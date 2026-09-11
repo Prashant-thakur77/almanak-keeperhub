@@ -19,7 +19,7 @@ Almanak, the open-source DeFi strategy framework (PyPI `almanak` 2.28, Apache-2.
 
 **Which KeeperHub surfaces did you use?**
 
-Direct execution REST: `POST /api/execute/contract-call` with `simulate: true` for the dry run and with an `Idempotency-Key` for the broadcast, `GET /api/execute/{id}/status` honouring `X-Poll-Interval-Hint`, `GET /api/user` for the organization wallet. The audit trail: every execution id and hash is recorded in `docs/receipts.json` next to the Almanak run log. Not used: MCP, CLI, x402, MPP. The bounty submission adds a raw-calldata input to the same endpoint.
+Direct execution REST: `POST /api/execute/contract-call` with `simulate: true` for the dry run and with an `Idempotency-Key` for the broadcast, `GET /api/execute/{id}/status` honouring `X-Poll-Interval-Hint`, `GET /api/user` for the organization wallet. The audit trail: every execution id, hash, verified flag and link is recorded automatically in `keeperhub-receipts.json` next to the strategy and printed at the end of each run. Not used: MCP, CLI, x402, MPP. The bounty submission adds a raw-calldata input to the same endpoint.
 
 **Testnet or mainnet?**
 
@@ -43,12 +43,12 @@ Email: prashant101007@gmail.com. X / Discord: <fill in>.
 
 - 0:00 Terminal in `demos/metamorpho_base_yield`. "This is Almanak's own packaged strategy. Nothing in it changed." Show `git diff --stat` against the almanak package copy: only `config.json`.
 - 0:15 `almanak-keeperhub doctor --chain base`: key, org wallet, chain enabled, 339 selectors.
-- 0:30 `almanak-keeperhub run --once --dry-run`: the gateway log lines `Wallet registry plugin loaded: KeeperHubWalletRegistry`, `Using KeeperHubSigner`, `KeeperHub execution backend active`, then `Dry run mode ... Would execute 2 transactions`.
-- 0:55 `almanak-keeperhub run --once`: `KeeperHub simulate ok: ...approve gas=...`, then two `KeeperHub execution <id> broadcast tx 0x... (completed)` lines, then `Status: SUCCESS | Intent: VAULT_DEPOSIT`. Open the Basescan link and the KeeperHub Runs page side by side.
+- 0:30 `almanak-keeperhub run --once --simulate-only`: the gateway log lines `Wallet registry plugin loaded: KeeperHubWalletRegistry`, `Using KeeperHubSigner`, `KeeperHub execution backend active`, then `KeeperHub simulate ok: ...approve gas=...` and `KeeperHub executions this run: none`. Say: "the exact compiled bundle, dry-run by KeeperHub, nothing touched the chain."
+- 0:55 `almanak-keeperhub run --once`: the same simulate line, then `KeeperHub execution <id> broadcast tx 0x... (completed)` per transaction, `Status: SUCCESS | Intent: VAULT_DEPOSIT`, and the proof summary with execution ids and links. Open one Basescan link and the KeeperHub Runs page side by side.
 - 1:30 `python demos/failure_modes/revert_caught_by_dry_run.py`: `simulated=True success=False`, revert reason, zero broadcasts.
 - 1:45 `python demos/failure_modes/duplicate_blocked_by_idempotency.py`: attempt 2 prints the same execution id with `replay=True`; one transaction on chain. Say: "this is the nonce incident from Almanak's own repo, prevented."
 - 2:05 `python demos/failure_modes/cap_refused.py`: the 100 USD stablecoin cap refuses 150 USDC before anything is signed.
-- 2:20 `pytest -q` (62 passed), `docs/receipts.json`, the known-gaps section of the README.
+- 2:20 `pytest -q` (72 passed), `keeperhub-receipts.json`, the known-gaps section of the README.
 
 ## Live pitch: eight hard questions
 

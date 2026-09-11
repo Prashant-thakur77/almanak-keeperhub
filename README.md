@@ -28,11 +28,26 @@ uv pip install -e ".[dev]"
 cp .env.example .env            # KEEPERHUB_API_KEY (mcp:write), Base RPC URL
 set -a; source .env; set +a
 
-almanak-keeperhub doctor --chain base        # key, org wallet, chain, selector index
+almanak-keeperhub doctor --chain base           # key, org wallet + balances, chain, selector index
 cd demos/metamorpho_base_yield
-almanak-keeperhub run --once --dry-run       # Almanak plans, nothing is broadcast
-almanak-keeperhub run --once                 # 5 USDC into the Moonwell Flagship USDC vault via KeeperHub
+almanak-keeperhub run --once --dry-run          # Almanak plans; nothing reaches the gateway
+almanak-keeperhub run --once --simulate-only    # KeeperHub dry-runs the compiled bundle; nothing broadcast
+almanak-keeperhub run --once                    # 5 USDC into the Moonwell Flagship USDC vault via KeeperHub
 ```
+
+Or run the whole sequence, failure modes included: `scripts/first_run.sh`.
+
+Every run ends with a proof summary and appends to `keeperhub-receipts.json` in the strategy directory:
+
+```
+KeeperHub executions this run (2), recorded in .../demos/metamorpho_base_yield/keeperhub-receipts.json:
+  approve -> 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913  execution=b0c3...  status=completed verified=True
+    tx 0x7970a839...  https://basescan.org/tx/0x7970a839...
+  deposit -> 0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca  execution=2e3b...  status=completed verified=True
+    tx 0xee489263...  https://basescan.org/tx/0xee489263...
+```
+
+`--simulate-only` is the orchestrator-level dry run: Almanak compiles the exact bundle, KeeperHub simulates it, the signer prepares it, and the pipeline stops before submission. It runs against a throwaway state store, so it leaves no footprint on the strategy (Almanak strategies move their own state optimistically when they emit an intent).
 
 The demo strategy in `demos/metamorpho_base_yield/` is Almanak's own packaged demo, copied unmodified from the `almanak` package (Apache-2.0). Only `config.json` differs: the deposit is 5 USDC instead of 50. Fund the KeeperHub organization wallet with at least 6 USDC and a little ETH on Base first.
 
@@ -84,16 +99,20 @@ Each script uses the same signer, simulator and submitter the gateway uses.
 
 ## Proof
 
-`docs/receipts.json` is appended by the demos and the strategy run with execution ids, hashes and explorer links from app.keeperhub.com.
+`demos/metamorpho_base_yield/keeperhub-receipts.json` is written by the strategy run and `docs/receipts.json` by the failure-mode demos: execution ids, hashes, verified flags and explorer links from app.keeperhub.com.
 
 Mainnet proof links: **to be added after the first hosted run** (see "What still breaks").
 
 `docs/rehearsal-fork.md` is the log of the same pipeline on an Anvil fork of Base against a local stand-in for KeeperHub (`tests/e2e/fake_keeperhub.py`, which mirrors the documented API shapes). It proves the wiring; it is not execution through KeeperHub.
 
+## Try it without a KeeperHub account
+
+`tests/e2e/rehearsal.sh` starts an Anvil fork of Base and a local stand-in for the KeeperHub API (`tests/e2e/fake_keeperhub.py`, documented request and response shapes, signs with a throwaway Anvil key), then runs doctor, the failure modes, a simulate-only tick and a real tick of the unmodified demo strategy, and asserts the vault deposit landed on the fork. Needs foundry and a Base RPC. It proves the wiring; it is not execution through KeeperHub.
+
 ## Tests
 
 ```bash
-pytest -q                      # 62 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 72 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, asserts the vault deposit landed
 ```

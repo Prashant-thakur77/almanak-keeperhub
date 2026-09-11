@@ -24,7 +24,7 @@ cleanup() { kill "${ANVIL_PID:-}" "${FAKE_PID:-}" 2>/dev/null || true; }
 trap cleanup EXIT
 
 echo "== starting anvil fork of Base"
-anvil --fork-url "$FORK_URL" --port "${ANVIL_PORT:-8547}" --chain-id 8453 --retries 12 --fork-retry-backoff 2000 --silent &
+"${ANVIL_BIN:-anvil}" --fork-url "$FORK_URL" --port "${ANVIL_PORT:-8547}" --chain-id 8453 --retries 12 --fork-retry-backoff 2000 --silent &
 ANVIL_PID=$!
 for _ in $(seq 1 30); do cast block-number --rpc-url "$RPC" >/dev/null 2>&1 && break; sleep 1; done
 
@@ -58,5 +58,5 @@ echo "== unmodified almanak demo strategy, executed through the backend"
 
 SHARES=$(cast call "$VAULT" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
 LEFT=$(cast call "$USDC" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
-echo "== vault shares: $SHARES, USDC left: $LEFT"
-[ "$SHARES" != "0" ] && [ "$LEFT" = "150000000" ] && echo "REHEARSAL OK" || { echo "REHEARSAL FAILED"; exit 1; }
+echo "== vault shares: $SHARES, USDC left: $LEFT (expected 195000000 after the 5 USDC deposit)"
+[ "$SHARES" != "0" ] && [ "$LEFT" = "195000000" ] && echo "REHEARSAL OK" || { echo "REHEARSAL FAILED"; exit 1; }
