@@ -68,13 +68,57 @@ class KeeperHubExecutionServiceServicer(ExecutionServiceServicer):
             client = self._client()
             orchestrator.submitter = KeeperHubSubmitter(client=client, rpc_url=orchestrator.rpc_url)
             orchestrator.simulator = KeeperHubSimulator(client=client, address=signer.address)
+            orchestrator.execute = _always_simulate(orchestrator.execute)
             logger.info("KeeperHub execution backend active for chain=%s wallet=%s", chain, signer.address[:10])
         return orchestrator
 
 
+def _always_simulate(execute):
+    """Almanak's strategy runner leaves ``ExecutionContext.simulation_enabled`` at its
+    ``False`` default on live networks, so the orchestrator skips its simulate phase and
+    only runs ``eth_estimateGas``. Through KeeperHub every bundle is dry-run first."""
+
+    @functools.wraps(execute)
+    async def wrapper(action_bundle, context, *args, **kwargs):
+        if getattr(context, "simulation_enabled", None) is False:
+            context.simulation_enabled = True
+        return await execute(action_bundle, context, *args, **kwargs)
+
+    return wrapper
+
+
+def skip_redundant_market_reinit(original):
+    """Workaround for an Almanak deadlock on the in-process managed gateway (almanak 2.28.0).
+
+    ``RegisterChains`` -> ``reinitialize_market_service`` -> ``MarketService._do_initialize``
+    rebuilds the Chainlink price source synchronously on the gateway's event loop. Its
+    ``TokenResolver`` is wired to the gateway channel, so it issues a blocking gRPC call
+    back into the very loop it is blocking: a 30 s self-deadlock, after which the runner
+    gives up on the registry wallet. It only triggers when a wallet registry plugin is
+    installed, which is exactly our case. The managed gateway already starts with the full
+    per-chain price stack, so the re-init is redundant whenever the chain is served.
+    Reported upstream; remove once fixed.
+    """
+
+    @functools.wraps(original)
+    async def wrapper(market_servicer, initialized_chains):
+        if market_servicer is not None and initialized_chains:
+            served = getattr(market_servicer, "_price_aggregators", {}) or {}
+            if initialized_chains[0] in served:
+                logger.info("Skipping redundant MarketService re-init for %s (already served)", initialized_chains[0])
+                return None
+        return await original(market_servicer, initialized_chains)
+
+    wrapper.__almanak_keeperhub_wrapped__ = original  # type: ignore[attr-defined]
+    return wrapper
+
+
 def install() -> None:
     """Make the in-process managed gateway construct the KeeperHub servicer."""
+    import almanak.gateway._register_chains_helpers as helpers
     import almanak.gateway.server as server
 
     if server.ExecutionServiceServicer is not KeeperHubExecutionServiceServicer:
         server.ExecutionServiceServicer = KeeperHubExecutionServiceServicer
+    if not hasattr(helpers.reinitialize_market_service, "__almanak_keeperhub_wrapped__"):
+        helpers.reinitialize_market_service = skip_redundant_market_reinit(helpers.reinitialize_market_service)

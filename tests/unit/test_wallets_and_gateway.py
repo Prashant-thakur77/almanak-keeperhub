@@ -104,6 +104,40 @@ async def test_servicer_swaps_submitter_and_simulator_when_signer_is_keeperhub()
     assert isinstance(orchestrator.simulator, KeeperHubSimulator)
 
 
+async def test_servicer_forces_the_dry_run_on_for_keeperhub_orchestrators() -> None:
+    from almanak.framework.execution.orchestrator import ExecutionContext
+
+    seen: list[ExecutionContext] = []
+
+    class FakeOrchestrator:
+        def __init__(self) -> None:
+            self.signer = KeeperHubSigner(client=None, address=ORG_WALLET)  # type: ignore[arg-type]
+            self.submitter = object()
+            self.simulator = object()
+            self.rpc_url = "https://rpc.test"
+
+        async def execute(self, action_bundle, context):
+            seen.append(context)
+            return "result"
+
+    class Parent:
+        async def _get_orchestrator(self, chain: str, wallet_address: str) -> FakeOrchestrator:
+            return FakeOrchestrator()
+
+    servicer = KeeperHubExecutionServiceServicer.__new__(KeeperHubExecutionServiceServicer)
+    servicer._keeperhub_client = None
+    orchestrator = await KeeperHubExecutionServiceServicer._get_orchestrator.__wrapped__(  # type: ignore[attr-defined]
+        servicer, "base", ORG_WALLET, parent_get=Parent()._get_orchestrator
+    )
+    context = ExecutionContext(deployment_id="d", chain="base", wallet_address=ORG_WALLET)
+    assert context.simulation_enabled is False  # Almanak's runner default on mainnet
+
+    result = await orchestrator.execute(object(), context)
+
+    assert result == "result"
+    assert seen[0].simulation_enabled is True
+
+
 def test_install_replaces_the_servicer_the_gateway_server_constructs() -> None:
     import almanak.gateway.server as server
 

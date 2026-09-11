@@ -1,0 +1,27 @@
+[
+  {
+    "kind": "unknown_selector_refused",
+    "selector": "0xdeadbeef",
+    "broadcast": false
+  },
+  {
+    "kind": "dry_run_revert",
+    "to": "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca",
+    "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "revert_reason": "('execution reverted: ERC20: transfer amount exceeds allowance', '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002845524332303a207472616e7366657220616d6f756e74206578636565647320616c6c6f77616e6365000000000000000000000000000000000000000000000000')",
+    "broadcast": false
+  },
+  {
+    "kind": "cap_refused",
+    "amount_usdc": 150,
+    "error": "Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit",
+    "broadcast": false
+  },
+  {
+    "kind": "duplicate_blocked",
+    "idempotency_key": "2b019a4228028a4e78089e4c9c32a1b4cbb944011cbc564e9d9c36c2429911a8",
+    "execution_id": "18ac768c3ca248679a6fd",
+    "tx_hash": "0x8cb57f31f4a711889e24b36d63ca0e27e59beaa08cc2d525025a8cdcc59f1384",
+    "second_attempt_replayed": true
+  }
+]

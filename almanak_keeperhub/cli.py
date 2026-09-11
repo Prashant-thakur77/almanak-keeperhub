@@ -63,6 +63,10 @@ def run(chain_override: str | None, working_dir: str, config_file: str | None, a
     if config_file:
         args += ["--config", config_file]
     args += list(almanak_args)
+    # KeeperHub's dry run is the point of this backend: simulate every bundle before broadcast
+    # unless the operator explicitly turns it off.
+    if not {"--simulate-tx", "--no-simulate-tx"} & set(almanak_args):
+        args.append("--simulate-tx")
     sys.exit(almanak.main(args=args, prog_name="almanak", standalone_mode=True))
 
 
