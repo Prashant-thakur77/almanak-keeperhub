@@ -1,0 +1,63 @@
+--- a/almanak/gateway/services/execution_service.py
++++ b/almanak/gateway/services/execution_service.py
+@@ -41,6 +41,28 @@
+ 
+ logger = logging.getLogger(__name__)
+ 
++
++def _load_execution_backend(kind: str | None):
++    """Discover an execution backend plugin for a wallet ``kind`` via entry points.
++
++    Plugins register under the ``almanak.execution_backends`` group with the wallet kind as
++    the entry-point name and expose ``create_signer``, ``create_submitter`` and
++    ``create_simulator``. ``None`` when ``kind`` is empty or no plugin is installed, so the
++    built-in kinds (direct, zodiac, squads) keep their existing paths.
++    """
++    if not kind:
++        return None
++    try:
++        from importlib.metadata import entry_points
++
++        matches = [ep for ep in entry_points(group="almanak.execution_backends") if ep.name == kind]
++    except Exception:  # pragma: no cover - importlib.metadata is stdlib
++        return None
++    if not matches:
++        return None
++    backend = matches[0].load()
++    return backend() if isinstance(backend, type) else backend
++
+ # TTL for cached compilers (5 minutes) - prevents stale price data in long-running services
+ COMPILER_CACHE_TTL_SECONDS = 300
+ 
+@@ -630,8 +652,12 @@
+             return LocalKeySigner(private_key=pk)
+         elif kind == "squads":
+             raise NotImplementedError("Squads multisig wallet support is not yet implemented")
+-        else:
+-            raise ValueError(f"Unknown wallet kind: {kind}")
++        backend = _load_execution_backend(kind)
++        if backend is not None:
++            signer = backend.create_signer(wallet, settings=self.settings)
++            logger.info("Using %s for resolved wallet %s (kind=%s)", type(signer).__name__, wallet.account_address[:10], kind)
++            return signer
++        raise ValueError(f"Unknown wallet kind: {kind}")
+ 
+     async def _get_orchestrator(self, chain: str, wallet_address: str):
+         """Get or create execution orchestrator for a chain.
+@@ -680,8 +706,14 @@
+                 ) from e
+         if signer is None:
+             signer = self._create_signer(wallet_address)
+-        submitter = PublicMempoolSubmitter(rpc_url=rpc_url)
+-        simulator = create_simulator(rpc_url=rpc_url)
++        backend = _load_execution_backend(getattr(signer, "execution_backend", None))
++        if backend is not None:
++            # A pluggable backend (e.g. KeeperHub) owns submission and simulation for its signer.
++            submitter = backend.create_submitter(signer, chain=chain, rpc_url=rpc_url, settings=self.settings)
++            simulator = backend.create_simulator(signer, chain=chain, rpc_url=rpc_url, settings=self.settings)
++        else:
++            submitter = PublicMempoolSubmitter(rpc_url=rpc_url)
++            simulator = create_simulator(rpc_url=rpc_url)
+ 
+         orchestrator = ExecutionOrchestrator(
+             signer=signer,
