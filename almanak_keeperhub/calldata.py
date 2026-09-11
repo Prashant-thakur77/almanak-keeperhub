@@ -93,11 +93,7 @@ class SelectorIndex:
             except (OSError, ValueError):
                 continue
             abi = (
-                document
-                if isinstance(document, list)
-                else document.get("abi")
-                if isinstance(document, dict)
-                else None
+                document if isinstance(document, list) else document.get("abi") if isinstance(document, dict) else None
             )
             if isinstance(abi, list):
                 self.add_abi(abi)

@@ -38,9 +38,7 @@ def test_registry_is_discoverable_through_almanaks_entry_point_group() -> None:
 
 @respx.mock
 def test_registry_resolves_every_configured_chain_to_the_org_wallet() -> None:
-    route = respx.get(f"{BASE}/api/user").mock(
-        return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET})
-    )
+    route = respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET}))
 
     registry = KeeperHubWalletRegistry.from_env(default_chains=None)
 
@@ -159,3 +157,47 @@ def test_install_replaces_the_servicer_the_gateway_server_constructs() -> None:
         assert server.ExecutionServiceServicer is KeeperHubExecutionServiceServicer
     finally:
         server.ExecutionServiceServicer = original
+
+
+@respx.mock
+def test_registry_falls_back_to_the_wallet_endpoint() -> None:
+    respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"id": "u1"}))
+    respx.get(f"{BASE}/api/user/wallet").mock(return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET}))
+
+    registry = KeeperHubWalletRegistry.from_env(default_chains=["base"])
+
+    assert registry.resolve("base").account_address == ORG_WALLET
+
+
+async def test_simulate_only_env_turns_the_orchestrator_run_into_a_dry_run(monkeypatch: pytest.MonkeyPatch) -> None:
+    from almanak.framework.execution.orchestrator import ExecutionContext
+
+    seen: list[ExecutionContext] = []
+
+    class FakeOrchestrator:
+        def __init__(self) -> None:
+            self.signer = KeeperHubSigner(client=None, address=ORG_WALLET)  # type: ignore[arg-type]
+            self.submitter = object()
+            self.simulator = object()
+            self.rpc_url = "https://rpc.test"
+
+        async def execute(self, action_bundle, context):
+            seen.append(context)
+            return "result"
+
+    class Parent:
+        async def _get_orchestrator(self, chain: str, wallet_address: str) -> FakeOrchestrator:
+            return FakeOrchestrator()
+
+    monkeypatch.setenv("ALMANAK_KEEPERHUB_SIMULATE_ONLY", "1")
+    servicer = KeeperHubExecutionServiceServicer.__new__(KeeperHubExecutionServiceServicer)
+    servicer._keeperhub_client = None
+    orchestrator = await KeeperHubExecutionServiceServicer._get_orchestrator.__wrapped__(  # type: ignore[attr-defined]
+        servicer, "base", ORG_WALLET, parent_get=Parent()._get_orchestrator
+    )
+    context = ExecutionContext(deployment_id="d", chain="base", wallet_address=ORG_WALLET)
+
+    await orchestrator.execute(object(), context)
+
+    assert seen[0].simulation_enabled is True
+    assert seen[0].dry_run is True

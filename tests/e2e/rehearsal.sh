@@ -40,6 +40,8 @@ sleep 2
 
 export KEEPERHUB_API_KEY=kh_rehearsal KEEPERHUB_BASE_URL="http://127.0.0.1:$FAKE_PORT"
 export ALMANAK_BASE_RPC_URL="$RPC" BASE_RPC_URL="$RPC" RPC_URL_BASE="$RPC"
+# Fork receipts must never be mistaken for proof: keep them out of the strategy directory.
+export ALMANAK_KEEPERHUB_RECEIPTS="$(mktemp -d)/keeperhub-receipts.json"
 
 echo "== doctor"
 almanak-keeperhub doctor --chain base
@@ -47,8 +49,11 @@ almanak-keeperhub doctor --chain base
 echo "== failure modes"
 ( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency; do python "$s.py"; done )
 
-echo "== unmodified almanak demo strategy, executed through the backend"
+echo "== simulate-only: KeeperHub dry-runs the compiled bundle, nothing broadcast"
 rm -f "$ROOT/demos/metamorpho_base_yield/almanak_state.db"*
+( cd "$ROOT/demos/metamorpho_base_yield" && almanak-keeperhub run --once --fresh --simulate-only 2>&1 | grep -E "KeeperHub simulate|Status:|executions this run" )
+
+echo "== unmodified almanak demo strategy, executed through the backend"
 ( cd "$ROOT/demos/metamorpho_base_yield" && almanak-keeperhub run --once --fresh 2>&1 | grep -E "KeeperHub simulate|KeeperHub execution|Status:|Gas estimate tx" )
 
 SHARES=$(cast call "$VAULT" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)

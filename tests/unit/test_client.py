@@ -12,6 +12,7 @@ import respx
 
 from almanak_keeperhub.client import ContractCall, KeeperHubClient
 from almanak_keeperhub.errors import (
+    KeeperHubAPIError,
     KeeperHubAuthError,
     KeeperHubIdempotencyConflict,
     KeeperHubIdempotencyInProgress,
@@ -163,9 +164,7 @@ async def test_simulate_surfaces_machine_readable_code(client: KeeperHubClient) 
 @respx.mock
 async def test_simulate_infrastructure_failure_raises(client: KeeperHubClient) -> None:
     respx.post(f"{BASE}/api/execute/contract-call").mock(
-        return_value=httpx.Response(
-            503, json={"success": False, "failureKind": "unavailable", "wouldRevert": False}
-        )
+        return_value=httpx.Response(503, json={"success": False, "failureKind": "unavailable", "wouldRevert": False})
     )
     with pytest.raises(KeeperHubUnavailable):
         await client.simulate_contract_call(_call())
@@ -381,3 +380,25 @@ async def test_wait_for_terminal_times_out(client: KeeperHubClient) -> None:
 
     with pytest.raises(TimeoutError):
         await client.wait_for_terminal("e", timeout_seconds=30, sleep=fake_sleep, now=lambda: next(clock))
+
+
+@respx.mock
+async def test_wallet_address_falls_back_to_wallet_endpoint(client: KeeperHubClient) -> None:
+    respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"id": "u1", "walletAddress": None}))
+    respx.get(f"{BASE}/api/user/wallet").mock(
+        return_value=httpx.Response(
+            200, json={"hasWallet": True, "walletAddress": "0x0bdf000000000000000000000000000000000002"}
+        )
+    )
+
+    assert await client.wallet_address() == "0x0bdf000000000000000000000000000000000002"
+
+
+@respx.mock
+async def test_wallet_address_error_names_the_remedy(client: KeeperHubClient) -> None:
+    respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"id": "u1"}))
+    respx.get(f"{BASE}/api/user/wallet").mock(return_value=httpx.Response(200, json={"hasWallet": False}))
+
+    with pytest.raises(KeeperHubAPIError) as excinfo:
+        await client.wallet_address()
+    assert "KEEPERHUB_WALLET_ADDRESS" in str(excinfo.value)

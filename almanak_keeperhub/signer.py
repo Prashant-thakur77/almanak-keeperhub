@@ -73,9 +73,7 @@ class KeeperHubSigner(Signer):
                 f"tx.from_address {tx.from_address} is not the KeeperHub organization wallet {self._address}"
             )
         try:
-            decoded = decode_calldata(
-                tx.data or "0x", to=tx.to, value_wei=int(tx.value or 0), index=self._index
-            )
+            decoded = decode_calldata(tx.data or "0x", to=tx.to, value_wei=int(tx.value or 0), index=self._index)
         except UndecodableCalldata as exc:
             raise SigningError(str(exc)) from exc
         call = ContractCall(

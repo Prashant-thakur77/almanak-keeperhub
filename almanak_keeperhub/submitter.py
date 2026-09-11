@@ -30,6 +30,7 @@ from almanak_keeperhub.errors import (
     KeeperHubIdempotencyInProgress,
     KeeperHubRateLimited,
 )
+from almanak_keeperhub.receipts import ReceiptLog
 from almanak_keeperhub.signer import KeeperHubSignedTransaction
 
 logger = logging.getLogger(__name__)
@@ -50,9 +51,7 @@ class KeeperHubSubmitter(Submitter):
     ) -> None:
         if receipt_fetcher is None:
             if not rpc_url:
-                raise ValueError(
-                    "KeeperHubSubmitter needs an rpc_url (for receipt logs) or a receipt_fetcher"
-                )
+                raise ValueError("KeeperHubSubmitter needs an rpc_url (for receipt logs) or a receipt_fetcher")
             receipt_fetcher = _web3_receipt_fetcher(rpc_url)
         self._client = client
         self._fetch_receipt = receipt_fetcher
@@ -60,6 +59,7 @@ class KeeperHubSubmitter(Submitter):
         self._confirmation_timeout = confirmation_timeout
         self._max_in_progress_retries = max_in_progress_retries
         self._executions: dict[str, ExecutionStatus | ExecutionEnvelope] = {}
+        self._receipts = ReceiptLog()
 
     # -- Submitter interface ----------------------------------------------------
 
@@ -67,21 +67,28 @@ class KeeperHubSubmitter(Submitter):
         results: list[SubmissionResult] = []
         for index, signed in enumerate(txs):
             if not isinstance(signed, KeeperHubSignedTransaction) or signed.call is None:
-                raise SubmissionError(
-                    "KeeperHubSubmitter only accepts transactions prepared by KeeperHubSigner"
-                )
+                raise SubmissionError("KeeperHubSubmitter only accepts transactions prepared by KeeperHubSigner")
             envelope = await self._broadcast(signed)
             if envelope.transaction_hash is None:
                 # Refused before broadcast: cap, guard, validation. Nothing reached the chain,
                 # and the transactions after this one depend on it, so stop here.
-                reason = (
-                    envelope.error or f"KeeperHub execution {envelope.execution_id} ended '{envelope.status}'"
-                )
+                reason = envelope.error or f"KeeperHub execution {envelope.execution_id} ended '{envelope.status}'"
                 logger.error("KeeperHub refused tx %d/%d: %s", index + 1, len(txs), reason)
                 results.append(SubmissionResult(tx_hash="", submitted=False, error=reason))
                 return results
             signed.tx_hash = envelope.transaction_hash  # the orchestrator indexes by this
             self._executions[envelope.transaction_hash.lower()] = envelope
+            self._receipts.record(
+                envelope.execution_id,
+                chain_id=signed.call.chain_id,
+                to=signed.call.contract_address,
+                function=signed.call.function_name,
+                tx_hash=envelope.transaction_hash,
+                transaction_link=envelope.transaction_link,
+                status=envelope.status,
+                idempotency_key=signed.idempotency_key,
+                idempotent_replay=envelope.idempotent_replay,
+            )
             logger.info(
                 "KeeperHub execution %s broadcast tx %s (%s)%s",
                 envelope.execution_id,
@@ -123,9 +130,7 @@ class KeeperHubSubmitter(Submitter):
         attempts = 0
         while True:
             try:
-                return await self._client.execute_contract_call(
-                    signed.call, idempotency_key=signed.idempotency_key
-                )
+                return await self._client.execute_contract_call(signed.call, idempotency_key=signed.idempotency_key)
             except KeeperHubIdempotencyInProgress:
                 attempts += 1
                 if attempts > self._max_in_progress_retries:
@@ -146,9 +151,7 @@ class KeeperHubSubmitter(Submitter):
                     recoverable=False,
                 ) from exc
             except KeeperHubAuthError as exc:
-                raise SubmissionError(
-                    f"KeeperHub credential cannot broadcast: {exc}", recoverable=False
-                ) from exc
+                raise SubmissionError(f"KeeperHub credential cannot broadcast: {exc}", recoverable=False) from exc
             except KeeperHubAPIError as exc:
                 recoverable = exc.status >= 500
                 raise SubmissionError(
@@ -159,10 +162,16 @@ class KeeperHubSubmitter(Submitter):
         known = self.execution_for(tx_hash)
         if isinstance(known, ExecutionStatus) and known.terminal:
             return known
-        status = await self._client.wait_for_terminal(
-            known.execution_id, timeout_seconds=timeout, sleep=self._sleep
-        )
+        status = await self._client.wait_for_terminal(known.execution_id, timeout_seconds=timeout, sleep=self._sleep)
         self._executions[tx_hash.lower()] = status
+        self._receipts.update(
+            status.execution_id,
+            status=status.status,
+            verified=all(r.verified for r in status.receipts) if status.receipts else None,
+            receipt_status=[r.receipt_status for r in status.receipts],
+            transaction_link=status.transaction_link,
+            sponsored=status.sponsored,
+        )
         return status
 
 
@@ -212,7 +221,9 @@ def _web3_receipt_fetcher(rpc_url: str) -> ReceiptFetcher:
             except TransactionNotFound:
                 await asyncio.sleep(2.0 * (attempt + 1))
             except Exception as exc:  # noqa: BLE001 - dead or flaky RPC: retry, then let get_receipt explain
-                logger.warning("receipt fetch for %s failed on %s (attempt %d/6): %s", tx_hash, rpc_url, attempt + 1, exc)
+                logger.warning(
+                    "receipt fetch for %s failed on %s (attempt %d/6): %s", tx_hash, rpc_url, attempt + 1, exc
+                )
                 await asyncio.sleep(2.0 * (attempt + 1))
         return None
 

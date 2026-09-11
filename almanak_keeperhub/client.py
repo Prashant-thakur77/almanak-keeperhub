@@ -152,18 +152,30 @@ class KeeperHubClient:
         await self._http.aclose()
 
     async def wallet_address(self) -> str:
+        """Organization wallet: ``GET /api/user`` first, ``GET /api/user/wallet`` as fallback.
+
+        Both accept an organization API key per docs/api/user.md; the first is what the
+        headless-onboarding guide recommends, the second is the wallet resource itself.
+        """
         if self._wallet_address is None:
-            response = await self._http.get("/api/user")
-            payload = _json_or_empty(response)
-            _raise_for_status(response, payload)
-            address = payload.get("walletAddress")
-            if not isinstance(address, str) or not address:
-                raise KeeperHubAPIError(
-                    "GET /api/user returned no walletAddress; provision the organization wallet first",
-                    status=response.status_code,
-                    payload=payload,
-                )
-            self._wallet_address = address
+            last_status = 0
+            last_payload: dict[str, Any] = {}
+            for path in ("/api/user", "/api/user/wallet"):
+                response = await self._http.get(path)
+                payload = _json_or_empty(response)
+                _raise_for_status(response, payload)
+                address = payload.get("walletAddress")
+                if isinstance(address, str) and address:
+                    self._wallet_address = address
+                    return address
+                last_status, last_payload = response.status_code, payload
+            raise KeeperHubAPIError(
+                "KeeperHub returned no walletAddress from /api/user or /api/user/wallet. Provision the "
+                "organization wallet in the app (Settings > Organization > Wallets), or set "
+                "KEEPERHUB_WALLET_ADDRESS explicitly.",
+                status=last_status,
+                payload=last_payload,
+            )
         return self._wallet_address
 
     async def simulate_contract_call(self, call: ContractCall) -> SimulationOutcome:
@@ -172,9 +184,7 @@ class KeeperHubClient:
         response = await self._http.post("/api/execute/contract-call", json=body)
         payload = _json_or_empty(response)
         if response.status_code == 503:
-            raise KeeperHubUnavailable(
-                _message(payload, "simulator unavailable"), status=503, payload=payload
-            )
+            raise KeeperHubUnavailable(_message(payload, "simulator unavailable"), status=503, payload=payload)
         if response.status_code not in (200, 400):
             _raise_for_status(response, payload)
         return SimulationOutcome(

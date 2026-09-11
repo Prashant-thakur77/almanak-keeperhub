@@ -71,9 +71,7 @@ def _stablecoin_refusal(state: State, body: dict[str, Any]) -> str | None:
     amount = int(json.loads(body.get("functionArgs") or "[]")[1])
     if amount > CAP_USD * 10**decimals:
         human = amount / 10**decimals
-        return (
-            f"Stablecoin transfer of {human:g} {symbol} exceeds the {CAP_USD:.1f} USD per-transaction limit"
-        )
+        return f"Stablecoin transfer of {human:g} {symbol} exceeds the {CAP_USD:.1f} USD per-transaction limit"
     return None
 
 
@@ -355,9 +353,7 @@ def serve(rpc: str, port: int, private_key: str, chain_id: int) -> ThreadingHTTP
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    print(
-        f"[fake-keeperhub] listening on http://127.0.0.1:{port} wallet={Handler.state.account.address} rpc={rpc}"
-    )
+    print(f"[fake-keeperhub] listening on http://127.0.0.1:{port} wallet={Handler.state.account.address} rpc={rpc}")
     return server
 
 

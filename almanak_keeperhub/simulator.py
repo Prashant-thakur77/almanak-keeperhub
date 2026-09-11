@@ -34,9 +34,7 @@ class KeeperHubSimulator(Simulator):
         state_overrides: dict | None = None,
     ) -> SimulationResult:
         if state_overrides:
-            logger.warning(
-                "KeeperHubSimulator ignores state_overrides; the org wallet's live state is simulated"
-            )
+            logger.warning("KeeperHubSimulator ignores state_overrides; the org wallet's live state is simulated")
         if not txs:
             return SimulationResult(success=True, simulated=False, simulator_name=SIMULATOR_NAME)
 
@@ -93,6 +91,4 @@ class KeeperHubSimulator(Simulator):
 
 
 def _failure(reason: str, *, simulated: bool) -> SimulationResult:
-    return SimulationResult(
-        success=False, simulated=simulated, revert_reason=reason, simulator_name=SIMULATOR_NAME
-    )
+    return SimulationResult(success=False, simulated=simulated, revert_reason=reason, simulator_name=SIMULATOR_NAME)

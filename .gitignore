@@ -10,3 +10,6 @@ dist/
 demos/**/state/
 demos/**/.almanak/
 .almanak-keeperhub/
+demos/**/almanak_state.db*
+demos/**/*.log
+demos/**/.almanak_lock*

@@ -27,6 +27,7 @@ from almanak_keeperhub.submitter import KeeperHubSubmitter
 from almanak_keeperhub.wallets import KIND
 
 logger = logging.getLogger(__name__)
+SIMULATE_ONLY_ENV = "ALMANAK_KEEPERHUB_SIMULATE_ONLY"
 
 
 def client_from_env() -> KeeperHubClient:
@@ -69,9 +70,7 @@ class KeeperHubExecutionServiceServicer(ExecutionServiceServicer):
             orchestrator.submitter = KeeperHubSubmitter(client=client, rpc_url=orchestrator.rpc_url)
             orchestrator.simulator = KeeperHubSimulator(client=client, address=signer.address)
             orchestrator.execute = _always_simulate(orchestrator.execute)
-            logger.info(
-                "KeeperHub execution backend active for chain=%s wallet=%s", chain, signer.address[:10]
-            )
+            logger.info("KeeperHub execution backend active for chain=%s wallet=%s", chain, signer.address[:10])
         return orchestrator
 
 
@@ -84,6 +83,10 @@ def _always_simulate(execute):
     async def wrapper(action_bundle, context, *args, **kwargs):
         if getattr(context, "simulation_enabled", None) is False:
             context.simulation_enabled = True
+        if os.environ.get(SIMULATE_ONLY_ENV) == "1" and getattr(context, "dry_run", None) is False:
+            # Orchestrator-level dry run: KeeperHub simulates the exact compiled bundle,
+            # the signer prepares it, and the pipeline stops before submission.
+            context.dry_run = True
         return await execute(action_bundle, context, *args, **kwargs)
 
     return wrapper
@@ -107,9 +110,7 @@ def skip_redundant_market_reinit(original):
         if market_servicer is not None and initialized_chains:
             served = getattr(market_servicer, "_price_aggregators", {}) or {}
             if initialized_chains[0] in served:
-                logger.info(
-                    "Skipping redundant MarketService re-init for %s (already served)", initialized_chains[0]
-                )
+                logger.info("Skipping redundant MarketService re-init for %s (already served)", initialized_chains[0])
                 return None
         return await original(market_servicer, initialized_chains)
 
@@ -125,6 +126,4 @@ def install() -> None:
     if server.ExecutionServiceServicer is not KeeperHubExecutionServiceServicer:
         server.ExecutionServiceServicer = KeeperHubExecutionServiceServicer
     if not hasattr(helpers.reinitialize_market_service, "__almanak_keeperhub_wrapped__"):
-        helpers.reinitialize_market_service = skip_redundant_market_reinit(
-            helpers.reinitialize_market_service
-        )
+        helpers.reinitialize_market_service = skip_redundant_market_reinit(helpers.reinitialize_market_service)
