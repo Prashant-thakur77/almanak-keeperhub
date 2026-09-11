@@ -23,5 +23,17 @@
     "execution_id": "18ac768c3ca248679a6fd",
     "tx_hash": "0x8cb57f31f4a711889e24b36d63ca0e27e59beaa08cc2d525025a8cdcc59f1384",
     "second_attempt_replayed": true
+  },
+  {
+    "kind": "rpc_outage",
+    "execution_id": "1057553b1ece4052a9ea6",
+    "tx_hash": "0x9269bc87651d137080eb98c556ae52299f1f6046adc5a59207a8c13073eb7674",
+    "keeperhub_status": "completed"
+  },
+  {
+    "kind": "rpc_outage",
+    "execution_id": "069686e8f4234fe695bae",
+    "tx_hash": "0x25dddeff9a67254516194a2b853d424600ab3e3fc9ab15f196944b72fad8ca37",
+    "keeperhub_status": "completed"
   }
 ]

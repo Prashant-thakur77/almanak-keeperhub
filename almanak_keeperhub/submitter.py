@@ -99,9 +99,11 @@ class KeeperHubSubmitter(Submitter):
         status = await self._settle(tx_hash, timeout=timeout)
         raw = await self._fetch_receipt(tx_hash)
         if raw is None:
+            verified = [r.verified for r in status.receipts]
             raise SubmissionError(
-                f"KeeperHub execution {status.execution_id} is '{status.status}' but the chain has no receipt "
-                f"for {tx_hash} yet; keep the same idempotency key and poll again",
+                f"KeeperHub execution {status.execution_id} is '{status.status}' (verified={verified}) but this "
+                f"process could not read the receipt for {tx_hash} from its RPC; the transaction is not resent, "
+                "keep the same idempotency key and retry the receipt read",
                 tx_hash=tx_hash,
             )
         return _to_almanak_receipt(raw, tx_hash)
@@ -208,6 +210,9 @@ def _web3_receipt_fetcher(rpc_url: str) -> ReceiptFetcher:
                 receipt = await web3.eth.get_transaction_receipt(tx_hash)  # type: ignore[arg-type]
                 return dict(receipt)
             except TransactionNotFound:
+                await asyncio.sleep(2.0 * (attempt + 1))
+            except Exception as exc:  # noqa: BLE001 - dead or flaky RPC: retry, then let get_receipt explain
+                logger.warning("receipt fetch for %s failed on %s (attempt %d/6): %s", tx_hash, rpc_url, attempt + 1, exc)
                 await asyncio.sleep(2.0 * (attempt + 1))
         return None
 
