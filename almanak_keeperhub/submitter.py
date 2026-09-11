@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -48,6 +49,7 @@ class KeeperHubSubmitter(Submitter):
         sleep: Sleep = asyncio.sleep,
         confirmation_timeout: float = 180.0,
         max_in_progress_retries: int = 20,
+        now: Callable[[], float] = time.monotonic,
     ) -> None:
         if receipt_fetcher is None:
             if not rpc_url:
@@ -56,6 +58,7 @@ class KeeperHubSubmitter(Submitter):
         self._client = client
         self._fetch_receipt = receipt_fetcher
         self._sleep = sleep
+        self._now = now
         self._confirmation_timeout = confirmation_timeout
         self._max_in_progress_retries = max_in_progress_retries
         self._executions: dict[str, ExecutionStatus | ExecutionEnvelope] = {}
@@ -97,9 +100,19 @@ class KeeperHubSubmitter(Submitter):
                 " [idempotent replay]" if envelope.idempotent_replay else "",
             )
             results.append(SubmissionResult(tx_hash=envelope.transaction_hash, submitted=True))
-            if index < len(txs) - 1 and envelope.status not in ("completed", "failed"):
+            if envelope.status == "failed":
+                # Reached the chain and reverted. The receipt phase reports it with the hash;
+                # the transactions after this one depend on it, so nothing more is sent.
+                logger.error("KeeperHub execution %s reverted on chain; stopping the bundle", envelope.execution_id)
+                return results
+            if index < len(txs) - 1 and envelope.status != "completed":
                 # Later transactions depend on this one landing; wait before sending the next.
-                await self._settle(envelope.transaction_hash, timeout=self._confirmation_timeout)
+                settled = await self._settle(envelope.transaction_hash, timeout=self._confirmation_timeout)
+                if settled.status == "failed":
+                    logger.error(
+                        "KeeperHub execution %s failed while settling; stopping the bundle", settled.execution_id
+                    )
+                    return results
         return results
 
     async def get_receipt(self, tx_hash: str, timeout: float = 120.0) -> TransactionReceipt:
@@ -162,7 +175,19 @@ class KeeperHubSubmitter(Submitter):
         known = self.execution_for(tx_hash)
         if isinstance(known, ExecutionStatus) and known.terminal:
             return known
-        status = await self._client.wait_for_terminal(known.execution_id, timeout_seconds=timeout, sleep=self._sleep)
+        try:
+            status = await self._client.wait_for_terminal(
+                known.execution_id, timeout_seconds=timeout, sleep=self._sleep, now=self._now
+            )
+        except TimeoutError as exc:
+            # Almanak's contract for a broadcast that may still land: recoverable, keep the hash,
+            # never resend under a new key.
+            raise SubmissionError(
+                f"KeeperHub execution {known.execution_id} still unconfirmed after {timeout:.0f}s; "
+                "do not resend, keep the same idempotency key and poll the receipt again",
+                tx_hash=tx_hash,
+                recoverable=True,
+            ) from exc
         self._executions[tx_hash.lower()] = status
         self._receipts.update(
             status.execution_id,

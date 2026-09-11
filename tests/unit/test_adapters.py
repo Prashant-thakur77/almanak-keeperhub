@@ -478,3 +478,53 @@ async def test_submitter_records_every_execution_for_proof(
     assert entries[0]["verified"] is True
     assert entries[0]["sponsored"] is True
     assert entries[0]["idempotency_key"] == signed.idempotency_key
+
+
+@respx.mock
+async def test_submit_stops_the_bundle_after_an_onchain_revert(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    route = respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(202, json={**completed("e1"), "status": "failed", "error": "execution reverted"})
+    )
+    approve = await signer.sign(approve_tx(), "base")
+    deposit = await signer.sign(deposit_tx(), "base")
+
+    results = await _submitter(client).submit([approve, deposit])
+
+    assert route.call_count == 1  # the deposit depends on the approve; it is never sent
+    assert len(results) == 1
+    assert results[0].submitted is True  # it reached the chain: the receipt phase reports the revert
+    assert results[0].tx_hash == TX_HASH
+
+
+@respx.mock
+async def test_unconfirmed_past_timeout_is_a_recoverable_submission_error(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}
+        )
+    )
+    respx.get(f"{BASE}/api/execute/e1/status").mock(
+        return_value=httpx.Response(
+            200, headers={"X-Poll-Interval-Hint": "5"}, json=status_body("e1", "unconfirmed", verified=False)
+        )
+    )
+    clock = iter([0.0, 10.0, 200.0, 400.0])
+    submitter = KeeperHubSubmitter(
+        client=client,
+        receipt_fetcher=_submitter(client)._fetch_receipt,
+        sleep=_submitter(client)._sleep,
+        now=lambda: next(clock),
+    )
+    signed = await signer.sign(approve_tx(), "base")
+    await submitter.submit([signed])
+
+    with pytest.raises(SubmissionError) as excinfo:
+        await submitter.get_receipt(TX_HASH, timeout=30)
+
+    assert excinfo.value.tx_hash == TX_HASH
+    assert excinfo.value.recoverable is True
+    assert "do not resend" in str(excinfo.value)
