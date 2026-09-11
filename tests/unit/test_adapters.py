@@ -145,10 +145,19 @@ async def test_sign_decodes_call_and_derives_stable_idempotency_key(signer: Keep
     assert again.idempotency_key == signed.idempotency_key
 
 
-async def test_idempotency_key_changes_with_work_not_attempt(signer: KeeperHubSigner) -> None:
-    base = (await signer.sign(approve_tx(nonce=7), "base")).idempotency_key
-    assert (await signer.sign(approve_tx(nonce=8), "base")).idempotency_key != base
-    assert (await signer.sign(approve_tx(amount=6_000_000), "base")).idempotency_key != base
+async def test_idempotency_key_identifies_the_work_not_the_attempt(signer: KeeperHubSigner) -> None:
+    from almanak_keeperhub.signer import work_id_scope
+
+    with work_id_scope("intent-1"):
+        first_attempt = (await signer.sign(approve_tx(nonce=7), "base")).idempotency_key
+        # The orchestrator assigns a fresh nonce per attempt; a retry of the same intent must reuse the key.
+        retry = (await signer.sign(approve_tx(nonce=8), "base")).idempotency_key
+    with work_id_scope("intent-2"):
+        other_intent = (await signer.sign(approve_tx(nonce=7), "base")).idempotency_key
+
+    assert retry == first_attempt
+    assert other_intent != first_attempt
+    assert (await signer.sign(approve_tx(amount=6_000_000), "base")).idempotency_key != first_attempt
 
 
 async def test_idempotency_key_honours_salt(client: KeeperHubClient, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -279,7 +288,7 @@ async def test_submit_stops_after_a_refused_broadcast(client: KeeperHubClient, s
     assert results[0].submitted is False
     assert "per-transaction limit" in results[0].error
     assert results[0].tx_hash == ""
-    assert len(results) == 1
+    assert len(results) == 2 and results[1].submitted is False
 
 
 @respx.mock
@@ -493,9 +502,12 @@ async def test_submit_stops_the_bundle_after_an_onchain_revert(
     results = await _submitter(client).submit([approve, deposit])
 
     assert route.call_count == 1  # the deposit depends on the approve; it is never sent
-    assert len(results) == 1
+    assert len(results) == 2
     assert results[0].submitted is True  # it reached the chain: the receipt phase reports the revert
     assert results[0].tx_hash == TX_HASH
+    assert results[1].submitted is False  # the orchestrator must see the bundle was not completed
+    assert results[1].tx_hash == ""
+    assert "not sent" in (results[1].error or "")
 
 
 @respx.mock
@@ -528,3 +540,145 @@ async def test_unconfirmed_past_timeout_is_a_recoverable_submission_error(
     assert excinfo.value.tx_hash == TX_HASH
     assert excinfo.value.recoverable is True
     assert "do not resend" in str(excinfo.value)
+
+
+@respx.mock
+async def test_intermediate_settle_timeout_returns_partial_results_with_the_hash(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}
+        )
+    )
+    respx.get(f"{BASE}/api/execute/e1/status").mock(
+        return_value=httpx.Response(
+            200, headers={"X-Poll-Interval-Hint": "5"}, json=status_body("e1", "unconfirmed", verified=False)
+        )
+    )
+    clock = iter([0.0, 10.0, 400.0, 800.0, 1600.0])
+    base = _submitter(client)
+    submitter = KeeperHubSubmitter(
+        client=client,
+        receipt_fetcher=base._fetch_receipt,
+        sleep=base._sleep,
+        now=lambda: next(clock),
+        confirmation_timeout=30,
+    )
+    approve = await signer.sign(approve_tx(), "base")
+    deposit = await signer.sign(deposit_tx(), "base")
+
+    results = await submitter.submit([approve, deposit])
+
+    assert results[0].submitted is True and results[0].tx_hash == TX_HASH
+    assert results[1].submitted is False and "unconfirmed" in (results[1].error or "")
+
+
+@respx.mock
+async def test_broadcast_retries_transport_errors_under_the_same_key(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    route = respx.post(EXEC_URL).mock(
+        side_effect=[
+            httpx.ReadTimeout("slow"),
+            httpx.Response(503, json={"error": "upstream"}),
+            httpx.Response(202, json=completed()),
+        ]
+    )
+    signed = await signer.sign(approve_tx(), "base")
+
+    results = await _submitter(client).submit([signed])
+
+    assert results[0].submitted is True
+    assert {c.request.headers["idempotency-key"] for c in route.calls} == {signed.idempotency_key}
+
+
+@respx.mock
+async def test_broadcast_gives_up_as_recoverable_submission_error(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    respx.post(EXEC_URL).mock(side_effect=httpx.ConnectError("down"))
+    signed = await signer.sign(approve_tx(), "base")
+    base = _submitter(client)
+    submitter = KeeperHubSubmitter(
+        client=client, receipt_fetcher=base._fetch_receipt, sleep=base._sleep, max_in_progress_retries=2
+    )
+
+    with pytest.raises(SubmissionError) as excinfo:
+        await submitter.submit([signed])
+    assert excinfo.value.recoverable is True
+
+
+@respx.mock
+async def test_hashless_non_terminal_envelope_is_polled_before_deciding(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    respx.post(EXEC_URL).mock(return_value=httpx.Response(202, json={"executionId": "e1", "status": "unconfirmed"}))
+    respx.get(f"{BASE}/api/execute/e1/status").mock(
+        side_effect=[
+            httpx.Response(
+                200, headers={"X-Poll-Interval-Hint": "1"}, json=status_body("e1", "unconfirmed", tx_hash=None)
+            ),
+            httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=status_body("e1", "completed")),
+        ]
+    )
+    signed = await signer.sign(approve_tx(), "base")
+
+    results = await _submitter(client).submit([signed])
+
+    assert results[0].submitted is True
+    assert results[0].tx_hash == TX_HASH
+    assert signed.tx_hash == TX_HASH
+
+
+@respx.mock
+async def test_get_receipt_trusts_keeperhub_when_it_reports_safe_inner_failure(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(202, json={**completed(), "status": "failed", "error": "safe inner call failed"})
+    )
+    body = status_body("exec-1", "failed", verified=True)
+    body["receipts"][0]["receiptStatus"] = "safe_inner_failure"
+    respx.get(f"{BASE}/api/execute/exec-1/status").mock(
+        return_value=httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=body)
+    )
+    submitter = _submitter(client, receipts={TX_HASH: rpc_receipt(status=1)})  # the outer Safe tx succeeded
+    signed = await signer.sign(approve_tx(), "base")
+    await submitter.submit([signed])
+
+    receipt = await submitter.get_receipt(TX_HASH, timeout=30)
+
+    assert receipt.success is False
+
+
+@respx.mock
+async def test_status_polling_survives_rate_limits_and_5xx(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}
+        )
+    )
+    respx.get(f"{BASE}/api/execute/e1/status").mock(
+        side_effect=[
+            httpx.Response(429, headers={"Retry-After": "1"}, json={"error": "Rate limit exceeded"}),
+            httpx.Response(502, json={"error": "bad gateway"}),
+            httpx.ReadTimeout("slow"),
+            httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=status_body("e1", "completed")),
+        ]
+    )
+    submitter = _submitter(client, receipts={TX_HASH: rpc_receipt()})
+    signed = await signer.sign(approve_tx(), "base")
+    await submitter.submit([signed])
+
+    receipt = await submitter.get_receipt(TX_HASH, timeout=60)
+
+    assert receipt.success is True
+
+
+@respx.mock
+async def test_simulator_reports_transport_failure_instead_of_raising(client: KeeperHubClient) -> None:
+    respx.post(EXEC_URL).mock(side_effect=httpx.ConnectError("down"))
+    result = await _simulator(client).simulate([deposit_tx()], "base")
+    assert result.success is False
+    assert result.simulated is False

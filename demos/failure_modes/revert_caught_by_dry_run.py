@@ -4,7 +4,7 @@ Expected: KeeperHub simulate answers wouldRevert=true, Almanak's SimulationResul
 is success=False, and no transaction is broadcast (zero calls to the execute path).
 """
 
-from common import USDC_BASE, VAULT_BASE, banner, calldata, record, run, tx, Stack
+from common import USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:

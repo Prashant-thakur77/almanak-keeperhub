@@ -87,6 +87,12 @@ def run(
         if os.environ.pop(var, None):
             click.echo(f"ignoring {var}: KeeperHub signs, no local key is used", err=True)
 
+    # Resolve the org wallet here, on the CLI thread, so the gateway's boot (which has a short
+    # start budget) never blocks on an HTTP call inside the wallet registry plugin.
+    if not os.environ.get("KEEPERHUB_WALLET_ADDRESS"):
+        os.environ["KEEPERHUB_WALLET_ADDRESS"] = asyncio.run(_resolve_wallet(api_key))
+    click.echo(f"org wallet: {os.environ['KEEPERHUB_WALLET_ADDRESS']}")
+
     from almanak_keeperhub.gateway import install
 
     install()
@@ -116,6 +122,16 @@ def run(
     finally:
         _print_execution_summary(started)
     sys.exit(exit_code)
+
+
+async def _resolve_wallet(api_key: str) -> str:
+    client = KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL))
+    try:
+        return await client.wallet_address()
+    except Exception as exc:  # noqa: BLE001 - turn into a CLI error with the remedy
+        raise click.ClickException(f"could not resolve the KeeperHub organization wallet: {exc}") from exc
+    finally:
+        await client.aclose()
 
 
 def _exit_code(code: object) -> int:

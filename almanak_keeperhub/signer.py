@@ -8,8 +8,11 @@ The organization wallet signs at broadcast time, inside KeeperHub.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import os
+from collections.abc import Iterator
+from contextvars import ContextVar
 from dataclasses import dataclass
 
 from almanak.framework.execution.interfaces import (
@@ -23,8 +26,25 @@ from almanak_keeperhub.calldata import SelectorIndex, decode_calldata
 from almanak_keeperhub.client import ContractCall, KeeperHubClient
 from almanak_keeperhub.errors import UndecodableCalldata
 
-KEY_VERSION = "almanak-keeperhub/v1"
+KEY_VERSION = "almanak-keeperhub/v2"
 SALT_ENV = "ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT"
+
+# The piece of work the current execution belongs to (Almanak's intent id, set by the
+# gateway wrapper around orchestrator.execute). Empty outside an orchestrated execution.
+_work_id: ContextVar[str] = ContextVar("almanak_keeperhub_work_id", default="")
+
+
+@contextlib.contextmanager
+def work_id_scope(work_id: str) -> Iterator[None]:
+    token = _work_id.set(work_id)
+    try:
+        yield
+    finally:
+        _work_id.reset(token)
+
+
+def current_work_id() -> str:
+    return _work_id.get()
 
 
 @dataclass
@@ -35,12 +55,13 @@ class KeeperHubSignedTransaction(SignedTransaction):
     idempotency_key: str = ""
 
 
-def idempotency_key_for(tx: UnsignedTransaction, sender: str) -> str:
+def idempotency_key_for(tx: UnsignedTransaction, sender: str, work_id: str = "") -> str:
     """Identify the work, not the attempt (docs/api/direct-execution.md, "Choosing a stable key").
 
-    A retry of the same compiled transaction reproduces the key and is replayed by
-    KeeperHub instead of moving funds twice. The Almanak-assigned nonce separates
-    distinct pieces of work that happen to carry identical calldata.
+    Almanak assigns a fresh nonce on every attempt, so the nonce is deliberately not part of
+    the key: a retry of the same intent reproduces the key and KeeperHub replays the first
+    execution instead of moving funds twice. The intent id separates two intents that happen
+    to compile to identical calldata within KeeperHub's 24-hour replay window.
     """
     parts = [
         KEY_VERSION,
@@ -49,7 +70,7 @@ def idempotency_key_for(tx: UnsignedTransaction, sender: str) -> str:
         str(tx.to).lower(),
         (tx.data or "0x").lower(),
         str(int(tx.value or 0)),
-        str(tx.nonce if tx.nonce is not None else ""),
+        work_id,
         os.environ.get(SALT_ENV, ""),
     ]
     return hashlib.sha256("|".join(parts).encode()).hexdigest()
@@ -84,7 +105,7 @@ class KeeperHubSigner(Signer):
             abi=decoded.abi,
             value_wei=int(tx.value or 0),
         )
-        key = idempotency_key_for(tx, self._address)
+        key = idempotency_key_for(tx, self._address, current_work_id())
         return KeeperHubSignedTransaction(
             raw_tx="0x",
             tx_hash="0x" + key,

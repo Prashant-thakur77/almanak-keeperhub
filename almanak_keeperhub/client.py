@@ -262,18 +262,38 @@ class KeeperHubClient:
         now: Callable[[], float] = time.monotonic,
         default_interval: float = 3.0,
     ) -> ExecutionStatus:
-        """Poll status honouring ``X-Poll-Interval-Hint`` until terminal."""
+        """Poll status honouring ``X-Poll-Interval-Hint`` until terminal.
+
+        A rate limit, a 5xx or a transport error while polling never decides the outcome
+        of a transaction that may still land: the poll is retried until the deadline.
+        """
         deadline = now() + timeout_seconds
+        last_problem: str | None = None
         while True:
-            status = await self.execution_status(execution_id)
-            if status.terminal:
-                return status
+            try:
+                status = await self.execution_status(execution_id)
+            except KeeperHubRateLimited as exc:
+                last_problem = str(exc)
+                interval: float = float(exc.retry_after_seconds)
+            except (KeeperHubUnavailable, httpx.TransportError) as exc:
+                last_problem = str(exc)
+                interval = default_interval
+            except KeeperHubAPIError as exc:
+                if exc.status < 500:
+                    raise
+                last_problem = str(exc)
+                interval = default_interval
+            else:
+                if status.terminal:
+                    return status
+                interval = status.poll_hint_seconds if status.poll_hint_seconds else default_interval
+                last_problem = None
             if now() >= deadline:
                 raise TimeoutError(
-                    f"KeeperHub execution {execution_id} still '{status.status}' after {timeout_seconds:.0f}s; "
-                    "do not resend, keep the same idempotency key and poll again"
+                    f"KeeperHub execution {execution_id} not terminal after {timeout_seconds:.0f}s"
+                    + (f" (last poll problem: {last_problem})" if last_problem else "")
+                    + "; do not resend, keep the same idempotency key and poll again"
                 )
-            interval = status.poll_hint_seconds if status.poll_hint_seconds else default_interval
             await sleep(float(interval))
 
 

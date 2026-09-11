@@ -21,7 +21,7 @@ from typing import Any
 from almanak.gateway.services.execution_service import ExecutionServiceServicer
 
 from almanak_keeperhub.client import DEFAULT_BASE_URL, KeeperHubClient
-from almanak_keeperhub.signer import KeeperHubSigner
+from almanak_keeperhub.signer import KeeperHubSigner, work_id_scope
 from almanak_keeperhub.simulator import KeeperHubSimulator
 from almanak_keeperhub.submitter import KeeperHubSubmitter
 from almanak_keeperhub.wallets import KIND
@@ -87,7 +87,15 @@ def _always_simulate(execute):
             # Orchestrator-level dry run: KeeperHub simulates the exact compiled bundle,
             # the signer prepares it, and the pipeline stops before submission.
             context.dry_run = True
-        return await execute(action_bundle, context, *args, **kwargs)
+        # The strategy runner sets correlation_id to the intent id: that is the piece of work an
+        # idempotency key must identify, so a retry of the same intent replays instead of resending.
+        work_id = str(
+            getattr(context, "correlation_id", "")
+            or getattr(context, "intent_id", "")
+            or getattr(context, "cycle_id", "")
+        )
+        with work_id_scope(work_id):
+            return await execute(action_bundle, context, *args, **kwargs)
 
     return wrapper
 

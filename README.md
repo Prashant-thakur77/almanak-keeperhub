@@ -83,7 +83,7 @@ Files:
 | `almanak_keeperhub/cli.py` | `almanak-keeperhub run` and `doctor` |
 | `patches/` | The upstream proposal for Almanak (same change, without the subclass) |
 
-Idempotency key: `sha256(v1 | chain_id | from | to | data | value | almanak nonce)`. A retry of the same compiled transaction reproduces it; different work changes it. Set `ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT` when you deliberately repeat identical work within KeeperHub's 24-hour replay window.
+Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak intent id)`. Almanak assigns a fresh nonce on every attempt, so the nonce is deliberately not part of the key: a retry of the same intent reproduces it and KeeperHub replays the first execution. The intent id (the execution context's correlation id) separates two intents that compile to identical calldata within KeeperHub's 24-hour replay window. Set `ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT` for a deliberate repeat outside an orchestrated run.
 
 ## Failure modes, on purpose
 
@@ -112,7 +112,7 @@ Mainnet proof links: **to be added after the first hosted run** (see "What still
 ## Tests
 
 ```bash
-pytest -q                      # 72 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 82 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, asserts the vault deposit landed
 ```
@@ -124,6 +124,7 @@ tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, ass
 - Almanak's Safe plus Zodiac Roles deployment mode is not covered; this runs Almanak's EOA mode with KeeperHub's org wallet as the EOA.
 - Multi-transaction bundles are submitted one at a time with confirmation in between, slower than Almanak's parallel public submitter.
 - Two Almanak bugs needed workarounds inside `gateway.py` (see `docs/almanak-feedback.md`): the in-process gateway deadlocks for 30 s during `RegisterChains` when any wallet registry plugin is installed, and the strategy runner never enables the orchestrator's simulate phase on live networks. Both are contained and documented.
+- The idempotency key protects a retry of the same Almanak intent. A strategy that crashes before persisting its state and then decides again compiles a new intent, which is new work by construction; KeeperHub cannot tell those apart, and neither can this package.
 - Sponsored KeeperHub transactions show the relayer as sender on the explorer; the vault's `Deposit` event `owner` and the `receipts[].verified` flag identify the org wallet.
 - Tuple arguments are passed to KeeperHub as nested JSON arrays; tested against the decoder, not yet against the hosted app.
 - Almanak's GitHub repository is a one-way mirror of a private monorepo with no pull requests, so the upstream change is offered as a patch and a filed issue, not a merged PR.

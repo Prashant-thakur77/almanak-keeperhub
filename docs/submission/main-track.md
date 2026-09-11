@@ -48,14 +48,14 @@ Email: prashant101007@gmail.com. X / Discord: <fill in>.
 - 1:30 `python demos/failure_modes/revert_caught_by_dry_run.py`: `simulated=True success=False`, revert reason, zero broadcasts.
 - 1:45 `python demos/failure_modes/duplicate_blocked_by_idempotency.py`: attempt 2 prints the same execution id with `replay=True`; one transaction on chain. Say: "this is the nonce incident from Almanak's own repo, prevented."
 - 2:05 `python demos/failure_modes/cap_refused.py`: the 100 USD stablecoin cap refuses 150 USDC before anything is signed.
-- 2:20 `pytest -q` (72 passed), `keeperhub-receipts.json`, the known-gaps section of the README.
+- 2:20 `pytest -q` (82 passed), `keeperhub-receipts.json`, the known-gaps section of the README.
 
 ## Live pitch: eight hard questions
 
 1. Why not call KeeperHub's MCP from an Almanak agent? Because the intent would be reinterpreted at execution time. Hooking the Submitter means the exact compiled transaction is what KeeperHub simulates and sends.
 2. What breaks without KeeperHub? Almanak falls back to the public mempool with no idempotency. The duplicate-mint incident in `nonce_recovery.py` is what that looks like.
 3. How do you handle calldata? Decode against the ABIs Almanak ships, fail closed on unknown selectors, and the bounty PR moves that decoding into KeeperHub itself.
-4. Nonce conflict between Almanak's counter and KeeperHub? KeeperHub owns the real nonce. Almanak's assigned nonce only salts the idempotency key so distinct work with identical calldata gets distinct keys.
+4. Nonce conflict between Almanak's counter and KeeperHub? KeeperHub owns the real nonce. Almanak assigns a fresh nonce per attempt, so the idempotency key deliberately excludes it: the key is the intent id plus the transaction fields, so a retry of the same intent replays and a new intent with identical calldata is new work.
 5. The relayer is the sender on the explorer. How do you prove the org wallet acted? `receipts[].verified` plus the `Deposit` event's `owner` argument, both shown in the run log.
 6. Multi-transaction bundles? Sequential with confirmation in between, and only the first is dry-run against live state. Same rule as Almanak's own LocalSimulator; documented as a gap.
 7. What about the other Almanak entries? The public ones translate a handful of intents outside Almanak. This runs any Almanak strategy unchanged through Almanak's own execution interfaces and gateway plugin points, and I had to fix two Almanak bugs to get there.

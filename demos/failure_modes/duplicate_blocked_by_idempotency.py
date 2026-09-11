@@ -9,10 +9,15 @@ of broadcasting again: same executionId, same hash, idempotentReplay=true.
 Moves 0.01 USDC approve allowance (approve(vault, 10000)), harmless and cheap.
 """
 
-from common import USDC_BASE, VAULT_BASE, banner, calldata, record, run, tx, Stack
+import os
+import time
+
+from common import USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:
+    # Each demo run is new work; within the run, attempts share the key.
+    os.environ.setdefault("ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT", f"demo-{int(time.time())}")
     async with Stack() as stack:
         nonce = await stack.nonce()
         approve = tx(
@@ -31,8 +36,9 @@ async def main() -> None:
             f"executionId={exec_1.execution_id} tx={results_1[0].tx_hash} replay={getattr(exec_1, 'idempotent_replay', False)}"
         )
 
-        banner("attempt 2: 'process crashed, strategy re-ran the same tick' -> identical work, identical key")
-        second = await stack.signer.sign(approve, "base")  # same nonce, same calldata -> same idempotency key
+        banner("attempt 2: 'framework retried the same intent' -> identical work, identical key")
+        approve.nonce = nonce + 1  # Almanak assigns a fresh nonce per attempt; the key must not move with it
+        second = await stack.signer.sign(approve, "base")
         assert second.idempotency_key == first.idempotency_key
         results_2 = await stack.submitter.submit([second])
         exec_2 = stack.submitter.execution_for(results_2[0].tx_hash)
@@ -40,9 +46,7 @@ async def main() -> None:
             f"executionId={exec_2.execution_id} tx={results_2[0].tx_hash} replay={getattr(exec_2, 'idempotent_replay', False)}"
         )
 
-        assert results_1[0].tx_hash == results_2[0].tx_hash, (
-            "second attempt must not produce a new transaction"
-        )
+        assert results_1[0].tx_hash == results_2[0].tx_hash, "second attempt must not produce a new transaction"
         receipt = await stack.submitter.get_receipt(results_1[0].tx_hash, timeout=180)
         print(f"one transaction on chain: block={receipt.block_number} status={receipt.status}")
         record(

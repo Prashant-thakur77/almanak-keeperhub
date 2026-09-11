@@ -6,8 +6,7 @@ never a guess. Offline: no KeeperHub call is made.
 """
 
 from almanak.framework.execution.interfaces import SigningError
-
-from common import VAULT_BASE, banner, record, run, tx, Stack
+from common import VAULT_BASE, Stack, banner, record, run, tx
 
 
 async def main() -> None:

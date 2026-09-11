@@ -7,7 +7,7 @@ submitter turns that into an Almanak SubmissionResult(submitted=False) and
 stops the bundle. Nothing leaves the wallet.
 """
 
-from common import USDC_BASE, banner, calldata, record, run, tx, Stack
+from common import USDC_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:

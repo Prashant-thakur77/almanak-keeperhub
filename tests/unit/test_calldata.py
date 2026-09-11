@@ -152,3 +152,10 @@ def test_default_index_includes_almanak_connector_abis() -> None:
     selector = "0x" + function_signature_to_4byte_selector("approve(address,uint256)").hex()
     assert selector in index.selectors
     assert index.size > 200
+
+
+def test_calldata_with_trailing_bytes_is_refused() -> None:
+    data = _calldata("approve(address,uint256)", ["address", "uint256"], [VAULT, 1]) + "ff"
+    with pytest.raises(UndecodableCalldata) as excinfo:
+        decode_calldata(data, to=USDC, value_wei=0)
+    assert "trailing" in str(excinfo.value)

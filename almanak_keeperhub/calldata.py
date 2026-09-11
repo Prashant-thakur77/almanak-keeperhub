@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from eth_abi import decode as abi_decode
+from eth_abi import encode as abi_encode
 from eth_utils import function_signature_to_4byte_selector, to_checksum_address
 
 from almanak_keeperhub.errors import UndecodableCalldata
@@ -125,6 +126,10 @@ def decode_calldata(data: str, *, to: str, value_wei: int, index: SelectorIndex 
     if sig is None:
         raise UndecodableCalldata(selector=selector, to=to)
     values = abi_decode(sig.types, raw[4:]) if sig.types else ()
+    # eth_abi ignores trailing bytes; a suffix that would not survive re-encoding is refused
+    # rather than silently dropped from what KeeperHub simulates and sends.
+    if abi_encode(sig.types, list(values)) != raw[4:]:
+        raise UndecodableCalldata(selector=f"{selector} (trailing or malformed argument bytes)", to=to)
     entry = {
         "type": "function",
         "name": sig.name,

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 
+import httpx
 from almanak.framework.execution.interfaces import SimulationResult, Simulator, UnsignedTransaction
 
 from almanak_keeperhub.calldata import SelectorIndex, decode_calldata
@@ -65,7 +66,7 @@ class KeeperHubSimulator(Simulator):
             )
             try:
                 outcome = await self._client.simulate_contract_call(call)
-            except KeeperHubAPIError as exc:
+            except (KeeperHubAPIError, httpx.TransportError) as exc:
                 return _failure(f"KeeperHub simulator unavailable: {exc}", simulated=False)
             if not outcome.success:
                 reason = outcome.revert_reason or "simulation failed"

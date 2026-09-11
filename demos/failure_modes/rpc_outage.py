@@ -7,11 +7,14 @@ lands (KeeperHub verifies it), and get_receipt reports exactly which side failed
 """
 
 import os
+import time
 
-from common import USDC_BASE, VAULT_BASE, banner, calldata, record, run, tx, Stack
+from common import USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:
+    # Each demo run is new work; within the run, attempts share the key.
+    os.environ.setdefault("ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT", f"demo-{int(time.time())}")
     os.environ["RPC_URL_BASE"] = "http://127.0.0.1:9"  # nothing listens here
     async with Stack() as stack:
         banner("broadcast approve(vault, 0.01 USDC) with a dead local RPC")
@@ -19,9 +22,7 @@ async def main() -> None:
             USDC_BASE,
             calldata("approve(address,uint256)", ["address", "uint256"], [VAULT_BASE, 10_001]),
             stack.address,
-            nonce=int(
-                os.environ.get("DEMO_NONCE", "0")
-            ),  # nonce only salts the key; KeeperHub assigns the real one
+            nonce=int(os.environ.get("DEMO_NONCE", "0")),  # nonce only salts the key; KeeperHub assigns the real one
             gas_limit=80_000,
         )
         signed = await stack.signer.sign(approve, "base")
@@ -35,9 +36,7 @@ async def main() -> None:
         except Exception as exc:  # noqa: BLE001
             print(f"local receipt-log fetch failed as expected: {type(exc).__name__}: {exc}")
         status = await stack.client.wait_for_terminal(execution.execution_id, timeout_seconds=120)
-        print(
-            f"KeeperHub verified receipt: status={status.status} verified={[r.verified for r in status.receipts]}"
-        )
+        print(f"KeeperHub verified receipt: status={status.status} verified={[r.verified for r in status.receipts]}")
         record(
             "rpc_outage",
             execution_id=execution.execution_id,

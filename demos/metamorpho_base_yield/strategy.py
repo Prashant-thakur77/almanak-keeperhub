@@ -279,8 +279,7 @@ class MetaMorphoBaseYield(IntentStrategy):
             # VAULT_DEPOSIT) without a readable yield signal would violate the
             # golden-demo "degrade to HOLD on unavailable data" gate.
             return Intent.hold(
-                reason=f"APY unavailable; holding vault position without compounding "
-                f"(floor {self.min_apy_floor:.2f}%)"
+                reason=f"APY unavailable; holding vault position without compounding (floor {self.min_apy_floor:.2f}%)"
             )
         if apy < self.min_apy_floor:
             self._below_floor_count += 1
@@ -444,9 +443,7 @@ class MetaMorphoBaseYield(IntentStrategy):
                         # ``assets_received`` is raw base units (VIB-5392) — scale
                         # to human units so yield = redeemed − deposited is a real
                         # USD-pegged figure, not a 1e6× artifact.
-                        self._redeem_assets = self._assets_to_human(
-                            Decimal(str(redeem_data.get("assets_received", 0)))
-                        )
+                        self._redeem_assets = self._assets_to_human(Decimal(str(redeem_data.get("assets_received", 0))))
                         yield_earned = self._redeem_assets - self._total_deposited
                         if yield_earned > 0:
                             self._total_yield_earned += yield_earned

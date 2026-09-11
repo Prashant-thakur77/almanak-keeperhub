@@ -5,6 +5,18 @@ retry connection-level problems, raise typed errors for the rest. KeeperHub
 owns nonce assignment, gas, retries and receipt verification; this class maps
 its envelope back into Almanak's types and keeps the execution id per hash so
 the receipt phase can resume.
+
+Rules that keep the orchestrator honest:
+
+* a bundle is sequential; once a transaction is refused, reverts, or cannot be
+  confirmed, every later transaction is returned as ``submitted=False`` so the
+  orchestrator takes its failure branch instead of reporting a partial bundle
+  as success;
+* a transport error, a 5xx or a rate limit never rotates the idempotency key:
+  the same request is sent again, and KeeperHub answers with a replay or
+  ``idempotency_in_progress`` if the first attempt got through;
+* KeeperHub's verified receipt outranks the chain receipt when they disagree
+  (a Safe inner-call failure has a successful outer transaction).
 """
 
 from __future__ import annotations
@@ -15,6 +27,7 @@ import time
 from collections.abc import Awaitable, Callable
 from typing import Any
 
+import httpx
 from almanak.framework.execution.interfaces import (
     SignedTransaction,
     SubmissionError,
@@ -30,6 +43,7 @@ from almanak_keeperhub.errors import (
     KeeperHubIdempotencyConflict,
     KeeperHubIdempotencyInProgress,
     KeeperHubRateLimited,
+    KeeperHubUnavailable,
 )
 from almanak_keeperhub.receipts import ReceiptLog
 from almanak_keeperhub.signer import KeeperHubSignedTransaction
@@ -38,6 +52,7 @@ logger = logging.getLogger(__name__)
 
 ReceiptFetcher = Callable[[str], Awaitable[dict[str, Any] | None]]
 Sleep = Callable[[float], Awaitable[None]]
+FAILED_RECEIPT_STATUSES = frozenset({"reverted", "safe_inner_failure"})
 
 
 class KeeperHubSubmitter(Submitter):
@@ -60,7 +75,7 @@ class KeeperHubSubmitter(Submitter):
         self._sleep = sleep
         self._now = now
         self._confirmation_timeout = confirmation_timeout
-        self._max_in_progress_retries = max_in_progress_retries
+        self._max_retries = max_in_progress_retries
         self._executions: dict[str, ExecutionStatus | ExecutionEnvelope] = {}
         self._receipts = ReceiptLog()
 
@@ -73,12 +88,11 @@ class KeeperHubSubmitter(Submitter):
                 raise SubmissionError("KeeperHubSubmitter only accepts transactions prepared by KeeperHubSigner")
             envelope = await self._broadcast(signed)
             if envelope.transaction_hash is None:
-                # Refused before broadcast: cap, guard, validation. Nothing reached the chain,
-                # and the transactions after this one depend on it, so stop here.
+                # Refused before broadcast: cap, guard, validation. Nothing reached the chain.
                 reason = envelope.error or f"KeeperHub execution {envelope.execution_id} ended '{envelope.status}'"
                 logger.error("KeeperHub refused tx %d/%d: %s", index + 1, len(txs), reason)
                 results.append(SubmissionResult(tx_hash="", submitted=False, error=reason))
-                return results
+                return self._abandon_rest(results, txs, index + 1, reason)
             signed.tx_hash = envelope.transaction_hash  # the orchestrator indexes by this
             self._executions[envelope.transaction_hash.lower()] = envelope
             self._receipts.record(
@@ -101,18 +115,20 @@ class KeeperHubSubmitter(Submitter):
             )
             results.append(SubmissionResult(tx_hash=envelope.transaction_hash, submitted=True))
             if envelope.status == "failed":
-                # Reached the chain and reverted. The receipt phase reports it with the hash;
-                # the transactions after this one depend on it, so nothing more is sent.
-                logger.error("KeeperHub execution %s reverted on chain; stopping the bundle", envelope.execution_id)
-                return results
+                # Reached the chain and failed. The receipt phase reports it with the hash.
+                reason = envelope.error or f"KeeperHub execution {envelope.execution_id} failed"
+                logger.error("KeeperHub execution %s failed on chain; stopping the bundle", envelope.execution_id)
+                return self._abandon_rest(results, txs, index + 1, reason)
             if index < len(txs) - 1 and envelope.status != "completed":
                 # Later transactions depend on this one landing; wait before sending the next.
-                settled = await self._settle(envelope.transaction_hash, timeout=self._confirmation_timeout)
+                try:
+                    settled = await self._settle(envelope.transaction_hash, timeout=self._confirmation_timeout)
+                except SubmissionError as exc:
+                    return self._abandon_rest(results, txs, index + 1, str(exc))
                 if settled.status == "failed":
-                    logger.error(
-                        "KeeperHub execution %s failed while settling; stopping the bundle", settled.execution_id
-                    )
-                    return results
+                    reason = settled.error or f"KeeperHub execution {settled.execution_id} failed while settling"
+                    logger.error("%s; stopping the bundle", reason)
+                    return self._abandon_rest(results, txs, index + 1, reason)
         return results
 
     async def get_receipt(self, tx_hash: str, timeout: float = 120.0) -> TransactionReceipt:
@@ -126,7 +142,15 @@ class KeeperHubSubmitter(Submitter):
                 "keep the same idempotency key and retry the receipt read",
                 tx_hash=tx_hash,
             )
-        return _to_almanak_receipt(raw, tx_hash)
+        receipt = _to_almanak_receipt(raw, tx_hash)
+        # KeeperHub re-fetches and classifies every receipt before settling. Its verdict outranks the
+        # chain's status bit: a Safe inner-call failure has a successful outer transaction.
+        if receipt.status == 1 and any(
+            r.hash.lower() == tx_hash.lower() and r.receipt_status in FAILED_RECEIPT_STATUSES for r in status.receipts
+        ):
+            logger.error("KeeperHub classified %s as failed (%s); reporting revert", tx_hash, status.receipts)
+            receipt.status = 0
+        return receipt
 
     # -- extras used by the gateway/CLI ---------------------------------------------
 
@@ -138,25 +162,38 @@ class KeeperHubSubmitter(Submitter):
 
     # -- internals -------------------------------------------------------------------
 
+    @staticmethod
+    def _abandon_rest(
+        results: list[SubmissionResult], txs: list[SignedTransaction], start: int, reason: str
+    ) -> list[SubmissionResult]:
+        """Every transaction after a failure is reported as not sent, so the orchestrator sees a failed bundle."""
+        for position in range(start, len(txs)):
+            results.append(
+                SubmissionResult(
+                    tx_hash="",
+                    submitted=False,
+                    error=(
+                        f"not sent: transaction {position + 1}/{len(txs)} depends on an earlier one "
+                        f"that did not complete ({reason})"
+                    ),
+                )
+            )
+        return results
+
     async def _broadcast(self, signed: KeeperHubSignedTransaction) -> ExecutionEnvelope:
         assert signed.call is not None
         attempts = 0
         while True:
             try:
-                return await self._client.execute_contract_call(signed.call, idempotency_key=signed.idempotency_key)
+                envelope = await self._client.execute_contract_call(signed.call, idempotency_key=signed.idempotency_key)
             except KeeperHubIdempotencyInProgress:
-                attempts += 1
-                if attempts > self._max_in_progress_retries:
-                    raise SubmissionError(
-                        "KeeperHub still reports the first attempt in progress; not rotating the key",
-                        recoverable=True,
-                    ) from None
-                await self._sleep(2.0)
+                attempts = await self._retry_or_give_up(attempts, 2.0, "first attempt still in progress")
             except KeeperHubRateLimited as exc:
-                attempts += 1
-                if attempts > self._max_in_progress_retries:
-                    raise SubmissionError(f"rate limited by KeeperHub: {exc}", recoverable=True) from exc
-                await self._sleep(float(exc.retry_after_seconds))
+                attempts = await self._retry_or_give_up(attempts, float(exc.retry_after_seconds), str(exc))
+            except (KeeperHubUnavailable, httpx.TransportError) as exc:
+                # The request may or may not have reached KeeperHub. Re-sending under the SAME key is
+                # safe by construction: a landed attempt answers with a replay or in_progress.
+                attempts = await self._retry_or_give_up(attempts, 3.0 * (attempts + 1), str(exc))
             except KeeperHubIdempotencyConflict as exc:
                 raise SubmissionError(
                     f"idempotency key reused with a different body (original execution "
@@ -166,10 +203,52 @@ class KeeperHubSubmitter(Submitter):
             except KeeperHubAuthError as exc:
                 raise SubmissionError(f"KeeperHub credential cannot broadcast: {exc}", recoverable=False) from exc
             except KeeperHubAPIError as exc:
-                recoverable = exc.status >= 500
+                if exc.status >= 500:
+                    attempts = await self._retry_or_give_up(attempts, 3.0 * (attempts + 1), str(exc))
+                    continue
                 raise SubmissionError(
-                    f"KeeperHub refused the broadcast (HTTP {exc.status}): {exc}", recoverable=recoverable
+                    f"KeeperHub refused the broadcast (HTTP {exc.status}): {exc}", recoverable=False
                 ) from exc
+            else:
+                return await self._resolve_hash(envelope)
+
+    async def _retry_or_give_up(self, attempts: int, delay: float, reason: str) -> int:
+        attempts += 1
+        if attempts > self._max_retries:
+            raise SubmissionError(
+                f"KeeperHub broadcast not confirmed after {attempts - 1} retries ({reason}); "
+                "the idempotency key was never rotated, retry the same tick later",
+                recoverable=True,
+            )
+        logger.warning("KeeperHub broadcast retry %d/%d in %.0fs: %s", attempts, self._max_retries, delay, reason)
+        await self._sleep(delay)
+        return attempts
+
+    async def _resolve_hash(self, envelope: ExecutionEnvelope) -> ExecutionEnvelope:
+        """A non-terminal envelope without a hash is broadcast-in-flight, not a refusal: poll first."""
+        if envelope.transaction_hash is not None or envelope.status == "failed":
+            return envelope
+        try:
+            status = await self._client.wait_for_terminal(
+                envelope.execution_id, timeout_seconds=self._confirmation_timeout, sleep=self._sleep, now=self._now
+            )
+        except TimeoutError as exc:
+            raise SubmissionError(
+                f"KeeperHub execution {envelope.execution_id} is '{envelope.status}' without a hash after "
+                f"{self._confirmation_timeout:.0f}s; do not resend, keep the same idempotency key and poll again",
+                recoverable=True,
+            ) from exc
+        if status.transaction_hash:
+            self._executions[status.transaction_hash.lower()] = status
+        return ExecutionEnvelope(
+            execution_id=status.execution_id,
+            status=status.status,
+            transaction_hash=status.transaction_hash,
+            transaction_link=status.transaction_link,
+            error=status.error,
+            idempotent_replay=envelope.idempotent_replay,
+            raw=status.raw,
+        )
 
     async def _settle(self, tx_hash: str, timeout: float) -> ExecutionStatus:
         known = self.execution_for(tx_hash)
