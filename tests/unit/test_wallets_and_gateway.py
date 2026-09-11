@@ -90,6 +90,9 @@ async def test_servicer_swaps_submitter_and_simulator_when_signer_is_keeperhub()
             self.simulator = object()
             self.rpc_url = "https://rpc.test"
 
+        async def execute(self, action_bundle, context):
+            return None
+
     class Parent:
         async def _get_orchestrator(self, chain: str, wallet_address: str) -> FakeOrchestrator:
             return FakeOrchestrator()
