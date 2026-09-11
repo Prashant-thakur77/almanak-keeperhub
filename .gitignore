@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+*.egg-info/
+demos/**/state/
+demos/**/.almanak/
+.almanak-keeperhub/
