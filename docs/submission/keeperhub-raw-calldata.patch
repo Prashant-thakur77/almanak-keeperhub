@@ -1,0 +1,717 @@
+From d3cc7a31620d8f992142c8f06fbf46a869ca7036 Mon Sep 17 00:00:00 2001
+From: Prashant-thakur77 <prashant101007@gmail.com>
+Date: Sat, 12 Sep 2026 02:12:36 +0530
+Subject: [PATCH] feat(execute): accept raw calldata on POST
+ /api/execute/contract-call
+
+Execution frameworks hand their executor an already-encoded data field.
+Decode it against the body or explorer ABI into the canonical function key
+and typed functionArgs, then take the existing read, simulate and write
+paths so every guard keeps reading a named function. A selector the ABI
+does not contain is a 400 on field data; no signature database is consulted.
+---
+ app/api/execute/_lib/raw-calldata.ts          | 116 +++++++
+ app/api/execute/contract-call/route.ts        |  41 +++
+ docs/api/direct-execution.md                  |  31 ++
+ tests/unit/contract-call-raw-calldata.test.ts | 300 ++++++++++++++++++
+ tests/unit/execute-raw-calldata.test.ts       | 157 +++++++++
+ 5 files changed, 645 insertions(+)
+ create mode 100644 app/api/execute/_lib/raw-calldata.ts
+ create mode 100644 tests/unit/contract-call-raw-calldata.test.ts
+ create mode 100644 tests/unit/execute-raw-calldata.test.ts
+
+diff --git a/app/api/execute/_lib/raw-calldata.ts b/app/api/execute/_lib/raw-calldata.ts
+new file mode 100644
+index 000000000..812542a50
+--- /dev/null
++++ b/app/api/execute/_lib/raw-calldata.ts
+@@ -0,0 +1,116 @@
++import { ethers } from "ethers";
++
++/**
++ * Turn raw EVM calldata into the typed call `POST /api/execute/contract-call`
++ * already executes: a function key plus a `functionArgs` JSON array string.
++ *
++ * Execution frameworks (Almanak, Wayfinder, AgentKit) hand their executor an
++ * already-encoded `data` field. Decoding it here, against an ABI the caller
++ * supplied or the explorer verified, keeps every downstream guard intact: the
++ * stablecoin cap, `simulate`, allowance and payable checks all keep reading a
++ * named function with typed arguments. Nothing is guessed: an ABI that does not
++ * contain the selector is an error, not a 4byte lookup.
++ */
++
++const HEX_PATTERN = /^0x[\da-fA-F]*$/;
++const SELECTOR_HEX_LENGTH = 10; // "0x" + 4 bytes
++
++export type RawCalldataResolution = {
++  /** Full signature, e.g. `approve(address,uint256)`, so overloads bind unambiguously. */
++  functionName: string;
++  /** JSON array string in the shape `functionArgs` accepts. */
++  functionArgs: string;
++  selector: string;
++};
++
++export type RawCalldataError = { error: string };
++
++export function isRawCalldataRequest(body: Record<string, unknown>): boolean {
++  return (
++    typeof body.data === "string" &&
++    !("functionName" in body) &&
++    !("abiFunction" in body)
++  );
++}
++
++export function selectorOf(data: string): string | RawCalldataError {
++  if (typeof data !== "string" || !HEX_PATTERN.test(data)) {
++    return { error: "data must be a 0x-prefixed hex string" };
++  }
++  if (data.length < SELECTOR_HEX_LENGTH || data.length % 2 !== 0) {
++    return {
++      error:
++        "data must carry at least a 4-byte function selector (plain value transfers use /api/execute/transfer)",
++    };
++  }
++  return data.slice(0, SELECTOR_HEX_LENGTH).toLowerCase();
++}
++
++/**
++ * Decode `data` against `abi`. The ABI must contain the selector; the caller
++ * decides where the ABI comes from (request body or explorer cache).
++ */
++export function resolveRawCalldata(
++  data: string,
++  abi: string
++): RawCalldataResolution | RawCalldataError {
++  const selector = selectorOf(data);
++  if (typeof selector !== "string") {
++    return selector;
++  }
++
++  let iface: ethers.Interface;
++  try {
++    iface = new ethers.Interface(JSON.parse(abi) as ethers.InterfaceAbi);
++  } catch {
++    return { error: "Invalid ABI JSON" };
++  }
++
++  let parsed: ethers.TransactionDescription | null;
++  try {
++    parsed = iface.parseTransaction({ data });
++  } catch (err: unknown) {
++    return {
++      error: `Calldata does not decode against the ABI: ${err instanceof Error ? err.message : String(err)}`,
++    };
++  }
++  if (parsed === null) {
++    return {
++      error: `Selector ${selector} is not in the ABI. Supply the contract's ABI in \`abi\`, or pass functionName and functionArgs instead of data.`,
++    };
++  }
++
++  const args = parsed.fragment.inputs.map((input, i) =>
++    toJsonArg(parsed.args[i], input)
++  );
++  return {
++    functionName: parsed.fragment.format("sighash"),
++    functionArgs: JSON.stringify(args),
++    selector,
++  };
++}
++
++/**
++ * Render one decoded value the way `functionArgs` expects it: decimal strings
++ * for integers, hex strings for bytes, nested arrays for arrays and tuples.
++ * Mirrors what a caller would have typed by hand.
++ */
++function toJsonArg(value: unknown, input: ethers.ParamType): unknown {
++  if (input.baseType === "array") {
++    const items = Array.from(value as Iterable<unknown>);
++    const child = input.arrayChildren as ethers.ParamType;
++    return items.map((item) => toJsonArg(item, child));
++  }
++  if (input.baseType === "tuple") {
++    const components = input.components ?? [];
++    const items = Array.from(value as Iterable<unknown>);
++    return components.map((component, i) => toJsonArg(items[i], component));
++  }
++  if (typeof value === "bigint") {
++    return value.toString();
++  }
++  if (typeof value === "boolean") {
++    return value;
++  }
++  return String(value);
++}
+diff --git a/app/api/execute/contract-call/route.ts b/app/api/execute/contract-call/route.ts
+index b86a550dd..3684a293d 100644
+--- a/app/api/execute/contract-call/route.ts
++++ b/app/api/execute/contract-call/route.ts
+@@ -36,6 +36,7 @@ import {
+   withRejectedSignerOverride,
+ } from "../_lib/execution-service";
+ import { checkRateLimit } from "../_lib/rate-limit";
++import { isRawCalldataRequest, resolveRawCalldata } from "../_lib/raw-calldata";
+ import { parseNativeValueEther } from "../_lib/reserved-value";
+ import { parseSimulateFlag } from "../_lib/simulate-flag";
+ import { checkAndReserveExecution } from "../_lib/spending-cap";
+@@ -343,6 +344,46 @@ export async function POST(request: Request): Promise<NextResponse> {
+     return executionGuard.response;
+   }
+ 
++  // Raw calldata: execution frameworks (Almanak, Wayfinder, AgentKit) hand
++  // their executor an already-encoded `data` field. Decode it against the ABI
++  // into the typed call this route already executes, so the stablecoin cap,
++  // the payable check, `simulate` and the audit record all keep reading a
++  // named function with typed arguments. The ABI comes from the body or the
++  // explorer; a selector it does not contain is refused, never looked up.
++  if (isRawCalldataRequest(body)) {
++    // Reuse the schema for everything except the function key, which is what
++    // the decode step is about to supply.
++    const shape = validateContractCallInput({
++      ...body,
++      functionName: "__raw_calldata__",
++    });
++    if (!shape.valid) {
++      return NextResponse.json(shape.error, {
++        status: HttpStatus.BAD_REQUEST,
++      });
++    }
++    const rawAbi = await resolveAbiForRequest({
++      ...body,
++      network: body.network ?? String(body.chainId),
++    });
++    if ("error" in rawAbi) {
++      return NextResponse.json(
++        { error: rawAbi.error, field: "abi" },
++        { status: HttpStatus.BAD_REQUEST }
++      );
++    }
++    const decoded = resolveRawCalldata(body.data as string, rawAbi.abi);
++    if ("error" in decoded) {
++      return NextResponse.json(
++        { error: decoded.error, field: "data" },
++        { status: HttpStatus.BAD_REQUEST }
++      );
++    }
++    body.functionName = decoded.functionName;
++    body.functionArgs = decoded.functionArgs;
++    body.abi = rawAbi.abi;
++  }
++
+   const validation = validateContractCallInput(body);
+   if (!validation.valid) {
+     return NextResponse.json(validation.error, {
+diff --git a/docs/api/direct-execution.md b/docs/api/direct-execution.md
+index 6d9a1e394..baf6e37fe 100644
+--- a/docs/api/direct-execution.md
++++ b/docs/api/direct-execution.md
+@@ -419,6 +419,37 @@ Call any smart contract function. Automatically detects read vs write operations
+ - `value` (optional): Native value to send with the call, as a decimal string in ether units (e.g. `0.1`) (for payable functions)
+ - `gasLimitMultiplier` (optional): Gas limit multiplier
+ 
++### Raw calldata
++
++Callers that already hold encoded calldata (execution frameworks, transaction
++builders, replayed transactions) may send `data` instead of `functionName` and
++`functionArgs`:
++
++```json
++{
++  "contractAddress": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
++  "chainId": 8453,
++  "data": "0x095ea7b3000000000000000000000000c1256ae5ff1cf2719d4937adb3bbccab2e00a2ca00000000000000000000000000000000000000000000000000000000004c4b40",
++  "abi": "[{...}]",
++  "simulate": true
++}
++```
++
++The route decodes `data` against the ABI, either the `abi` in the body or the
++explorer-verified ABI it fetches when `abi` is omitted, into the canonical
++function key (`approve(address,uint256)`) and a typed `functionArgs` array, and
++then continues exactly as a typed request: read functions return their result,
++`simulate` dry-runs, writes reserve against the spending caps and the
++stablecoin limit, and the execution record carries the decoded function and
++arguments rather than opaque bytes.
++
++Nothing is inferred. A selector the ABI does not contain is rejected with
++`400` on field `data`; supply the contract's ABI or the typed fields instead.
++No signature database is consulted. `data` must carry at least the 4-byte
++selector; plain value transfers use [Transfer Funds](#transfer-funds).
++When `functionName` (or `abiFunction`) is present alongside `data`, the typed
++fields win and `data` is ignored. `check-and-execute` does not accept `data`.
++
+ **Direct execution vs. workflow node field names**
+ 
+ The same values carry different field names depending on which surface you're
+diff --git a/tests/unit/contract-call-raw-calldata.test.ts b/tests/unit/contract-call-raw-calldata.test.ts
+new file mode 100644
+index 000000000..cd94d552b
+--- /dev/null
++++ b/tests/unit/contract-call-raw-calldata.test.ts
+@@ -0,0 +1,300 @@
++/**
++ * POST /api/execute/contract-call accepts raw `data` in place of
++ * functionName + functionArgs. The route decodes it against the ABI and then
++ * takes exactly the path a typed call takes: the write core sees a canonical
++ * function key and typed arguments, so every guard that keys on them still
++ * applies. A selector the ABI does not contain is a 400 before any execution.
++ *
++ * Run with: pnpm vitest tests/unit/contract-call-raw-calldata.test.ts
++ */
++import { ethers } from "ethers";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++
++vi.mock("server-only", () => ({}));
++
++const mockValidateApiKey = vi.fn();
++vi.mock("@/app/api/execute/_lib/auth", () => ({
++  validateApiKey: (...args: unknown[]) => mockValidateApiKey(...args),
++}));
++
++const mockCheckRateLimit = vi.fn();
++vi.mock("@/app/api/execute/_lib/rate-limit", () => ({
++  checkRateLimit: (...args: unknown[]) => mockCheckRateLimit(...args),
++}));
++
++vi.mock("@/app/api/execute/_lib/concurrency-limit", () => ({
++  enforceDirectExecutionConcurrency: vi.fn().mockResolvedValue(null),
++}));
++
++vi.mock("@/lib/billing/execution-guard", () => ({
++  enforceExecutionLimit: vi
++    .fn()
++    .mockResolvedValue({ blocked: false, limitResult: null }),
++  EXECUTION_LIMIT_ERROR: "Monthly execution limit exceeded",
++  EXECUTION_DEBT_ERROR: "Executions suspended due to unpaid overage invoice.",
++}));
++
++vi.mock("@/app/api/execute/_lib/wallet-check", () => ({
++  requireWallet: vi.fn().mockResolvedValue(null),
++}));
++
++vi.mock("@/lib/middleware/require-scope", () => ({
++  requireScope: vi.fn().mockReturnValue(null),
++}));
++
++vi.mock("@/lib/db/org-helpers", () => ({
++  enterApiExecuteErrorContext: vi.fn().mockResolvedValue(undefined),
++}));
++
++const mockCheckAndReserveExecution = vi.fn();
++vi.mock("@/app/api/execute/_lib/spending-cap", () => ({
++  checkAndReserveExecution: (...args: unknown[]) =>
++    mockCheckAndReserveExecution(...args),
++}));
++
++vi.mock("@/app/api/execute/_lib/execution-service", () => ({
++  markRunning: vi.fn().mockResolvedValue(undefined),
++  completeExecution: vi.fn().mockResolvedValue({ status: "completed" }),
++  failExecution: vi.fn().mockResolvedValue({ status: "failed" }),
++  redactInput: (input: unknown) => input,
++  withRejectedSignerOverride: (body: unknown) => body,
++}));
++
++const mockResolveAbi = vi.fn();
++vi.mock("@/lib/abi/cache", () => ({
++  resolveAbi: (...args: unknown[]) => mockResolveAbi(...args),
++}));
++
++const mockSimulateContractCall = vi.fn();
++vi.mock("@/lib/execute/simulate", () => ({
++  simulateContractCall: (...args: unknown[]) =>
++    mockSimulateContractCall(...args),
++}));
++
++const mockReadContractCore = vi.fn();
++vi.mock("@/plugins/web3/steps/read-contract-core", () => ({
++  readContractCore: (...args: unknown[]) => mockReadContractCore(...args),
++}));
++
++const mockWriteContractCore = vi.fn();
++vi.mock("@/plugins/web3/steps/write-contract-core", () => ({
++  writeContractCore: (...args: unknown[]) => mockWriteContractCore(...args),
++}));
++
++vi.mock("@/lib/idempotency", async (importActual) => {
++  const actual = await importActual<typeof import("@/lib/idempotency")>();
++  return {
++    ...actual,
++    beginIdempotentFromRequest: vi.fn().mockResolvedValue(null),
++    withIdempotencyHeartbeat: (_idem: unknown, fn: () => unknown) => fn(),
++    recordIdempotentResponse: (_idem: unknown, response: unknown) => response,
++    idempotencyEarlyResponse: () => null,
++  };
++});
++
++import { POST } from "@/app/api/execute/contract-call/route";
++
++const TOKEN = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
++const SPENDER = "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca";
++const ERC20_ABI = JSON.stringify([
++  {
++    type: "function",
++    name: "approve",
++    stateMutability: "nonpayable",
++    inputs: [
++      { name: "spender", type: "address" },
++      { name: "amount", type: "uint256" },
++    ],
++    outputs: [{ type: "bool" }],
++  },
++  {
++    type: "function",
++    name: "balanceOf",
++    stateMutability: "view",
++    inputs: [{ name: "account", type: "address" }],
++    outputs: [{ type: "uint256" }],
++  },
++]);
++const iface = new ethers.Interface(JSON.parse(ERC20_ABI));
++
++function post(body: Record<string, unknown>): Request {
++  return new Request("http://localhost/api/execute/contract-call", {
++    method: "POST",
++    headers: {
++      "Content-Type": "application/json",
++      Authorization: "Bearer kh_test",
++    },
++    body: JSON.stringify(body),
++  });
++}
++
++const call = POST as (req: Request) => Promise<Response>;
++
++beforeEach(() => {
++  vi.clearAllMocks();
++  mockValidateApiKey.mockResolvedValue({
++    organizationId: "org-1",
++    apiKeyId: "key-1",
++    scope: "mcp:write",
++    credentialType: "api_key",
++  });
++  mockCheckRateLimit.mockReturnValue({ allowed: true });
++  mockCheckAndReserveExecution.mockResolvedValue({
++    allowed: true,
++    executionId: "exec-1",
++  });
++  mockWriteContractCore.mockResolvedValue({
++    success: true,
++    transactionHash: "0xabc",
++    transactionLink: "https://basescan.org/tx/0xabc",
++    chainId: 8453,
++  });
++  mockSimulateContractCall.mockResolvedValue({
++    success: true,
++    status: "simulated",
++    wouldRevert: false,
++    gasEstimate: "46000",
++  });
++});
++
++describe("contract-call with raw calldata", () => {
++  const approveData = iface.encodeFunctionData("approve", [
++    SPENDER,
++    BigInt("5000000"),
++  ]);
++
++  it("decodes data against the supplied ABI and executes the typed call", async () => {
++    const response = await call(
++      post({
++        chainId: 8453,
++        contractAddress: TOKEN,
++        data: approveData,
++        abi: ERC20_ABI,
++      })
++    );
++
++    expect(response.status).toBe(202);
++    expect(mockWriteContractCore).toHaveBeenCalledTimes(1);
++    const input = mockWriteContractCore.mock.calls[0][0] as Record<
++      string,
++      unknown
++    >;
++    expect(input.abiFunction).toBe("approve(address,uint256)");
++    expect(input.functionArgs).toBe(JSON.stringify([SPENDER, "5000000"]));
++    expect(input.abi).toBe(ERC20_ABI);
++    expect(input.contractAddress).toBe(TOKEN);
++  });
++
++  it("uses the explorer ABI when the body carries none", async () => {
++    mockResolveAbi.mockResolvedValue({ abi: ERC20_ABI, source: "explorer" });
++
++    const response = await call(
++      post({ chainId: 8453, contractAddress: TOKEN, data: approveData })
++    );
++
++    expect(response.status).toBe(202);
++    expect(mockResolveAbi).toHaveBeenCalledWith(
++      expect.objectContaining({ contractAddress: TOKEN, network: "8453" })
++    );
++    expect(mockWriteContractCore.mock.calls[0][0]).toMatchObject({
++      abiFunction: "approve(address,uint256)",
++    });
++  });
++
++  it("dry-runs raw calldata through the same simulate path", async () => {
++    const response = await call(
++      post({
++        chainId: 8453,
++        contractAddress: TOKEN,
++        data: approveData,
++        abi: ERC20_ABI,
++        simulate: true,
++      })
++    );
++
++    expect(response.status).toBe(200);
++    expect(mockSimulateContractCall).toHaveBeenCalledWith(
++      expect.objectContaining({
++        functionName: "approve(address,uint256)",
++        functionArgs: JSON.stringify([SPENDER, "5000000"]),
++      })
++    );
++    expect(mockWriteContractCore).not.toHaveBeenCalled();
++  });
++
++  it("routes a decoded view function to the read path", async () => {
++    mockReadContractCore.mockResolvedValue({
++      success: true,
++      result: "150000000",
++    });
++    const data = iface.encodeFunctionData("balanceOf", [SPENDER]);
++
++    const response = await call(
++      post({ chainId: 8453, contractAddress: TOKEN, data, abi: ERC20_ABI })
++    );
++
++    expect(response.status).toBe(200);
++    expect(mockReadContractCore).toHaveBeenCalledTimes(1);
++    expect(mockWriteContractCore).not.toHaveBeenCalled();
++  });
++
++  it("refuses a selector the ABI does not contain before any execution", async () => {
++    const response = await call(
++      post({
++        chainId: 8453,
++        contractAddress: TOKEN,
++        data: `0xdeadbeef${"00".repeat(64)}`,
++        abi: ERC20_ABI,
++      })
++    );
++    const body = (await response.json()) as { error: string; field?: string };
++
++    expect(response.status).toBe(400);
++    expect(body.field).toBe("data");
++    expect(body.error).toContain("0xdeadbeef is not in the ABI");
++    expect(mockWriteContractCore).not.toHaveBeenCalled();
++    expect(mockSimulateContractCall).not.toHaveBeenCalled();
++  });
++
++  it("reports an unresolvable ABI on the abi field", async () => {
++    mockResolveAbi.mockRejectedValue(new Error("contract not verified"));
++
++    const response = await call(
++      post({ chainId: 8453, contractAddress: TOKEN, data: approveData })
++    );
++    const body = (await response.json()) as { error: string; field?: string };
++
++    expect(response.status).toBe(400);
++    expect(body.field).toBe("abi");
++    expect(body.error).toContain("contract not verified");
++  });
++
++  it("still validates the rest of the body before decoding", async () => {
++    const response = await call(
++      post({ contractAddress: TOKEN, data: approveData, abi: ERC20_ABI })
++    );
++    const body = (await response.json()) as { error: string; field?: string };
++
++    expect(response.status).toBe(400);
++    expect(body.field).toBe("chainId");
++    expect(mockResolveAbi).not.toHaveBeenCalled();
++  });
++
++  it("leaves typed requests untouched when both data and functionName are sent", async () => {
++    await call(
++      post({
++        chainId: 8453,
++        contractAddress: TOKEN,
++        functionName: "approve",
++        functionArgs: JSON.stringify([SPENDER, "1"]),
++        abi: ERC20_ABI,
++        data: approveData,
++      })
++    );
++
++    expect(mockWriteContractCore.mock.calls[0][0]).toMatchObject({
++      abiFunction: "approve",
++      functionArgs: JSON.stringify([SPENDER, "1"]),
++    });
++  });
++});
+diff --git a/tests/unit/execute-raw-calldata.test.ts b/tests/unit/execute-raw-calldata.test.ts
+new file mode 100644
+index 000000000..df7aa7d94
+--- /dev/null
++++ b/tests/unit/execute-raw-calldata.test.ts
+@@ -0,0 +1,157 @@
++/**
++ * Raw calldata on POST /api/execute/contract-call: `data` is decoded against
++ * the ABI into the typed call the route already executes. Nothing is guessed:
++ * a selector the ABI does not contain is a 400, not a 4byte lookup.
++ *
++ * Run with: pnpm vitest tests/unit/execute-raw-calldata.test.ts
++ */
++import { ethers } from "ethers";
++import { describe, expect, it } from "vitest";
++import {
++  isRawCalldataRequest,
++  resolveRawCalldata,
++  selectorOf,
++} from "@/app/api/execute/_lib/raw-calldata";
++
++const SPENDER = "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca";
++const OWNER = "0x0BDf000000000000000000000000000000000001";
++
++const ERC20_ABI = JSON.stringify([
++  {
++    type: "function",
++    name: "approve",
++    stateMutability: "nonpayable",
++    inputs: [
++      { name: "spender", type: "address" },
++      { name: "amount", type: "uint256" },
++    ],
++    outputs: [{ type: "bool" }],
++  },
++  {
++    type: "function",
++    name: "balanceOf",
++    stateMutability: "view",
++    inputs: [{ name: "account", type: "address" }],
++    outputs: [{ type: "uint256" }],
++  },
++]);
++
++const iface = new ethers.Interface(JSON.parse(ERC20_ABI));
++
++describe("isRawCalldataRequest", () => {
++  it("is true only when data is present and no function key is", () => {
++    expect(isRawCalldataRequest({ data: "0x095ea7b3" })).toBe(true);
++    expect(
++      isRawCalldataRequest({ data: "0x095ea7b3", functionName: "approve" })
++    ).toBe(false);
++    expect(
++      isRawCalldataRequest({ data: "0x095ea7b3", abiFunction: "approve" })
++    ).toBe(false);
++    expect(isRawCalldataRequest({ functionName: "approve" })).toBe(false);
++  });
++});
++
++describe("selectorOf", () => {
++  it("returns the lowercase 4-byte selector", () => {
++    expect(selectorOf(`0x095EA7B3${"00".repeat(64)}`)).toBe("0x095ea7b3");
++  });
++
++  it("rejects non-hex and too-short data", () => {
++    expect(selectorOf("095ea7b3")).toEqual({
++      error: expect.stringContaining("0x-prefixed"),
++    });
++    expect(selectorOf("0x")).toEqual({
++      error: expect.stringContaining("4-byte"),
++    });
++    expect(selectorOf("0x095ea7")).toEqual({
++      error: expect.stringContaining("4-byte"),
++    });
++  });
++});
++
++describe("resolveRawCalldata", () => {
++  it("decodes an ERC-20 approve into the canonical key and typed args", () => {
++    const data = iface.encodeFunctionData("approve", [
++      SPENDER,
++      BigInt("5000000"),
++    ]);
++
++    const result = resolveRawCalldata(data, ERC20_ABI);
++
++    expect(result).toEqual({
++      functionName: "approve(address,uint256)",
++      functionArgs: JSON.stringify([SPENDER, "5000000"]),
++      selector: "0x095ea7b3",
++    });
++  });
++
++  it("renders arrays, tuples, bytes and bools the way functionArgs accepts them", () => {
++    const abi = JSON.stringify([
++      {
++        type: "function",
++        name: "supply",
++        stateMutability: "nonpayable",
++        inputs: [
++          {
++            name: "marketParams",
++            type: "tuple",
++            components: [
++              { name: "loanToken", type: "address" },
++              { name: "lltv", type: "uint256" },
++            ],
++          },
++          { name: "amounts", type: "uint256[]" },
++          { name: "data", type: "bytes" },
++          { name: "flag", type: "bool" },
++        ],
++        outputs: [],
++      },
++    ]);
++    const supplyIface = new ethers.Interface(JSON.parse(abi));
++    const data = supplyIface.encodeFunctionData("supply", [
++      [OWNER, BigInt("860000000000000000")],
++      [BigInt("1"), BigInt("2")],
++      "0x01ff",
++      true,
++    ]);
++
++    const result = resolveRawCalldata(data, abi);
++
++    expect(result).toMatchObject({
++      functionName: "supply((address,uint256),uint256[],bytes,bool)",
++    });
++    expect(
++      JSON.parse((result as { functionArgs: string }).functionArgs)
++    ).toEqual([[OWNER, "860000000000000000"], ["1", "2"], "0x01ff", true]);
++  });
++
++  it("refuses a selector the ABI does not contain instead of guessing", () => {
++    const data = `0xdeadbeef${"00".repeat(64)}`;
++
++    const result = resolveRawCalldata(data, ERC20_ABI);
++
++    expect(result).toEqual({
++      error: expect.stringContaining("0xdeadbeef is not in the ABI"),
++    });
++  });
++
++  it("reports calldata that does not decode against the matched fragment", () => {
++    const truncated = iface
++      .encodeFunctionData("approve", [SPENDER, BigInt("1")])
++      .slice(0, 20);
++
++    const result = resolveRawCalldata(truncated, ERC20_ABI);
++
++    expect(result).toEqual({
++      error: expect.stringContaining("does not decode"),
++    });
++  });
++
++  it("rejects an invalid ABI", () => {
++    expect(
++      resolveRawCalldata(`0x095ea7b3${"00".repeat(64)}`, "{not json")
++    ).toEqual({
++      error: "Invalid ABI JSON",
++    });
++  });
++});
+-- 
+2.53.0
+
