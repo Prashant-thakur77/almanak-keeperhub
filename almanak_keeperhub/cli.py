@@ -37,14 +37,18 @@ def main() -> None:
 @click.option("--working-dir", "-d", default=".", help="Strategy directory (passed through to almanak).")
 @click.option("--config", "-c", "config_file", default=None, help="Strategy config JSON (passed through).")
 @click.argument("almanak_args", nargs=-1, type=click.UNPROCESSED)
-def run(chain_override: str | None, working_dir: str, config_file: str | None, almanak_args: tuple[str, ...]) -> None:
+def run(
+    chain_override: str | None, working_dir: str, config_file: str | None, almanak_args: tuple[str, ...]
+) -> None:
     """Run `almanak strat run ...` through KeeperHub."""
     api_key = os.environ.get("KEEPERHUB_API_KEY")
     if not api_key:
         raise click.ClickException("KEEPERHUB_API_KEY is not set (organization API key with mcp:write scope)")
     chain = chain_override or _chain_from_config(Path(working_dir), config_file)
     if not chain:
-        raise click.ClickException("could not determine the chain: pass --chain or put 'chain' in config.json")
+        raise click.ClickException(
+            "could not determine the chain: pass --chain or put 'chain' in config.json"
+        )
 
     os.environ.setdefault("ALMANAK_GATEWAY_WALLETS", json.dumps({chain: {"kind": KIND}}))
     # No local key: the KeeperHub organization wallet signs inside Turnkey.
@@ -55,7 +59,9 @@ def run(chain_override: str | None, working_dir: str, config_file: str | None, a
     from almanak_keeperhub.gateway import install
 
     install()
-    click.echo(f"almanak-keeperhub {__version__}: chain={chain} backend=keeperhub ({os.environ.get('KEEPERHUB_BASE_URL', DEFAULT_BASE_URL)})")
+    click.echo(
+        f"almanak-keeperhub {__version__}: chain={chain} backend=keeperhub ({os.environ.get('KEEPERHUB_BASE_URL', DEFAULT_BASE_URL)})"
+    )
 
     from almanak.cli import almanak
 
@@ -119,7 +125,14 @@ async def _check_account(api_key: str, base_url: str, chain_name: str) -> int:
 
             descriptor = ChainRegistry.try_resolve(chain_name)
             wanted = descriptor.chain_id if descriptor else None
-            match = next((c for c in rows if isinstance(c, dict) and int(c.get("chainId", c.get("id", 0)) or 0) == wanted), None)
+            match = next(
+                (
+                    c
+                    for c in rows
+                    if isinstance(c, dict) and int(c.get("chainId", c.get("id", 0)) or 0) == wanted
+                ),
+                None,
+            )
             if match is None:
                 click.echo(f"chain {chain_name:<12}: not enabled on KeeperHub")
                 problems += 1

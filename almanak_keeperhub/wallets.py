@@ -41,7 +41,9 @@ class KeeperHubWalletRegistry:
     def from_env(cls, default_chains: list[str] | None = None) -> KeeperHubWalletRegistry:
         raw = os.environ.get("ALMANAK_GATEWAY_WALLETS", "")
         configured = json.loads(raw) if raw else {}
-        chains = [chain for chain, cfg in configured.items() if isinstance(cfg, dict) and cfg.get("kind") == KIND]
+        chains = [
+            chain for chain, cfg in configured.items() if isinstance(cfg, dict) and cfg.get("kind") == KIND
+        ]
         if not chains and default_chains:
             chains = list(default_chains)
         return cls(address=resolve_wallet_address(), chains=chains)
@@ -62,12 +64,18 @@ def resolve_wallet_address() -> str:
         return explicit
     api_key = os.environ.get("KEEPERHUB_API_KEY", "")
     if not api_key:
-        raise RuntimeError("KEEPERHUB_API_KEY is not set; create an organization API key with mcp:write scope")
+        raise RuntimeError(
+            "KEEPERHUB_API_KEY is not set; create an organization API key with mcp:write scope"
+        )
     base_url = os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
     response = httpx.get(f"{base_url}/api/user", headers={"Authorization": f"Bearer {api_key}"}, timeout=30.0)
     if response.status_code != 200:
-        raise RuntimeError(f"GET {base_url}/api/user returned HTTP {response.status_code}: {response.text[:200]}")
+        raise RuntimeError(
+            f"GET {base_url}/api/user returned HTTP {response.status_code}: {response.text[:200]}"
+        )
     address = response.json().get("walletAddress")
     if not address:
-        raise RuntimeError("KeeperHub returned no walletAddress; provision the organization wallet in the app first")
+        raise RuntimeError(
+            "KeeperHub returned no walletAddress; provision the organization wallet in the app first"
+        )
     return str(address)

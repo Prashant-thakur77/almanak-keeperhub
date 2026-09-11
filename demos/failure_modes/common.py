@@ -37,7 +37,9 @@ def calldata(signature: str, types: list[str], args: list[Any]) -> str:
     return "0x" + (function_signature_to_4byte_selector(signature) + encode(types, args)).hex()
 
 
-def tx(to: str, data: str, sender: str, nonce: int, value: int = 0, gas_limit: int = 200_000, **meta: Any) -> UnsignedTransaction:
+def tx(
+    to: str, data: str, sender: str, nonce: int, value: int = 0, gas_limit: int = 200_000, **meta: Any
+) -> UnsignedTransaction:
     return UnsignedTransaction(
         to=to,
         value=value,
@@ -60,7 +62,9 @@ class Stack:
         api_key = os.environ.get("KEEPERHUB_API_KEY")
         if not api_key:
             sys.exit("KEEPERHUB_API_KEY is not set")
-        self.client = KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com"))
+        self.client = KeeperHubClient(
+            api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com")
+        )
         self.rpc_url = os.environ.get("RPC_URL_BASE", "https://mainnet.base.org")
         self.address = ""
         self.signer: KeeperHubSigner

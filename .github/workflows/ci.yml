@@ -1,0 +1,13 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv python install 3.12
+      - run: uv venv --python 3.12 && . .venv/bin/activate && uv pip install -e ".[dev]"
+      - run: . .venv/bin/activate && ruff check almanak_keeperhub tests
+      - run: . .venv/bin/activate && pytest -q
+  # tests/e2e/rehearsal.sh needs foundry and a Base RPC; run it manually before a release.

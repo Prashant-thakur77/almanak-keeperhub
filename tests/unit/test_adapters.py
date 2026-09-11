@@ -52,7 +52,11 @@ def approve_tx(nonce: int = 7, amount: int = 5_000_000) -> UnsignedTransaction:
         from_address=ORG_WALLET,
         max_fee_per_gas=1,
         max_priority_fee_per_gas=1,
-        metadata={"tx_type": "approve", "description": "approve USDC for vault", "intent_type": "vault_deposit"},
+        metadata={
+            "tx_type": "approve",
+            "description": "approve USDC for vault",
+            "intent_type": "vault_deposit",
+        },
     )
 
 
@@ -82,14 +86,30 @@ def completed(execution_id: str = "exec-1", tx_hash: str = TX_HASH, **extra: Any
     }
 
 
-def status_body(execution_id: str, status: str, tx_hash: str | None = TX_HASH, verified: bool = True) -> dict[str, Any]:
+def status_body(
+    execution_id: str, status: str, tx_hash: str | None = TX_HASH, verified: bool = True
+) -> dict[str, Any]:
     receipts = (
-        [{"hash": tx_hash, "chainId": 8453, "verified": verified, "receiptStatus": "success" if verified else "reverted",
-          "blockNumber": 100, "gasUsed": "68115"}]
+        [
+            {
+                "hash": tx_hash,
+                "chainId": 8453,
+                "verified": verified,
+                "receiptStatus": "success" if verified else "reverted",
+                "blockNumber": 100,
+                "gasUsed": "68115",
+            }
+        ]
         if tx_hash
         else []
     )
-    return {"executionId": execution_id, "status": status, "transactionHash": tx_hash, "receipts": receipts, "sponsored": True}
+    return {
+        "executionId": execution_id,
+        "status": status,
+        "transactionHash": tx_hash,
+        "receipts": receipts,
+        "sponsored": True,
+    }
 
 
 @pytest.fixture
@@ -166,7 +186,9 @@ async def test_sign_refuses_sender_mismatch(signer: KeeperHubSigner) -> None:
 # --- submitter --------------------------------------------------------------
 
 
-def _submitter(client: KeeperHubClient, receipts: dict[str, dict[str, Any]] | None = None) -> KeeperHubSubmitter:
+def _submitter(
+    client: KeeperHubClient, receipts: dict[str, dict[str, Any]] | None = None
+) -> KeeperHubSubmitter:
     async def fetch_receipt(tx_hash: str) -> dict[str, Any] | None:
         return (receipts or {}).get(tx_hash)
 
@@ -196,7 +218,9 @@ def test_submitter_implements_almanak_interface(client: KeeperHubClient) -> None
 
 
 @respx.mock
-async def test_submit_broadcasts_with_key_and_replaces_placeholder_hash(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
+async def test_submit_broadcasts_with_key_and_replaces_placeholder_hash(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
     route = respx.post(EXEC_URL).mock(return_value=httpx.Response(202, json=completed()))
     signed = await signer.sign(approve_tx(), "base")
 
@@ -204,22 +228,32 @@ async def test_submit_broadcasts_with_key_and_replaces_placeholder_hash(client: 
 
     assert route.calls[0].request.headers["idempotency-key"] == signed.idempotency_key
     assert json.loads(route.calls[0].request.content)["functionName"] == "approve"
-    assert results == [SubmissionResult(tx_hash=TX_HASH, submitted=True, submitted_at=results[0].submitted_at)]
+    assert results == [
+        SubmissionResult(tx_hash=TX_HASH, submitted=True, submitted_at=results[0].submitted_at)
+    ]
     assert signed.tx_hash == TX_HASH  # orchestrator indexes results by this
 
 
 @respx.mock
-async def test_submit_is_sequential_and_waits_for_confirmation_between_calls(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
+async def test_submit_is_sequential_and_waits_for_confirmation_between_calls(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
     second_hash = "0x" + "ef" * 32
     respx.post(EXEC_URL).mock(
         side_effect=[
-            httpx.Response(202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}),
+            httpx.Response(
+                202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}
+            ),
             httpx.Response(202, json=completed("e2", second_hash)),
         ]
     )
     status_route = respx.get(f"{BASE}/api/execute/e1/status").mock(
         side_effect=[
-            httpx.Response(200, headers={"X-Poll-Interval-Hint": "1"}, json=status_body("e1", "unconfirmed", verified=False)),
+            httpx.Response(
+                200,
+                headers={"X-Poll-Interval-Hint": "1"},
+                json=status_body("e1", "unconfirmed", verified=False),
+            ),
             httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=status_body("e1", "completed")),
         ]
     )
@@ -233,12 +267,17 @@ async def test_submit_is_sequential_and_waits_for_confirmation_between_calls(cli
 
 
 @respx.mock
-async def test_submit_stops_after_a_refused_broadcast(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
+async def test_submit_stops_after_a_refused_broadcast(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
     route = respx.post(EXEC_URL).mock(
         return_value=httpx.Response(
             202,
-            json={"executionId": "e1", "status": "failed",
-                  "error": "Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit"},
+            json={
+                "executionId": "e1",
+                "status": "failed",
+                "error": "Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit",
+            },
         )
     )
     approve = await signer.sign(approve_tx(), "base")
@@ -254,10 +293,14 @@ async def test_submit_stops_after_a_refused_broadcast(client: KeeperHubClient, s
 
 
 @respx.mock
-async def test_submit_retries_same_key_while_first_attempt_in_progress(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
+async def test_submit_retries_same_key_while_first_attempt_in_progress(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
     route = respx.post(EXEC_URL).mock(
         side_effect=[
-            httpx.Response(409, json={"code": "idempotency_in_progress", "retryable": True, "error": "processing"}),
+            httpx.Response(
+                409, json={"code": "idempotency_in_progress", "retryable": True, "error": "processing"}
+            ),
             httpx.Response(202, json=completed(idempotentReplay=True)),
         ]
     )
@@ -271,7 +314,9 @@ async def test_submit_retries_same_key_while_first_attempt_in_progress(client: K
 
 
 @respx.mock
-async def test_submit_maps_daily_cap_to_submission_error(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
+async def test_submit_maps_daily_cap_to_submission_error(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
     respx.post(EXEC_URL).mock(return_value=httpx.Response(403, json={"error": "Daily spending cap exceeded"}))
     signed = await signer.sign(approve_tx(), "base")
     with pytest.raises(SubmissionError) as excinfo:
@@ -281,11 +326,21 @@ async def test_submit_maps_daily_cap_to_submission_error(client: KeeperHubClient
 
 
 @respx.mock
-async def test_get_receipt_waits_for_verified_status_then_reads_chain_receipt(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
-    respx.post(EXEC_URL).mock(return_value=httpx.Response(202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}))
+async def test_get_receipt_waits_for_verified_status_then_reads_chain_receipt(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}
+        )
+    )
     respx.get(f"{BASE}/api/execute/e1/status").mock(
         side_effect=[
-            httpx.Response(200, headers={"X-Poll-Interval-Hint": "1"}, json=status_body("e1", "unconfirmed", verified=False)),
+            httpx.Response(
+                200,
+                headers={"X-Poll-Interval-Hint": "1"},
+                json=status_body("e1", "unconfirmed", verified=False),
+            ),
             httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=status_body("e1", "completed")),
         ]
     )
@@ -306,10 +361,18 @@ async def test_get_receipt_waits_for_verified_status_then_reads_chain_receipt(cl
 
 
 @respx.mock
-async def test_get_receipt_reports_revert_from_chain(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
-    respx.post(EXEC_URL).mock(return_value=httpx.Response(202, json={**completed(), "status": "failed", "error": "execution reverted"}))
+async def test_get_receipt_reports_revert_from_chain(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            202, json={**completed(), "status": "failed", "error": "execution reverted"}
+        )
+    )
     respx.get(f"{BASE}/api/execute/exec-1/status").mock(
-        return_value=httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=status_body("exec-1", "failed", verified=False))
+        return_value=httpx.Response(
+            200, headers={"X-Poll-Interval-Hint": "0"}, json=status_body("exec-1", "failed", verified=False)
+        )
     )
     submitter = _submitter(client, receipts={TX_HASH: rpc_receipt(status=0)})
     signed = await signer.sign(approve_tx(), "base")
@@ -339,7 +402,9 @@ def test_simulator_implements_almanak_interface(client: KeeperHubClient) -> None
 @respx.mock
 async def test_simulate_success_returns_keeperhub_gas_estimate(client: KeeperHubClient) -> None:
     route = respx.post(EXEC_URL).mock(
-        return_value=httpx.Response(200, json={"success": True, "gasEstimate": "357000", "wouldRevert": False, "from": ORG_WALLET})
+        return_value=httpx.Response(
+            200, json={"success": True, "gasEstimate": "357000", "wouldRevert": False, "from": ORG_WALLET}
+        )
     )
 
     result = await _simulator(client).simulate([deposit_tx()], "base")
@@ -357,8 +422,12 @@ async def test_simulate_revert_fails_with_decoded_reason(client: KeeperHubClient
     respx.post(EXEC_URL).mock(
         return_value=httpx.Response(
             400,
-            json={"success": False, "failureKind": "revert", "wouldRevert": True,
-                  "revertReason": "Error(ERC20: transfer amount exceeds balance)"},
+            json={
+                "success": False,
+                "failureKind": "revert",
+                "wouldRevert": True,
+                "revertReason": "Error(ERC20: transfer amount exceeds balance)",
+            },
         )
     )
     result = await _simulator(client).simulate([deposit_tx()], "base")

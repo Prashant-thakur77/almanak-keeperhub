@@ -27,16 +27,22 @@ async def main() -> None:
         first = await stack.signer.sign(approve, "base")
         results_1 = await stack.submitter.submit([first])
         exec_1 = stack.submitter.execution_for(results_1[0].tx_hash)
-        print(f"executionId={exec_1.execution_id} tx={results_1[0].tx_hash} replay={getattr(exec_1, 'idempotent_replay', False)}")
+        print(
+            f"executionId={exec_1.execution_id} tx={results_1[0].tx_hash} replay={getattr(exec_1, 'idempotent_replay', False)}"
+        )
 
         banner("attempt 2: 'process crashed, strategy re-ran the same tick' -> identical work, identical key")
         second = await stack.signer.sign(approve, "base")  # same nonce, same calldata -> same idempotency key
         assert second.idempotency_key == first.idempotency_key
         results_2 = await stack.submitter.submit([second])
         exec_2 = stack.submitter.execution_for(results_2[0].tx_hash)
-        print(f"executionId={exec_2.execution_id} tx={results_2[0].tx_hash} replay={getattr(exec_2, 'idempotent_replay', False)}")
+        print(
+            f"executionId={exec_2.execution_id} tx={results_2[0].tx_hash} replay={getattr(exec_2, 'idempotent_replay', False)}"
+        )
 
-        assert results_1[0].tx_hash == results_2[0].tx_hash, "second attempt must not produce a new transaction"
+        assert results_1[0].tx_hash == results_2[0].tx_hash, (
+            "second attempt must not produce a new transaction"
+        )
         receipt = await stack.submitter.get_receipt(results_1[0].tx_hash, timeout=180)
         print(f"one transaction on chain: block={receipt.block_number} status={receipt.status}")
         record(

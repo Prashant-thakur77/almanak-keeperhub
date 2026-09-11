@@ -287,7 +287,9 @@ class MetaMorphoBaseYield(IntentStrategy):
             if self._below_floor_count >= self.exit_confirm_checks:
                 logger.info(
                     "EXIT: APY %.2f%% < floor %.2f%% for %d checks — redeeming vault position",
-                    apy, self.min_apy_floor, self._below_floor_count,
+                    apy,
+                    self.min_apy_floor,
+                    self._below_floor_count,
                 )
                 self._previous_stable_state = self._state
                 self._state = "redeeming"
@@ -328,10 +330,12 @@ class MetaMorphoBaseYield(IntentStrategy):
                 )
 
         logger.info(
-            "HOLD: Vault position active (shares=%s, total_deposited=%s %s, "
-            "epoch=%d, compounds=%d)",
-            self._deposit_shares, self._total_deposited, self.deposit_token,
-            self._epochs_completed, self._compounds_completed,
+            "HOLD: Vault position active (shares=%s, total_deposited=%s %s, epoch=%d, compounds=%d)",
+            self._deposit_shares,
+            self._total_deposited,
+            self.deposit_token,
+            self._epochs_completed,
+            self._compounds_completed,
         )
         apy_str = f"{self._current_apy:.2f}%" if self._current_apy is not None else "n/a"
         return Intent.hold(
@@ -440,7 +444,9 @@ class MetaMorphoBaseYield(IntentStrategy):
                         # ``assets_received`` is raw base units (VIB-5392) — scale
                         # to human units so yield = redeemed − deposited is a real
                         # USD-pegged figure, not a 1e6× artifact.
-                        self._redeem_assets = self._assets_to_human(Decimal(str(redeem_data.get("assets_received", 0))))
+                        self._redeem_assets = self._assets_to_human(
+                            Decimal(str(redeem_data.get("assets_received", 0)))
+                        )
                         yield_earned = self._redeem_assets - self._total_deposited
                         if yield_earned > 0:
                             self._total_yield_earned += yield_earned

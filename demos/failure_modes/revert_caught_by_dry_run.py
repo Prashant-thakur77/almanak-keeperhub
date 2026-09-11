@@ -22,7 +22,13 @@ async def main() -> None:
         print(f"simulated={result.simulated} success={result.success}")
         print(f"revert_reason={result.revert_reason}")
         assert result.simulated and not result.success, "simulation should have failed"
-        record("dry_run_revert", to=VAULT_BASE, token=USDC_BASE, revert_reason=result.revert_reason, broadcast=False)
+        record(
+            "dry_run_revert",
+            to=VAULT_BASE,
+            token=USDC_BASE,
+            revert_reason=result.revert_reason,
+            broadcast=False,
+        )
         print("no transaction was broadcast: the strategy tick stops at SIMULATION.")
 
 

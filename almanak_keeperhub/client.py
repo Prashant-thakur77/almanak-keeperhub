@@ -172,7 +172,9 @@ class KeeperHubClient:
         response = await self._http.post("/api/execute/contract-call", json=body)
         payload = _json_or_empty(response)
         if response.status_code == 503:
-            raise KeeperHubUnavailable(_message(payload, "simulator unavailable"), status=503, payload=payload)
+            raise KeeperHubUnavailable(
+                _message(payload, "simulator unavailable"), status=503, payload=payload
+            )
         if response.status_code not in (200, 400):
             _raise_for_status(response, payload)
         return SimulationOutcome(
@@ -287,7 +289,9 @@ def _raise_for_status(response: httpx.Response, payload: dict[str, Any]) -> None
         return
     message = _message(payload, f"KeeperHub returned HTTP {status}")
     code = payload.get("code")
-    if status == 401 or (status == 403 and (payload.get("error") == "insufficient_scope" or code == "insufficient_scope")):
+    if status == 401 or (
+        status == 403 and (payload.get("error") == "insufficient_scope" or code == "insufficient_scope")
+    ):
         raise KeeperHubAuthError(message, status=status, payload=payload)
     if status == 409 and code == "idempotency_conflict":
         raise KeeperHubIdempotencyConflict(message, status=status, payload=payload)

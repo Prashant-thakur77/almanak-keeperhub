@@ -34,7 +34,9 @@ class KeeperHubSimulator(Simulator):
         state_overrides: dict | None = None,
     ) -> SimulationResult:
         if state_overrides:
-            logger.warning("KeeperHubSimulator ignores state_overrides; the org wallet's live state is simulated")
+            logger.warning(
+                "KeeperHubSimulator ignores state_overrides; the org wallet's live state is simulated"
+            )
         if not txs:
             return SimulationResult(success=True, simulated=False, simulator_name=SIMULATOR_NAME)
 
@@ -50,7 +52,9 @@ class KeeperHubSimulator(Simulator):
                 )
                 continue
             try:
-                decoded = decode_calldata(tx.data or "0x", to=str(tx.to), value_wei=int(tx.value or 0), index=self._index)
+                decoded = decode_calldata(
+                    tx.data or "0x", to=str(tx.to), value_wei=int(tx.value or 0), index=self._index
+                )
             except UndecodableCalldata as exc:
                 return _failure(str(exc), simulated=False)
             call = ContractCall(
@@ -72,7 +76,11 @@ class KeeperHubSimulator(Simulator):
                 return _failure(reason, simulated=True)
             gas_estimates.append(outcome.gas_estimate or tx.gas_limit or FALLBACK_GAS)
             logger.info(
-                "KeeperHub simulate ok: %s.%s gas=%s from=%s", tx.to, decoded.function_name, outcome.gas_estimate, outcome.sender
+                "KeeperHub simulate ok: %s.%s gas=%s from=%s",
+                tx.to,
+                decoded.function_name,
+                outcome.gas_estimate,
+                outcome.sender,
             )
 
         return SimulationResult(
@@ -85,4 +93,6 @@ class KeeperHubSimulator(Simulator):
 
 
 def _failure(reason: str, *, simulated: bool) -> SimulationResult:
-    return SimulationResult(success=False, simulated=simulated, revert_reason=reason, simulator_name=SIMULATOR_NAME)
+    return SimulationResult(
+        success=False, simulated=simulated, revert_reason=reason, simulator_name=SIMULATOR_NAME
+    )

@@ -25,7 +25,10 @@ def _env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("KEEPERHUB_API_KEY", "kh_test")
     monkeypatch.setenv("KEEPERHUB_BASE_URL", BASE)
     monkeypatch.delenv("KEEPERHUB_WALLET_ADDRESS", raising=False)
-    monkeypatch.setenv("ALMANAK_GATEWAY_WALLETS", json.dumps({"base": {"kind": "keeperhub"}, "arbitrum": {"kind": "keeperhub"}}))
+    monkeypatch.setenv(
+        "ALMANAK_GATEWAY_WALLETS",
+        json.dumps({"base": {"kind": "keeperhub"}, "arbitrum": {"kind": "keeperhub"}}),
+    )
 
 
 def test_registry_is_discoverable_through_almanaks_entry_point_group() -> None:
@@ -35,7 +38,9 @@ def test_registry_is_discoverable_through_almanaks_entry_point_group() -> None:
 
 @respx.mock
 def test_registry_resolves_every_configured_chain_to_the_org_wallet() -> None:
-    route = respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET}))
+    route = respx.get(f"{BASE}/api/user").mock(
+        return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET})
+    )
 
     registry = KeeperHubWalletRegistry.from_env(default_chains=None)
 
@@ -62,7 +67,9 @@ def test_registry_accepts_wallet_address_from_env_without_network(monkeypatch: p
 
 def test_registry_ignores_chains_of_other_kinds(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("KEEPERHUB_WALLET_ADDRESS", ORG_WALLET)
-    monkeypatch.setenv("ALMANAK_GATEWAY_WALLETS", json.dumps({"base": {"kind": "keeperhub"}, "ethereum": {"kind": "zodiac"}}))
+    monkeypatch.setenv(
+        "ALMANAK_GATEWAY_WALLETS", json.dumps({"base": {"kind": "keeperhub"}, "ethereum": {"kind": "zodiac"}})
+    )
     registry = KeeperHubWalletRegistry.from_env(default_chains=None)
     assert registry.all_chains() == ["base"]
 

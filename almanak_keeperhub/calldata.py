@@ -92,7 +92,13 @@ class SelectorIndex:
                 document = json.loads(path.read_text())
             except (OSError, ValueError):
                 continue
-            abi = document if isinstance(document, list) else document.get("abi") if isinstance(document, dict) else None
+            abi = (
+                document
+                if isinstance(document, list)
+                else document.get("abi")
+                if isinstance(document, dict)
+                else None
+            )
             if isinstance(abi, list):
                 self.add_abi(abi)
 
@@ -149,7 +155,7 @@ def _canonical_type(entry: dict[str, Any]) -> str:
     typ = str(entry["type"])
     if typ.startswith("tuple"):
         inner = ",".join(_canonical_type(c) for c in entry.get("components", []))
-        return f"({inner}){typ[len('tuple'):]}"
+        return f"({inner}){typ[len('tuple') :]}"
     return typ
 
 

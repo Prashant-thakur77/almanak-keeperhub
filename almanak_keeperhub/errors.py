@@ -35,7 +35,9 @@ class KeeperHubAuthError(KeeperHubAPIError):
 
 
 class KeeperHubRateLimited(KeeperHubAPIError):
-    def __init__(self, message: str, *, status: int, payload: dict[str, Any] | None, retry_after_seconds: int) -> None:
+    def __init__(
+        self, message: str, *, status: int, payload: dict[str, Any] | None, retry_after_seconds: int
+    ) -> None:
         super().__init__(message, status=status, payload=payload)
         self.retry_after_seconds = retry_after_seconds
 

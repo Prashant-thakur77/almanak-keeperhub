@@ -52,7 +52,9 @@ def client() -> KeeperHubClient:
 @respx.mock
 async def test_wallet_address_comes_from_user_endpoint_and_is_cached(client: KeeperHubClient) -> None:
     route = respx.get(f"{BASE}/api/user").mock(
-        return_value=httpx.Response(200, json={"id": "u1", "walletAddress": "0x0bdf000000000000000000000000000000000001"})
+        return_value=httpx.Response(
+            200, json={"id": "u1", "walletAddress": "0x0bdf000000000000000000000000000000000001"}
+        )
     )
 
     first = await client.wallet_address()
@@ -161,7 +163,9 @@ async def test_simulate_surfaces_machine_readable_code(client: KeeperHubClient) 
 @respx.mock
 async def test_simulate_infrastructure_failure_raises(client: KeeperHubClient) -> None:
     respx.post(f"{BASE}/api/execute/contract-call").mock(
-        return_value=httpx.Response(503, json={"success": False, "failureKind": "unavailable", "wouldRevert": False})
+        return_value=httpx.Response(
+            503, json={"success": False, "failureKind": "unavailable", "wouldRevert": False}
+        )
     )
     with pytest.raises(KeeperHubUnavailable):
         await client.simulate_contract_call(_call())
@@ -199,7 +203,12 @@ async def test_execute_marks_replayed_response(client: KeeperHubClient) -> None:
     respx.post(f"{BASE}/api/execute/contract-call").mock(
         return_value=httpx.Response(
             202,
-            json={"executionId": "orig", "status": "completed", "transactionHash": "0xabc", "idempotentReplay": True},
+            json={
+                "executionId": "orig",
+                "status": "completed",
+                "transactionHash": "0xabc",
+                "idempotentReplay": True,
+            },
         )
     )
     envelope = await client.execute_contract_call(_call(), idempotency_key="work-1")
@@ -248,7 +257,8 @@ async def test_execute_conflict_raises_with_original_execution(client: KeeperHub
 async def test_execute_in_progress_raises_retryable(client: KeeperHubClient) -> None:
     respx.post(f"{BASE}/api/execute/contract-call").mock(
         return_value=httpx.Response(
-            409, json={"error": "already being processed", "code": "idempotency_in_progress", "retryable": True}
+            409,
+            json={"error": "already being processed", "code": "idempotency_in_progress", "retryable": True},
         )
     )
     with pytest.raises(KeeperHubIdempotencyInProgress) as excinfo:
@@ -332,8 +342,16 @@ async def test_execution_status_parses_receipts_and_poll_hint(client: KeeperHubC
 @respx.mock
 async def test_wait_for_terminal_polls_until_hint_is_zero(client: KeeperHubClient) -> None:
     responses = [
-        httpx.Response(200, headers={"X-Poll-Interval-Hint": "2"}, json={"executionId": "e", "status": "unconfirmed", "receipts": []}),
-        httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json={"executionId": "e", "status": "completed", "transactionHash": "0x1", "receipts": []}),
+        httpx.Response(
+            200,
+            headers={"X-Poll-Interval-Hint": "2"},
+            json={"executionId": "e", "status": "unconfirmed", "receipts": []},
+        ),
+        httpx.Response(
+            200,
+            headers={"X-Poll-Interval-Hint": "0"},
+            json={"executionId": "e", "status": "completed", "transactionHash": "0x1", "receipts": []},
+        ),
     ]
     respx.get(f"{BASE}/api/execute/e/status").mock(side_effect=responses)
     sleeps: list[float] = []
@@ -350,7 +368,11 @@ async def test_wait_for_terminal_polls_until_hint_is_zero(client: KeeperHubClien
 @respx.mock
 async def test_wait_for_terminal_times_out(client: KeeperHubClient) -> None:
     respx.get(f"{BASE}/api/execute/e/status").mock(
-        return_value=httpx.Response(200, headers={"X-Poll-Interval-Hint": "5"}, json={"executionId": "e", "status": "unconfirmed", "receipts": []})
+        return_value=httpx.Response(
+            200,
+            headers={"X-Poll-Interval-Hint": "5"},
+            json={"executionId": "e", "status": "unconfirmed", "receipts": []},
+        )
     )
     clock = iter([0.0, 10.0, 40.0])
 

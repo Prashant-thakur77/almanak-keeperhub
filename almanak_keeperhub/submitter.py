@@ -50,7 +50,9 @@ class KeeperHubSubmitter(Submitter):
     ) -> None:
         if receipt_fetcher is None:
             if not rpc_url:
-                raise ValueError("KeeperHubSubmitter needs an rpc_url (for receipt logs) or a receipt_fetcher")
+                raise ValueError(
+                    "KeeperHubSubmitter needs an rpc_url (for receipt logs) or a receipt_fetcher"
+                )
             receipt_fetcher = _web3_receipt_fetcher(rpc_url)
         self._client = client
         self._fetch_receipt = receipt_fetcher
@@ -65,12 +67,16 @@ class KeeperHubSubmitter(Submitter):
         results: list[SubmissionResult] = []
         for index, signed in enumerate(txs):
             if not isinstance(signed, KeeperHubSignedTransaction) or signed.call is None:
-                raise SubmissionError("KeeperHubSubmitter only accepts transactions prepared by KeeperHubSigner")
+                raise SubmissionError(
+                    "KeeperHubSubmitter only accepts transactions prepared by KeeperHubSigner"
+                )
             envelope = await self._broadcast(signed)
             if envelope.transaction_hash is None:
                 # Refused before broadcast: cap, guard, validation. Nothing reached the chain,
                 # and the transactions after this one depend on it, so stop here.
-                reason = envelope.error or f"KeeperHub execution {envelope.execution_id} ended '{envelope.status}'"
+                reason = (
+                    envelope.error or f"KeeperHub execution {envelope.execution_id} ended '{envelope.status}'"
+                )
                 logger.error("KeeperHub refused tx %d/%d: %s", index + 1, len(txs), reason)
                 results.append(SubmissionResult(tx_hash="", submitted=False, error=reason))
                 return results
@@ -115,7 +121,9 @@ class KeeperHubSubmitter(Submitter):
         attempts = 0
         while True:
             try:
-                return await self._client.execute_contract_call(signed.call, idempotency_key=signed.idempotency_key)
+                return await self._client.execute_contract_call(
+                    signed.call, idempotency_key=signed.idempotency_key
+                )
             except KeeperHubIdempotencyInProgress:
                 attempts += 1
                 if attempts > self._max_in_progress_retries:
@@ -136,16 +144,22 @@ class KeeperHubSubmitter(Submitter):
                     recoverable=False,
                 ) from exc
             except KeeperHubAuthError as exc:
-                raise SubmissionError(f"KeeperHub credential cannot broadcast: {exc}", recoverable=False) from exc
+                raise SubmissionError(
+                    f"KeeperHub credential cannot broadcast: {exc}", recoverable=False
+                ) from exc
             except KeeperHubAPIError as exc:
                 recoverable = exc.status >= 500
-                raise SubmissionError(f"KeeperHub refused the broadcast (HTTP {exc.status}): {exc}", recoverable=recoverable) from exc
+                raise SubmissionError(
+                    f"KeeperHub refused the broadcast (HTTP {exc.status}): {exc}", recoverable=recoverable
+                ) from exc
 
     async def _settle(self, tx_hash: str, timeout: float) -> ExecutionStatus:
         known = self.execution_for(tx_hash)
         if isinstance(known, ExecutionStatus) and known.terminal:
             return known
-        status = await self._client.wait_for_terminal(known.execution_id, timeout_seconds=timeout, sleep=self._sleep)
+        status = await self._client.wait_for_terminal(
+            known.execution_id, timeout_seconds=timeout, sleep=self._sleep
+        )
         self._executions[tx_hash.lower()] = status
         return status
 

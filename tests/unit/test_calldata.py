@@ -114,14 +114,24 @@ def test_tuple_arguments_become_nested_lists_with_abi_components() -> None:
     assert call.function_args[4] == "0x"
     first_input = call.abi[0]["inputs"][0]
     assert first_input["type"] == "tuple"
-    assert [c["type"] for c in first_input["components"]] == ["address", "address", "address", "address", "uint256"]
+    assert [c["type"] for c in first_input["components"]] == [
+        "address",
+        "address",
+        "address",
+        "address",
+        "uint256",
+    ]
 
 
 def test_index_loads_abi_json_files_from_a_directory(tmp_path: Path) -> None:
     abi = [
-        {"type": "function", "name": "swapExactTokensForTokens", "stateMutability": "nonpayable",
-         "inputs": [{"name": "amountIn", "type": "uint256"}, {"name": "amountOutMin", "type": "uint256"}],
-         "outputs": []},
+        {
+            "type": "function",
+            "name": "swapExactTokensForTokens",
+            "stateMutability": "nonpayable",
+            "inputs": [{"name": "amountIn", "type": "uint256"}, {"name": "amountOutMin", "type": "uint256"}],
+            "outputs": [],
+        },
         {"type": "event", "name": "Swap", "inputs": []},
     ]
     (tmp_path / "router.json").write_text(json.dumps(abi))
