@@ -44,17 +44,22 @@ def _encode_call(state: State, body: dict[str, Any]) -> tuple[str, bytes, int]:
     contract = state.web3.eth.contract(address=Web3.to_checksum_address(body["contractAddress"]), abi=abi)
     args = json.loads(body.get("functionArgs") or "[]")
     fn = contract.get_function_by_name(body["functionName"])
-    typed_args = [_coerce(a, i["type"]) for a, i in zip(args, fn.abi["inputs"], strict=True)]
+    typed_args = [_coerce(a, spec) for a, spec in zip(args, fn.abi["inputs"], strict=True)]
     data = contract.encode_abi(body["functionName"], args=typed_args)
     value_wei = int(Web3.to_wei(body["value"], "ether")) if body.get("value") else 0
     return body["contractAddress"], bytes.fromhex(data[2:]), value_wei
 
 
-def _coerce(value: Any, typ: str) -> Any:
+def _coerce(value: Any, spec: dict[str, Any]) -> Any:
+    """Mirror KeeperHub's coerceArgsForAbi: tuples arrive as objects keyed by component name."""
+    typ = str(spec["type"])
     if typ.endswith("]"):
-        return [_coerce(v, typ[: typ.rindex("[")]) for v in value]
-    if typ.startswith("tuple"):
-        return tuple(value)
+        return [_coerce(v, {**spec, "type": typ[: typ.rindex("[")]}) for v in value]
+    if typ == "tuple":
+        components = spec.get("components", [])
+        if isinstance(value, dict):
+            return tuple(_coerce(value[c["name"]], c) for c in components)
+        return tuple(_coerce(v, c) for v, c in zip(value, components, strict=True))
     if typ.startswith(("uint", "int")):
         return int(value)
     if typ.startswith("bytes") and isinstance(value, str):

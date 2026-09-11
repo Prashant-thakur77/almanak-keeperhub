@@ -56,7 +56,15 @@ rm -f "$ROOT/demos/metamorpho_base_yield/almanak_state.db"*
 echo "== unmodified almanak demo strategy, executed through the backend"
 ( cd "$ROOT/demos/metamorpho_base_yield" && almanak-keeperhub run --once --fresh 2>&1 | grep -E "KeeperHub simulate|KeeperHub execution|Status:|Gas estimate tx" )
 
+echo "== almanak's agent CLI (ax): dry-run swap, then a real 1 USDC swap through the backend"
+( cd "$ROOT" && almanak-keeperhub ax --chain base swap USDC WETH 1 --dry-run 2>&1 | grep -E "Simulation:|amount_out" )
+( cd "$ROOT" && almanak-keeperhub ax --chain base swap USDC WETH 1 --yes 2>&1 | grep -E "Swap:|broadcast tx|executions this run|^  [a-z]+ ->" )
+
+echo "== benchmark (small): refusals, dry runs, broadcasts, replay"
+( cd "$ROOT" && python scripts/benchmark.py --refusals 3 --simulations 3 --executions 2 | grep -E "^\|" && rm -f docs/benchmark.md docs/benchmark.json )
+
 SHARES=$(cast call "$VAULT" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
 LEFT=$(cast call "$USDC" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
-echo "== vault shares: $SHARES, USDC left: $LEFT (expected 195000000 after the 5 USDC deposit)"
-[ "$SHARES" != "0" ] && [ "$LEFT" = "195000000" ] && echo "REHEARSAL OK" || { echo "REHEARSAL FAILED"; exit 1; }
+WETH=$(cast call 0x4200000000000000000000000000000000000006 "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
+echo "== vault shares: $SHARES, USDC left: $LEFT (expected 194000000: 5 USDC deposited, 1 USDC swapped), WETH: $WETH"
+[ "$SHARES" != "0" ] && [ "$LEFT" = "194000000" ] && [ "$WETH" != "0" ] && echo "REHEARSAL OK" || { echo "REHEARSAL FAILED"; exit 1; }

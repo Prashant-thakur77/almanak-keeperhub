@@ -98,7 +98,7 @@ def test_bytes_bools_and_arrays_are_json_friendly() -> None:
     assert json.dumps(call.function_args)
 
 
-def test_tuple_arguments_become_nested_lists_with_abi_components() -> None:
+def test_tuple_arguments_become_objects_keyed_by_component_name() -> None:
     signature = "supply((address,address,address,address,uint256),uint256,uint256,address,bytes)"
     index = SelectorIndex.from_signatures([signature])
     market = (USDC, VAULT, OWNER, OWNER, 860000000000000000)
@@ -110,16 +110,55 @@ def test_tuple_arguments_become_nested_lists_with_abi_components() -> None:
 
     call = decode_calldata(data, to=VAULT, value_wei=0, index=index)
 
-    assert call.function_args[0] == [USDC, VAULT, OWNER, OWNER, "860000000000000000"]
-    assert call.function_args[4] == "0x"
+    # KeeperHub's reshapeArgsForAbi/coerceTuple want a tuple as an object keyed by component
+    # name (a nested array at the top level would be consumed as flat args). The names must
+    # match the ABI entry we send alongside.
     first_input = call.abi[0]["inputs"][0]
     assert first_input["type"] == "tuple"
-    assert [c["type"] for c in first_input["components"]] == [
-        "address",
-        "address",
-        "address",
-        "address",
-        "uint256",
+    assert [c["type"] for c in first_input["components"]] == ["address", "address", "address", "address", "uint256"]
+    names = [c["name"] for c in first_input["components"]]
+    assert all(names)
+    assert call.function_args[0] == dict(zip(names, [USDC, VAULT, OWNER, OWNER, "860000000000000000"], strict=True))
+    assert call.function_args[4] == "0x"
+
+
+def test_named_abi_tuple_uses_the_abi_component_names(tmp_path: Path) -> None:
+    abi = [
+        {
+            "type": "function",
+            "name": "supply",
+            "stateMutability": "nonpayable",
+            "inputs": [
+                {
+                    "name": "marketParams",
+                    "type": "tuple",
+                    "components": [{"name": "loanToken", "type": "address"}, {"name": "lltv", "type": "uint256"}],
+                },
+                {"name": "assets", "type": "uint256"},
+            ],
+            "outputs": [],
+        }
+    ]
+    (tmp_path / "morpho.json").write_text(json.dumps(abi))
+    index = SelectorIndex.from_abi_directory(tmp_path)
+    data = _calldata("supply((address,uint256),uint256)", ["(address,uint256)", "uint256"], [(USDC, 5), 7])
+
+    call = decode_calldata(data, to=VAULT, value_wei=0, index=index)
+
+    assert call.function_args == [{"loanToken": USDC, "lltv": "5"}, "7"]
+
+
+def test_arrays_of_tuples_are_lists_of_objects() -> None:
+    signature = "aggregate3((address,bool,bytes)[])"
+    index = SelectorIndex.from_signatures([signature])
+    data = _calldata(signature, ["(address,bool,bytes)[]"], [[(USDC, True, b"\x01"), (VAULT, False, b"")]])
+
+    call = decode_calldata(data, to=VAULT, value_wei=0, index=index)
+
+    components = call.abi[0]["inputs"][0]["components"]
+    keys = [c["name"] for c in components]
+    assert call.function_args == [
+        [dict(zip(keys, [USDC, True, "0x01"], strict=True)), dict(zip(keys, [VAULT, False, "0x"], strict=True))]
     ]
 
 

@@ -130,17 +130,18 @@ def decode_calldata(data: str, *, to: str, value_wei: int, index: SelectorIndex 
     # rather than silently dropped from what KeeperHub simulates and sends.
     if abi_encode(sig.types, list(values)) != raw[4:]:
         raise UndecodableCalldata(selector=f"{selector} (trailing or malformed argument bytes)", to=to)
+    inputs = [_named_input(entry, f"arg{i}") for i, entry in enumerate(sig.inputs)]
     entry = {
         "type": "function",
         "name": sig.name,
-        "inputs": sig.inputs,
+        "inputs": inputs,
         "outputs": [],
         "stateMutability": "payable" if value_wei > 0 else "nonpayable",
     }
     return DecodedCall(
         function_name=sig.name,
         signature=sig.signature,
-        function_args=[_json_value(value, t) for value, t in zip(values, sig.types, strict=True)],
+        function_args=[_json_value(value, spec) for value, spec in zip(values, inputs, strict=True)],
         abi=[entry],
     )
 
@@ -205,13 +206,37 @@ def _matching_paren(text: str) -> int:
     raise ValueError(f"unbalanced tuple type: {text!r}")
 
 
-def _json_value(value: Any, typ: str) -> Any:
+def _named_input(entry: dict[str, Any], fallback: str) -> dict[str, Any]:
+    """Copy of an ABI input with every (nested) component named.
+
+    KeeperHub reshapes tuple arguments into objects keyed by component name, so the ABI we
+    send and the argument objects we render must agree on the names; empty names are filled.
+    """
+    named = dict(entry)
+    if not named.get("name"):
+        named["name"] = fallback
+    if str(named.get("type", "")).startswith("tuple"):
+        named["components"] = [
+            _named_input(component, f"c{i}") for i, component in enumerate(named.get("components", []))
+        ]
+    return named
+
+
+def _json_value(value: Any, spec: dict[str, Any]) -> Any:
+    """Render one decoded value the way KeeperHub's ``functionArgs`` accepts it.
+
+    Integers as decimal strings, bytes as hex, booleans as booleans, arrays as lists, and
+    tuples as objects keyed by component name (``reshapeArgsForAbi`` / ``coerceTuple`` in
+    KeeperHub's lib/abi/struct-args.ts; a nested array at the top level would be consumed
+    as flat arguments).
+    """
+    typ = str(spec["type"])
     if typ.endswith("]"):
-        base = typ[: typ.rindex("[")]
+        base = {**spec, "type": typ[: typ.rindex("[")]}
         return [_json_value(v, base) for v in value]
-    if typ.startswith("("):
-        inner = _split_top_level(typ[1 : _matching_paren(typ)])
-        return [_json_value(v, t) for v, t in zip(value, inner, strict=True)]
+    if typ == "tuple":
+        components = spec.get("components", [])
+        return {c["name"]: _json_value(v, c) for c, v in zip(components, value, strict=True)}
     if typ == "address":
         return to_checksum_address(value)
     if typ == "bool":

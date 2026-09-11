@@ -49,6 +49,14 @@ KeeperHub executions this run (2), recorded in .../demos/metamorpho_base_yield/k
 
 `--simulate-only` is the orchestrator-level dry run: Almanak compiles the exact bundle, KeeperHub simulates it, the signer prepares it, and the pipeline stops before submission. It runs against a throwaway state store, so it leaves no footprint on the strategy (Almanak strategies move their own state optimistically when they emit an intent).
 
+Almanak's own agent CLI runs through the same backend. `almanak ax` compiles an agent's decision (structured or natural language) into transactions and executes them through the gateway, so with the KeeperHub servicer installed the agent decides and KeeperHub executes:
+
+```bash
+almanak-keeperhub ax --chain base swap USDC WETH 1 --dry-run     # agent plans, KeeperHub simulates, nothing sent
+almanak-keeperhub ax --chain base swap USDC WETH 1 --yes         # Uniswap v3 exactInputSingle through KeeperHub
+almanak-keeperhub ax --chain base -n "swap 1 USDC to WETH"       # natural language; needs AGENT_LLM_API_KEY
+```
+
 The demo strategy in `demos/metamorpho_base_yield/` is Almanak's own packaged demo, copied unmodified from the `almanak` package (Apache-2.0). Only `config.json` differs: the deposit is 5 USDC instead of 50. Fund the KeeperHub organization wallet with at least 6 USDC and a little ETH on Base first.
 
 `almanak-keeperhub run` accepts every `almanak strat run` flag. It sets `ALMANAK_GATEWAY_WALLETS` for the strategy's chain, installs the KeeperHub gateway servicer, and hands over to Almanak's own `strat run`.
@@ -80,10 +88,25 @@ Files:
 | `almanak_keeperhub/simulator.py` | `Simulator`: KeeperHub dry run of the first transaction, compiler gas for dependent ones (same rule as Almanak's own simulator) |
 | `almanak_keeperhub/wallets.py` | Almanak `almanak.wallets` registry plugin resolving every chain to the KeeperHub org wallet |
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
-| `almanak_keeperhub/cli.py` | `almanak-keeperhub run` and `doctor` |
+| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax` and `doctor` |
 | `patches/` | The upstream proposal for Almanak (same change, without the subclass) |
 
 Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak intent id)`. Almanak assigns a fresh nonce on every attempt, so the nonce is deliberately not part of the key: a retry of the same intent reproduces it and KeeperHub replays the first execution. The intent id (the execution context's correlation id) separates two intents that compile to identical calldata within KeeperHub's 24-hour replay window. Set `ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT` for a deliberate repeat outside an orchestrated run.
+
+## KeeperHub surfaces used
+
+| Surface | Used | How |
+|---|---|---|
+| Direct execution REST | yes | `POST /api/execute/contract-call` with `simulate: true`, then with `Idempotency-Key`; `GET /api/execute/{id}/status` |
+| Audit trail | yes | every execution id, hash, verified flag and link recorded in `keeperhub-receipts.json`, printed at the end of each run, plus the Runs page in the app |
+| Agent-authored execution | partly | Almanak's `ax` agent (structured or natural language) decides; KeeperHub executes the compiled transactions |
+| MCP | no | Almanak's execution layer is Python inside a gRPC gateway; the REST surface is the right one there. The bounty adds a `data` input to the same endpoint the MCP tool wraps |
+| CLI (`kh`) | no | not needed by the integration |
+| x402 / MPP | no, deliberately | this executes a framework's own transactions; nothing here is sold per call |
+
+## What we got wrong first
+
+The first idempotency key included the nonce Almanak assigns to a transaction. An independent review showed Almanak assigns that nonce per attempt, so a genuine retry after a landed transaction would have produced a new key, which is the exact failure the README claims to prevent. The key is now the intent id plus the transaction fields (`almanak_keeperhub/signer.py`), and the duplicate demo proves it by changing the nonce on the retry. The same review found a truncated bundle could read as success and that a transport error rotated nothing but still halted the strategy; both fixed, all in `git log`.
 
 ## Failure modes, on purpose
 
@@ -101,6 +124,8 @@ Each script uses the same signer, simulator and submitter the gateway uses.
 
 `demos/metamorpho_base_yield/keeperhub-receipts.json` is written by the strategy run and `docs/receipts.json` by the failure-mode demos: execution ids, hashes, verified flags and explorer links from app.keeperhub.com.
 
+`scripts/benchmark.py` measures the backend the way judges compare it: impossible deposits refused before broadcast, valid dry runs, real approvals landed and verified, retry replayed instead of resent, p50 and p95 latency. It writes `docs/benchmark.md`.
+
 Mainnet proof links: **to be added after the first hosted run** (see "What still breaks").
 
 `docs/rehearsal-fork.md` is the log of the same pipeline on an Anvil fork of Base against a local stand-in for KeeperHub (`tests/e2e/fake_keeperhub.py`, which mirrors the documented API shapes). It proves the wiring; it is not execution through KeeperHub.
@@ -112,7 +137,7 @@ Mainnet proof links: **to be added after the first hosted run** (see "What still
 ## Tests
 
 ```bash
-pytest -q                      # 82 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 84 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, asserts the vault deposit landed
 ```
@@ -126,7 +151,7 @@ tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, ass
 - Two Almanak bugs needed workarounds inside `gateway.py` (see `docs/almanak-feedback.md`): the in-process gateway deadlocks for 30 s during `RegisterChains` when any wallet registry plugin is installed, and the strategy runner never enables the orchestrator's simulate phase on live networks. Both are contained and documented.
 - The idempotency key protects a retry of the same Almanak intent. A strategy that crashes before persisting its state and then decides again compiles a new intent, which is new work by construction; KeeperHub cannot tell those apart, and neither can this package.
 - Sponsored KeeperHub transactions show the relayer as sender on the explorer; the vault's `Deposit` event `owner` and the `receipts[].verified` flag identify the org wallet.
-- Tuple arguments are passed to KeeperHub as nested JSON arrays; tested against the decoder, not yet against the hosted app.
+- Tuple arguments are rendered as objects keyed by component name, the shape KeeperHub's own argument reshaping expects (read from its source); exercised by the Uniswap v3 swap in the rehearsal, not yet against the hosted app.
 - Almanak's GitHub repository is a one-way mirror of a private monorepo with no pull requests, so the upstream change is offered as a patch and a filed issue, not a merged PR.
 
 ## Feedback to KeeperHub and Almanak

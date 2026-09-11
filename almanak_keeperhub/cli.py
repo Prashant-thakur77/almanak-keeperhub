@@ -161,6 +161,49 @@ def _print_execution_summary(started_iso: str) -> None:
         click.echo(f"    tx {entry.get('tx_hash')}  {entry.get('transaction_link') or ''}")
 
 
+@main.command(context_settings={"ignore_unknown_options": True, "allow_extra_args": True})
+@click.option("--chain", "chain_name", default="base", show_default=True, help="Chain the org wallet executes on.")
+@click.argument("ax_args", nargs=-1, type=click.UNPROCESSED)
+def ax(chain_name: str, ax_args: tuple[str, ...]) -> None:
+    """Run Almanak's agent CLI (`almanak ax ...`) with KeeperHub as the executor.
+
+    Structured (`swap USDC WETH 1 --dry-run`) or natural language (`-n "swap 1 USDC to WETH on base"`,
+    needs AGENT_LLM_API_KEY). The agent decides; the compiled transactions are dry-run and
+    broadcast through KeeperHub exactly like a strategy tick.
+    """
+    api_key = os.environ.get("KEEPERHUB_API_KEY")
+    if not api_key:
+        raise click.ClickException("KEEPERHUB_API_KEY is not set (organization API key with mcp:write scope)")
+    os.environ.setdefault("ALMANAK_GATEWAY_WALLETS", json.dumps({chain_name: {"kind": KIND}}))
+    os.environ.setdefault("ALMANAK_KEEPERHUB_RECEIPTS", str(Path.cwd() / DEFAULT_FILENAME))
+    for var in ("ALMANAK_PRIVATE_KEY", "PRIVATE_KEY"):
+        if os.environ.pop(var, None):
+            click.echo(f"ignoring {var}: KeeperHub signs, no local key is used", err=True)
+    if not os.environ.get("KEEPERHUB_WALLET_ADDRESS"):
+        os.environ["KEEPERHUB_WALLET_ADDRESS"] = asyncio.run(_resolve_wallet(api_key))
+    wallet = os.environ["KEEPERHUB_WALLET_ADDRESS"]
+    os.environ["ALMANAK_WALLET_ADDRESS"] = wallet
+
+    from almanak_keeperhub.gateway import install
+
+    install()
+    click.echo(f"almanak-keeperhub {__version__}: ax on {chain_name} as {wallet} via KeeperHub")
+
+    from almanak.cli import almanak
+
+    started = datetime.now(UTC).isoformat()
+    exit_code = 0
+    try:
+        almanak.main(
+            args=["ax", "--wallet", wallet, "--chain", chain_name, *ax_args], prog_name="almanak", standalone_mode=True
+        )
+    except SystemExit as exc:
+        exit_code = _exit_code(exc.code)
+    finally:
+        _print_execution_summary(started)
+    sys.exit(exit_code)
+
+
 @main.command()
 @click.option("--chain", "chain_name", default="base", show_default=True)
 def doctor(chain_name: str) -> None:

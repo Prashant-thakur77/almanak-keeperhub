@@ -1,4 +1,4 @@
-From d3cc7a31620d8f992142c8f06fbf46a869ca7036 Mon Sep 17 00:00:00 2001
+From 9b089608ef6ff6ed87e889193bb6110ac7ee519e Mon Sep 17 00:00:00 2001
 From: Prashant-thakur77 <prashant101007@gmail.com>
 Date: Sat, 12 Sep 2026 02:12:36 +0530
 Subject: [PATCH] feat(execute): accept raw calldata on POST
@@ -10,22 +10,22 @@ and typed functionArgs, then take the existing read, simulate and write
 paths so every guard keeps reading a named function. A selector the ABI
 does not contain is a 400 on field data; no signature database is consulted.
 ---
- app/api/execute/_lib/raw-calldata.ts          | 116 +++++++
+ app/api/execute/_lib/raw-calldata.ts          | 123 +++++++
  app/api/execute/contract-call/route.ts        |  41 +++
  docs/api/direct-execution.md                  |  31 ++
  tests/unit/contract-call-raw-calldata.test.ts | 300 ++++++++++++++++++
- tests/unit/execute-raw-calldata.test.ts       | 157 +++++++++
- 5 files changed, 645 insertions(+)
+ tests/unit/execute-raw-calldata.test.ts       | 162 ++++++++++
+ 5 files changed, 657 insertions(+)
  create mode 100644 app/api/execute/_lib/raw-calldata.ts
  create mode 100644 tests/unit/contract-call-raw-calldata.test.ts
  create mode 100644 tests/unit/execute-raw-calldata.test.ts
 
 diff --git a/app/api/execute/_lib/raw-calldata.ts b/app/api/execute/_lib/raw-calldata.ts
 new file mode 100644
-index 000000000..812542a50
+index 000000000..f3d5b5026
 --- /dev/null
 +++ b/app/api/execute/_lib/raw-calldata.ts
-@@ -0,0 +1,116 @@
+@@ -0,0 +1,123 @@
 +import { ethers } from "ethers";
 +
 +/**
@@ -120,8 +120,8 @@ index 000000000..812542a50
 +
 +/**
 + * Render one decoded value the way `functionArgs` expects it: decimal strings
-+ * for integers, hex strings for bytes, nested arrays for arrays and tuples.
-+ * Mirrors what a caller would have typed by hand.
++ * for integers, hex strings for bytes, arrays for arrays, objects keyed by
++ * component name for tuples. Mirrors what a caller would have typed by hand.
 + */
 +function toJsonArg(value: unknown, input: ethers.ParamType): unknown {
 +  if (input.baseType === "array") {
@@ -130,9 +130,16 @@ index 000000000..812542a50
 +    return items.map((item) => toJsonArg(item, child));
 +  }
 +  if (input.baseType === "tuple") {
++    // reshapeArgsForAbi / coerceTuple (lib/abi/struct-args.ts) take a struct as an
++    // object keyed by component name; a nested array at the top level would be
++    // consumed as flat arguments. Unnamed components fall back to positional keys.
 +    const components = input.components ?? [];
 +    const items = Array.from(value as Iterable<unknown>);
-+    return components.map((component, i) => toJsonArg(items[i], component));
++    const struct: Record<string, unknown> = {};
++    for (const [i, component] of components.entries()) {
++      struct[component.name || `c${i}`] = toJsonArg(items[i], component);
++    }
++    return struct;
 +  }
 +  if (typeof value === "bigint") {
 +    return value.toString();
@@ -551,10 +558,10 @@ index 000000000..cd94d552b
 +});
 diff --git a/tests/unit/execute-raw-calldata.test.ts b/tests/unit/execute-raw-calldata.test.ts
 new file mode 100644
-index 000000000..df7aa7d94
+index 000000000..5e60f329e
 --- /dev/null
 +++ b/tests/unit/execute-raw-calldata.test.ts
-@@ -0,0 +1,157 @@
+@@ -0,0 +1,162 @@
 +/**
 + * Raw calldata on POST /api/execute/contract-call: `data` is decoded against
 + * the ABI into the typed call the route already executes. Nothing is guessed:
@@ -642,7 +649,7 @@ index 000000000..df7aa7d94
 +    });
 +  });
 +
-+  it("renders arrays, tuples, bytes and bools the way functionArgs accepts them", () => {
++  it("renders arrays, bytes, bools and name-keyed tuples the way functionArgs accepts them", () => {
 +    const abi = JSON.stringify([
 +      {
 +        type: "function",
@@ -679,7 +686,12 @@ index 000000000..df7aa7d94
 +    });
 +    expect(
 +      JSON.parse((result as { functionArgs: string }).functionArgs)
-+    ).toEqual([[OWNER, "860000000000000000"], ["1", "2"], "0x01ff", true]);
++    ).toEqual([
++      { loanToken: OWNER, lltv: "860000000000000000" },
++      ["1", "2"],
++      "0x01ff",
++      true,
++    ]);
 +  });
 +
 +  it("refuses a selector the ABI does not contain instead of guessing", () => {

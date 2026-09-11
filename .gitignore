@@ -13,3 +13,4 @@ demos/**/.almanak/
 demos/**/almanak_state.db*
 demos/**/*.log
 demos/**/.almanak_lock*
+/keeperhub-receipts.json
