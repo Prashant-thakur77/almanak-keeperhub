@@ -1,24 +1,24 @@
 # Pull request (open after the issue has the `accepted` label)
 
-Branch: `feat/raw-calldata-contract-call` in `/home/prashant/KeeperHub/keeperhub` (one commit `d3cc7a316`).
+Branch: `feat/raw-calldata-contract-call` in `/home/prashant/KeeperHub/keeperhub` (one commit, rebased on `staging` f8c8f18c7).
 Base: `staging`. Push to your fork, then open the PR against `KeeperHub/keeperhub:staging`.
 
 Title (the pr-title-check workflow enforces conventional commits and the issue link check needs the number):
 
-`feat: #<ISSUE> accept raw calldata on POST /api/execute/contract-call`
+`feat: #2426 accept raw calldata on POST /api/execute/contract-call`
 
 Before pushing, amend the commit title to the same string:
 
 ```bash
 cd /home/prashant/KeeperHub/keeperhub
-git commit --amend -m "feat: #<ISSUE> accept raw calldata on POST /api/execute/contract-call" --no-edit
+git commit --amend -m "feat: #2426 accept raw calldata on POST /api/execute/contract-call" --no-edit
 ```
 
 ## Body (follows .github/PULL_REQUEST_TEMPLATE.md)
 
 **Issue**
 
-Closes #<ISSUE>.
+Closes #2426.
 
 **What this changes**
 
