@@ -37,6 +37,18 @@ almanak-keeperhub run --once                    # 5 USDC into the Moonwell Flags
 
 Or run the whole sequence, failure modes included: `scripts/first_run.sh`.
 
+## Execution console
+
+`almanak-keeperhub console` serves a local page over the proof files and keeps it live while the terminal runs: every execution with KeeperHub's status and verified flag, every dry run (including `--simulate-only` ticks), the failure-mode verdicts, and the benchmark. Inspect asks KeeperHub for its verdict and decodes the receipt events to show who acted, even when the relayer paid the gas. Nothing on the page is typed in by hand; every row is read from a file the run wrote.
+
+![execution console](docs/img/console.png)
+
+```bash
+almanak-keeperhub console            # http://127.0.0.1:8642, opens a browser; --no-open for headless
+```
+
+Standard library only, no build step: one HTML file and one JSON endpoint. Open it beside the terminal for the demo.
+
 To show a judge who acted when KeeperHub's relayer paid the gas:
 
 ```bash
@@ -47,7 +59,7 @@ almanak-keeperhub verify 0x<tx hash or execution id>
 # event               : Deposit at 0xc125...: sender=<org> owner=<org> assets=5000000 shares=... -> actor is org wallet
 ```
 
-Every run ends with a proof summary and appends to `keeperhub-receipts.json` in the strategy directory:
+Every run ends with a proof summary and appends to `keeperhub-receipts.json` in the strategy directory (dry runs are recorded there too, so a simulate-only tick leaves a trace):
 
 ```
 KeeperHub executions this run (2), recorded in .../demos/metamorpho_base_yield/keeperhub-receipts.json:
@@ -98,7 +110,8 @@ Files:
 | `almanak_keeperhub/simulator.py` | `Simulator`: KeeperHub dry run of the first transaction, compiler gas for dependent ones (same rule as Almanak's own simulator) |
 | `almanak_keeperhub/wallets.py` | Almanak `almanak.wallets` registry plugin resolving every chain to the KeeperHub org wallet |
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
-| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify` and `doctor` |
+| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify`, `console` and `doctor` |
+| `almanak_keeperhub/console/` | The execution console: `server.py` (state over the proof files, verify endpoint) and `index.html` |
 | `almanak_keeperhub/verify.py` | Decodes Transfer, Approval, Deposit and Withdraw events to name the acting wallet |
 | `almanak_keeperhub/receipts.py` | Append-only record of every execution; also the resume table after a crash |
 | `patches/` | The upstream proposal for Almanak (same change, without the subclass) |
@@ -176,7 +189,7 @@ Mainnet proof links: **to be added after the first hosted run** (see "What still
 ## Tests
 
 ```bash
-pytest -q                      # 89 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 95 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, asserts the vault deposit landed
 ```

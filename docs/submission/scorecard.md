@@ -17,7 +17,7 @@ What I did not adopt, on purpose:
 
 - Marketplace listing and x402 or MPP payments (ChronicleAI, LIFELINE). This integration executes a framework's own transactions; selling them per call is not what Almanak users need. Listed honestly in the surfaces table.
 - Volume for its own sake (Meld). Each benchmark execution is a real approval and costs gas; the benchmark is sized so the numbers are meaningful without burning the wallet.
-- A browser extension or dashboard (Meld). Judges present a working build from a terminal in the finalist call; the CLI is the product.
+- A browser extension on KeeperHub's pages (Meld) or a hosted web app (ChronicleAI). Instead: `almanak-keeperhub console`, a local proof page that updates live beside the terminal, in the same proof-first style (status strip, audit timeline, verdict segments), with no build step and no hosting to break during the finalist call.
 
 Where the previous winners were stronger than this build, still:
 

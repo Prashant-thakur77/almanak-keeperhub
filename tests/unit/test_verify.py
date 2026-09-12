@@ -58,3 +58,24 @@ def test_events_from_other_actors_are_reported_as_such() -> None:
 
 def test_unknown_events_are_skipped() -> None:
     assert actor_evidence([{"address": USDC, "topics": ["0x" + "11" * 32], "data": "0x"}], ORG) == []
+
+
+def test_mint_and_burn_events_are_labelled_not_blamed() -> None:
+    zero = "0x" + "00" * 20
+    logs = [
+        {
+            "address": VAULT,
+            "topics": [topic("Transfer(address,address,uint256)"), addr_topic(zero), addr_topic(ORG)],
+            "data": "0x" + encode(["uint256"], [7]).hex(),
+        },
+        {
+            "address": VAULT,
+            "topics": [topic("Transfer(address,address,uint256)"), addr_topic(ORG), addr_topic(zero)],
+            "data": "0x" + encode(["uint256"], [7]).hex(),
+        },
+    ]
+
+    lines = actor_evidence(logs, ORG)
+
+    assert "mint to the org wallet" in lines[0]
+    assert "burn from the org wallet" in lines[1]

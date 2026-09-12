@@ -708,3 +708,27 @@ async def test_a_new_process_resumes_settlement_from_the_receipts_log(
 
     assert receipt.success is True
     assert second_process.execution_for(TX_HASH).execution_id == "e1"
+
+
+@respx.mock
+async def test_simulator_records_every_dry_run(
+    client: KeeperHubClient, tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from almanak_keeperhub.receipts import ReceiptLog
+
+    monkeypatch.setenv("ALMANAK_KEEPERHUB_RECEIPTS", str(tmp_path / "receipts.json"))
+    respx.post(EXEC_URL).mock(
+        side_effect=[
+            httpx.Response(200, json={"success": True, "wouldRevert": False, "gasEstimate": "55000"}),
+            httpx.Response(200, json={"success": False, "wouldRevert": True, "revertReason": "ERC20: balance"}),
+        ]
+    )
+    simulator = _simulator(client)
+
+    await simulator.simulate([approve_tx()], "base")
+    await simulator.simulate([deposit_tx()], "base")
+
+    entries = ReceiptLog(tmp_path / "receipts.json").entries_since("2000-01-01")
+    assert [e["type"] for e in entries] == ["simulation", "simulation"]
+    assert entries[0]["success"] is True and entries[0]["gas_estimate"] == 55000
+    assert entries[1]["would_revert"] is True and "balance" in entries[1]["error"]

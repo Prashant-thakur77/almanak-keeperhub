@@ -64,3 +64,17 @@ def test_find_by_hash_is_case_insensitive(tmp_path: Path) -> None:
     assert found is not None
     assert found["execution_id"] == "exec-9"
     assert log.find_by_hash("0x000") is None
+
+
+def test_simulations_are_recorded_separately_from_executions(tmp_path: Path) -> None:
+    log = ReceiptLog(tmp_path / "r.json")
+    log.record_simulation(
+        chain_id=8453, to="0xVault", function="deposit", success=False, would_revert=True, error="balance"
+    )
+    log.record("exec-1", chain_id=8453, function="approve", to="0xToken", tx_hash="0xabc", status="completed")
+
+    entries = json.loads((tmp_path / "r.json").read_text())
+    assert entries[0]["type"] == "simulation" and entries[0]["would_revert"] is True
+    assert "execution_id" not in entries[0]
+    assert [e["execution_id"] for e in log.entries_since("2000-01-01") if e.get("type") != "simulation"] == ["exec-1"]
+    assert log.find_by_hash("0xabc")["execution_id"] == "exec-1"

@@ -16,6 +16,7 @@ from almanak.framework.execution.interfaces import SimulationResult, Simulator, 
 from almanak_keeperhub.calldata import SelectorIndex, decode_calldata
 from almanak_keeperhub.client import ContractCall, KeeperHubClient
 from almanak_keeperhub.errors import KeeperHubAPIError, UndecodableCalldata
+from almanak_keeperhub.receipts import ReceiptLog
 
 logger = logging.getLogger(__name__)
 SIMULATOR_NAME = "keeperhub"
@@ -72,8 +73,24 @@ class KeeperHubSimulator(Simulator):
                 reason = outcome.revert_reason or "simulation failed"
                 if outcome.code:
                     reason = f"{reason} [code={outcome.code}]"
+                ReceiptLog().record_simulation(
+                    chain_id=int(tx.chain_id),
+                    to=str(tx.to),
+                    function=decoded.function_name,
+                    success=False,
+                    would_revert=bool(outcome.would_revert),
+                    error=reason,
+                )
                 return _failure(reason, simulated=True)
             gas_estimates.append(outcome.gas_estimate or tx.gas_limit or FALLBACK_GAS)
+            ReceiptLog().record_simulation(
+                chain_id=int(tx.chain_id),
+                to=str(tx.to),
+                function=decoded.function_name,
+                success=True,
+                would_revert=False,
+                gas_estimate=outcome.gas_estimate,
+            )
             logger.info(
                 "KeeperHub simulate ok: %s.%s gas=%s from=%s",
                 tx.to,

@@ -19,127 +19,21 @@
   },
   {
     "kind": "duplicate_blocked",
-    "idempotency_key": "2b019a4228028a4e78089e4c9c32a1b4cbb944011cbc564e9d9c36c2429911a8",
-    "execution_id": "18ac768c3ca248679a6fd",
-    "tx_hash": "0x8cb57f31f4a711889e24b36d63ca0e27e59beaa08cc2d525025a8cdcc59f1384",
+    "idempotency_key": "de57838e7df7653d7994c0f487166d81ca976308424986f4bdeed758fc454b38",
+    "execution_id": "0f76ab11c4584d4bbe75d",
+    "tx_hash": "0x35c13fc32bd7997a9701f8010304856aeef2010294938638688d5457ce60bc29",
     "second_attempt_replayed": true
   },
   {
     "kind": "rpc_outage",
-    "execution_id": "1057553b1ece4052a9ea6",
-    "tx_hash": "0x9269bc87651d137080eb98c556ae52299f1f6046adc5a59207a8c13073eb7674",
+    "execution_id": "7405aee75a244e2eb6455",
+    "tx_hash": "0xef7f18a87f9d284c93b17b40f93dc2461f72e6a20b8b3c10078cf2c5b01a305d",
     "keeperhub_status": "completed"
-  },
-  {
-    "kind": "rpc_outage",
-    "execution_id": "069686e8f4234fe695bae",
-    "tx_hash": "0x25dddeff9a67254516194a2b853d424600ab3e3fc9ab15f196944b72fad8ca37",
-    "keeperhub_status": "completed"
-  },
-  {
-    "kind": "unknown_selector_refused",
-    "selector": "0xdeadbeef",
-    "broadcast": false
-  },
-  {
-    "kind": "dry_run_revert",
-    "to": "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca",
-    "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-    "revert_reason": "('execution reverted: ERC20: transfer amount exceeds allowance', '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002845524332303a207472616e7366657220616d6f756e74206578636565647320616c6c6f77616e6365000000000000000000000000000000000000000000000000')",
-    "broadcast": false
-  },
-  {
-    "kind": "cap_refused",
-    "amount_usdc": 150,
-    "error": "Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit",
-    "broadcast": false
-  },
-  {
-    "kind": "duplicate_blocked",
-    "idempotency_key": "e9837c468d4a3cb5c6c46c23c7c93a6d6167a1e46efd27b61190289dc054c23c",
-    "execution_id": "64575a558f8144d38f2f0",
-    "tx_hash": "0x2c6241ba97e87a46b335d7cb5b78139e35813ae95bb4fb9e9dafc4ee3ba6e23b",
-    "second_attempt_replayed": true
-  },
-  {
-    "kind": "unknown_selector_refused",
-    "selector": "0xdeadbeef",
-    "broadcast": false
-  },
-  {
-    "kind": "dry_run_revert",
-    "to": "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca",
-    "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-    "revert_reason": "('execution reverted: ERC20: transfer amount exceeds allowance', '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002845524332303a207472616e7366657220616d6f756e74206578636565647320616c6c6f77616e6365000000000000000000000000000000000000000000000000')",
-    "broadcast": false
-  },
-  {
-    "kind": "cap_refused",
-    "amount_usdc": 150,
-    "error": "Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit",
-    "broadcast": false
-  },
-  {
-    "kind": "duplicate_blocked",
-    "idempotency_key": "a3e52cba559554f8724594d9fa227e0c70f97e7ec0b491d1cd6ec6668ea5ce33",
-    "execution_id": "85d549fda5b64ef0a2934",
-    "tx_hash": "0xeca8f46ede644aba2d7629fe2c2c3eb7915c228569e28216ab9de198761af02f",
-    "second_attempt_replayed": true
-  },
-  {
-    "kind": "unknown_selector_refused",
-    "selector": "0xdeadbeef",
-    "broadcast": false
-  },
-  {
-    "kind": "dry_run_revert",
-    "to": "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca",
-    "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-    "revert_reason": "('execution reverted: ERC20: transfer amount exceeds allowance', '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002845524332303a207472616e7366657220616d6f756e74206578636565647320616c6c6f77616e6365000000000000000000000000000000000000000000000000')",
-    "broadcast": false
-  },
-  {
-    "kind": "cap_refused",
-    "amount_usdc": 150,
-    "error": "Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit",
-    "broadcast": false
-  },
-  {
-    "kind": "duplicate_blocked",
-    "idempotency_key": "cc346c2027e2cbf3d349515a624f0e415ce7cd3d81bde5127966202be38790de",
-    "execution_id": "f0668476bc844b68b7345",
-    "tx_hash": "0x70ab9edc5f91f39287e823c3e46b57ac1aa4b542622fbc1f476e3e474e796856",
-    "second_attempt_replayed": true
-  },
-  {
-    "kind": "unknown_selector_refused",
-    "selector": "0xdeadbeef",
-    "broadcast": false
-  },
-  {
-    "kind": "dry_run_revert",
-    "to": "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca",
-    "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-    "revert_reason": "('execution reverted: ERC20: transfer amount exceeds allowance', '0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002845524332303a207472616e7366657220616d6f756e74206578636565647320616c6c6f77616e6365000000000000000000000000000000000000000000000000')",
-    "broadcast": false
-  },
-  {
-    "kind": "cap_refused",
-    "amount_usdc": 150,
-    "error": "Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit",
-    "broadcast": false
-  },
-  {
-    "kind": "duplicate_blocked",
-    "idempotency_key": "501d2ce06aa22443f6a5c7ce4bba6f72abf8ffb0bd39845974308ccd5d2a25f3",
-    "execution_id": "5229979d238245179f296",
-    "tx_hash": "0x6e209c3dc50ee38366b4658aa66842e3c360b291b0ebd798295019626a978079",
-    "second_attempt_replayed": true
   },
   {
     "kind": "crash_and_resume",
-    "execution_id": "809aa4afa3e149b9b061b",
-    "tx_hash": "0x18c91989f2006f570a7f2b86b38fae73af8d5dcd3ffbbf8a5151d6fd93954eb3",
+    "execution_id": "45512b92cbbe406aa2b32",
+    "tx_hash": "0x662658fec16f0037629a0b742d87eee9876fb5fe4429374119a538ea16e5dde1",
     "resumed": true
   }
 ]

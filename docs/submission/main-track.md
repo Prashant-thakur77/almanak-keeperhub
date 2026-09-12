@@ -41,15 +41,15 @@ Email: prashant101007@gmail.com. X / Discord: <fill in>.
 
 ## Demo video script (2:30)
 
-- 0:00 Terminal in `demos/metamorpho_base_yield`. "This is Almanak's own packaged strategy. Nothing in it changed." Show `git diff --stat` against the almanak package copy: only `config.json`.
+- 0:00 Split screen: terminal left, `almanak-keeperhub console` right (empty state). Terminal in `demos/metamorpho_base_yield`. "This is Almanak's own packaged strategy. Nothing in it changed." Show `git diff --stat` against the almanak package copy: only `config.json`.
 - 0:15 `almanak-keeperhub doctor --chain base`: key, org wallet, chain enabled, 339 selectors.
-- 0:30 `almanak-keeperhub run --once --simulate-only`: the gateway log lines `Wallet registry plugin loaded: KeeperHubWalletRegistry`, `Using KeeperHubSigner`, `KeeperHub execution backend active`, then `KeeperHub simulate ok: ...approve gas=...` and `KeeperHub executions this run: none`. Say: "the exact compiled bundle, dry-run by KeeperHub, nothing touched the chain."
-- 0:55 `almanak-keeperhub run --once`: the same simulate line, then `KeeperHub execution <id> broadcast tx 0x... (completed)` per transaction, `Status: SUCCESS | Intent: VAULT_DEPOSIT`, and the proof summary with execution ids and links. Open one Basescan link and the KeeperHub Runs page side by side.
+- 0:30 `almanak-keeperhub run --once --simulate-only`: the gateway log lines `Wallet registry plugin loaded: KeeperHubWalletRegistry`, `Using KeeperHubSigner`, `KeeperHub execution backend active`, then `KeeperHub simulate ok: ...approve gas=...` and `KeeperHub executions this run: none`. The console's Dry runs table gains a row and Executions stays empty. Say: "the exact compiled bundle, dry-run by KeeperHub, nothing touched the chain."
+- 0:55 `almanak-keeperhub run --once`: the same simulate line, then `KeeperHub execution <id> broadcast tx 0x... (completed)` per transaction, `Status: SUCCESS | Intent: VAULT_DEPOSIT`, and the proof summary with execution ids and links. The console shows the two executions land; click Inspect on the deposit: KeeperHub's verdict, the relayer as sender, the Deposit event naming the org wallet.
 - 1:20 `almanak-keeperhub ax --chain base swap USDC WETH 1 --yes`: Almanak's own agent CLI decides the swap; the Uniswap v3 call goes through KeeperHub; show the proof summary line. (With an LLM key, use `-n "swap 1 USDC to WETH"` instead: the agent is probabilistic, the execution is not.)
 - 1:35 `python demos/failure_modes/revert_caught_by_dry_run.py`: `simulated=True success=False`, revert reason, zero broadcasts.
 - 1:50 `python demos/failure_modes/duplicate_blocked_by_idempotency.py`: attempt 2 prints the same execution id with `replay=True`; one transaction on chain. Say: "this is the nonce incident from Almanak's own repo, prevented."
 - 2:05 `python demos/failure_modes/crash_and_resume.py`: the child dies after broadcast; a fresh process settles the hash from the receipts log with no second broadcast. Then `almanak-keeperhub verify <hash>`: relayer as sender, Deposit event names the org wallet.
-- 2:20 `docs/benchmark.md` table, `pytest -q` (89 passed), the known-gaps section of the README.
+- 2:20 the console's Failure modes and Measured sections, `pytest -q` (95 passed), the known-gaps section of the README.
 
 ## Live pitch: eight hard questions
 

@@ -36,6 +36,7 @@ EVENTS: dict[str, tuple[str, list[str], list[str], list[str]]] = {
     ),
 }
 ACTOR_FIELDS = ("owner", "sender", "from")
+ZERO = "0x" + "00" * 20
 
 
 def _address(topic: Any) -> str:
@@ -67,7 +68,12 @@ def actor_evidence(logs: list[dict[str, Any]], org_wallet: str) -> list[str]:
             values = ()
         fields.update({label: str(v) for label, v in zip(data_names, values, strict=False)})
         actor = next((fields[f] for f in ACTOR_FIELDS if f in fields), None)
-        verdict = "org wallet" if actor == org else "not the org wallet"
+        if name == "Transfer" and fields.get("from") == ZERO:
+            verdict = "mint to the org wallet" if fields.get("to") == org else "mint, not the org wallet"
+        elif name == "Transfer" and fields.get("to") == ZERO:
+            verdict = "burn from the org wallet" if actor == org else "burn, not the org wallet"
+        else:
+            verdict = "org wallet" if actor == org else "not the org wallet"
         rendered = " ".join(f"{k}={v}" for k, v in fields.items())
         lines.append(f"{name} at {str(log.get('address', '')).lower()}: {rendered} -> actor is {verdict}")
     return lines

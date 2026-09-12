@@ -34,6 +34,12 @@ class ReceiptLog:
         entries.append({"execution_id": execution_id, "recorded_at": datetime.now(UTC).isoformat(), **fields})
         self._write(entries)
 
+    def record_simulation(self, **fields: Any) -> None:
+        """A dry run, kept next to the executions so a simulate-only tick leaves a trace."""
+        entries = self._read()
+        entries.append({"type": "simulation", "recorded_at": datetime.now(UTC).isoformat(), **fields})
+        self._write(entries)
+
     def update(self, execution_id: str, **fields: Any) -> None:
         entries = self._read()
         for entry in entries:

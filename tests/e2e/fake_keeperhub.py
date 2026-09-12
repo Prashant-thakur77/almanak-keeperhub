@@ -191,7 +191,9 @@ class Handler(BaseHTTPRequestHandler):
             gas = self.state.web3.eth.estimate_gas(tx)
             self.state.web3.eth.call(tx)
         except Exception as exc:  # noqa: BLE001
-            reason = str(exc)
+            # web3 wraps reverts with (message, data); KeeperHub returns the message alone
+            args = getattr(exc, "args", ())
+            reason = str(args[0]) if args and isinstance(args[0], str) else str(exc)
             self._send(
                 400,
                 {

@@ -145,8 +145,15 @@ def _exit_code(code: object) -> int:
 def _print_execution_summary(started_iso: str) -> None:
     """The proof, where the run ended: every KeeperHub execution this run produced."""
     log = ReceiptLog()
-    entries = log.entries_since(started_iso)
+    rows = log.entries_since(started_iso)
+    simulations = [r for r in rows if r.get("type") == "simulation"]
+    entries = [r for r in rows if r.get("type") != "simulation"]
     click.echo("")
+    if simulations:
+        refused = sum(1 for s in simulations if not s.get("success"))
+        click.echo(
+            f"KeeperHub dry runs this run: {len(simulations)} ({refused} would revert, refused before broadcast)"
+        )
     if not entries:
         click.echo("KeeperHub executions this run: none (dry run, simulate-only, or nothing to do)")
         return
@@ -273,6 +280,67 @@ async def _verify(reference: str, api_key: str, chain_name: str) -> int:
         return 0
     finally:
         await client.aclose()
+
+
+@main.command()
+@click.option("--receipts", default=None, help="Strategy receipts file (default: ./keeperhub-receipts.json).")
+@click.option(
+    "--docs", "docs_dir", default=None, help="Directory holding receipts.json and benchmark.json (default: ./docs)."
+)
+@click.option("--port", default=8642, show_default=True)
+@click.option("--chain", "chain_name", default="base", show_default=True)
+@click.option("--open/--no-open", "open_browser", default=True, help="Open the page in a browser.")
+def console(receipts: str | None, docs_dir: str | None, port: int, chain_name: str, open_browser: bool) -> None:
+    """Serve the execution console: executions, verdicts, failure modes and the benchmark, live.
+
+    Keep it open in a browser while `run`, `ax` or the demos execute in a terminal; it re-reads
+    the proof files every two seconds. Inspect asks KeeperHub and the chain for the evidence.
+    """
+    import webbrowser
+
+    from almanak_keeperhub.console.server import ConsoleServer
+
+    receipts_path = (
+        Path(receipts) if receipts else Path(os.environ.get("ALMANAK_KEEPERHUB_RECEIPTS") or DEFAULT_FILENAME)
+    )
+    docs = Path(docs_dir) if docs_dir else _find_docs_dir()
+    org_wallet = os.environ.get("KEEPERHUB_WALLET_ADDRESS", "")
+    api_key = os.environ.get("KEEPERHUB_API_KEY")
+    if not org_wallet and api_key:
+        try:
+            org_wallet = asyncio.run(_resolve_wallet(api_key))
+        except click.ClickException as exc:
+            click.echo(f"org wallet unknown ({exc.message}); Inspect will still try", err=True)
+    server = ConsoleServer(
+        receipts=receipts_path.resolve(),
+        demo_receipts=(docs / "receipts.json").resolve(),
+        benchmark=(docs / "benchmark.json").resolve(),
+        org_wallet=org_wallet,
+        base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL),
+        port=port,
+        chain_name=chain_name,
+    )
+    url = f"http://127.0.0.1:{server.port}/"
+    click.echo(f"execution console: {url}")
+    click.echo(f"  receipts  {server.receipts}")
+    click.echo(f"  demos     {server.demo_receipts}")
+    click.echo(f"  benchmark {server.benchmark}")
+    if open_browser:
+        webbrowser.open(url)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+
+
+def _find_docs_dir() -> Path:
+    """The repo's docs/ directory when run from inside the checkout, else ./docs."""
+    for candidate in (Path.cwd(), *Path.cwd().parents):
+        if (candidate / "docs" / "receipts.json").exists() or (candidate / "pyproject.toml").exists():
+            return candidate / "docs"
+    return Path.cwd() / "docs"
 
 
 @main.command()
