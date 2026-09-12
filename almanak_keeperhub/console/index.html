@@ -113,6 +113,12 @@
   </section>
 
   <section>
+    <h2>Keeper on KeeperHub</h2>
+    <p class="lede">A scheduled KeeperHub workflow generated from the strategy config: every tick it reads idle balance and, inside a bounded window, approves and deposits it into the same vault, with no Almanak process running. Almanak still decides entry, exit and anything larger.</p>
+    <div id="keeper"></div>
+  </section>
+
+  <section>
     <h2>Dry runs</h2>
     <p class="lede">Every KeeperHub simulation the backend asked for, including <code>--simulate-only</code> ticks. A refusal here is a transaction that never existed.</p>
     <div id="simulations"></div>
@@ -244,6 +250,33 @@
     </tr>`).join("")}</tbody></table></div>`;
   }
 
+  let keeperSignature = "";
+  async function keeper() {
+    try {
+      const r = await fetch("/api/keeper");
+      const k = await r.json();
+      const sig = JSON.stringify(k);
+      if (sig === keeperSignature) return;
+      keeperSignature = sig;
+      if (!k.deployed) { $("keeper").innerHTML = `<div class="empty">No keeper deployed. <code>almanak-keeperhub keeper deploy</code> creates it in KeeperHub (disabled), <code>keeper enable</code> switches it on.</div>`; return; }
+      const head = `<div class="card"><div class="row">
+        <span class="fn">compounder</span>
+        <span class="pill ${k.enabled ? "ok" : "muted"}">${k.enabled ? "enabled" : "disabled"}</span>
+        <span class="hash">workflow ${esc(k.workflow_id)}</span>
+        <span class="addr">cron ${esc(k.cron || "")} (UTC)</span>
+        <span class="addr">window ${esc(k.min)}..${esc(k.max)}</span>
+        <span class="when">${when(k.created_at)}</span>
+      </div>
+      ${k.validation ? `<div class="evidence"><div class="seg ${k.validation.valid ? "ok" : "bad"}">KeeperHub validation at deploy: valid=${k.validation.valid}, ${(k.validation.errors || []).length} errors, ${(k.validation.warnings || []).length} warnings</div></div>` : ""}
+      </div>`;
+      let runs = "";
+      if (k.error) runs = `<div class="seg bad">${esc(k.error)}</div>`;
+      else if (!k.executions.length) runs = `<div class="empty">No executions yet: the schedule has not fired, or the workflow is disabled.</div>`;
+      else runs = `<div class="table-wrap"><table><thead><tr><th>When</th><th>Execution</th><th>Status</th></tr></thead><tbody>${k.executions.slice(0, 10).map((x) => `<tr><td class="num">${when(x.createdAt || x.startedAt)}</td><td class="num">${esc(x.id)}</td><td><span class="pill ${/success|completed/.test(String(x.status)) ? "ok" : /fail|error/.test(String(x.status)) ? "bad" : "warn"}">${esc(x.status)}</span></td></tr>`).join("")}</tbody></table></div>`;
+      $("keeper").innerHTML = head + runs;
+    } catch (e) { $("keeper").innerHTML = `<div class="seg bad">${esc(String(e))}</div>`; }
+  }
+
   function failures(list) {
     if (!list.length) { $("failures").innerHTML = `<div class="empty">Run the scripts in <code>demos/failure_modes/</code>; each one records its verdict here.</div>`; return; }
     $("failures").innerHTML = list.map((f) => {
@@ -293,8 +326,9 @@
       $("live").classList.add("stale"); $("live-text").textContent = "console stopped";
     }
   }
-  poll();
+  poll(); keeper();
   setInterval(poll, 2000);
+  setInterval(keeper, 15000);
 })();
 </script>
 </body>

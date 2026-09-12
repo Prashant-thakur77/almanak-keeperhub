@@ -26,15 +26,29 @@ KIND = "keeperhub"
 @dataclass(frozen=True)
 class ResolvedKeeperHubWallet:
     chain: str
-    account_address: str
+    account_address: str  # the address whose balances Almanak reads and that is msg.sender on chain
     kind: str = KIND
     config: dict[str, Any] = field(default_factory=dict)
     private_key: str | None = None  # never set: KeeperHub's Turnkey enclave holds the key
+    signer_address: str | None = None  # the org EOA when the acting account is a Safe
+
+
+SAFE_ENV = "KEEPERHUB_SAFE_ADDRESS"
 
 
 class KeeperHubWalletRegistry:
-    def __init__(self, address: str, chains: list[str]) -> None:
+    """Every chain resolves to the KeeperHub organization wallet.
+
+    Almanak's production shape is one Safe per chain with Zodiac Roles. When the
+    organization has configured that Safe as its sender in KeeperHub
+    (docs/wallet-management/safe.md), set ``KEEPERHUB_SAFE_ADDRESS``: Almanak then
+    treats the Safe as the account (balances, ``from_address``, receipts) while
+    KeeperHub wraps each call through the Safe and signs with the org EOA.
+    """
+
+    def __init__(self, address: str, chains: list[str], safe_address: str | None = None) -> None:
         self._address = address
+        self._safe = safe_address
         self._chains = list(chains)
 
     @classmethod
@@ -44,7 +58,7 @@ class KeeperHubWalletRegistry:
         chains = [chain for chain, cfg in configured.items() if isinstance(cfg, dict) and cfg.get("kind") == KIND]
         if not chains and default_chains:
             chains = list(default_chains)
-        return cls(address=resolve_wallet_address(), chains=chains)
+        return cls(address=resolve_wallet_address(), chains=chains, safe_address=os.environ.get(SAFE_ENV) or None)
 
     def all_chains(self) -> list[str]:
         return list(self._chains)
@@ -52,6 +66,8 @@ class KeeperHubWalletRegistry:
     def resolve(self, chain: str) -> ResolvedKeeperHubWallet:
         if chain not in self._chains:
             raise KeyError(chain)
+        if self._safe:
+            return ResolvedKeeperHubWallet(chain=chain, account_address=self._safe, signer_address=self._address)
         return ResolvedKeeperHubWallet(chain=chain, account_address=self._address)
 
 

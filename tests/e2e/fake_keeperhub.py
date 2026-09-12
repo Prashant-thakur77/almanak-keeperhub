@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import secrets
 import threading
 import time
 import uuid
@@ -36,6 +37,7 @@ class State:
         self.chain_id = chain_id
         self.executions: dict[str, dict[str, Any]] = {}
         self.idempotency: dict[str, tuple[str, str]] = {}  # key -> (body digest, execution id)
+        self.workflows: dict[str, dict[str, Any]] = {}  # created through /api/workflows/create; never scheduled here
         self.lock = threading.Lock()
 
 
@@ -86,6 +88,54 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt: str, *args: Any) -> None:  # quieter
         print(f"[fake-keeperhub] {self.command} {self.path} {args[1] if len(args) > 1 else ''}")
 
+    def do_PATCH(self) -> None:  # noqa: N802
+        if not self._auth():
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        body = json.loads(self.rfile.read(length) or b"{}")
+        parts = self.path.strip("/").split("/")
+        if len(parts) == 3 and parts[:2] == ["api", "workflows"] and parts[2] in self.state.workflows:
+            workflow = self.state.workflows[parts[2]]
+            if "enabled" in body:
+                workflow["enabled"] = bool(body["enabled"])
+            self._send(200, workflow)
+            return
+        self._send(404, {"error": "not found"})
+
+    def _workflows_get(self) -> None:
+        parts = self.path.split("?")[0].strip("/").split("/")
+        if parts == ["api", "workflows"]:
+            self._send(200, {"workflows": list(self.state.workflows.values())})
+        elif len(parts) == 4 and parts[3] == "executions" and parts[2] in self.state.workflows:
+            self._send(200, {"executions": []})  # the stand-in has no scheduler; the hosted app fills this
+        elif len(parts) == 3 and parts[2] in self.state.workflows:
+            self._send(200, self.state.workflows[parts[2]])
+        else:
+            self._send(404, {"error": "not found"})
+
+    def _workflows_post(self, body: dict[str, Any]) -> None:
+        parts = self.path.strip("/").split("/")
+        if parts == ["api", "workflows", "create"]:
+            for key in ("name", "nodes", "edges"):
+                if key not in body:
+                    self._send(400, {"error": f"{key} is required"})
+                    return
+            workflow_id = secrets.token_hex(10)
+            for node in body["nodes"]:
+                node.setdefault("data", {}).setdefault("type", node.get("type"))  # the server's normalisation
+            self.state.workflows[workflow_id] = {**body, "id": workflow_id, "enabled": bool(body.get("enabled", False))}
+            self._send(201, self.state.workflows[workflow_id])
+        elif len(parts) == 4 and parts[3] == "validate" and parts[2] in self.state.workflows:
+            workflow = self.state.workflows[parts[2]]
+            errors = (
+                []
+                if workflow["nodes"] and workflow["nodes"][0].get("type") == "trigger"
+                else [{"code": "missing-trigger"}]
+            )
+            self._send(200, {"valid": not errors, "errors": errors, "warnings": []})
+        else:
+            self._send(404, {"error": "not found"})
+
     def _send(self, status: int, payload: Any, headers: dict[str, str] | None = None) -> None:
         raw = json.dumps(payload).encode()
         self.send_response(status)
@@ -119,6 +169,9 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/analytics/spend-cap":
             self._send(200, {"dailyCapWei": None, "effectiveDailyCapWei": str(2 * 10**16), "usedTodayWei": "0"})
             return
+        if self.path.startswith("/api/workflows"):
+            self._workflows_get()
+            return
         if self.path == "/api/chains":
             self._send(
                 200,
@@ -148,6 +201,9 @@ class Handler(BaseHTTPRequestHandler):
             return
         length = int(self.headers.get("Content-Length", "0"))
         body = json.loads(self.rfile.read(length) or b"{}")
+        if self.path.startswith("/api/workflows"):
+            self._workflows_post(body)
+            return
         if self.path != "/api/execute/contract-call":
             self._send(404, {"error": "not found"})
             return

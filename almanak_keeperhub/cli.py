@@ -343,6 +343,216 @@ def _find_docs_dir() -> Path:
     return Path.cwd() / "docs"
 
 
+@main.group()
+def keeper() -> None:
+    """The scheduled KeeperHub workflow that compounds idle balances between Almanak ticks.
+
+    Almanak decides entry and exit. This keeper runs on KeeperHub's own scheduler, with no
+    Almanak process required, and only moves balances inside a bounded window.
+    """
+
+
+def _keeper_client() -> KeeperHubClient:
+    api_key = os.environ.get("KEEPERHUB_API_KEY")
+    if not api_key:
+        raise click.ClickException("KEEPERHUB_API_KEY is not set")
+    return KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL))
+
+
+def _keeper_workflow(
+    working_dir: str,
+    vault: str | None,
+    token: str | None,
+    symbol: str | None,
+    min_amount: str,
+    max_amount: str,
+    cron: str,
+) -> dict:
+    from almanak_keeperhub.keeper import build_compounder_workflow, keeper_params_from_config
+
+    params: dict = {}
+    config_path = Path(working_dir) / "config.json"
+    if config_path.exists():
+        try:
+            params = keeper_params_from_config(config_path)
+        except ValueError as exc:
+            click.echo(f"config.json: {exc}", err=True)
+    vault = vault or params.get("vault")
+    token = token or params.get("token")
+    symbol = symbol or params.get("token_symbol") or "USDC"
+    chain_id = int(params.get("chain_id") or 8453)
+    if not vault or not token:
+        raise click.ClickException(
+            "need --vault and --token (or a strategy config.json with vault_address and deposit_token)"
+        )
+    wallet = os.environ.get("KEEPERHUB_WALLET_ADDRESS") or asyncio.run(
+        _resolve_wallet(os.environ.get("KEEPERHUB_API_KEY", ""))
+    )
+    return build_compounder_workflow(
+        vault=vault,
+        token=token,
+        token_symbol=symbol,
+        chain_id=chain_id,
+        wallet=wallet,
+        min_amount=min_amount,
+        max_amount=max_amount,
+        cron=cron,
+    )
+
+
+KEEPER_OPTIONS = [
+    click.option("--working-dir", "-d", default=".", help="Strategy directory with config.json (vault, token, chain)."),
+    click.option("--vault", default=None, help="ERC-4626 vault address (default: config.json vault_address)."),
+    click.option("--token", default=None, help="Token address (default: the strategy's deposit token)."),
+    click.option("--symbol", default=None, help="Token symbol (default: config.json deposit_token)."),
+    click.option(
+        "--min", "min_amount", default="1", show_default=True, help="Smallest idle balance to compound (human units)."
+    ),
+    click.option(
+        "--max",
+        "max_amount",
+        default="90",
+        show_default=True,
+        help="Largest balance the keeper may move; above it, Almanak decides.",
+    ),
+    click.option("--every", "cron", default="0 */6 * * *", show_default=True, help="Cron schedule (UTC)."),
+]
+
+
+def _with_keeper_options(fn):
+    for option in reversed(KEEPER_OPTIONS):
+        fn = option(fn)
+    return fn
+
+
+@keeper.command("show")
+@_with_keeper_options
+def keeper_show(
+    working_dir: str,
+    vault: str | None,
+    token: str | None,
+    symbol: str | None,
+    min_amount: str,
+    max_amount: str,
+    cron: str,
+) -> None:
+    """Print the workflow JSON that would be deployed."""
+    click.echo(json.dumps(_keeper_workflow(working_dir, vault, token, symbol, min_amount, max_amount, cron), indent=2))
+
+
+@keeper.command("deploy")
+@_with_keeper_options
+@click.option("--enable/--no-enable", default=False, help="Enable the workflow right after creating it.")
+def keeper_deploy(
+    working_dir: str,
+    vault: str | None,
+    token: str | None,
+    symbol: str | None,
+    min_amount: str,
+    max_amount: str,
+    cron: str,
+    enable: bool,
+) -> None:
+    """Create the compounder workflow in KeeperHub (disabled unless --enable) and remember its id."""
+    from almanak_keeperhub.keeper import deploy, set_enabled, state_path, validate_remote
+
+    workflow = _keeper_workflow(working_dir, vault, token, symbol, min_amount, max_amount, cron)
+
+    async def go() -> dict:
+        client = _keeper_client()
+        try:
+            created = await deploy(client, workflow)
+            workflow_id = str(
+                created.get("id") or created.get("workflowId") or created.get("workflow", {}).get("id", "")
+            )
+            if not workflow_id:
+                raise click.ClickException(f"KeeperHub returned no workflow id: {json.dumps(created)[:300]}")
+            verdict = await validate_remote(client, workflow_id)
+            if enable:
+                await set_enabled(client, workflow_id, True)
+            return {"workflow_id": workflow_id, "name": workflow["name"], "validation": verdict, "enabled": enable}
+        finally:
+            await client.aclose()
+
+    result = asyncio.run(go())
+    state = state_path(Path(working_dir))
+    state.write_text(
+        json.dumps(
+            {**result, "created_at": datetime.now(UTC).isoformat(), "cron": cron, "min": min_amount, "max": max_amount},
+            indent=2,
+        )
+        + "\n"
+    )
+    click.echo(
+        f"keeper workflow {result['workflow_id']} created ({'enabled' if enable else 'disabled'}); remembered in {state}"
+    )
+    validation = result.get("validation") or {}
+    click.echo(
+        f"KeeperHub validation: valid={validation.get('valid')} errors={len(validation.get('errors') or [])} warnings={len(validation.get('warnings') or [])}"
+    )
+    click.echo(f"open it: {os.environ.get('KEEPERHUB_BASE_URL', DEFAULT_BASE_URL)}/workflows/{result['workflow_id']}")
+
+
+@keeper.command("enable")
+@click.option("--working-dir", "-d", default=".")
+@click.option("--off", is_flag=True, default=False, help="Disable instead.")
+def keeper_enable(working_dir: str, off: bool) -> None:
+    """Enable (or disable) the remembered keeper workflow."""
+    from almanak_keeperhub.keeper import set_enabled, state_path
+
+    state = _read_keeper_state(Path(working_dir))
+
+    async def go() -> None:
+        client = _keeper_client()
+        try:
+            await set_enabled(client, state["workflow_id"], not off)
+        finally:
+            await client.aclose()
+
+    asyncio.run(go())
+    state["enabled"] = not off
+    state_path(Path(working_dir)).write_text(json.dumps(state, indent=2) + "\n")
+    click.echo(f"keeper workflow {state['workflow_id']} {'disabled' if off else 'enabled'}")
+
+
+@keeper.command("status")
+@click.option("--working-dir", "-d", default=".")
+def keeper_status(working_dir: str) -> None:
+    """Show the remembered keeper workflow and its latest KeeperHub executions."""
+    from almanak_keeperhub.keeper import executions
+
+    state = _read_keeper_state(Path(working_dir))
+
+    async def go() -> list[dict]:
+        client = _keeper_client()
+        try:
+            return await executions(client, state["workflow_id"])
+        finally:
+            await client.aclose()
+
+    rows = asyncio.run(go())
+    click.echo(
+        f"keeper workflow {state['workflow_id']}  enabled={state.get('enabled')}  cron={state.get('cron')}  window={state.get('min')}..{state.get('max')}"
+    )
+    if not rows:
+        click.echo("executions: none yet (the schedule has not fired, or the workflow is disabled)")
+        return
+    for row in rows[:20]:
+        click.echo(
+            f"  {row.get('createdAt') or row.get('startedAt') or ''}  {row.get('id')}  status={row.get('status')}"
+        )
+
+
+def _read_keeper_state(working_dir: Path) -> dict:
+    from almanak_keeperhub.keeper import state_path
+
+    path = state_path(working_dir)
+    try:
+        return json.loads(path.read_text())
+    except (OSError, ValueError) as exc:
+        raise click.ClickException(f"no keeper deployed yet ({path}); run `almanak-keeperhub keeper deploy`") from exc
+
+
 @main.command()
 @click.option("--chain", "chain_name", default="base", show_default=True)
 def doctor(chain_name: str) -> None:

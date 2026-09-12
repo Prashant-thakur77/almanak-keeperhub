@@ -33,7 +33,12 @@ if [ "${1:-}" != "--skip-real" ]; then
   step "4/7 real run: approve + deposit through KeeperHub"
   almanak-keeperhub run -d "$STRATEGY" --once --fresh 2>&1 | grep -E "KeeperHub simulate|broadcast tx|Status:|executions this run|^  [a-z]+ ->|^    tx" || true
   echo
-  echo "receipts: $STRATEGY/keeperhub-receipts.json (commit this file; it is the proof)"
+  step "4b/7 exit tick: the strategy leaves, the redeem goes through KeeperHub"
+  almanak-keeperhub run -d "$STRATEGY" --once -c "$STRATEGY/config.exit.json" 2>&1 | grep -E "EXIT:|KeeperHub simulate|broadcast tx|Status:|^  [a-z]+ ->" || true
+  step "4c/7 keeper: the scheduled compounder, created and enabled in KeeperHub"
+  ( cd "$STRATEGY" && almanak-keeperhub keeper deploy && almanak-keeperhub keeper enable && almanak-keeperhub keeper status ) || echo "!!! keeper deploy failed; see TOMORROW.md"
+  echo
+  echo "receipts: $STRATEGY/keeperhub-receipts.json and keeperhub-keeper.json (commit both; they are the proof)"
 fi
 
 step "5/7 failure modes (each script explains what it proves)"

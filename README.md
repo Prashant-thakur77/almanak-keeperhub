@@ -79,6 +79,37 @@ almanak-keeperhub ax --chain base swap USDC WETH 1 --yes         # Uniswap v3 ex
 almanak-keeperhub ax --chain base -n "swap 1 USDC to WETH"       # natural language; needs AGENT_LLM_API_KEY
 ```
 
+The whole position lifecycle runs through KeeperHub. `config.exit.json` raises the strategy's APY floor above any live rate, so the next tick decides to leave:
+
+```bash
+almanak-keeperhub run --once --fresh                        # approve + deposit
+almanak-keeperhub run --once -c config.exit.json            # EXIT: APY 4.2% < floor 50% -> redeem, back to idle
+```
+
+## The keeper: a scheduled KeeperHub workflow generated from the strategy
+
+Almanak decides entry and exit on its own tick. Between ticks, or when no Almanak process is running at all, a KeeperHub workflow keeps small idle balances working. `almanak-keeperhub keeper` generates it from the strategy's `config.json` (vault, token, chain), creates it in KeeperHub, validates it, and enables it on request:
+
+```bash
+almanak-keeperhub keeper show      # the workflow JSON: Schedule -> idle balance -> Condition -> approve -> vault deposit
+almanak-keeperhub keeper deploy    # POST /api/workflows/create, then /validate; created disabled
+almanak-keeperhub keeper enable    # PATCH enabled; KeeperHub's scheduler runs it from here
+almanak-keeperhub keeper status    # GET /api/workflows/{id}/executions
+```
+
+The keeper only moves balances inside a bounded window (1 to 90 USDC by default). Anything larger is left for the strategy to size, which keeps the two layers from fighting. It uses free-tier nodes only (the Code, HTTP and notification nodes need a Pro plan). The generated JSON passes KeeperHub's own `validateWorkflow` with `deepCheck`; the test that proves it lives in `tests/e2e/keeperhub-validator/` and runs inside a KeeperHub checkout.
+
+## Two policy layers, both refusing
+
+Almanak's agent policy refuses before anything is compiled; KeeperHub's caps refuse before anything is signed. Both are demonstrated:
+
+```bash
+almanak-keeperhub ax --chain base --max-trade-usd 0.5 swap USDC WETH 1 --yes
+# Policy denied 'swap_tokens': Estimated trade value $1.00 exceeds single-trade limit $0.5.  (no KeeperHub call)
+python demos/failure_modes/cap_refused.py
+# Stablecoin transfer of 150 USDC exceeds the 100.0 USD per-transaction limit          (KeeperHub, nothing signed)
+```
+
 The demo strategy in `demos/metamorpho_base_yield/` is Almanak's own packaged demo, copied unmodified from the `almanak` package (Apache-2.0). Only `config.json` differs: the deposit is 5 USDC instead of 50. Fund the KeeperHub organization wallet with at least 6 USDC and a little ETH on Base first.
 
 `almanak-keeperhub run` accepts every `almanak strat run` flag. It sets `ALMANAK_GATEWAY_WALLETS` for the strategy's chain, installs the KeeperHub gateway servicer, and hands over to Almanak's own `strat run`.
@@ -111,6 +142,7 @@ Files:
 | `almanak_keeperhub/wallets.py` | Almanak `almanak.wallets` registry plugin resolving every chain to the KeeperHub org wallet |
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
 | `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify`, `console` and `doctor` |
+| `almanak_keeperhub/keeper.py` | Generates, deploys, enables and reads the scheduled compounder workflow |
 | `almanak_keeperhub/console/` | The execution console: `server.py` (state over the proof files, verify endpoint) and `index.html` |
 | `almanak_keeperhub/verify.py` | Decodes Transfer, Approval, Deposit and Withdraw events to name the acting wallet |
 | `almanak_keeperhub/receipts.py` | Append-only record of every execution; also the resume table after a crash |
@@ -124,7 +156,8 @@ Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak inte
 |---|---|---|
 | Direct execution REST | yes | `POST /api/execute/contract-call` with `simulate: true`, then with `Idempotency-Key`; `GET /api/execute/{id}/status` |
 | Audit trail | yes | every execution id, hash, verified flag and link recorded in `keeperhub-receipts.json`, printed at the end of each run, plus the Runs page in the app |
-| Agent-authored execution | partly | Almanak's `ax` agent (structured or natural language) decides; KeeperHub executes the compiled transactions |
+| Agent-authored workflows | yes | `almanak-keeperhub keeper` generates a Schedule-triggered workflow from the strategy config and creates it through `POST /api/workflows/create`; KeeperHub's scheduler runs it with no Almanak process |
+| Agent-authored execution | yes | Almanak's `ax` agent (structured or natural language) decides; KeeperHub executes the compiled transactions |
 | MCP | no | Almanak's execution layer is Python inside a gRPC gateway; the REST surface is the right one there. The bounty adds a `data` input to the same endpoint the MCP tool wraps |
 | CLI (`kh`) | no | not needed by the integration |
 | x402 / MPP | no, deliberately | this executes a framework's own transactions; nothing here is sold per call |
@@ -189,7 +222,7 @@ Mainnet proof links: **to be added after the first hosted run** (see "What still
 ## Tests
 
 ```bash
-pytest -q                      # 95 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 102 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, asserts the vault deposit landed
 ```

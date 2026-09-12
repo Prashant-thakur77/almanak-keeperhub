@@ -201,3 +201,17 @@ async def test_simulate_only_env_turns_the_orchestrator_run_into_a_dry_run(monke
 
     assert seen[0].simulation_enabled is True
     assert seen[0].dry_run is True
+
+
+@respx.mock
+def test_safe_address_becomes_the_acting_wallet(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Almanak deploys one Safe per chain; KeeperHub executes through the org's configured Safe."""
+    safe = "0x5afe000000000000000000000000000000000001"
+    monkeypatch.setenv("KEEPERHUB_SAFE_ADDRESS", safe)
+    respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET}))
+
+    registry = KeeperHubWalletRegistry.from_env(default_chains=["base"])
+
+    resolved = registry.resolve("base")
+    assert resolved.account_address == safe
+    assert resolved.signer_address == ORG_WALLET  # the EOA that signs inside Turnkey for the Safe

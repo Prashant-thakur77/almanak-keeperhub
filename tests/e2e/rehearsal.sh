@@ -64,11 +64,21 @@ echo "== almanak's agent CLI (ax): dry-run swap, then a real 1 USDC swap through
 ( cd "$ROOT" && almanak-keeperhub ax --chain base swap USDC WETH 1 --dry-run 2>&1 | grep -E "Simulation:|amount_out" )
 ( cd "$ROOT" && almanak-keeperhub ax --chain base swap USDC WETH 1 --yes 2>&1 | grep -E "Swap:|broadcast tx|executions this run|^  [a-z]+ ->" )
 
+echo "== authority separation: Almanak's own policy refuses before KeeperHub is called"
+( cd "$ROOT" && almanak-keeperhub ax --chain base --max-trade-usd 0.5 swap USDC WETH 1 --yes 2>&1 | grep -E "Policy denied|executions this run" | head -2 ) || true  # the refusal is the point
+
+echo "== keeper: the scheduled compounder workflow, created in KeeperHub and enabled"
+( cd "$ROOT/demos/metamorpho_base_yield" && rm -f keeperhub-keeper.json && almanak-keeperhub keeper deploy && almanak-keeperhub keeper enable && almanak-keeperhub keeper status && rm -f keeperhub-keeper.json )
+
+echo "== exit tick: the strategy decides to leave (APY floor raised), redeem goes through KeeperHub"
+( cd "$ROOT/demos/metamorpho_base_yield" && almanak-keeperhub run --once -c config.exit.json 2>&1 | grep -E "EXIT:|KeeperHub simulate|broadcast tx|Status:|^  [a-z]+ ->" )
+
 echo "== benchmark (small): refusals, dry runs, broadcasts, replay"
 ( cd "$ROOT" && python scripts/benchmark.py --refusals 3 --simulations 3 --executions 2 | grep -E "^\|" && rm -f docs/benchmark.md docs/benchmark.json )
 
 SHARES=$(cast call "$VAULT" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
 LEFT=$(cast call "$USDC" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
 WETH=$(cast call 0x4200000000000000000000000000000000000006 "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
-echo "== vault shares: $SHARES, USDC left: $LEFT (expected 194000000: 5 USDC deposited, 1 USDC swapped), WETH: $WETH"
-[ "$SHARES" != "0" ] && [ "$LEFT" = "194000000" ] && [ "$WETH" != "0" ] && echo "REHEARSAL OK" || { echo "REHEARSAL FAILED"; exit 1; }
+echo "== vault shares: $SHARES (expected dust after the exit), USDC left: $LEFT (expected about 198999999: 1 USDC swapped, deposit redeemed), WETH: $WETH"
+# "redeem all" leaves rounding dust in the vault (share/asset conversion); dust is below 1e13 shares.
+[ "$SHARES" -lt 10000000000000 ] && [ "$LEFT" -ge 198990000 ] && [ "$LEFT" -le 199000000 ] && [ "$WETH" != "0" ] && echo "REHEARSAL OK" || { echo "REHEARSAL FAILED"; exit 1; }

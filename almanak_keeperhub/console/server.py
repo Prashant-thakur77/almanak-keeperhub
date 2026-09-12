@@ -166,6 +166,32 @@ async def verify_reference(reference: str, receipts: Path, chain_name: str) -> d
         await client.aclose()
 
 
+async def keeper_state(receipts: Path) -> dict[str, Any]:
+    """The remembered keeper workflow next to the receipts file, plus its live executions."""
+    from almanak_keeperhub.keeper import executions, state_path
+
+    path = state_path(receipts.parent)
+    try:
+        state = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return {"deployed": False, "path": str(path)}
+    result: dict[str, Any] = {"deployed": True, "path": str(path), **state, "executions": [], "error": None}
+    api_key = os.environ.get("KEEPERHUB_API_KEY")
+    if not api_key:
+        result["error"] = "KEEPERHUB_API_KEY is not set in the console's environment"
+        return result
+    from almanak_keeperhub.client import DEFAULT_BASE_URL, KeeperHubClient
+
+    client = KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL))
+    try:
+        result["executions"] = await executions(client, str(state.get("workflow_id", "")))
+    except Exception as exc:  # noqa: BLE001 - shown on the page
+        result["error"] = str(exc)
+    finally:
+        await client.aclose()
+    return result
+
+
 class _Handler(BaseHTTPRequestHandler):
     server: ConsoleServer
 
@@ -179,6 +205,12 @@ class _Handler(BaseHTTPRequestHandler):
             self._respond(HTTPStatus.OK, body, "text/html; charset=utf-8")
         elif url.path == "/api/state":
             self._json(HTTPStatus.OK, self.server.state())
+        elif url.path == "/api/keeper":
+            try:
+                payload = asyncio.run(keeper_state(self.server.receipts))
+            except Exception as exc:  # noqa: BLE001
+                payload = {"deployed": False, "error": str(exc)}
+            self._json(HTTPStatus.OK, payload)
         elif url.path == "/api/verify":
             reference = parse_qs(url.query).get("ref", [""])[0]
             if not reference:
