@@ -160,9 +160,10 @@ Files:
 | `almanak_keeperhub/simulator.py` | `Simulator`: KeeperHub dry run of the first transaction, compiler gas for dependent ones (same rule as Almanak's own simulator) |
 | `almanak_keeperhub/wallets.py` | Almanak `almanak.wallets` registry plugin resolving every chain to the KeeperHub org wallet |
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
-| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify`, `console` and `doctor` |
+| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify`, `console`, `keeper`, `bot` and `doctor` |
 | `almanak_keeperhub/keeper.py` | Generates, deploys, enables and reads the scheduled compounder workflow |
 | `almanak_keeperhub/notify.py` | Optional Telegram alerts on broadcast, settlement and refusals |
+| `almanak_keeperhub/bot.py` | The Telegram operator bot: status, executions, keeper, verify, simulate, tick, demos |
 | `almanak_keeperhub/testnet.py` | Registers `base_sepolia` as an Almanak chain, its tokens, and the vault connector on it |
 | `almanak_keeperhub/demo_targets.py` | Chain switch for the demos and the benchmark (`ALMANAK_KEEPERHUB_CHAIN`) |
 | `contracts/TestVault.sol` | Dependency-free ERC-4626 test vault for Base Sepolia |
@@ -184,6 +185,23 @@ Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak inte
 | MCP | no | Almanak's execution layer is Python inside a gRPC gateway; the REST surface is the right one there. The bounty adds a `data` input to the same endpoint the MCP tool wraps |
 | CLI (`kh`) | no | not needed by the integration |
 | x402 / MPP | no, deliberately | this executes a framework's own transactions; nothing here is sold per call |
+
+## Telegram operator bot (optional)
+
+`almanak-keeperhub bot -d demos/metamorpho_base_sepolia` runs a Telegram bot that answers only its owner's chat (the first chat that sends `/start` claims it, and the bot prints the chat id to put in `.env`). Read commands answer from the same proof files as the console; action commands run the CLI in a subprocess and post the summary:
+
+| Command | What it does |
+|---|---|
+| `/status` | org wallet, chain, execution and dry-run counts, keeper state |
+| `/executions [n]` | latest executions with status, verified and sponsored flags, explorer links |
+| `/dryruns` | latest KeeperHub dry runs and their verdicts |
+| `/keeper` | the scheduled compounder workflow and its KeeperHub executions |
+| `/verify <hash or execution id>` | KeeperHub's verdict, the on-chain sender, and the events naming the org wallet |
+| `/simulate` | one strategy tick dry-run through KeeperHub, nothing broadcast |
+| `/tick` then `/confirm` | one real strategy tick; the confirmation expires after 60 seconds |
+| `/demo revert\|cap\|duplicate\|crash\|selector\|rpc` | run a failure-mode demo and post its verdict |
+
+Long polling over the Bot API with no webhook and no public endpoint. Set `ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN` (from @BotFather); the alerts below use the same token.
 
 ## Operator alerts (Telegram, optional)
 
@@ -273,7 +291,7 @@ Findings reproduced against the hosted API in one command (`docs/api-notes-verif
 ## Tests
 
 ```bash
-pytest -q                      # 113 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 120 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
 tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end

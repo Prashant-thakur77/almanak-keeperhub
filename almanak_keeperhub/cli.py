@@ -558,6 +558,38 @@ def _read_keeper_state(working_dir: Path) -> dict:
 
 
 @main.command()
+@click.option("--working-dir", "-d", default=".", help="Strategy directory the bot operates (config.json, receipts).")
+@click.option("--chain", "chain_name", default=None, help="Chain name; defaults to config.json 'chain'.")
+def bot(working_dir: str, chain_name: str | None) -> None:
+    """Run the Telegram operator bot: proof and controls for this strategy from a phone.
+
+    Needs ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN. With no ALMANAK_KEEPERHUB_TELEGRAM_CHAT_ID the
+    first chat that sends /start becomes the owner; every other chat is refused.
+    """
+    from almanak_keeperhub.bot import bot_from_env
+
+    strategy = Path(working_dir).resolve()
+    chain = chain_name or _chain_from_config(strategy, None) or "base"
+    os.environ.setdefault("ALMANAK_KEEPERHUB_RECEIPTS", str(strategy / DEFAULT_FILENAME))
+    if not os.environ.get("KEEPERHUB_WALLET_ADDRESS") and os.environ.get("KEEPERHUB_API_KEY"):
+        try:
+            os.environ["KEEPERHUB_WALLET_ADDRESS"] = asyncio.run(_resolve_wallet(os.environ["KEEPERHUB_API_KEY"]))
+        except click.ClickException as exc:
+            click.echo(f"org wallet unknown ({exc.message})", err=True)
+    try:
+        operator = bot_from_env(strategy, chain)
+    except RuntimeError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(
+        f"operator bot: strategy={strategy} chain={chain} owner={operator.owner_chat_id or 'first /start claims it'}"
+    )
+    try:
+        asyncio.run(operator.run_forever())
+    except KeyboardInterrupt:
+        pass
+
+
+@main.command()
 @click.option("--chain", "chain_name", default="base", show_default=True)
 def doctor(chain_name: str) -> None:
     """Check the KeeperHub key, org wallet and balances, chain support and the calldata index."""
