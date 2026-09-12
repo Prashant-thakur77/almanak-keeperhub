@@ -54,7 +54,7 @@ ALMANAK_KEEPERHUB_CHAIN=base_sepolia python ../failure_modes/crash_and_resume.py
 
 `contracts/TestVault.sol` is a dependency-free 1:1 ERC-4626 over the test USDC, the stand-in for the Moonwell vault. The one-line difference in `demos/metamorpho_base_sepolia/strategy.py` is the declared chain list (see its README). What stays mainnet-only: the exit tick (the strategy reads a Morpho Blue rate that does not exist on Sepolia, and a missing rate holds rather than exits) and the `ax` swap (no swap venue on Sepolia). `tests/e2e/rehearsal.sh --testnet` runs the whole free path on a Base Sepolia fork.
 
-Cost of the free path: zero. Faucet ETH for the single vault deploy, faucet USDC from https://faucet.circle.com, and KeeperHub sponsors gas on Base Sepolia.
+Cost of the free path: zero. Faucet ETH for the single vault deploy, faucet USDC from https://faucet.circle.com, and KeeperHub sponsors gas on Base Sepolia. `scripts/track_a.sh` runs all of it: it generates a throwaway deployer key, waits for the two faucets, deploys the vault, and runs every step above plus the demos, the benchmark and the API-notes reproduction.
 
 ## Execution console
 
