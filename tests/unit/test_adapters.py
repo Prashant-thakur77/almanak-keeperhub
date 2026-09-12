@@ -682,3 +682,29 @@ async def test_simulator_reports_transport_failure_instead_of_raising(client: Ke
     result = await _simulator(client).simulate([deposit_tx()], "base")
     assert result.success is False
     assert result.simulated is False
+
+
+@respx.mock
+async def test_a_new_process_resumes_settlement_from_the_receipts_log(
+    client: KeeperHubClient, signer: KeeperHubSigner, tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Crash after broadcast: the next process knows only the hash Almanak persisted."""
+    monkeypatch.setenv("ALMANAK_KEEPERHUB_RECEIPTS", str(tmp_path / "receipts.json"))
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            202, json={"executionId": "e1", "status": "unconfirmed", "transactionHash": TX_HASH}
+        )
+    )
+    respx.get(f"{BASE}/api/execute/e1/status").mock(
+        return_value=httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=status_body("e1", "completed"))
+    )
+    first_process = _submitter(client, receipts={TX_HASH: rpc_receipt()})
+    signed = await signer.sign(approve_tx(), "base")
+    await first_process.submit([signed])
+    # crash here: nothing settled, only keeperhub-receipts.json and Almanak's session hold the hash
+
+    second_process = _submitter(client, receipts={TX_HASH: rpc_receipt()})
+    receipt = await second_process.get_receipt(TX_HASH, timeout=30)
+
+    assert receipt.success is True
+    assert second_process.execution_for(TX_HASH).execution_id == "e1"

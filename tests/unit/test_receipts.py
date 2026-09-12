@@ -53,3 +53,14 @@ def test_unreadable_file_does_not_break_recording(tmp_path: Path) -> None:
     log = ReceiptLog(path)
     log.record("exec-1", chain_id=1, function="f", to="0x", tx_hash="0x1", status="completed")
     assert json.loads(path.read_text())[0]["execution_id"] == "exec-1"
+
+
+def test_find_by_hash_is_case_insensitive(tmp_path: Path) -> None:
+    log = ReceiptLog(tmp_path / "r.json")
+    log.record("exec-9", chain_id=8453, function="deposit", to="0xVault", tx_hash="0xABCDEF", status="unconfirmed")
+
+    found = log.find_by_hash("0xabcdef")
+
+    assert found is not None
+    assert found["execution_id"] == "exec-9"
+    assert log.find_by_hash("0x000") is None

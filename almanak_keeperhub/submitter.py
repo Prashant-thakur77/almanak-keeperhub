@@ -155,10 +155,34 @@ class KeeperHubSubmitter(Submitter):
     # -- extras used by the gateway/CLI ---------------------------------------------
 
     def execution_for(self, tx_hash: str) -> ExecutionStatus | ExecutionEnvelope:
-        try:
-            return self._executions[tx_hash.lower()]
-        except KeyError as exc:
-            raise SubmissionError(f"no KeeperHub execution known for {tx_hash}", tx_hash=tx_hash) from exc
+        """The execution behind a hash: from memory, or from the receipts log after a restart.
+
+        Almanak persists the hash in its session store and asks for the receipt again when a
+        process resumes; the receipts log is what lets a fresh submitter answer without resending.
+        """
+        known = self._executions.get(tx_hash.lower())
+        if known is not None:
+            return known
+        recorded = self._receipts.find_by_hash(tx_hash)
+        if recorded is None:
+            raise SubmissionError(
+                f"no KeeperHub execution known for {tx_hash} (not in memory, not in {self._receipts.path})",
+                tx_hash=tx_hash,
+            )
+        logger.info(
+            "resuming KeeperHub execution %s for %s from %s", recorded["execution_id"], tx_hash, self._receipts.path
+        )
+        envelope = ExecutionEnvelope(
+            execution_id=str(recorded["execution_id"]),
+            status=str(recorded.get("status") or "unconfirmed"),
+            transaction_hash=tx_hash,
+            transaction_link=recorded.get("transaction_link"),
+            error=None,
+            idempotent_replay=bool(recorded.get("idempotent_replay", False)),
+            raw=dict(recorded),
+        )
+        self._executions[tx_hash.lower()] = envelope
+        return envelope
 
     # -- internals -------------------------------------------------------------------
 

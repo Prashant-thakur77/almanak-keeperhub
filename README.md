@@ -37,6 +37,16 @@ almanak-keeperhub run --once                    # 5 USDC into the Moonwell Flags
 
 Or run the whole sequence, failure modes included: `scripts/first_run.sh`.
 
+To show a judge who acted when KeeperHub's relayer paid the gas:
+
+```bash
+almanak-keeperhub verify 0x<tx hash or execution id>
+# KeeperHub execution : 2e3b...   status: completed  sponsored=True
+# receipt             : 0xee48... verified=True receiptStatus=success
+# on-chain sender     : 0x3b2e... = KeeperHub's relayer (sponsored gas), not the org wallet
+# event               : Deposit at 0xc125...: sender=<org> owner=<org> assets=5000000 shares=... -> actor is org wallet
+```
+
 Every run ends with a proof summary and appends to `keeperhub-receipts.json` in the strategy directory:
 
 ```
@@ -88,7 +98,9 @@ Files:
 | `almanak_keeperhub/simulator.py` | `Simulator`: KeeperHub dry run of the first transaction, compiler gas for dependent ones (same rule as Almanak's own simulator) |
 | `almanak_keeperhub/wallets.py` | Almanak `almanak.wallets` registry plugin resolving every chain to the KeeperHub org wallet |
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
-| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax` and `doctor` |
+| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify` and `doctor` |
+| `almanak_keeperhub/verify.py` | Decodes Transfer, Approval, Deposit and Withdraw events to name the acting wallet |
+| `almanak_keeperhub/receipts.py` | Append-only record of every execution; also the resume table after a crash |
 | `patches/` | The upstream proposal for Almanak (same change, without the subclass) |
 
 Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak intent id)`. Almanak assigns a fresh nonce on every attempt, so the nonce is deliberately not part of the key: a retry of the same intent reproduces it and KeeperHub replays the first execution. The intent id (the execution context's correlation id) separates two intents that compile to identical calldata within KeeperHub's 24-hour replay window. Set `ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT` for a deliberate repeat outside an orchestrated run.
@@ -103,6 +115,32 @@ Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak inte
 | MCP | no | Almanak's execution layer is Python inside a gRPC gateway; the REST surface is the right one there. The bounty adds a `data` input to the same endpoint the MCP tool wraps |
 | CLI (`kh`) | no | not needed by the integration |
 | x402 / MPP | no, deliberately | this executes a framework's own transactions; nothing here is sold per call |
+
+## Failure and recovery, from the logs
+
+Two things happened during the fork rehearsal that were not planned and are kept because they show the backend doing its job.
+
+The duplicate demo left a 0.01 USDC allowance to the vault. On the next strategy tick Almanak's compiler applied USDC's approve-zero-first rule, so the bundle became three transactions instead of two. The submitter sent them one at a time, waiting for each verified receipt before the next:
+
+```
+KeeperHub execution 62d4ae96... broadcast tx 0x481a6b66... (completed)   approve(vault, 0)
+KeeperHub execution 43f4d751... broadcast tx 0x272c0f2d... (completed)   approve(vault, 5000000)
+KeeperHub execution a761b41d... broadcast tx 0x41f6f46b... (completed)   deposit(5000000, org)
+Status: SUCCESS | Intent: VAULT_DEPOSIT | Gas used: 437819
+```
+
+The crash demo kills the process right after broadcast. The next process is handed only the hash:
+
+```
+child broadcast 0x18c91989... and exited with 0 before any receipt was read
+resumed execution 809aa4af... from .../keeperhub-receipts.json
+receipt status=1 block=51186612 gas_used=46199
+no second broadcast was needed: the hash was settled by a process that never sent it.
+```
+
+## Reproducible API notes
+
+`docs/keeperhub-feedback.md` lists what was learned building against the API. `scripts/verify_api_notes.py` reproduces each finding in one command with expected versus actual, and reports a finding as fixed when it no longer reproduces, so the notes cannot go stale.
 
 ## What we got wrong first
 
@@ -119,6 +157,7 @@ Each script uses the same signer, simulator and submitter the gateway uses.
 | `demos/failure_modes/cap_refused.py` | 150 USDC transfer: refused by KeeperHub's 100 USD per-transaction stablecoin cap, `submitted=False`, nothing signed |
 | `demos/failure_modes/rpc_outage.py` | Dead local RPC: the broadcast still lands through KeeperHub's RPC pool; only the local log fetch fails, and says so |
 | `demos/failure_modes/unknown_selector_refused.py` | Calldata with an unknown selector is refused at SIGNING, offline |
+| `demos/failure_modes/crash_and_resume.py` | A child process broadcasts and dies before settlement; a fresh process is handed only the hash (what Almanak's runner does on restart), resumes the KeeperHub execution from `keeperhub-receipts.json`, and settles it without a second broadcast |
 
 ## Proof
 
@@ -137,7 +176,7 @@ Mainnet proof links: **to be added after the first hosted run** (see "What still
 ## Tests
 
 ```bash
-pytest -q                      # 84 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 89 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, asserts the vault deposit landed
 ```

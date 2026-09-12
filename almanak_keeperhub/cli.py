@@ -205,6 +205,77 @@ def ax(chain_name: str, ax_args: tuple[str, ...]) -> None:
 
 
 @main.command()
+@click.argument("reference")
+@click.option("--chain", "chain_name", default="base", show_default=True)
+def verify(reference: str, chain_name: str) -> None:
+    """Show KeeperHub's verdict and the on-chain evidence for a transaction hash or execution id.
+
+    Sponsored transactions show KeeperHub's relayer as sender on the explorer; the events
+    still name the organization wallet. This prints both sides.
+    """
+    api_key = os.environ.get("KEEPERHUB_API_KEY")
+    if not api_key:
+        raise click.ClickException("KEEPERHUB_API_KEY is not set")
+    sys.exit(asyncio.run(_verify(reference, api_key, chain_name)))
+
+
+async def _verify(reference: str, api_key: str, chain_name: str) -> int:
+    from almanak_keeperhub.verify import actor_evidence
+
+    client = KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL))
+    try:
+        org_wallet = await client.wallet_address()
+        execution_id, tx_hash = reference, None
+        if reference.startswith("0x") and len(reference) == 66:
+            tx_hash = reference
+            entry = ReceiptLog().find_by_hash(reference)
+            if entry is None:
+                raise click.ClickException(f"{reference} is not in {ReceiptLog().path}; pass the execution id instead")
+            execution_id = str(entry["execution_id"])
+        status = await client.execution_status(execution_id)
+        tx_hash = tx_hash or status.transaction_hash
+        click.echo(f"KeeperHub execution : {status.execution_id}")
+        click.echo(f"status              : {status.status}  sponsored={status.sponsored}")
+        for r in status.receipts:
+            click.echo(f"receipt             : {r.hash} verified={r.verified} receiptStatus={r.receipt_status}")
+        click.echo(f"link                : {status.transaction_link or ''}")
+        click.echo(f"org wallet          : {org_wallet}")
+        if not tx_hash:
+            click.echo("no transaction hash yet (not broadcast, or refused before broadcast)")
+            return 0
+        rpc_url = (
+            os.environ.get(f"ALMANAK_{chain_name.upper()}_RPC_URL")
+            or os.environ.get(f"{chain_name.upper()}_RPC_URL")
+            or os.environ.get("RPC_URL_BASE")
+        )
+        if not rpc_url:
+            click.echo("on-chain evidence   : skipped (set ALMANAK_<CHAIN>_RPC_URL)")
+            return 0
+        from web3 import AsyncHTTPProvider, AsyncWeb3
+
+        web3 = AsyncWeb3(AsyncHTTPProvider(rpc_url))
+        receipt = await web3.eth.get_transaction_receipt(tx_hash)  # type: ignore[arg-type]
+        sender = str(receipt["from"]).lower()
+        who = (
+            "the org wallet"
+            if sender == org_wallet.lower()
+            else "KeeperHub's relayer (sponsored gas), not the org wallet"
+        )
+        click.echo(f"on-chain sender     : {sender} = {who}")
+        click.echo(
+            f"on-chain status     : {'success' if receipt['status'] == 1 else 'reverted'} in block {receipt['blockNumber']}"
+        )
+        lines = actor_evidence([dict(log) for log in receipt["logs"]], org_wallet)
+        if not lines:
+            click.echo("events              : none recognised (Transfer, Approval, Deposit, Withdraw)")
+        for line in lines:
+            click.echo(f"event               : {line}")
+        return 0
+    finally:
+        await client.aclose()
+
+
+@main.command()
 @click.option("--chain", "chain_name", default="base", show_default=True)
 def doctor(chain_name: str) -> None:
     """Check the KeeperHub key, org wallet and balances, chain support and the calldata index."""
@@ -266,6 +337,19 @@ async def _check_account(api_key: str, base_url: str, chain_name: str) -> int:
                 )
         except (httpx.HTTPError, ValueError) as exc:
             click.echo(f"chains             : could not read /api/chains ({exc})")
+        try:
+            response = await client._http.get("/api/analytics/spend-cap")
+            caps = response.json() if response.status_code == 200 else {}
+            eth_cap = caps.get("effectiveDailyCapWei")
+            if eth_cap is not None:
+                click.echo(
+                    f"spend caps         : {int(eth_cap) / 10**18:.4f} native/day (org-wide), "
+                    "100 USD per stablecoin transfer (platform)"
+                )
+            else:
+                click.echo(f"spend caps         : not reported (HTTP {response.status_code}); platform defaults apply")
+        except (httpx.HTTPError, ValueError) as exc:
+            click.echo(f"spend caps         : could not read ({exc})")
         if wanted is not None:
             problems += await _report_balances(address, chain_name, wanted)
     finally:

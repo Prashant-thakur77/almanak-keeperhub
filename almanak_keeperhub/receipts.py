@@ -42,6 +42,14 @@ class ReceiptLog:
                 entry["updated_at"] = datetime.now(UTC).isoformat()
         self._write(entries)
 
+    def find_by_hash(self, tx_hash: str) -> dict[str, Any] | None:
+        """The entry for a transaction hash, so a new process can resume settlement."""
+        wanted = tx_hash.lower()
+        for entry in reversed(self._read()):
+            if str(entry.get("tx_hash", "")).lower() == wanted:
+                return entry
+        return None
+
     def entries_since(self, iso_timestamp: str) -> list[dict[str, Any]]:
         return [e for e in self._read() if str(e.get("recorded_at", "")) >= iso_timestamp]
 

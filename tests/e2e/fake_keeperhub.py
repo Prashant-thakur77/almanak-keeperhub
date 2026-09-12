@@ -116,6 +116,9 @@ class Handler(BaseHTTPRequestHandler):
                 },
             )
             return
+        if self.path == "/api/analytics/spend-cap":
+            self._send(200, {"dailyCapWei": None, "effectiveDailyCapWei": str(2 * 10**16), "usedTodayWei": "0"})
+            return
         if self.path == "/api/chains":
             self._send(
                 200,

@@ -37,13 +37,18 @@ if [ "${1:-}" != "--skip-real" ]; then
 fi
 
 step "5/6 failure modes (each script explains what it proves)"
-( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency rpc_outage; do
+( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency rpc_outage crash_and_resume; do
     echo "--- $s"; python "$s.py" || echo "!!! $s failed; read the output above"
   done )
 echo
 echo "demo receipts: $ROOT/docs/receipts.json"
 
-step "6/6 next"
+step "6/7 verify the last strategy execution and reproduce the API notes"
+LAST_HASH=$(python -c "import json; d=json.load(open('$STRATEGY/keeperhub-receipts.json')); print(d[-1]['tx_hash'])" 2>/dev/null || true)
+[ -n "$LAST_HASH" ] && ( cd "$STRATEGY" && almanak-keeperhub verify "$LAST_HASH" --chain base ) || echo "no strategy receipt yet"
+python scripts/verify_api_notes.py | tee docs/api-notes-verified.md
+
+step "7/7 next"
 cat <<'EOF'
 - Open the transaction links above on Basescan and the executions in the KeeperHub app (Runs).
 - Paste one transaction link into the DoraHacks form and the README "Proof" section.

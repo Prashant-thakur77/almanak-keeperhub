@@ -47,7 +47,11 @@ echo "== doctor"
 almanak-keeperhub doctor --chain base
 
 echo "== failure modes"
-( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency; do python "$s.py"; done )
+( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency crash_and_resume; do python "$s.py"; done )
+
+echo "== verify: KeeperHub's verdict plus on-chain evidence for the last recorded hash"
+LAST_HASH=$(python -c "import json,os; d=json.load(open(os.environ['ALMANAK_KEEPERHUB_RECEIPTS'])); print(d[-1]['tx_hash'])")
+( cd "$ROOT" && almanak-keeperhub verify "$LAST_HASH" --chain base )
 
 echo "== simulate-only: KeeperHub dry-runs the compiled bundle, nothing broadcast"
 rm -f "$ROOT/demos/metamorpho_base_yield/almanak_state.db"*
