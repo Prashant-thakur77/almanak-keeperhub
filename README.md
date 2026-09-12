@@ -52,7 +52,7 @@ almanak-keeperhub keeper deploy && almanak-keeperhub keeper enable
 ALMANAK_KEEPERHUB_CHAIN=base_sepolia python ../failure_modes/crash_and_resume.py    # every demo and the benchmark take the same switch
 ```
 
-`contracts/TestVault.sol` is a dependency-free 1:1 ERC-4626 over the test USDC, the stand-in for the Moonwell vault. The one-line difference in `demos/metamorpho_base_sepolia/strategy.py` is the declared chain list (see its README). What stays mainnet-only: the exit tick (the strategy reads a Morpho Blue rate that does not exist on Sepolia, and a missing rate holds rather than exits) and the `ax` swap (no swap venue on Sepolia). `tests/e2e/rehearsal.sh --testnet` runs the whole free path on a Base Sepolia fork.
+`contracts/TestVault.sol` is a dependency-free 1:1 ERC-4626 over the test USDC, the stand-in for the Moonwell vault. The one-line difference in `demos/metamorpho_base_sepolia/strategy.py` is the declared chain list (see its README). What stays mainnet-only: the strategy-decided exit tick (the strategy reads a Morpho Blue rate that does not exist on Sepolia, and a missing rate holds rather than exits) and the `ax` swap (no swap venue on Sepolia). On Sepolia `scripts/redeem_all.py` closes the position through KeeperHub instead (dry run, idempotent broadcast, verified receipt), which also returns the test USDC to the wallet. `tests/e2e/rehearsal.sh --testnet` runs the whole free path on a Base Sepolia fork.
 
 Cost of the free path: zero. Faucet ETH for the single vault deploy, faucet USDC from https://faucet.circle.com, and KeeperHub sponsors gas on Base Sepolia. `scripts/track_a.sh` runs all of it: it generates a throwaway deployer key, waits for the two faucets, deploys the vault, and runs every step above plus the demos, the benchmark and the API-notes reproduction.
 
@@ -111,8 +111,9 @@ Almanak decides entry and exit on its own tick. Between ticks, or when no Almana
 
 ```bash
 almanak-keeperhub keeper show      # the workflow JSON: Schedule -> idle balance -> Condition -> approve -> vault deposit
-almanak-keeperhub keeper deploy    # POST /api/workflows/create, then /validate; created disabled
+almanak-keeperhub keeper deploy    # POST /api/workflows/create, then GET /validate; created disabled
 almanak-keeperhub keeper enable    # PATCH enabled; KeeperHub's scheduler runs it from here
+almanak-keeperhub keeper run       # POST /execute: fire it now and follow the run (what the proof table shows)
 almanak-keeperhub keeper status    # GET /api/workflows/{id}/executions
 ```
 
@@ -263,7 +264,9 @@ Proof from the hosted app on Base Sepolia (12 Sep 2026), all executed by KeeperH
 | Test vault (ERC-4626 over Circle's test USDC) | https://sepolia.basescan.org/address/0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04 |
 | Strategy tick, approve (KeeperHub execution `az13hw7qn9y9dhs52s4rg`) | https://sepolia.basescan.org/tx/0x29dd40a6db7016bf0b75f49ef56da3b64b44e81e25e473cc6d19c7930a5203c8 |
 | Strategy tick, deposit of 5 USDC (execution `au5z8vtzv8s9xm811z93j`) | https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87 |
-| Keeper workflow, created through the API, validated by KeeperHub, enabled | workflow `7cloybpqfrjvjv756dd2r` (`demos/metamorpho_base_sepolia/keeperhub-keeper.json`) |
+| Keeper workflow, created through the API, validated by KeeperHub's hosted validator | workflow `7cloybpqfrjvjv756dd2r` (`demos/metamorpho_base_sepolia/keeperhub-keeper.json`); its schedule is off after the proof run so faucet USDC stays available for strategy ticks, `almanak-keeperhub keeper run` fires it on demand |
+| Keeper workflow run by KeeperHub's own engine (`keeper run`, five steps, no Almanak process): approve then deposit of 15 idle USDC | https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16 |
+| Redeem of the whole position through KeeperHub (`scripts/redeem_all.py`, the free path's exit) | https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4 |
 | Duplicate demo: same intent submitted twice, one transaction, second answer `idempotentReplay` | https://sepolia.basescan.org/tx/0x965fa66afab02671772d282258c65df27cb7d10cb2b314d15ff949e0b6e30c2a |
 | Every execution with id, status, verified flag | `demos/metamorpho_base_sepolia/keeperhub-receipts.json`, `demos/failure_modes/keeperhub-receipts.json`, `docs/receipts.json` |
 
@@ -291,7 +294,7 @@ Findings reproduced against the hosted API in one command (`docs/api-notes-verif
 ## Tests
 
 ```bash
-pytest -q                      # 120 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 121 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
 tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end

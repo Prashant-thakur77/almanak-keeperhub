@@ -1,6 +1,6 @@
 """Write the deployed TestVault address into the Base Sepolia demo config.
 
-    python scripts/testnet_config.py 0xYourVaultAddress
+python scripts/testnet_config.py 0xYourVaultAddress
 """
 
 from __future__ import annotations

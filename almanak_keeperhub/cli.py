@@ -519,6 +519,39 @@ def keeper_enable(working_dir: str, off: bool) -> None:
     click.echo(f"keeper workflow {state['workflow_id']} {'disabled' if off else 'enabled'}")
 
 
+@keeper.command("run")
+@click.option("--working-dir", "-d", default=".")
+def keeper_run(working_dir: str) -> None:
+    """Trigger the remembered keeper workflow now (instead of waiting for its schedule) and follow it."""
+    from almanak_keeperhub.keeper import run_now, state_path
+
+    state = _read_keeper_state(Path(working_dir))
+
+    async def go() -> dict:
+        client = _keeper_client()
+        try:
+            return await run_now(client, state["workflow_id"])
+        finally:
+            await client.aclose()
+
+    result = asyncio.run(go())
+    click.echo(f"keeper execution {result['execution_id']}: {result['status']}  trace={' -> '.join(result['trace'])}")
+    for tx in result["transaction_hashes"]:
+        link = (
+            f"https://sepolia.basescan.org/tx/{tx.get('hash')}"
+            if int(tx.get("chainId") or 0) == 84532
+            else tx.get("hash")
+        )
+        click.echo(f"  {tx.get('nodeId')}: {tx.get('hash')} verified={tx.get('verified')}  {link}")
+    if result.get("error"):
+        click.echo(f"  error: {result['error']}")
+    runs = state.setdefault("manual_runs", [])
+    runs.append(
+        {"execution_id": result["execution_id"], "status": result["status"], "at": datetime.now(UTC).isoformat()}
+    )
+    state_path(Path(working_dir)).write_text(json.dumps(state, indent=2) + "\n")
+
+
 @keeper.command("status")
 @click.option("--working-dir", "-d", default=".")
 def keeper_status(working_dir: str) -> None:

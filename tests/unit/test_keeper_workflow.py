@@ -88,3 +88,46 @@ def test_defaults_come_from_the_strategy_config(tmp_path) -> None:
     assert params["token_symbol"] == "USDC"
     assert params["chain_id"] == 8453
     assert params["token"].lower() == USDC.lower()
+
+
+def test_run_now_triggers_the_workflow_and_follows_it() -> None:
+    import asyncio
+
+    import httpx
+    import respx
+
+    from almanak_keeperhub.client import KeeperHubClient
+    from almanak_keeperhub.keeper import run_now
+
+    async def go() -> dict:
+        client = KeeperHubClient(api_key="kh_x", base_url="https://app.keeperhub.com")
+        try:
+            with respx.mock:
+                respx.post("https://app.keeperhub.com/api/workflows/wf1/execute").mock(
+                    return_value=httpx.Response(200, json={"executionId": "ex1", "status": "running"})
+                )
+                respx.get("https://app.keeperhub.com/api/workflows/executions/ex1/status").mock(
+                    side_effect=[
+                        httpx.Response(200, json={"status": "running", "transactionHashes": []}),
+                        httpx.Response(
+                            200,
+                            json={
+                                "status": "success",
+                                "transactionHashes": [{"hash": "0xabc", "nodeId": "deposit", "verified": True}],
+                                "executionTrace": ["trigger", "balance", "gate", "approve", "deposit"],
+                            },
+                        ),
+                    ]
+                )
+
+                async def no_sleep(_: float) -> None:
+                    return None
+
+                return await run_now(client, "wf1", sleep=no_sleep, timeout_seconds=30)
+        finally:
+            await client.aclose()
+
+    result = asyncio.run(go())
+    assert result["execution_id"] == "ex1" and result["status"] == "success"
+    assert result["transaction_hashes"][0]["hash"] == "0xabc"
+    assert result["trace"][-1] == "deposit"

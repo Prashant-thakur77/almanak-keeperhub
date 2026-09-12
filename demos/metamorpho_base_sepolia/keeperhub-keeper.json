@@ -7,9 +7,29 @@
     "warnings": [],
     "nodeCount": 5
   },
-  "enabled": true,
+  "enabled": false,
   "created_at": "2026-09-12T06:19:51.491852+00:00",
   "cron": "0 */6 * * *",
   "min": "1",
-  "max": "90"
+  "max": "90",
+  "manual_runs": [
+    {
+      "execution_id": "ieycppji20h1iymm0mkvf",
+      "status": "success",
+      "started_at": "2026-09-12T07:17:52Z",
+      "duration_ms": 11385,
+      "steps": [
+        "trigger",
+        "balance",
+        "gate",
+        "approve",
+        "deposit"
+      ],
+      "approve_tx": "0x00a03b8ff7f326fc8cf16fa885611d9dbe9615db664b695bbdd26c5b3fba6041",
+      "deposit_tx": "0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16",
+      "assets": "15000000",
+      "sponsored": true
+    }
+  ],
+  "note": "schedule disabled after the manual proof run so faucet USDC stays available for strategy ticks; `keeper run` triggers it on demand"
 }

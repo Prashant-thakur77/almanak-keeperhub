@@ -203,6 +203,40 @@ async def executions(client: KeeperHubClient, workflow_id: str, limit: int = 20)
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
 
 
+async def run_now(
+    client: KeeperHubClient,
+    workflow_id: str,
+    *,
+    timeout_seconds: float = 300.0,
+    sleep: Any = None,
+) -> dict[str, Any]:
+    """Trigger the workflow manually (POST /api/workflows/{id}/execute) and follow it to a terminal state."""
+    import asyncio
+    import time
+
+    sleep = sleep or asyncio.sleep
+    response = await client._http.post(f"/api/workflows/{workflow_id}/execute", json={"input": {}})
+    payload = response.json() if response.content else {}
+    if response.status_code >= 400:
+        raise RuntimeError(f"execute failed (HTTP {response.status_code}): {json.dumps(payload)[:400]}")
+    execution_id = str(payload.get("executionId") or "")
+    deadline = time.monotonic() + timeout_seconds
+    status: dict[str, Any] = payload
+    while time.monotonic() < deadline:
+        poll = await client._http.get(f"/api/workflows/executions/{execution_id}/status")
+        status = poll.json() if poll.content else {}
+        if str(status.get("status")) in ("success", "completed", "error", "failed", "system_error", "cancelled"):
+            break
+        await sleep(5.0)
+    return {
+        "execution_id": execution_id,
+        "status": status.get("status"),
+        "error": status.get("error"),
+        "transaction_hashes": status.get("transactionHashes") or [],
+        "trace": status.get("executionTrace") or [],
+    }
+
+
 async def list_workflows(client: KeeperHubClient) -> list[dict[str, Any]]:
     response = await client._http.get("/api/workflows", params={"limit": 50})
     payload = response.json() if response.content else {}
