@@ -9,7 +9,7 @@ Labels you cannot set; the maintainers add `accepted`. Wait for it before pushin
 ### Before filing
 
 - [x] I searched existing issues. Closest: #1792 (raw Solana instruction write, merged), which has no EVM equivalent. Nothing open asks for EVM calldata.
-- [x] I checked the behaviour on `staging` at `caa60d103`.
+- [x] I checked the behaviour on `staging` at `f8c8f18c7` (12 Sep 2026) and on app.keeperhub.com.
 - [x] This is one change: one route, one new field, no sibling routes altered.
 
 ### Reason
@@ -29,7 +29,7 @@ Cost of the workaround: each integration keeps its own selector table, and a str
 
 ### Plan
 
-1. `app/api/execute/_lib/raw-calldata.ts`: `isRawCalldataRequest(body)`, `selectorOf(data)`, `resolveRawCalldata(data, abi)` returning the canonical function key (`fragment.format("sighash")`, the same spelling `resolveAbiFunction` matches canonically) and a `functionArgs` JSON array string (decimal strings for integers, hex for bytes, nested arrays for tuples and arrays, the shape `reshapeArgsForAbi` and `coerceArgsForAbi` already accept).
+1. `app/api/execute/_lib/raw-calldata.ts`: `isRawCalldataRequest(body)`, `selectorOf(data)`, `resolveRawCalldata(data, abi)` returning the canonical function key (`fragment.format("sighash")`, the same spelling `resolveAbiFunction` matches canonically) and a `functionArgs` JSON array string (decimal strings for integers, hex for bytes, arrays for arrays and objects keyed by component name for tuples, the shape `reshapeArgsForAbi` and `coerceArgsForAbi` already accept).
 2. `app/api/execute/contract-call/route.ts`: when `data` is present and no function key is, validate the rest of the body with the existing schema, resolve the ABI with the existing `resolveAbiForRequest`, decode, and set `functionName`, `functionArgs`, `abi` on the body. Everything after that line is untouched. If both `data` and `functionName` are sent, the typed fields win.
 3. Tests: `tests/unit/execute-raw-calldata.test.ts` (decoder: approve, tuple/array/bytes/bool rendering, unknown selector, undecodable calldata, invalid ABI) and `tests/unit/contract-call-raw-calldata.test.ts` (route: write path receives the canonical key and typed args, explorer ABI fallback, `simulate: true` goes through the simulate path, a decoded view function takes the read path, unknown selector is a 400 on `data` before any execution, unresolvable ABI is a 400 on `abi`, body validation still runs first, typed fields win over `data`).
 4. Docs: a "Raw calldata" subsection in `docs/api/direct-execution.md`.
