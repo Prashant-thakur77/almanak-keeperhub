@@ -732,3 +732,26 @@ async def test_simulator_records_every_dry_run(
     assert [e["type"] for e in entries] == ["simulation", "simulation"]
     assert entries[0]["success"] is True and entries[0]["gas_estimate"] == 55000
     assert entries[1]["would_revert"] is True and "balance" in entries[1]["error"]
+
+
+@respx.mock
+async def test_get_receipt_falls_back_to_keeperhubs_verified_receipt_when_the_rpc_lags(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    """Public RPCs lag behind KeeperHub's own node; a verified KeeperHub receipt is still a receipt."""
+    respx.post(EXEC_URL).mock(return_value=httpx.Response(202, json=completed()))
+    body = status_body("exec-1", "completed", verified=True)
+    body["receipts"][0].update({"blockNumber": 46712860, "gasUsed": "46199"})
+    respx.get(f"{BASE}/api/execute/exec-1/status").mock(
+        return_value=httpx.Response(200, headers={"X-Poll-Interval-Hint": "0"}, json=body)
+    )
+    submitter = _submitter(client, receipts={})  # the local RPC never finds the hash
+    signed = await signer.sign(approve_tx(), "base")
+    await submitter.submit([signed])
+
+    receipt = await submitter.get_receipt(TX_HASH, timeout=30)
+
+    assert receipt.success is True
+    assert receipt.block_number == 46712860
+    assert receipt.gas_used == 46199
+    assert receipt.logs == []  # no logs without the RPC; the caller is told via the warning log

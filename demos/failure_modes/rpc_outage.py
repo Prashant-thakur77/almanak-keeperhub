@@ -1,4 +1,4 @@
-"""Failure mode 4: the strategy's own RPC is dead, the broadcast still lands.
+"""Failure mode 4: the strategy's own RPC is dead, the broadcast still lands and settles.
 
 Almanak's public-mempool submitter needs a working RPC to send. With KeeperHub
 the broadcast goes through KeeperHub's RPC pool; only the local receipt-log
@@ -31,10 +31,12 @@ async def main() -> None:
         print(
             f"KeeperHub executionId={execution.execution_id} tx={results[0].tx_hash} (broadcast did not need our RPC)"
         )
-        try:
-            await stack.submitter.get_receipt(results[0].tx_hash, timeout=120)
-        except Exception as exc:  # noqa: BLE001
-            print(f"local receipt-log fetch failed as expected: {type(exc).__name__}: {exc}")
+        os.environ["ALMANAK_KEEPERHUB_RECEIPT_ATTEMPTS"] = "2"  # do not wait two minutes on a dead RPC in a demo
+        receipt = await stack.submitter.get_receipt(results[0].tx_hash, timeout=120)
+        print(
+            f"local RPC never answered; settled from KeeperHub's verified receipt: block={receipt.block_number} "
+            f"gas_used={receipt.gas_used} logs={len(receipt.logs)} (logs need an RPC)"
+        )
         status = await stack.client.wait_for_terminal(execution.execution_id, timeout_seconds=120)
         print(f"KeeperHub verified receipt: status={status.status} verified={[r.verified for r in status.receipts]}")
         record(
@@ -42,6 +44,7 @@ async def main() -> None:
             execution_id=execution.execution_id,
             tx_hash=results[0].tx_hash,
             keeperhub_status=status.status,
+            settled_from="keeperhub verified receipt",
         )
 
 

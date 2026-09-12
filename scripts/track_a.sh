@@ -50,7 +50,7 @@ DEPLOYER=$(cast wallet address --private-key "$TESTVAULT_DEPLOYER_KEY")
 echo "   deployer address: $DEPLOYER"
 
 step "3/8 what to fund (both free)"
-echo "   a) Sepolia ETH to the DEPLOYER $DEPLOYER (0.001 is enough):"
+echo "   a) Sepolia ETH to the DEPLOYER $DEPLOYER (0.0001 is enough):"
 echo "      https://portal.cdp.coinbase.com/products/faucet   or   https://www.alchemy.com/faucets/base-sepolia"
 echo "   b) test USDC to the ORG WALLET $ORG (network: Base Sepolia, 20 USDC is plenty):"
 echo "      https://faucet.circle.com"
@@ -61,7 +61,7 @@ echo "   org USDC now     : $(usdc_of "$ORG") (raw, 6 decimals)"
 if [ "$STATUS_ONLY" = "--status" ]; then exit 0; fi
 
 step "4/8 waiting for the faucets"
-wait_for "deployer ETH (wei)" "cast balance $DEPLOYER --rpc-url $RPC" 300000000000000     # 0.0003 ETH
+wait_for "deployer ETH (wei)" "cast balance $DEPLOYER --rpc-url $RPC" 30000000000000      # 0.00003 ETH; a deploy on Base Sepolia costs a few millionths
 wait_for "org USDC (raw)" "usdc_of $ORG" 6000000                                             # 6 USDC
 
 step "5/8 test vault"

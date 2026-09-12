@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import time
 from collections.abc import Awaitable, Callable
 from typing import Any
@@ -135,12 +136,34 @@ class KeeperHubSubmitter(Submitter):
         status = await self._settle(tx_hash, timeout=timeout)
         raw = await self._fetch_receipt(tx_hash)
         if raw is None:
-            verified = [r.verified for r in status.receipts]
-            raise SubmissionError(
-                f"KeeperHub execution {status.execution_id} is '{status.status}' (verified={verified}) but this "
-                f"process could not read the receipt for {tx_hash} from its RPC; the transaction is not resent, "
-                "keep the same idempotency key and retry the receipt read",
+            verified_receipt = next(
+                (r for r in status.receipts if r.hash.lower() == tx_hash.lower() and r.verified and r.block_number),
+                None,
+            )
+            if verified_receipt is None:
+                verified = [r.verified for r in status.receipts]
+                raise SubmissionError(
+                    f"KeeperHub execution {status.execution_id} is '{status.status}' (verified={verified}) but this "
+                    f"process could not read the receipt for {tx_hash} from its RPC; the transaction is not resent, "
+                    "keep the same idempotency key and retry the receipt read",
+                    tx_hash=tx_hash,
+                )
+            # KeeperHub re-fetched and verified the receipt on its own node; a public RPC lagging behind
+            # it is not a reason to fail the work. Logs are unavailable without the RPC.
+            logger.warning(
+                "receipt for %s unavailable from the local RPC; using KeeperHub's verified receipt (block %s, gas %s) without logs",
+                tx_hash,
+                verified_receipt.block_number,
+                verified_receipt.gas_used,
+            )
+            return TransactionReceipt(
                 tx_hash=tx_hash,
+                block_number=int(verified_receipt.block_number or 0),
+                block_hash="",
+                gas_used=int(verified_receipt.gas_used or 0),
+                effective_gas_price=0,
+                status=0 if verified_receipt.receipt_status in FAILED_RECEIPT_STATUSES else 1,
+                logs=[],
             )
         receipt = _to_almanak_receipt(raw, tx_hash)
         # KeeperHub re-fetches and classifies every receipt before settling. Its verdict outranks the
@@ -342,17 +365,26 @@ def _web3_receipt_fetcher(rpc_url: str) -> ReceiptFetcher:
     web3 = AsyncWeb3(AsyncHTTPProvider(rpc_url))
 
     async def fetch(tx_hash: str) -> dict[str, Any] | None:
-        for attempt in range(6):
+        # Public RPCs lag behind the node KeeperHub broadcast on and rate-limit bursts; be patient
+        # (about two minutes by default) before falling back to KeeperHub's verified receipt.
+        attempts = int(os.environ.get("ALMANAK_KEEPERHUB_RECEIPT_ATTEMPTS", "12"))
+        for attempt in range(attempts):
+            delay = min(15.0, 2.0 * (attempt + 1))
             try:
                 receipt = await web3.eth.get_transaction_receipt(tx_hash)  # type: ignore[arg-type]
                 return dict(receipt)
             except TransactionNotFound:
-                await asyncio.sleep(2.0 * (attempt + 1))
+                await asyncio.sleep(delay)
             except Exception as exc:  # noqa: BLE001 - dead or flaky RPC: retry, then let get_receipt explain
                 logger.warning(
-                    "receipt fetch for %s failed on %s (attempt %d/6): %s", tx_hash, rpc_url, attempt + 1, exc
+                    "receipt fetch for %s failed on %s (attempt %d/%d): %s",
+                    tx_hash,
+                    rpc_url,
+                    attempt + 1,
+                    attempts,
+                    exc,
                 )
-                await asyncio.sleep(2.0 * (attempt + 1))
+                await asyncio.sleep(delay)
         return None
 
     return fetch
