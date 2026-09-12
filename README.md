@@ -289,6 +289,8 @@ Measured against the hosted app (`docs/benchmark.md`):
 
 Findings reproduced against the hosted API in one command (`docs/api-notes-verified.md`): no raw-calldata write (HTTP 400, `functionName` required), the brief's MCP docs link redirects (308), `network` outranks `chainId` on contract-call.
 
+Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/KeeperHub/keeperhub/issues/2426) accept raw calldata on contract-call (the PR with tests is on [`feat/raw-calldata-contract-call`](https://github.com/Prashant-thakur77/keeperhub/tree/feat/raw-calldata-contract-call)), [#2427](https://github.com/KeeperHub/keeperhub/issues/2427) chained simulation for bundles, [#2428](https://github.com/KeeperHub/keeperhub/issues/2428) the acting wallet on sponsored executions.
+
 `docs/rehearsal-fork.md` is the log of the same pipeline on an Anvil fork of Base against a local stand-in for KeeperHub (`tests/e2e/fake_keeperhub.py`, which mirrors the documented API shapes). It proves the wiring; it is not execution through KeeperHub.
 
 ## Try it without a KeeperHub account
