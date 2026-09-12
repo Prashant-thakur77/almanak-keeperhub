@@ -238,6 +238,10 @@ no second broadcast was needed: the hash was settled by a process that never sen
 
 `docs/keeperhub-feedback.md` lists what was learned building against the API. `scripts/verify_api_notes.py` reproduces each finding in one command with expected versus actual, and reports a finding as fixed when it no longer reproduces, so the notes cannot go stale.
 
+## The failure other builders hit
+
+During this hackathon a builder reported [KeeperHub/keeperhub#2374](https://github.com/KeeperHub/keeperhub/issues/2374): a repay reported `failed` while the transaction had landed, and an agent that trusted the status retried and repaid twice. The channel's conclusion was the design this backend already ships: the idempotency key binds to the intent, not to the observation; a reported failure that carries a hash is unconfirmed with the hash retained, never "failed"; and the receipt's truth comes from the chain, or from KeeperHub's verified copy when the local RPC lags. `demos/failure_modes/crash_and_resume.py` and the duplicate demo are those rules, run on purpose.
+
 ## What we got wrong first
 
 The first idempotency key included the nonce Almanak assigns to a transaction. An independent review showed Almanak assigns that nonce per attempt, so a genuine retry after a landed transaction would have produced a new key, which is the exact failure the README claims to prevent. The key is now the intent id plus the transaction fields (`almanak_keeperhub/signer.py`), and the duplicate demo proves it by changing the nonce on the retry. The same review found a truncated bundle could read as success and that a transport error rotated nothing but still halted the strategy; both fixed, all in `git log`.
