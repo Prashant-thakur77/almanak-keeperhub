@@ -46,6 +46,7 @@ from almanak_keeperhub.errors import (
     KeeperHubRateLimited,
     KeeperHubUnavailable,
 )
+from almanak_keeperhub.notify import notifier_from_env
 from almanak_keeperhub.receipts import ReceiptLog
 from almanak_keeperhub.signer import KeeperHubSignedTransaction
 
@@ -54,6 +55,7 @@ logger = logging.getLogger(__name__)
 ReceiptFetcher = Callable[[str], Awaitable[dict[str, Any] | None]]
 Sleep = Callable[[float], Awaitable[None]]
 FAILED_RECEIPT_STATUSES = frozenset({"reverted", "safe_inner_failure"})
+TERMINAL_OK_STATUSES = frozenset({"completed", "success"})
 
 
 class KeeperHubSubmitter(Submitter):
@@ -79,6 +81,7 @@ class KeeperHubSubmitter(Submitter):
         self._max_retries = max_in_progress_retries
         self._executions: dict[str, ExecutionStatus | ExecutionEnvelope] = {}
         self._receipts = ReceiptLog()
+        self._notify = notifier_from_env()
 
     # -- Submitter interface ----------------------------------------------------
 
@@ -92,6 +95,11 @@ class KeeperHubSubmitter(Submitter):
                 # Refused before broadcast: cap, guard, validation. Nothing reached the chain.
                 reason = envelope.error or f"KeeperHub execution {envelope.execution_id} ended '{envelope.status}'"
                 logger.error("KeeperHub refused tx %d/%d: %s", index + 1, len(txs), reason)
+                await self._notify.send(
+                    "refused before broadcast",
+                    f"{signed.call.function_name} -> {signed.call.contract_address}: {reason}",
+                    None,
+                )
                 results.append(SubmissionResult(tx_hash="", submitted=False, error=reason))
                 return self._abandon_rest(results, txs, index + 1, reason)
             signed.tx_hash = envelope.transaction_hash  # the orchestrator indexes by this
@@ -113,6 +121,11 @@ class KeeperHubSubmitter(Submitter):
                 envelope.transaction_hash,
                 envelope.status,
                 " [idempotent replay]" if envelope.idempotent_replay else "",
+            )
+            await self._notify.send(
+                "broadcast" + (" (replay)" if envelope.idempotent_replay else ""),
+                f"{signed.call.function_name} -> {signed.call.contract_address} on chain {signed.call.chain_id}, execution {envelope.execution_id}",
+                envelope.transaction_link,
             )
             results.append(SubmissionResult(tx_hash=envelope.transaction_hash, submitted=True))
             if envelope.status == "failed":
@@ -315,6 +328,11 @@ class KeeperHubSubmitter(Submitter):
                 recoverable=True,
             ) from exc
         self._executions[tx_hash.lower()] = status
+        await self._notify.send(
+            "settled" if status.status in TERMINAL_OK_STATUSES else "failed",
+            f"execution {status.execution_id} {status.status}, verified={[r.verified for r in status.receipts]}",
+            status.transaction_link,
+        )
         self._receipts.update(
             status.execution_id,
             status=status.status,

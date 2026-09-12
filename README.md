@@ -162,6 +162,7 @@ Files:
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
 | `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify`, `console` and `doctor` |
 | `almanak_keeperhub/keeper.py` | Generates, deploys, enables and reads the scheduled compounder workflow |
+| `almanak_keeperhub/notify.py` | Optional Telegram alerts on broadcast, settlement and refusals |
 | `almanak_keeperhub/testnet.py` | Registers `base_sepolia` as an Almanak chain, its tokens, and the vault connector on it |
 | `almanak_keeperhub/demo_targets.py` | Chain switch for the demos and the benchmark (`ALMANAK_KEEPERHUB_CHAIN`) |
 | `contracts/TestVault.sol` | Dependency-free ERC-4626 test vault for Base Sepolia |
@@ -183,6 +184,10 @@ Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak inte
 | MCP | no | Almanak's execution layer is Python inside a gRPC gateway; the REST surface is the right one there. The bounty adds a `data` input to the same endpoint the MCP tool wraps |
 | CLI (`kh`) | no | not needed by the integration |
 | x402 / MPP | no, deliberately | this executes a framework's own transactions; nothing here is sold per call |
+
+## Operator alerts (Telegram, optional)
+
+KeeperHub's own Telegram node is a Pro-plan feature; this backend runs on the free tier, so the alert is sent from the backend itself: one message per broadcast, settlement or refusal (dry-run revert, cap, guard), with the explorer link. Set `ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN` and `ALMANAK_KEEPERHUB_TELEGRAM_CHAT_ID` (see `.env.example`); unset means silent, and a failed send never affects execution.
 
 ## Failure and recovery, from the logs
 
@@ -268,7 +273,7 @@ Findings reproduced against the hosted API in one command (`docs/api-notes-verif
 ## Tests
 
 ```bash
-pytest -q                      # 108 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 113 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
 tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end

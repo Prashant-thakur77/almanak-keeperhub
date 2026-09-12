@@ -16,6 +16,7 @@ from almanak.framework.execution.interfaces import SimulationResult, Simulator, 
 from almanak_keeperhub.calldata import SelectorIndex, decode_calldata
 from almanak_keeperhub.client import ContractCall, KeeperHubClient
 from almanak_keeperhub.errors import KeeperHubAPIError, UndecodableCalldata
+from almanak_keeperhub.notify import notifier_from_env
 from almanak_keeperhub.receipts import ReceiptLog
 
 logger = logging.getLogger(__name__)
@@ -80,6 +81,9 @@ class KeeperHubSimulator(Simulator):
                     success=False,
                     would_revert=bool(outcome.would_revert),
                     error=reason,
+                )
+                await notifier_from_env().send(
+                    "refused by dry run", f"{decoded.function_name} -> {tx.to} on chain {tx.chain_id}: {reason}", None
                 )
                 return _failure(reason, simulated=True)
             gas_estimates.append(outcome.gas_estimate or tx.gas_limit or FALLBACK_GAS)
