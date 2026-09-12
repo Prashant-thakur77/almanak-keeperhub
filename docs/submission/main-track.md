@@ -34,6 +34,7 @@ Both. Almanak ships no testnet chain (its sepolia mode keeps the mainnet chain i
 - Bundles are submitted one transaction at a time with confirmation in between, slower than Almanak's parallel public submitter.
 - Almanak's public repository is a one-way mirror of a private monorepo with no pull requests, so the upstream change is a patch file plus a filed issue rather than a merged PR.
 - Tuple arguments are rendered as name-keyed objects (KeeperHub's own reshaping rule); exercised on a fork with a Uniswap v3 swap, not yet on the hosted app.
+- Almanak's runner needs three testnet shims (a chain descriptor, token registry entries, the vault connector's chain set) because Almanak ships no testnet; they live in `testnet.py`, not in the strategy.
 
 **Transaction executed through KeeperHub**
 
@@ -45,16 +46,16 @@ Email: prashant101007@gmail.com. X / Discord: <fill in>.
 
 ## Demo video script (2:30)
 
-- 0:00 Split screen: terminal left, `almanak-keeperhub console` right (empty state). Terminal in `demos/metamorpho_base_yield`. "This is Almanak's own packaged strategy. Nothing in it changed." Show `git diff --stat` against the almanak package copy: only `config.json`.
-- 0:15 `almanak-keeperhub doctor --chain base`: key, org wallet, chain enabled, 339 selectors.
-- 0:30 `almanak-keeperhub run --once --simulate-only`: the gateway log lines `Wallet registry plugin loaded: KeeperHubWalletRegistry`, `Using KeeperHubSigner`, `KeeperHub execution backend active`, then `KeeperHub simulate ok: ...approve gas=...` and `KeeperHub executions this run: none`. The console's Dry runs table gains a row and Executions stays empty. Say: "the exact compiled bundle, dry-run by KeeperHub, nothing touched the chain."
-- 0:55 `almanak-keeperhub run --once`: the same simulate line, then `KeeperHub execution <id> broadcast tx 0x... (completed)` per transaction, `Status: SUCCESS | Intent: VAULT_DEPOSIT`, and the proof summary with execution ids and links. The console shows the two executions land; click Inspect on the deposit: KeeperHub's verdict, the relayer as sender, the Deposit event naming the org wallet.
-- 1:10 `almanak-keeperhub run --once -c config.exit.json`: the strategy decides to exit, the redeem goes through KeeperHub, USDC is back. Then `almanak-keeperhub keeper deploy` and `keeper enable`: the console's Keeper panel shows the workflow KeeperHub now runs on its own schedule.
-- 1:30 `almanak-keeperhub ax --chain base swap USDC WETH 1 --yes`: Almanak's own agent CLI decides the swap; the Uniswap v3 call goes through KeeperHub; show the proof summary line. (With an LLM key, use `-n "swap 1 USDC to WETH"` instead: the agent is probabilistic, the execution is not.)
-- 1:35 `python demos/failure_modes/revert_caught_by_dry_run.py`: `simulated=True success=False`, revert reason, zero broadcasts.
-- 1:50 `python demos/failure_modes/duplicate_blocked_by_idempotency.py`: attempt 2 prints the same execution id with `replay=True`; one transaction on chain. Say: "this is the nonce incident from Almanak's own repo, prevented."
-- 2:05 `python demos/failure_modes/crash_and_resume.py`: the child dies after broadcast; a fresh process settles the hash from the receipts log with no second broadcast. Then `almanak-keeperhub verify <hash>`: relayer as sender, Deposit event names the org wallet.
-- 2:20 the console's Failure modes and Measured sections, `pytest -q` (102 passed), the known-gaps section of the README.
+Three panes: terminal left, `almanak-keeperhub console` right, phone with the Telegram bot in a corner. Everything on Base Sepolia through app.keeperhub.com; nothing costs anything.
+
+- 0:00 Terminal in `demos/metamorpho_base_sepolia`. "This is Almanak's own packaged strategy. One line changed: it declares the testnet chain, because Almanak ships none." Show `diff ../metamorpho_base_yield/strategy.py strategy.py`: one line.
+- 0:15 `almanak-keeperhub doctor --chain base_sepolia`: org wallet, chain enabled (testnet), spend caps, 339 selectors, result OK.
+- 0:30 `almanak-keeperhub run --once --fresh --simulate-only`: `Wallet registry plugin loaded: KeeperHubWalletRegistry`, `KeeperHub execution backend active`, `KeeperHub simulate ok: ...approve gas=...`, `KeeperHub executions this run: none`. The console's Dry runs table gains a row; Executions stays empty. Say: "the exact compiled bundle, dry-run by KeeperHub, nothing touched the chain."
+- 0:50 `almanak-keeperhub run --once --fresh`: `KeeperHub execution <id> broadcast tx 0x... (completed)` for approve and deposit, `Status: SUCCESS | Intent: VAULT_DEPOSIT`, the proof summary with `[sponsored]`. The phone buzzes: the bot posts the broadcast and settlement alerts. In the console click Inspect on the deposit: KeeperHub's verdict, the relayer as sender (sponsored gas), the Deposit event naming the org wallet.
+- 1:15 `almanak-keeperhub keeper status` (or `/keeper` on the phone): the scheduled compounder KeeperHub created from the strategy config, validated by KeeperHub, enabled, running every six hours with no Almanak process. If it has fired by recording day, show its execution.
+- 1:30 On the phone: `/demo cap`. KeeperHub refuses a 150 USDC transfer before anything is signed; the reply and the alert arrive. Then `/demo duplicate`: the same intent submitted twice, one transaction, second answer `replay=True`. Say: "this is the nonce incident from Almanak's own repo, prevented."
+- 1:55 `python demos/failure_modes/crash_and_resume.py` in the terminal: the child dies after broadcast; a fresh process settles the hash from the receipts log with no second broadcast.
+- 2:10 `docs/benchmark.md`: 20 of 20 impossible deposits refused before broadcast, 5 of 5 approvals landed and verified, median 6.9 s. Then `pytest -q` (120 passed) and the README's known gaps, including what stays mainnet-only and why.
 
 ## Live pitch: eight hard questions
 

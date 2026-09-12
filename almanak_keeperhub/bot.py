@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import re
 import shlex
 import subprocess
 import sys
@@ -77,6 +78,14 @@ def _default_runner(args: list[str]) -> tuple[str, int]:
         timeout=900,
     )
     return (proc.stdout + proc.stderr, proc.returncode)
+
+
+_ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}")
+
+
+def _short_addresses(text: str) -> str:
+    """Phone-sized: 0xe7dbacbd…36ac9 instead of the full 40 hex characters."""
+    return _ADDRESS.sub(lambda m: m.group(0)[:10] + "…" + m.group(0)[-5:], text)
 
 
 def _summarise(output: str, limit: int = 30) -> str:
@@ -246,7 +255,7 @@ class OperatorBot:
         if on:
             who = "the org wallet" if on["sender_is_org_wallet"] else "KeeperHub's relayer (sponsored gas)"
             lines.append(f"on chain: {on['status']} in block {on['block']}, sender is {who}")
-        lines += result.get("events", [])
+        lines += [_short_addresses(line) for line in result.get("events", [])]
         if result.get("transaction_link"):
             lines.append(result["transaction_link"])
         return "\n".join(lines)
