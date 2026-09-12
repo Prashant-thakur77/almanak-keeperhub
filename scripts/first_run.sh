@@ -20,23 +20,23 @@ STRATEGY="$ROOT/demos/metamorpho_base_yield"
 
 step() { echo; echo "================ $1"; echo; }
 
-step "1/6 doctor"
+step "1/7 doctor"
 almanak-keeperhub doctor --chain base
 
-step "2/6 Almanak plans (--dry-run): nothing reaches the gateway"
+step "2/7 Almanak plans (--dry-run): nothing reaches the gateway"
 almanak-keeperhub run -d "$STRATEGY" --once --fresh --dry-run 2>&1 | grep -E "Wallet registry plugin loaded|Using KeeperHubSigner|KeeperHub execution backend active|Would execute|Status:" || true
 
-step "3/6 KeeperHub dry run of the compiled bundle (--simulate-only): nothing broadcast"
+step "3/7 KeeperHub dry run of the compiled bundle (--simulate-only): nothing broadcast"
 almanak-keeperhub run -d "$STRATEGY" --once --fresh --simulate-only 2>&1 | grep -E "KeeperHub simulate|Gas estimate tx|Status:|executions this run" || true
 
 if [ "${1:-}" != "--skip-real" ]; then
-  step "4/6 real run: approve + deposit through KeeperHub"
+  step "4/7 real run: approve + deposit through KeeperHub"
   almanak-keeperhub run -d "$STRATEGY" --once --fresh 2>&1 | grep -E "KeeperHub simulate|broadcast tx|Status:|executions this run|^  [a-z]+ ->|^    tx" || true
   echo
   echo "receipts: $STRATEGY/keeperhub-receipts.json (commit this file; it is the proof)"
 fi
 
-step "5/6 failure modes (each script explains what it proves)"
+step "5/7 failure modes (each script explains what it proves)"
 ( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency rpc_outage crash_and_resume; do
     echo "--- $s"; python "$s.py" || echo "!!! $s failed; read the output above"
   done )
