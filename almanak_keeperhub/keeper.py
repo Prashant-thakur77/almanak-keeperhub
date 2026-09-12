@@ -201,6 +201,7 @@ async def list_workflows(client: KeeperHubClient) -> list[dict[str, Any]]:
 
 KNOWN_TOKENS: dict[tuple[int, str], str] = {
     (8453, "USDC"): "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    (84532, "USDC"): "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
     (8453, "WETH"): "0x4200000000000000000000000000000000000006",
     (42161, "USDC"): "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
     (1, "USDC"): "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -211,6 +212,9 @@ def keeper_params_from_config(config_path: Path) -> dict[str, Any]:
     """Vault, token and chain for the keeper, read from an Almanak strategy config.json."""
     from almanak.core.chains import ChainRegistry
 
+    from almanak_keeperhub.testnet import register_testnets
+
+    register_testnets()
     config = json.loads(Path(config_path).read_text())
     chain_name = str(config.get("chain") or "base")
     descriptor = ChainRegistry.try_resolve(chain_name)

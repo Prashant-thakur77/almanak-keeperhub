@@ -18,14 +18,14 @@ import subprocess
 import sys
 import time
 
-from common import USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
+from common import CHAIN_NAME, USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
 
 APPROVE = calldata("approve(address,uint256)", ["address", "uint256"], [VAULT_BASE, 3])
 
 
 async def phase_broadcast() -> None:
     async with Stack() as stack:
-        signed = await stack.signer.sign(tx(USDC_BASE, APPROVE, stack.address, nonce=0), "base")
+        signed = await stack.signer.sign(tx(USDC_BASE, APPROVE, stack.address, nonce=0), CHAIN_NAME)
         results = await stack.submitter.submit([signed])
         print(f"BROADCAST {results[0].tx_hash}", flush=True)
         os._exit(0)  # the crash: no settlement, no receipt phase, no clean shutdown

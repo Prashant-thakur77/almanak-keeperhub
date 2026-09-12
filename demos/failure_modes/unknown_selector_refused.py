@@ -6,7 +6,7 @@ never a guess. Offline: no KeeperHub call is made.
 """
 
 from almanak.framework.execution.interfaces import SigningError
-from common import VAULT_BASE, Stack, banner, record, run, tx
+from common import CHAIN_NAME, VAULT_BASE, Stack, banner, record, run, tx
 
 
 async def main() -> None:
@@ -14,7 +14,7 @@ async def main() -> None:
         banner("sign calldata with selector 0xdeadbeef")
         weird = tx(VAULT_BASE, "0xdeadbeef" + "00" * 32, stack.address, nonce=0)
         try:
-            await stack.signer.sign(weird, "base")
+            await stack.signer.sign(weird, CHAIN_NAME)
         except SigningError as exc:
             print(f"refused: {exc}")
             record("unknown_selector_refused", selector="0xdeadbeef", broadcast=False)

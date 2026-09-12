@@ -22,14 +22,16 @@ from eth_abi import encode
 from eth_utils import function_signature_to_4byte_selector
 
 from almanak_keeperhub.client import KeeperHubClient
+from almanak_keeperhub.demo_targets import demo_targets
 from almanak_keeperhub.signer import KeeperHubSigner
 from almanak_keeperhub.simulator import KeeperHubSimulator
 from almanak_keeperhub.submitter import KeeperHubSubmitter
 
-BASE_CHAIN_ID = 8453
-USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-# Moonwell Flagship USDC MetaMorpho vault on Base (almanak demo metamorpho_base_yield/config.json)
-VAULT_BASE = "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca"
+_TARGETS = demo_targets()  # ALMANAK_KEEPERHUB_CHAIN=base (default) or base_sepolia
+BASE_CHAIN_ID = _TARGETS.chain_id
+USDC_BASE = _TARGETS.usdc
+VAULT_BASE = _TARGETS.vault  # Moonwell Flagship USDC vault on Base, or your TestVault on Base Sepolia
+CHAIN_NAME = _TARGETS.chain
 RECEIPTS = Path(__file__).resolve().parents[2] / "docs" / "receipts.json"
 
 

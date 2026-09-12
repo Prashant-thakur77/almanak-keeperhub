@@ -37,6 +37,25 @@ almanak-keeperhub run --once                    # 5 USDC into the Moonwell Flags
 
 Or run the whole sequence, failure modes included: `scripts/first_run.sh`.
 
+## The free path: Base Sepolia
+
+Almanak ships no testnet chain: its "sepolia" network mode swaps the RPC but keeps the mainnet chain id in every compiled transaction, which would hand KeeperHub a mainnet transaction. `almanak_keeperhub/testnet.py` fixes that at the root: it registers `base_sepolia` (chain id 84532) as a first-class Almanak chain, teaches Almanak's token resolver the testnet's ETH, WETH and Circle's test USDC, and lets the ERC-4626 vault connector compile there. The unmodified demo strategy then runs on Base Sepolia through KeeperHub with sponsored gas:
+
+```bash
+scripts/deploy_test_vault.sh --rpc https://sepolia.base.org --private-key 0x...   # once; ~0.0005 Sepolia ETH from a faucet
+python scripts/testnet_config.py 0x<vault>                                         # writes it into demos/metamorpho_base_sepolia/config.json
+cd demos/metamorpho_base_sepolia
+almanak-keeperhub doctor --chain base_sepolia
+almanak-keeperhub run --once --fresh --simulate-only
+almanak-keeperhub run --once --fresh                  # approve + deposit 5 test USDC into the TestVault, chain id 84532
+almanak-keeperhub keeper deploy && almanak-keeperhub keeper enable
+ALMANAK_KEEPERHUB_CHAIN=base_sepolia python ../failure_modes/crash_and_resume.py    # every demo and the benchmark take the same switch
+```
+
+`contracts/TestVault.sol` is a dependency-free 1:1 ERC-4626 over the test USDC, the stand-in for the Moonwell vault. The one-line difference in `demos/metamorpho_base_sepolia/strategy.py` is the declared chain list (see its README). What stays mainnet-only: the exit tick (the strategy reads a Morpho Blue rate that does not exist on Sepolia, and a missing rate holds rather than exits) and the `ax` swap (no swap venue on Sepolia). `tests/e2e/rehearsal.sh --testnet` runs the whole free path on a Base Sepolia fork.
+
+Cost of the free path: zero. Faucet ETH for the single vault deploy, faucet USDC from https://faucet.circle.com, and KeeperHub sponsors gas on Base Sepolia.
+
 ## Execution console
 
 `almanak-keeperhub console` serves a local page over the proof files and keeps it live while the terminal runs: every execution with KeeperHub's status and verified flag, every dry run (including `--simulate-only` ticks), the failure-mode verdicts, and the benchmark. Inspect asks KeeperHub for its verdict and decodes the receipt events to show who acted, even when the relayer paid the gas. Nothing on the page is typed in by hand; every row is read from a file the run wrote.
@@ -143,6 +162,9 @@ Files:
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
 | `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify`, `console` and `doctor` |
 | `almanak_keeperhub/keeper.py` | Generates, deploys, enables and reads the scheduled compounder workflow |
+| `almanak_keeperhub/testnet.py` | Registers `base_sepolia` as an Almanak chain, its tokens, and the vault connector on it |
+| `almanak_keeperhub/demo_targets.py` | Chain switch for the demos and the benchmark (`ALMANAK_KEEPERHUB_CHAIN`) |
+| `contracts/TestVault.sol` | Dependency-free ERC-4626 test vault for Base Sepolia |
 | `almanak_keeperhub/console/` | The execution console: `server.py` (state over the proof files, verify endpoint) and `index.html` |
 | `almanak_keeperhub/verify.py` | Decodes Transfer, Approval, Deposit and Withdraw events to name the acting wallet |
 | `almanak_keeperhub/receipts.py` | Append-only record of every execution; also the resume table after a crash |
@@ -222,9 +244,10 @@ Mainnet proof links: **to be added after the first hosted run** (see "What still
 ## Tests
 
 ```bash
-pytest -q                      # 102 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
+pytest -q                      # 108 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
 ruff check almanak_keeperhub tests
-tests/e2e/rehearsal.sh         # fork + stand-in + unmodified demo strategy, asserts the vault deposit landed
+tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
+tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end
 ```
 
 ## What still breaks or is unfinished

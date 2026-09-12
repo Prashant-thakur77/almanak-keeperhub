@@ -21,6 +21,6 @@ What I did not adopt, on purpose:
 
 Where the previous winners were stronger than this build, still:
 
-- Proof at volume: until the hosted run happens, this repo has fork receipts only. The first mainnet run and `scripts/benchmark.py --executions 5` close that gap.
+- Proof at volume: until the hosted run happens, this repo has fork receipts only. The free path on Base Sepolia (`tests/e2e/rehearsal.sh --testnet` mirrors it) and `scripts/benchmark.py --executions 5` close that gap at zero cost; the previous winners all ran on Sepolia too.
 - A merged upstream PR: the bounty PR is ready but gated on KeeperHub accepting the issue. File it on day 1.
 - Surfaces breadth: REST direct execution, agent-authored workflows (the keeper), and the audit trail. No x402 or MPP, deliberately, stated as such.

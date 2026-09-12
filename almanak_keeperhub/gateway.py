@@ -127,6 +127,13 @@ def skip_redundant_market_reinit(original):
 
 
 def install() -> None:
+    from almanak_keeperhub.testnet import register_testnets
+
+    register_testnets()
+    _install()
+
+
+def _install() -> None:
     """Make the in-process managed gateway construct the KeeperHub servicer."""
     import almanak.gateway._register_chains_helpers as helpers
     import almanak.gateway.server as server

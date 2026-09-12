@@ -32,6 +32,7 @@ from almanak_keeperhub.wallets import KIND
 
 USDC_BY_CHAIN_ID = {
     8453: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    84532: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
     42161: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
     1: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 }
@@ -41,6 +42,9 @@ USDC_BY_CHAIN_ID = {
 @click.version_option(__version__)
 def main() -> None:
     """KeeperHub execution backend for Almanak."""
+    from almanak_keeperhub.testnet import register_testnets
+
+    register_testnets()  # base_sepolia (84532) as a first-class Almanak chain
 
 
 @main.command(context_settings={"ignore_unknown_options": True, "allow_extra_args": True})

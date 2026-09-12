@@ -24,13 +24,15 @@ from eth_abi import encode
 from eth_utils import function_signature_to_4byte_selector
 
 from almanak_keeperhub.client import KeeperHubClient
+from almanak_keeperhub.demo_targets import demo_targets
 from almanak_keeperhub.signer import KeeperHubSigner, work_id_scope
 from almanak_keeperhub.simulator import KeeperHubSimulator
 from almanak_keeperhub.submitter import KeeperHubSubmitter
 
-BASE_CHAIN_ID = 8453
-USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-VAULT_BASE = "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca"
+_TARGETS = demo_targets()  # ALMANAK_KEEPERHUB_CHAIN=base (default) or base_sepolia
+BASE_CHAIN_ID = _TARGETS.chain_id
+USDC_BASE = _TARGETS.usdc
+VAULT_BASE = _TARGETS.vault
 DOCS = Path(__file__).resolve().parents[1] / "docs"
 
 
@@ -79,6 +81,8 @@ async def main(args: argparse.Namespace) -> int:
         "started_at": datetime.now(UTC).isoformat(),
         "base_url": base_url,
         "wallet": address,
+        "chain": _TARGETS.chain,
+        "chain_id": _TARGETS.chain_id,
     }
 
     # 1. Refusals: a deposit far above balance must never be broadcast.
@@ -91,7 +95,7 @@ async def main(args: argparse.Namespace) -> int:
             gas_limit=450_000,
         )
         started = time.perf_counter()
-        outcome = await simulator.simulate([impossible], "base")
+        outcome = await simulator.simulate([impossible], _TARGETS.chain)
         refusal_latency.append(time.perf_counter() - started)
         refused += int(outcome.simulated and not outcome.success)
     results["refusals"] = {"attempted": args.refusals, "refused_before_broadcast": refused}
@@ -101,7 +105,7 @@ async def main(args: argparse.Namespace) -> int:
     approve = tx(USDC_BASE, calldata("approve(address,uint256)", ["address", "uint256"], [VAULT_BASE, 1]), address)
     for _ in range(args.simulations):
         started = time.perf_counter()
-        outcome = await simulator.simulate([approve], "base")
+        outcome = await simulator.simulate([approve], _TARGETS.chain)
         sim_latency.append(time.perf_counter() - started)
         ok += int(outcome.success)
         if outcome.gas_estimates:
@@ -116,7 +120,7 @@ async def main(args: argparse.Namespace) -> int:
     landed, exec_latency, hashes = 0, [], []
     for i in range(args.executions):
         with work_id_scope(f"{run_id}-{i}"):
-            signed = await signer.sign(approve, "base")
+            signed = await signer.sign(approve, _TARGETS.chain)
         started = time.perf_counter()
         outcomes = await submitter.submit([signed])
         if outcomes[0].submitted:
@@ -127,7 +131,7 @@ async def main(args: argparse.Namespace) -> int:
     replayed = None
     if args.executions:
         with work_id_scope(f"{run_id}-0"):
-            retry = await signer.sign(approve, "base")
+            retry = await signer.sign(approve, _TARGETS.chain)
         started = time.perf_counter()
         outcomes = await submitter.submit([retry])
         replay_latency = time.perf_counter() - started
@@ -159,7 +163,7 @@ def render(r: dict) -> str:
     lines = [
         f"# Benchmark ({r['run_id']})",
         "",
-        f"KeeperHub: {r['base_url']}  wallet: {r['wallet']}  started: {r['started_at']}",
+        f"KeeperHub: {r['base_url']}  chain: {r.get('chain', 'base')} ({r.get('chain_id', 8453)})  wallet: {r['wallet']}  started: {r['started_at']}",
         "",
         "| Measure | Result |",
         "|---|---|",

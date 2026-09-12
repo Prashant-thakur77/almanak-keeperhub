@@ -7,7 +7,7 @@ submitter turns that into an Almanak SubmissionResult(submitted=False) and
 stops the bundle. Nothing leaves the wallet.
 """
 
-from common import USDC_BASE, Stack, banner, calldata, record, run, tx
+from common import CHAIN_NAME, USDC_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:
@@ -21,7 +21,7 @@ async def main() -> None:
             gas_limit=80_000,
             description="transfer 150 USDC to self",
         )
-        signed = await stack.signer.sign(transfer, "base")
+        signed = await stack.signer.sign(transfer, CHAIN_NAME)
         results = await stack.submitter.submit([signed])
         print(f"submitted={results[0].submitted} error={results[0].error}")
         assert results[0].submitted is False, "KeeperHub should have refused this before signing"

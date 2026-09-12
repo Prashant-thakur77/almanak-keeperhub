@@ -1,0 +1,27 @@
+{
+    "chain": "base_sepolia",
+    "token_funding": [
+        {
+            "symbol": "USDC",
+            "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+            "chain": "base_sepolia",
+            "amount": "100",
+            "amount_type": "usd"
+        }
+    ],
+    "vault_address": "0xdaDac3c4275c092f61a5EFB2759c6f23CC1DC948",
+    "deposit_token": "USDC",
+    "deposit_token_decimals": 6,
+    "deposit_amount": "5",
+    "min_deposit_usd": "2",
+    "max_vault_allocation_pct": 80,
+    "compound_interval_hours": 24,
+    "min_apy_floor": "0.0",
+    "exit_confirm_checks": 2,
+    "rate_protocol": "morpho_blue",
+    "rate_token": "USDC",
+    "anvil_funding": {
+        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE": 10,
+        "0x036CbD53842c5426634e7929541eC2318f3dCF7e": 50000
+    }
+}

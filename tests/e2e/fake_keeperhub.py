@@ -26,7 +26,10 @@ from eth_account import Account
 from web3 import HTTPProvider, Web3
 
 ANVIL_KEY_0 = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-STABLECOINS = {8453: {"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": ("USDC", 6)}}
+STABLECOINS = {
+    8453: {"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": ("USDC", 6)},
+    84532: {"0x036cbd53842c5426634e7929541ec2318f3dcf7e": ("USDC", 6)},
+}
 CAP_USD = 100
 
 

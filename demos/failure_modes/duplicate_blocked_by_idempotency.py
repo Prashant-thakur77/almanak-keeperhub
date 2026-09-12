@@ -12,7 +12,7 @@ Moves 0.01 USDC approve allowance (approve(vault, 10000)), harmless and cheap.
 import os
 import time
 
-from common import USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
+from common import CHAIN_NAME, USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:
@@ -29,7 +29,7 @@ async def main() -> None:
             description="approve 0.01 USDC to the vault",
         )
         banner("attempt 1: broadcast approve through KeeperHub")
-        first = await stack.signer.sign(approve, "base")
+        first = await stack.signer.sign(approve, CHAIN_NAME)
         results_1 = await stack.submitter.submit([first])
         exec_1 = stack.submitter.execution_for(results_1[0].tx_hash)
         print(
@@ -38,7 +38,7 @@ async def main() -> None:
 
         banner("attempt 2: 'framework retried the same intent' -> identical work, identical key")
         approve.nonce = nonce + 1  # Almanak assigns a fresh nonce per attempt; the key must not move with it
-        second = await stack.signer.sign(approve, "base")
+        second = await stack.signer.sign(approve, CHAIN_NAME)
         assert second.idempotency_key == first.idempotency_key
         results_2 = await stack.submitter.submit([second])
         exec_2 = stack.submitter.execution_for(results_2[0].tx_hash)

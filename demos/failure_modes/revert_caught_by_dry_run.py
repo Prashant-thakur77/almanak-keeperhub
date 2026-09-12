@@ -4,7 +4,7 @@ Expected: KeeperHub simulate answers wouldRevert=true, Almanak's SimulationResul
 is success=False, and no transaction is broadcast (zero calls to the execute path).
 """
 
-from common import USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
+from common import CHAIN_NAME, USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:
@@ -18,7 +18,7 @@ async def main() -> None:
             gas_limit=450_000,
             description="deposit 1,000,000 USDC into Moonwell Flagship USDC",
         )
-        result = await stack.simulator.simulate([deposit], "base")
+        result = await stack.simulator.simulate([deposit], CHAIN_NAME)
         print(f"simulated={result.simulated} success={result.success}")
         print(f"revert_reason={result.revert_reason}")
         assert result.simulated and not result.success, "simulation should have failed"

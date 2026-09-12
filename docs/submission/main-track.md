@@ -23,7 +23,7 @@ Direct execution REST: `POST /api/execute/contract-call` with `simulate: true` f
 
 **Testnet or mainnet?**
 
-Base mainnet with small amounts, because Almanak ships no testnet chain configuration. KeeperHub sponsors gas on Base, so the explorer shows the relayer as sender; the receipt's `verified` flag and the vault's `Deposit` event `owner` identify the organization wallet.
+Both. Almanak ships no testnet chain (its sepolia mode keeps the mainnet chain id in compiled transactions), so this package registers `base_sepolia` as a first-class Almanak chain and the unmodified strategy runs on Base Sepolia through KeeperHub with sponsored gas against a dependency-free ERC-4626 test vault. The full lifecycle (exit tick) and the agent swap need mainnet venues, so those ran on Base mainnet with small amounts. KeeperHub sponsors gas on Base, so the explorer shows the relayer as sender; the receipt's `verified` flag and the vault's `Deposit` event `owner` identify the organization wallet.
 
 **What still breaks or is unfinished?**
 

@@ -9,7 +9,7 @@ lands (KeeperHub verifies it), and get_receipt reports exactly which side failed
 import os
 import time
 
-from common import USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
+from common import CHAIN_NAME, USDC_BASE, VAULT_BASE, Stack, banner, calldata, record, run, tx
 
 
 async def main() -> None:
@@ -25,7 +25,7 @@ async def main() -> None:
             nonce=int(os.environ.get("DEMO_NONCE", "0")),  # nonce only salts the key; KeeperHub assigns the real one
             gas_limit=80_000,
         )
-        signed = await stack.signer.sign(approve, "base")
+        signed = await stack.signer.sign(approve, CHAIN_NAME)
         results = await stack.submitter.submit([signed])
         execution = stack.submitter.execution_for(results[0].tx_hash)
         print(
