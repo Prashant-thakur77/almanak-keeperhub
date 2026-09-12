@@ -23,7 +23,7 @@ Direct execution REST: `POST /api/execute/contract-call` with `simulate: true` f
 
 **Testnet or mainnet?**
 
-Both. Almanak ships no testnet chain (its sepolia mode keeps the mainnet chain id in compiled transactions), so this package registers `base_sepolia` as a first-class Almanak chain and the unmodified strategy runs on Base Sepolia through KeeperHub with sponsored gas against a dependency-free ERC-4626 test vault. The full lifecycle (exit tick) and the agent swap need mainnet venues, so those ran on Base mainnet with small amounts. KeeperHub sponsors gas on Base, so the explorer shows the relayer as sender; the receipt's `verified` flag and the vault's `Deposit` event `owner` identify the organization wallet.
+Both. Almanak ships no testnet chain (its sepolia mode keeps the mainnet chain id in compiled transactions), so this package registers `base_sepolia` as a first-class Almanak chain and the unmodified strategy runs on Base Sepolia through KeeperHub with sponsored gas against a dependency-free ERC-4626 test vault. The full lifecycle (exit tick) and the agent swap need mainnet venues, so those are rehearsed on a Base mainnet fork and remain mainnet-only. KeeperHub sponsors gas on Base, so the explorer shows the relayer as sender; the receipt's `verified` flag and the vault's `Deposit` event `owner` identify the organization wallet.
 
 **What still breaks or is unfinished?**
 
@@ -33,7 +33,11 @@ Both. Almanak ships no testnet chain (its sepolia mode keeps the mainnet chain i
 - Almanak's Safe plus Zodiac Roles mode is not covered; the demo runs Almanak's EOA mode with the KeeperHub org wallet as the EOA.
 - Bundles are submitted one transaction at a time with confirmation in between, slower than Almanak's parallel public submitter.
 - Almanak's public repository is a one-way mirror of a private monorepo with no pull requests, so the upstream change is a patch file plus a filed issue rather than a merged PR.
-- Tuple arguments are passed as nested JSON arrays; tested against the decoder and against a local stand-in of the API, not yet against the hosted app.
+- Tuple arguments are rendered as name-keyed objects (KeeperHub's own reshaping rule); exercised on a fork with a Uniswap v3 swap, not yet on the hosted app.
+
+**Transaction executed through KeeperHub**
+
+https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87 (KeeperHub execution `au5z8vtzv8s9xm811z93j`: the demo strategy's 5 USDC deposit on Base Sepolia, sponsored gas, verified receipt). Full list in the README's Proof section and in `keeperhub-receipts.json`.
 
 **Contact**
 

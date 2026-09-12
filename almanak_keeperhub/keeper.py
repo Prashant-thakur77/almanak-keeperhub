@@ -181,8 +181,19 @@ async def set_enabled(client: KeeperHubClient, workflow_id: str, enabled: bool) 
 
 
 async def validate_remote(client: KeeperHubClient, workflow_id: str) -> dict[str, Any]:
-    response = await client._http.post(f"/api/workflows/{workflow_id}/validate", json={"deepCheck": True})
-    return response.json() if response.content else {"status": response.status_code}
+    # GET on the hosted app (app/api/workflows/[workflowId]/validate/route.ts exports GET only).
+    response = await client._http.get(f"/api/workflows/{workflow_id}/validate", params={"deepCheck": "true"})
+    payload = response.json() if response.content else {}
+    if response.status_code >= 400:
+        return {"status": response.status_code, "error": payload}
+    # The hosted app wraps the verdict: {"ok": true, "result": {"valid": ..., "nodeCount": ...}}
+    result = payload.get("result") if isinstance(payload, dict) and isinstance(payload.get("result"), dict) else payload
+    return {
+        "valid": result.get("valid"),
+        "errors": result.get("errors") or [],
+        "warnings": result.get("warnings") or [],
+        **result,
+    }
 
 
 async def executions(client: KeeperHubClient, workflow_id: str, limit: int = 20) -> list[dict[str, Any]]:

@@ -233,7 +233,31 @@ Each script uses the same signer, simulator and submitter the gateway uses.
 
 `scripts/benchmark.py` measures the backend the way judges compare it: impossible deposits refused before broadcast, valid dry runs, real approvals landed and verified, retry replayed instead of resent, p50 and p95 latency. It writes `docs/benchmark.md`.
 
-Mainnet proof links: **to be added after the first hosted run** (see "What still breaks").
+Proof from the hosted app on Base Sepolia (12 Sep 2026), all executed by KeeperHub from the organization wallet `0xe7Db…6Ac9` with sponsored gas:
+
+| What | Link |
+|---|---|
+| Test vault (ERC-4626 over Circle's test USDC) | https://sepolia.basescan.org/address/0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04 |
+| Strategy tick, approve (KeeperHub execution `az13hw7qn9y9dhs52s4rg`) | https://sepolia.basescan.org/tx/0x29dd40a6db7016bf0b75f49ef56da3b64b44e81e25e473cc6d19c7930a5203c8 |
+| Strategy tick, deposit of 5 USDC (execution `au5z8vtzv8s9xm811z93j`) | https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87 |
+| Keeper workflow, created through the API, validated by KeeperHub, enabled | workflow `7cloybpqfrjvjv756dd2r` (`demos/metamorpho_base_sepolia/keeperhub-keeper.json`) |
+| Duplicate demo: same intent submitted twice, one transaction, second answer `idempotentReplay` | https://sepolia.basescan.org/tx/0x965fa66afab02671772d282258c65df27cb7d10cb2b314d15ff949e0b6e30c2a |
+| Every execution with id, status, verified flag | `demos/metamorpho_base_sepolia/keeperhub-receipts.json`, `demos/failure_modes/keeperhub-receipts.json`, `docs/receipts.json` |
+
+On the explorer the sender is KeeperHub's relayer (`0x6331…1E99`, sponsored gas) and the target is its relay contract; the Approval and Deposit events name the organization wallet. `almanak-keeperhub verify <hash> --chain base_sepolia` prints both sides.
+
+Measured against the hosted app (`docs/benchmark.md`):
+
+| Measure | Result |
+|---|---|
+| Impossible deposits refused before broadcast | 20/20 |
+| Valid approve dry runs succeeded | 10/10 (median gas estimate 38680) |
+| Real approvals landed and verified | 5/5 |
+| Broadcast + verified receipt latency | p50 6.88s, p95 9.59s |
+| Simulate latency | p50 0.36s, p95 0.41s |
+| Retry of already-landed work replayed, not resent | True (0.3s) |
+
+Findings reproduced against the hosted API in one command (`docs/api-notes-verified.md`): no raw-calldata write (HTTP 400, `functionName` required), the brief's MCP docs link redirects (308), `network` outranks `chainId` on contract-call.
 
 `docs/rehearsal-fork.md` is the log of the same pipeline on an Anvil fork of Base against a local stand-in for KeeperHub (`tests/e2e/fake_keeperhub.py`, which mirrors the documented API shapes). It proves the wiring; it is not execution through KeeperHub.
 
@@ -259,7 +283,7 @@ tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end
 - Two Almanak bugs needed workarounds inside `gateway.py` (see `docs/almanak-feedback.md`): the in-process gateway deadlocks for 30 s during `RegisterChains` when any wallet registry plugin is installed, and the strategy runner never enables the orchestrator's simulate phase on live networks. Both are contained and documented.
 - The idempotency key protects a retry of the same Almanak intent. A strategy that crashes before persisting its state and then decides again compiles a new intent, which is new work by construction; KeeperHub cannot tell those apart, and neither can this package.
 - Sponsored KeeperHub transactions show the relayer as sender on the explorer; the vault's `Deposit` event `owner` and the `receipts[].verified` flag identify the org wallet.
-- Tuple arguments are rendered as objects keyed by component name, the shape KeeperHub's own argument reshaping expects (read from its source); exercised by the Uniswap v3 swap in the rehearsal, not yet against the hosted app.
+- Tuple arguments are rendered as objects keyed by component name, the shape KeeperHub's own argument reshaping expects (read from its source); exercised by the Uniswap v3 swap on the fork. The hosted run used approve and deposit (no tuples).
 - Almanak's GitHub repository is a one-way mirror of a private monorepo with no pull requests, so the upstream change is offered as a patch and a filed issue, not a merged PR.
 
 ## Feedback to KeeperHub and Almanak

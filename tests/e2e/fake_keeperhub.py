@@ -109,6 +109,10 @@ class Handler(BaseHTTPRequestHandler):
         parts = self.path.split("?")[0].strip("/").split("/")
         if parts == ["api", "workflows"]:
             self._send(200, {"workflows": list(self.state.workflows.values())})
+        elif len(parts) == 4 and parts[3] == "validate" and parts[2] in self.state.workflows:
+            workflow = self.state.workflows[parts[2]]
+            valid = bool(workflow["nodes"]) and workflow["nodes"][0].get("type") == "trigger"
+            self._send(200, {"ok": True, "result": {"valid": valid, "nodeCount": len(workflow["nodes"])}})
         elif len(parts) == 4 and parts[3] == "executions" and parts[2] in self.state.workflows:
             self._send(200, {"executions": []})  # the stand-in has no scheduler; the hosted app fills this
         elif len(parts) == 3 and parts[2] in self.state.workflows:

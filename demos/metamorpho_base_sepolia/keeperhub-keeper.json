@@ -2,7 +2,10 @@
   "workflow_id": "7cloybpqfrjvjv756dd2r",
   "name": "almanak-keeperhub compounder (USDC -> 0xd36E...cb04)",
   "validation": {
-    "status": 405
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "nodeCount": 5
   },
   "enabled": true,
   "created_at": "2026-09-12T06:19:51.491852+00:00",

@@ -80,5 +80,87 @@
     ],
     "sponsored": true,
     "updated_at": "2026-09-12T06:22:01.022961+00:00"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-12T06:26:38.027108+00:00",
+    "chain_id": 84532,
+    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+    "function": "deposit",
+    "success": false,
+    "would_revert": true,
+    "error": "Error(ERC20: transfer amount exceeds allowance)"
+  },
+  {
+    "execution_id": "0w8daipzivbp8merzysca",
+    "recorded_at": "2026-09-12T06:26:44.565758+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0x965fa66afab02671772d282258c65df27cb7d10cb2b314d15ff949e0b6e30c2a",
+    "transaction_link": "https://sepolia.basescan.org/tx/0x965fa66afab02671772d282258c65df27cb7d10cb2b314d15ff949e0b6e30c2a",
+    "status": "completed",
+    "idempotency_key": "98715cf438e04495b299eb7f0639c99cea7cc9ff6d6378335cd16dd9b63af945",
+    "idempotent_replay": false,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-12T06:26:45.196357+00:00"
+  },
+  {
+    "execution_id": "0w8daipzivbp8merzysca",
+    "recorded_at": "2026-09-12T06:26:44.882726+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0x965fa66afab02671772d282258c65df27cb7d10cb2b314d15ff949e0b6e30c2a",
+    "transaction_link": "https://sepolia.basescan.org/tx/0x965fa66afab02671772d282258c65df27cb7d10cb2b314d15ff949e0b6e30c2a",
+    "status": "completed",
+    "idempotency_key": "98715cf438e04495b299eb7f0639c99cea7cc9ff6d6378335cd16dd9b63af945",
+    "idempotent_replay": true,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-12T06:26:45.196376+00:00"
+  },
+  {
+    "execution_id": "c9qyie4kt2rqebfb01t1h",
+    "recorded_at": "2026-09-12T06:26:52.395113+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0xd822f702766ac2a7b7e219014f0fd7594c835c57502967d56073639e86870e9f",
+    "transaction_link": "https://sepolia.basescan.org/tx/0xd822f702766ac2a7b7e219014f0fd7594c835c57502967d56073639e86870e9f",
+    "status": "completed",
+    "idempotency_key": "acadf6b5e81001973eaa46a36c1feea049e07f44cda5cbb79a50bfea59f78cda",
+    "idempotent_replay": false,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-12T06:26:52.869454+00:00"
+  },
+  {
+    "execution_id": "otzkaujo4qhzsgwfgjobs",
+    "recorded_at": "2026-09-12T06:27:09.169224+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0xaf144a42c2ec331d7541f4a0a4e20708f28fed18228048838fbff0aa0b98608c",
+    "transaction_link": "https://sepolia.basescan.org/tx/0xaf144a42c2ec331d7541f4a0a4e20708f28fed18228048838fbff0aa0b98608c",
+    "status": "completed",
+    "idempotency_key": "904773a9060dbbd36931657eee9fa907b078bf8627e3729d620f4cf65c4125d4",
+    "idempotent_replay": false,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-12T06:27:10.171978+00:00"
   }
 ]
