@@ -14,7 +14,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 FORK_URL="${FORK_URL:-https://mainnet.base.org}"
 RPC="http://127.0.0.1:${ANVIL_PORT:-8547}"
-FAKE_PORT="${FAKE_PORT:-8790}"
+FAKE_PORT="${FAKE_PORT:-8791}"
 ORG=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266            # anvil account #0, the stand-in's "org wallet"
 USDC=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 VAULT=0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca           # Moonwell Flagship USDC (almanak demo)
