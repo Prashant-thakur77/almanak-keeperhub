@@ -79,7 +79,7 @@ step "6/8 the strategy through KeeperHub (console: open a second terminal, cd $S
 cd "$STRATEGY"
 almanak-keeperhub run --once --fresh --simulate-only 2>&1 | grep -E "KeeperHub simulate|Status:|dry runs this run|executions this run" || true
 almanak-keeperhub run --once --fresh 2>&1 | grep -E "KeeperHub simulate|broadcast tx|Status:|executions this run|^  [a-z]+ ->|^    tx" || true
-almanak-keeperhub keeper deploy && almanak-keeperhub keeper enable && almanak-keeperhub keeper status || echo "!!! keeper deploy failed; paste the error into Discord (see TOMORROW.md)"
+almanak-keeperhub keeper deploy && almanak-keeperhub keeper enable && almanak-keeperhub keeper status || echo "!!! keeper deploy failed; paste the error into Discord"
 LAST_HASH=$(python -c "import json; d=[e for e in json.load(open('keeperhub-receipts.json')) if e.get('type')!='simulation']; print(d[-1]['tx_hash'])" 2>/dev/null || true)
 [ -n "$LAST_HASH" ] && almanak-keeperhub verify "$LAST_HASH" --chain base_sepolia || echo "no execution to verify yet"
 cd "$ROOT"

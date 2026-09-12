@@ -231,8 +231,10 @@ def verify(reference: str, chain_name: str) -> None:
 
 
 async def _verify(reference: str, api_key: str, chain_name: str) -> int:
-    from almanak_keeperhub.verify import actor_evidence
+    from almanak_keeperhub.verify import actor_evidence, valid_reference
 
+    if not valid_reference(reference):
+        raise click.ClickException("not a transaction hash or execution id")
     client = KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL))
     try:
         org_wallet = await client.wallet_address()
@@ -471,6 +473,22 @@ def keeper_deploy(
             )
             if not workflow_id:
                 raise click.ClickException(f"KeeperHub returned no workflow id: {json.dumps(created)[:300]}")
+            # Remember the id before validating or enabling: a failure after create must not orphan it.
+            state_path(Path(working_dir)).write_text(
+                json.dumps(
+                    {
+                        "workflow_id": workflow_id,
+                        "name": workflow["name"],
+                        "enabled": False,
+                        "created_at": datetime.now(UTC).isoformat(),
+                        "cron": cron,
+                        "min": min_amount,
+                        "max": max_amount,
+                    },
+                    indent=2,
+                )
+                + "\n"
+            )
             verdict = await validate_remote(client, workflow_id)
             if enable:
                 await set_enabled(client, workflow_id, True)
@@ -547,7 +565,18 @@ def keeper_run(working_dir: str) -> None:
         click.echo(f"  error: {result['error']}")
     runs = state.setdefault("manual_runs", [])
     runs.append(
-        {"execution_id": result["execution_id"], "status": result["status"], "at": datetime.now(UTC).isoformat()}
+        {
+            "execution_id": result["execution_id"],
+            "status": result["status"],
+            "at": datetime.now(UTC).isoformat(),
+            "started_at": result.get("started_at"),
+            "completed_at": result.get("completed_at"),
+            "transactions": [
+                {"node": tx.get("nodeId"), "hash": tx.get("hash"), "verified": tx.get("verified")}
+                for tx in result["transaction_hashes"]
+            ],
+            "error": result.get("error"),
+        }
     )
     state_path(Path(working_dir)).write_text(json.dumps(state, indent=2) + "\n")
 

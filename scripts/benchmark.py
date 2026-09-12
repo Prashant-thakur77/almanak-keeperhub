@@ -69,7 +69,7 @@ async def main(args: argparse.Namespace) -> int:
     if not api_key:
         sys.exit("KEEPERHUB_API_KEY is not set")
     base_url = os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com")
-    rpc_url = os.environ.get("RPC_URL_BASE", "https://mainnet.base.org")
+    rpc_url = _TARGETS.rpc
     client = KeeperHubClient(api_key=api_key, base_url=base_url)
     address = await client.wallet_address()
     signer = KeeperHubSigner(client, address)

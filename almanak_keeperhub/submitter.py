@@ -27,6 +27,7 @@ import os
 import time
 from collections.abc import Awaitable, Callable
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 from almanak.framework.execution.interfaces import (
@@ -90,7 +91,16 @@ class KeeperHubSubmitter(Submitter):
         for index, signed in enumerate(txs):
             if not isinstance(signed, KeeperHubSignedTransaction) or signed.call is None:
                 raise SubmissionError("KeeperHubSubmitter only accepts transactions prepared by KeeperHubSigner")
-            envelope = await self._broadcast(signed)
+            try:
+                envelope = await self._broadcast(signed)
+            except SubmissionError as exc:
+                if index == 0:
+                    raise
+                # A later transaction could not be broadcast; the earlier hashes are real and must reach
+                # the orchestrator, so report this one as not sent instead of losing the whole bundle.
+                logger.error("KeeperHub broadcast of tx %d/%d failed: %s", index + 1, len(txs), exc)
+                results.append(SubmissionResult(tx_hash="", submitted=False, error=str(exc)))
+                return self._abandon_rest(results, txs, index + 1, str(exc))
             if envelope.transaction_hash is None:
                 # Refused before broadcast: cap, guard, validation. Nothing reached the chain.
                 reason = envelope.error or f"KeeperHub execution {envelope.execution_id} ended '{envelope.status}'"
@@ -397,7 +407,7 @@ def _web3_receipt_fetcher(rpc_url: str) -> ReceiptFetcher:
                 logger.warning(
                     "receipt fetch for %s failed on %s (attempt %d/%d): %s",
                     tx_hash,
-                    rpc_url,
+                    urlparse(rpc_url).netloc,  # never the path: provider keys live there
                     attempt + 1,
                     attempts,
                     exc,

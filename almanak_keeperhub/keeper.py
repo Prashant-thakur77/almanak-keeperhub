@@ -166,18 +166,16 @@ def build_compounder_workflow(
 async def deploy(client: KeeperHubClient, workflow: dict[str, Any]) -> dict[str, Any]:
     """POST /api/workflows/create; the workflow is created disabled."""
     response = await client._http.post("/api/workflows/create", json=workflow)
-    payload = response.json() if response.content else {}
     if response.status_code >= 400:
-        raise RuntimeError(f"create failed (HTTP {response.status_code}): {json.dumps(payload)[:400]}")
-    return payload
+        raise RuntimeError(f"create failed (HTTP {response.status_code}): {response.text[:400]}")
+    return response.json() if response.content else {}
 
 
 async def set_enabled(client: KeeperHubClient, workflow_id: str, enabled: bool) -> dict[str, Any]:
     response = await client._http.patch(f"/api/workflows/{workflow_id}", json={"enabled": enabled})
-    payload = response.json() if response.content else {}
     if response.status_code >= 400:
-        raise RuntimeError(f"update failed (HTTP {response.status_code}): {json.dumps(payload)[:400]}")
-    return payload
+        raise RuntimeError(f"update failed (HTTP {response.status_code}): {response.text[:400]}")
+    return response.json() if response.content else {}
 
 
 async def validate_remote(client: KeeperHubClient, workflow_id: str) -> dict[str, Any]:
@@ -198,6 +196,8 @@ async def validate_remote(client: KeeperHubClient, workflow_id: str) -> dict[str
 
 async def executions(client: KeeperHubClient, workflow_id: str, limit: int = 20) -> list[dict[str, Any]]:
     response = await client._http.get(f"/api/workflows/{workflow_id}/executions", params={"limit": limit})
+    if response.status_code >= 400:
+        raise RuntimeError(f"executions failed (HTTP {response.status_code}): {response.text[:300]}")
     payload = response.json() if response.content else {}
     rows = payload.get("executions", payload) if isinstance(payload, dict) else payload
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
@@ -224,21 +224,30 @@ async def run_now(
     status: dict[str, Any] = payload
     while time.monotonic() < deadline:
         poll = await client._http.get(f"/api/workflows/executions/{execution_id}/status")
+        if poll.status_code >= 400:
+            raise RuntimeError(f"status failed (HTTP {poll.status_code}): {poll.text[:300]}")
         status = poll.json() if poll.content else {}
         if str(status.get("status")) in ("success", "completed", "error", "failed", "system_error", "cancelled"):
             break
-        await sleep(5.0)
+        hint = poll.headers.get("X-Poll-Interval-Hint")
+        await sleep(float(hint) if hint and float(hint) > 0 else 5.0)
+    # The status route nests failure details under errorContext (app/api/workflows/executions/.../status).
+    context = status.get("errorContext") or {}
     return {
         "execution_id": execution_id,
         "status": status.get("status"),
-        "error": status.get("error"),
+        "error": context.get("error") or status.get("error"),
         "transaction_hashes": status.get("transactionHashes") or [],
-        "trace": status.get("executionTrace") or [],
+        "trace": context.get("executionTrace") or status.get("executionTrace") or [],
+        "started_at": status.get("startedAt"),
+        "completed_at": status.get("completedAt"),
     }
 
 
 async def list_workflows(client: KeeperHubClient) -> list[dict[str, Any]]:
     response = await client._http.get("/api/workflows", params={"limit": 50})
+    if response.status_code >= 400:
+        raise RuntimeError(f"list failed (HTTP {response.status_code}): {response.text[:300]}")
     payload = response.json() if response.content else {}
     rows = payload.get("workflows", payload) if isinstance(payload, dict) else payload
     return [r for r in rows if isinstance(r, dict)] if isinstance(rows, list) else []
@@ -263,7 +272,9 @@ def keeper_params_from_config(config_path: Path) -> dict[str, Any]:
     config = json.loads(Path(config_path).read_text())
     chain_name = str(config.get("chain") or "base")
     descriptor = ChainRegistry.try_resolve(chain_name)
-    chain_id = int(descriptor.chain_id) if descriptor else 8453
+    if descriptor is None:
+        raise ValueError(f"config.json chain {chain_name!r} is not a chain Almanak knows; fix it or pass --chain")
+    chain_id = int(descriptor.chain_id)
     symbol = str(config.get("deposit_token") or "USDC").upper()
     token = KNOWN_TOKENS.get((chain_id, symbol))
     if token is None:

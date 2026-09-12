@@ -25,6 +25,7 @@ class DemoTargets:
     usdc: str
     vault: str
     explorer: str
+    rpc: str
 
 
 def _vault_from_config(demo_dir: str) -> str | None:
@@ -42,8 +43,9 @@ def demo_targets() -> DemoTargets:
         vault = os.environ.get("ALMANAK_KEEPERHUB_VAULT") or _vault_from_config("metamorpho_base_sepolia")
         if not vault:
             raise SystemExit("set ALMANAK_KEEPERHUB_VAULT to the TestVault you deployed (scripts/deploy_test_vault.sh)")
+        rpc = os.environ.get("ALMANAK_BASE_SEPOLIA_RPC_URL") or "https://sepolia.base.org"
         return DemoTargets(
-            "base_sepolia", BASE_SEPOLIA_CHAIN_ID, BASE_SEPOLIA_USDC, vault, "https://sepolia.basescan.org/tx/"
+            "base_sepolia", BASE_SEPOLIA_CHAIN_ID, BASE_SEPOLIA_USDC, vault, "https://sepolia.basescan.org/tx/", rpc
         )
     if chain != "base":
         raise SystemExit(f"ALMANAK_KEEPERHUB_CHAIN={chain!r} is not supported by the demos (base or base_sepolia)")
@@ -52,4 +54,7 @@ def demo_targets() -> DemoTargets:
         or _vault_from_config("metamorpho_base_yield")
         or ("0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca")
     )
-    return DemoTargets("base", 8453, "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", vault, "https://basescan.org/tx/")
+    rpc = os.environ.get("ALMANAK_BASE_RPC_URL") or os.environ.get("RPC_URL_BASE") or "https://mainnet.base.org"
+    return DemoTargets(
+        "base", 8453, "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", vault, "https://basescan.org/tx/", rpc
+    )

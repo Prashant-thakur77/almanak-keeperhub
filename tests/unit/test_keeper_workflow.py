@@ -112,9 +112,12 @@ def test_run_now_triggers_the_workflow_and_follows_it() -> None:
                         httpx.Response(
                             200,
                             json={
-                                "status": "success",
+                                "status": "error",
                                 "transactionHashes": [{"hash": "0xabc", "nodeId": "deposit", "verified": True}],
-                                "executionTrace": ["trigger", "balance", "gate", "approve", "deposit"],
+                                "errorContext": {
+                                    "error": "deposit reverted",
+                                    "executionTrace": ["trigger", "balance", "gate", "approve", "deposit"],
+                                },
                             },
                         ),
                     ]
@@ -128,6 +131,6 @@ def test_run_now_triggers_the_workflow_and_follows_it() -> None:
             await client.aclose()
 
     result = asyncio.run(go())
-    assert result["execution_id"] == "ex1" and result["status"] == "success"
+    assert result["execution_id"] == "ex1" and result["status"] == "error"
     assert result["transaction_hashes"][0]["hash"] == "0xabc"
-    assert result["trace"][-1] == "deposit"
+    assert result["trace"][-1] == "deposit" and result["error"] == "deposit reverted"

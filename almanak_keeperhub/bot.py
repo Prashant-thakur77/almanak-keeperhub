@@ -13,7 +13,7 @@ import asyncio
 import logging
 import os
 import re
-import shlex
+import secrets
 import subprocess
 import sys
 import time
@@ -29,6 +29,7 @@ from almanak_keeperhub.notify import CHAT_ENV, TOKEN_ENV
 logger = logging.getLogger(__name__)
 
 Runner = Callable[[list[str]], tuple[str, int]]
+STALE_AFTER_SECONDS = 180
 HELP = """almanak-keeperhub operator bot
 
 /status     org wallet, chain, counts, keeper
@@ -112,22 +113,27 @@ class OperatorBot:
         self.owner_chat_id = owner_chat_id or None
         self._strategy_dir = Path(strategy_dir)
         self._chain = chain
-        self._api_key = api_key
         self._base_url = base_url
         self._runner = runner or _default_runner
         self._pending: tuple[str, float] | None = None
         self._offset = 0
+        # With no configured owner, only someone who can read this process's output may claim the bot.
+        self.start_secret = secrets.token_urlsafe(8)
 
     # -- command handling -------------------------------------------------------
 
-    async def handle(self, *, chat_id: str, text: str) -> str:
+    async def handle(self, *, chat_id: str, text: str, sent_at: float | None = None) -> str:
+        if sent_at is not None and time.time() - sent_at > STALE_AFTER_SECONDS:
+            return ""  # queued while the bot was offline: never act on an old /tick or /confirm
         parts = (text or "").strip().split()
         if not parts:
             return HELP
         command, args = parts[0].lower().split("@")[0], parts[1:]
-        if self.owner_chat_id is None and command == "/start":
-            self.owner_chat_id = str(chat_id)
-            return f"This chat now owns the bot. Save it so restarts keep it:\n{CHAT_ENV}={chat_id}\n\n" + HELP
+        if self.owner_chat_id is None:
+            if command == "/start" and args and secrets.compare_digest(args[0], self.start_secret):
+                self.owner_chat_id = str(chat_id)
+                return f"This chat now owns the bot. Save it so restarts keep it:\n{CHAT_ENV}={chat_id}\n\n" + HELP
+            return "This bot has no owner yet. Send /start <secret>; the secret is printed where the bot was started."
         if str(chat_id) != str(self.owner_chat_id):
             return "Not authorised: this bot answers only its owner's chat."
         handler = {
@@ -241,6 +247,10 @@ class OperatorBot:
     async def _verify(self, args: list[str]) -> str:
         if not args:
             return "Usage: /verify <tx hash or execution id>"
+        from almanak_keeperhub.verify import valid_reference
+
+        if not valid_reference(args[0]):
+            return "That is not a transaction hash or execution id."
         state = self._state()
         result = await verify_reference(args[0], Path(state["sources"]["receipts"]), self._chain)
         if result.get("error"):
@@ -251,6 +261,8 @@ class OperatorBot:
         ]
         for r in result.get("receipts", []):
             lines.append(f"receipt {str(r['hash'])[:12]}… verified={r['verified']} {r['receipt_status']}")
+        if result.get("onchain_error"):
+            lines.append(f"on chain: {result['onchain_error']}")
         on = result.get("onchain")
         if on:
             who = "the org wallet" if on["sender_is_org_wallet"] else "KeeperHub's relayer (sponsored gas)"
@@ -314,10 +326,10 @@ class OperatorBot:
                 )
 
     async def run_forever(self) -> None:
+        if self.owner_chat_id is None:
+            print(f"operator bot has no owner yet: send it  /start {self.start_secret}  from your Telegram chat")
         logger.info(
-            "operator bot polling (owner=%s, strategy=%s)",
-            self.owner_chat_id or "first /start claims",
-            self._strategy_dir,
+            "operator bot polling (owner=%s, strategy=%s)", self.owner_chat_id or "unclaimed", self._strategy_dir
         )
         async with httpx.AsyncClient(timeout=60.0) as http:
             while True:
@@ -326,23 +338,36 @@ class OperatorBot:
                         f"https://api.telegram.org/bot{self._token}/getUpdates",
                         params={"timeout": 50, "offset": self._offset, "allowed_updates": '["message"]'},
                     )
-                    for update in r.json().get("result", []):
+                    payload = r.json() if r.content else {}
+                    if not payload.get("ok"):
+                        description = str(payload.get("description") or r.status_code)
+                        if r.status_code == 401:
+                            raise SystemExit(f"telegram rejected the bot token: {description}")
+                        logger.warning("telegram getUpdates not ok: %s", description)
+                        await asyncio.sleep(5)
+                        continue
+                    for update in payload.get("result", []):
                         self._offset = int(update["update_id"]) + 1
                         message = update.get("message") or {}
                         chat_id = str((message.get("chat") or {}).get("id", ""))
                         text = message.get("text") or ""
                         if not chat_id or not text:
                             continue
-                        asyncio.create_task(self._answer(chat_id, text))
+                        asyncio.create_task(self._answer(chat_id, text, float(message.get("date") or time.time())))
+                except SystemExit:
+                    raise
                 except Exception as exc:  # noqa: BLE001 - keep polling
                     logger.warning("telegram polling error: %s", exc)
                     await asyncio.sleep(5)
 
-    async def _answer(self, chat_id: str, text: str) -> None:
+    async def _answer(self, chat_id: str, text: str, sent_at: float) -> None:
+        if time.time() - sent_at > STALE_AFTER_SECONDS:
+            return
         if text.split()[0].lower() in ("/simulate", "/confirm", "/demo"):
             await self.send(chat_id, "working…")
-        reply = await self.handle(chat_id=chat_id, text=text)
-        await self.send(chat_id, reply)
+        reply = await self.handle(chat_id=chat_id, text=text, sent_at=sent_at)
+        if reply:
+            await self.send(chat_id, reply)
 
 
 def bot_from_env(strategy_dir: Path, chain: str, runner: Runner | None = None) -> OperatorBot:
@@ -358,7 +383,3 @@ def bot_from_env(strategy_dir: Path, chain: str, runner: Runner | None = None) -
         base_url=os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com"),
         runner=runner,
     )
-
-
-def command_line(args: list[str]) -> str:
-    return " ".join(shlex.quote(a) for a in args)

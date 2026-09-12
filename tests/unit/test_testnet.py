@@ -60,3 +60,22 @@ def test_demo_targets_switch_with_the_chain_env(monkeypatch) -> None:
 
     monkeypatch.setenv("ALMANAK_KEEPERHUB_CHAIN", "base")
     assert demo_targets().chain_id == 8453
+
+
+def test_demo_targets_carry_a_chain_matched_rpc(monkeypatch) -> None:
+    from almanak_keeperhub.demo_targets import demo_targets
+
+    monkeypatch.setenv("ALMANAK_KEEPERHUB_CHAIN", "base_sepolia")
+    monkeypatch.setenv("ALMANAK_KEEPERHUB_VAULT", "0x" + "ab" * 20)
+    monkeypatch.delenv("ALMANAK_BASE_SEPOLIA_RPC_URL", raising=False)
+    monkeypatch.setenv(
+        "RPC_URL_BASE", "https://mainnet.base.org"
+    )  # a mainnet RPC must not leak into the testnet targets
+    assert "sepolia" in demo_targets().rpc
+
+    monkeypatch.setenv("ALMANAK_BASE_SEPOLIA_RPC_URL", "http://127.0.0.1:8549")
+    assert demo_targets().rpc == "http://127.0.0.1:8549"
+
+    monkeypatch.setenv("ALMANAK_KEEPERHUB_CHAIN", "base")
+    monkeypatch.delenv("ALMANAK_BASE_RPC_URL", raising=False)
+    assert demo_targets().rpc == "https://mainnet.base.org"

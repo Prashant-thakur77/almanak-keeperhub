@@ -192,11 +192,11 @@
         e.sponsored ? `<span class="pill info">sponsored</span>` : "",
         e.idempotent_replay ? `<span class="pill info">replay</span>` : "",
       ].join("");
-      const link = e.explorer ? `<a href="${esc(e.explorer)}" target="_blank" rel="noopener">${short(e.tx_hash)}</a>` : short(e.tx_hash);
+      const link = e.explorer ? `<a href="${esc(e.explorer)}" target="_blank" rel="noopener">${esc(short(e.tx_hash))}</a>` : esc(short(e.tx_hash));
       const ev = evidence[key];
       return `<div class="card" data-id="${esc(key)}">
         <div class="row">
-          <span class="fn">${esc(e.function)} <small>→</small> <span class="addr">${short(e.to)}</span></span>
+          <span class="fn">${esc(e.function)} <small>→</small> <span class="addr">${esc(short(e.to))}</span></span>
           ${pill(e)} ${flags}
           <span class="hash">tx ${link}</span>
           <span class="hash">exec ${esc(e.execution_id)}</span>
@@ -244,7 +244,7 @@
     if (!list.length) { $("simulations").innerHTML = `<div class="empty">No dry runs recorded yet. <code>almanak-keeperhub run --once --simulate-only</code> records one per compiled transaction.</div>`; return; }
     $("simulations").innerHTML = `<div class="table-wrap"><table><thead><tr><th>When</th><th>Call</th><th>Verdict</th><th>Detail</th></tr></thead><tbody>${list.slice(0, 12).map((x) => `<tr>
       <td class="num">${when(x.recorded_at)}</td>
-      <td class="call"><span class="fn">${esc(x.function)}</span> <small>→</small> <span class="addr">${short(x.to)}</span></td>
+      <td class="call"><span class="fn">${esc(x.function)}</span> <small>→</small> <span class="addr">${esc(short(x.to))}</span></td>
       <td>${x.success ? `<span class="pill ok">would succeed</span>` : `<span class="pill warn">${x.would_revert ? "would revert" : "refused"}</span>`}</td>
       <td class="clamp" title="${esc(x.error || "")}">${x.success ? `gas ${esc(x.gas_estimate ?? "–")}` : esc(reason(x.error))}</td>
     </tr>`).join("")}</tbody></table></div>`;

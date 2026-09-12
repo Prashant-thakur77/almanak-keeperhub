@@ -70,7 +70,7 @@ Cost of the free path: zero. Faucet ETH for the single vault deploy, faucet USDC
 almanak-keeperhub console            # http://127.0.0.1:8642, opens a browser; --no-open for headless
 ```
 
-Standard library only, no build step: one HTML file and one JSON endpoint. Open it beside the terminal for the demo.
+No framework and no build step: one HTML file served by the standard library's HTTP server, with the package's own client behind the Inspect endpoint. Open it beside the terminal for the demo.
 
 To show a judge who acted when KeeperHub's relayer paid the gas:
 
@@ -121,7 +121,7 @@ almanak-keeperhub keeper run       # POST /execute: fire it now and follow the r
 almanak-keeperhub keeper status    # GET /api/workflows/{id}/executions
 ```
 
-The keeper only moves balances inside a bounded window (1 to 90 USDC by default). Anything larger is left for the strategy to size, which keeps the two layers from fighting. It uses free-tier nodes only (the Code, HTTP and notification nodes need a Pro plan). The generated JSON passes KeeperHub's own `validateWorkflow` with `deepCheck`; the test that proves it lives in `tests/e2e/keeperhub-validator/` and runs inside a KeeperHub checkout.
+The keeper only moves balances inside a bounded window (1 to 90 USDC by default). Anything larger is left for the strategy to size, which keeps the two layers from fighting. It uses free-tier nodes only (the Code, HTTP request and Send Webhook nodes need a Pro plan; checked against `GET /api/action-schemas` on the hosted app). The generated JSON passes KeeperHub's hosted validator (`GET /api/workflows/{id}/validate?deepCheck=true`, recorded in `keeperhub-keeper.json`) and its structural validator in `tests/e2e/keeperhub-validator/`, which runs inside a KeeperHub checkout against `docs/keeper-workflow.json`.
 
 ## Two policy layers, both refusing
 
@@ -210,7 +210,7 @@ Long polling over the Bot API with no webhook and no public endpoint. Set `ALMAN
 
 ## Operator alerts (Telegram, optional)
 
-KeeperHub's own Telegram node is a Pro-plan feature; this backend runs on the free tier, so the alert is sent from the backend itself: one message per broadcast, settlement or refusal (dry-run revert, cap, guard), with the explorer link. Set `ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN` and `ALMANAK_KEEPERHUB_TELEGRAM_CHAT_ID` (see `.env.example`); unset means silent, and a failed send never affects execution.
+KeeperHub's workflows have a Telegram node (free tier), but this integration executes through the direct-execution API where no workflow node runs, so the alert is sent from the backend itself: one message per broadcast, settlement or refusal (dry-run revert, cap, guard), with the explorer link. Set `ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN` and `ALMANAK_KEEPERHUB_TELEGRAM_CHAT_ID` (see `.env.example`); unset means silent, and a failed send never affects execution.
 
 ## Failure and recovery, from the logs
 
@@ -311,6 +311,7 @@ tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end
 - Almanak's Safe plus Zodiac Roles deployment mode is not covered; this runs Almanak's EOA mode with KeeperHub's org wallet as the EOA.
 - Multi-transaction bundles are submitted one at a time with confirmation in between, slower than Almanak's parallel public submitter.
 - Two Almanak bugs needed workarounds inside `gateway.py` (see `docs/almanak-feedback.md`): the in-process gateway deadlocks for 30 s during `RegisterChains` when any wallet registry plugin is installed, and the strategy runner never enables the orchestrator's simulate phase on live networks. Both are contained and documented.
+- When the local RPC cannot return a receipt within about two minutes, the submitter settles from KeeperHub's verified receipt without logs; on that path Almanak's receipt parsers see no events, so the position is recorded from the intent rather than from the chain. It happened once on Base Sepolia (the public RPC lagged KeeperHub's node) and is visible in the receipts file.
 - The idempotency key protects a retry of the same Almanak intent. A strategy that crashes before persisting its state and then decides again compiles a new intent, which is new work by construction; KeeperHub cannot tell those apart, and neither can this package.
 - Sponsored KeeperHub transactions show the relayer as sender on the explorer; the vault's `Deposit` event `owner` and the `receipts[].verified` flag identify the org wallet.
 - Tuple arguments are rendered as objects keyed by component name, the shape KeeperHub's own argument reshaping expects (read from its source); exercised by the Uniswap v3 swap on the fork. The hosted run used approve and deposit (no tuples).

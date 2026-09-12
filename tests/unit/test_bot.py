@@ -90,7 +90,7 @@ def make_bot(strategy_dir: Path, owner: str | None = "42", runner=None) -> Opera
 
 async def test_first_start_claims_ownership_when_no_owner_is_configured(strategy_dir: Path) -> None:
     bot = make_bot(strategy_dir, owner=None)
-    reply = await bot.handle(chat_id="99", text="/start")
+    reply = await bot.handle(chat_id="99", text=f"/start {bot.start_secret}")
     assert bot.owner_chat_id == "99"
     assert "ALMANAK_KEEPERHUB_TELEGRAM_CHAT_ID=99" in reply
     assert "not authorised" in (await bot.handle(chat_id="100", text="/status")).lower()
@@ -147,3 +147,25 @@ async def test_help_and_unknown(strategy_dir: Path) -> None:
     bot = make_bot(strategy_dir)
     assert "/executions" in await bot.handle(chat_id="42", text="/help")
     assert "/help" in await bot.handle(chat_id="42", text="/nope")
+
+
+async def test_ownership_needs_the_startup_secret(strategy_dir: Path) -> None:
+    bot = make_bot(strategy_dir, owner=None)
+    assert "secret" in (await bot.handle(chat_id="99", text="/start")).lower()
+    assert bot.owner_chat_id is None
+    assert "secret" in (await bot.handle(chat_id="99", text="/start wrong")).lower()
+    reply = await bot.handle(chat_id="99", text=f"/start {bot.start_secret}")
+    assert bot.owner_chat_id == "99" and "ALMANAK_KEEPERHUB_TELEGRAM_CHAT_ID=99" in reply
+
+
+async def test_stale_queued_messages_are_ignored(strategy_dir: Path) -> None:
+    import time
+
+    bot = make_bot(strategy_dir)
+    assert await bot.handle(chat_id="42", text="/tick", sent_at=time.time() - 3600) == ""
+    assert "/confirm" in await bot.handle(chat_id="42", text="/tick", sent_at=time.time())
+
+
+async def test_verify_rejects_bad_references_before_any_request(strategy_dir: Path) -> None:
+    reply = await make_bot(strategy_dir).handle(chat_id="42", text="/verify ../../user/wallet?x=")
+    assert "not a transaction hash or execution id" in reply

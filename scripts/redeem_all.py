@@ -41,11 +41,7 @@ async def main() -> int:
     api_key = os.environ.get("KEEPERHUB_API_KEY")
     if not api_key:
         sys.exit("KEEPERHUB_API_KEY is not set")
-    rpc_url = (
-        os.environ.get(f"ALMANAK_{targets.chain.upper()}_RPC_URL")
-        or os.environ.get("RPC_URL_BASE")
-        or "https://sepolia.base.org"
-    )
+    rpc_url = targets.rpc
     client = KeeperHubClient(
         api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com")
     )
@@ -58,6 +54,9 @@ async def main() -> int:
         if shares == 0:
             print("nothing to redeem")
             return 0
+        if targets.chain_id != 84532 and "--yes" not in sys.argv:
+            print("this redeems the whole position on a mainnet; rerun with --yes to confirm")
+            return 2
         data = (
             "0x"
             + (

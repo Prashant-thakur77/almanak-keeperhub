@@ -382,8 +382,12 @@ async def test_get_receipt_for_unknown_hash_raises(client: KeeperHubClient) -> N
 # --- simulator --------------------------------------------------------------
 
 
+async def _no_sleep(_: float) -> None:
+    return None
+
+
 def _simulator(client: KeeperHubClient) -> KeeperHubSimulator:
-    return KeeperHubSimulator(client=client, address=ORG_WALLET)
+    return KeeperHubSimulator(client=client, address=ORG_WALLET, sleep=_no_sleep)
 
 
 def test_simulator_implements_almanak_interface(client: KeeperHubClient) -> None:
@@ -755,3 +759,28 @@ async def test_get_receipt_falls_back_to_keeperhubs_verified_receipt_when_the_rp
     assert receipt.block_number == 46712860
     assert receipt.gas_used == 46199
     assert receipt.logs == []  # no logs without the RPC; the caller is told via the warning log
+
+
+@respx.mock
+async def test_a_later_broadcast_error_keeps_the_landed_hash_in_the_results(
+    client: KeeperHubClient, signer: KeeperHubSigner
+) -> None:
+    """approve landed; the deposit broadcast is refused with a 400: the orchestrator must still see tx0's hash."""
+    respx.post(EXEC_URL).mock(
+        side_effect=[httpx.Response(202, json=completed()), httpx.Response(400, json={"error": "bad args"})]
+    )
+    approve = await signer.sign(approve_tx(), "base")
+    deposit = await signer.sign(deposit_tx(), "base")
+
+    results = await _submitter(client).submit([approve, deposit])
+
+    assert results[0].submitted is True and results[0].tx_hash == TX_HASH
+    assert results[1].submitted is False and "bad args" in (results[1].error or "")
+
+
+@respx.mock
+async def test_a_first_broadcast_error_still_raises(client: KeeperHubClient, signer: KeeperHubSigner) -> None:
+    respx.post(EXEC_URL).mock(return_value=httpx.Response(400, json={"error": "bad args"}))
+    signed = await signer.sign(approve_tx(), "base")
+    with pytest.raises(SubmissionError):
+        await _submitter(client).submit([signed])

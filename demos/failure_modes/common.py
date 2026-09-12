@@ -67,7 +67,7 @@ class Stack:
         self.client = KeeperHubClient(
             api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com")
         )
-        self.rpc_url = os.environ.get("RPC_URL_BASE", "https://mainnet.base.org")
+        self.rpc_url = _TARGETS.rpc  # matched to the chain, never a mainnet RPC for Sepolia hashes
         self.address = ""
         self.signer: KeeperHubSigner
         self.simulator: KeeperHubSimulator

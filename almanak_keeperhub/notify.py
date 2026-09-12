@@ -1,8 +1,8 @@
 """Optional operator alerts over Telegram.
 
-KeeperHub's own Telegram node is a Pro-plan feature, and this backend runs on the
-free tier, so the alert is sent from here: one message per broadcast, settlement
-or refusal. Set ``ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN`` (from @BotFather) and
+KeeperHub workflows have a Telegram node, but this integration executes through
+the direct-execution API where no workflow node runs, so the alert is sent from
+here: one message per broadcast, settlement or refusal. Set ``ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN`` (from @BotFather) and
 ``ALMANAK_KEEPERHUB_TELEGRAM_CHAT_ID`` (your chat with the bot). Unset means silent.
 A failed send is logged and never affects execution.
 """

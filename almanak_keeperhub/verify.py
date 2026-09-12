@@ -8,6 +8,7 @@ decodes the common ones so a judge can see it without an explorer.
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from eth_abi import decode
@@ -36,6 +37,15 @@ EVENTS: dict[str, tuple[str, list[str], list[str], list[str]]] = {
     ),
 }
 ACTOR_FIELDS = ("owner", "sender", "from")
+_TX_HASH = re.compile(r"^0x[0-9a-fA-F]{64}$")
+_EXECUTION_ID = re.compile(r"^(?!0x)[A-Za-z0-9_-]{1,64}$")
+
+
+def valid_reference(reference: str) -> bool:
+    """A transaction hash or a KeeperHub execution id; anything else never reaches a URL."""
+    return bool(reference) and bool(_TX_HASH.match(reference) or _EXECUTION_ID.match(reference))
+
+
 ZERO = "0x" + "00" * 20
 
 

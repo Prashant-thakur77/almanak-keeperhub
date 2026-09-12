@@ -79,3 +79,14 @@ def test_mint_and_burn_events_are_labelled_not_blamed() -> None:
 
     assert "mint to the org wallet" in lines[0]
     assert "burn from the org wallet" in lines[1]
+
+
+def test_references_are_validated_before_any_request() -> None:
+    from almanak_keeperhub.verify import valid_reference
+
+    assert valid_reference("0x" + "ab" * 32)
+    assert valid_reference("au5z8vtzv8s9xm811z93j")
+    assert not valid_reference("../../user/wallet?x=")
+    assert not valid_reference("0x" + "ab" * 31)
+    assert not valid_reference("a b")
+    assert not valid_reference("")

@@ -8,14 +8,21 @@ the compiler's gas limit and are reported as warnings, never as success.
 
 from __future__ import annotations
 
+import asyncio
 import logging
+from typing import Any
 
 import httpx
 from almanak.framework.execution.interfaces import SimulationResult, Simulator, UnsignedTransaction
 
 from almanak_keeperhub.calldata import SelectorIndex, decode_calldata
 from almanak_keeperhub.client import ContractCall, KeeperHubClient
-from almanak_keeperhub.errors import KeeperHubAPIError, UndecodableCalldata
+from almanak_keeperhub.errors import (
+    KeeperHubAPIError,
+    KeeperHubRateLimited,
+    KeeperHubUnavailable,
+    UndecodableCalldata,
+)
 from almanak_keeperhub.notify import notifier_from_env
 from almanak_keeperhub.receipts import ReceiptLog
 
@@ -25,7 +32,14 @@ FALLBACK_GAS = 300_000
 
 
 class KeeperHubSimulator(Simulator):
-    def __init__(self, client: KeeperHubClient, address: str, index: SelectorIndex | None = None) -> None:
+    def __init__(
+        self,
+        client: KeeperHubClient,
+        address: str,
+        index: SelectorIndex | None = None,
+        sleep: Any = None,
+    ) -> None:
+        self._sleep = sleep or asyncio.sleep
         self._client = client
         self._address = address
         self._index = index
@@ -66,10 +80,20 @@ class KeeperHubSimulator(Simulator):
                 abi=decoded.abi,
                 value_wei=int(tx.value or 0),
             )
-            try:
-                outcome = await self._client.simulate_contract_call(call)
-            except (KeeperHubAPIError, httpx.TransportError) as exc:
-                return _failure(f"KeeperHub simulator unavailable: {exc}", simulated=False)
+            outcome = None
+            for attempt in range(3):
+                try:
+                    outcome = await self._client.simulate_contract_call(call)
+                    break
+                except (KeeperHubRateLimited, KeeperHubUnavailable, httpx.TransportError) as exc:
+                    if attempt == 2:
+                        return _failure(f"KeeperHub simulator unavailable: {exc}", simulated=False)
+                    delay = float(getattr(exc, "retry_after_seconds", 0) or 0) or 2.0 * (attempt + 1)
+                    logger.warning("KeeperHub simulate retry %d/3 in %.0fs: %s", attempt + 1, delay, exc)
+                    await self._sleep(delay)
+                except KeeperHubAPIError as exc:
+                    return _failure(f"KeeperHub simulator unavailable: {exc}", simulated=False)
+            assert outcome is not None
             if not outcome.success:
                 reason = outcome.revert_reason or "simulation failed"
                 if outcome.code:

@@ -33,13 +33,15 @@ EXPLORERS = {
 }
 FAILURE_TITLES = {
     "revert_caught_by_dry_run": "Revert caught by dry run",
+    "dry_run_revert": "Revert caught by dry run",
+    "duplicate_blocked": "Duplicate blocked by idempotency",
     "cap_refused": "Stablecoin cap refused before signing",
     "duplicate_blocked_by_idempotency": "Duplicate blocked by idempotency",
     "rpc_outage": "Local RPC outage, broadcast still landed",
     "unknown_selector_refused": "Unknown selector refused offline",
     "crash_and_resume": "Crash after broadcast, resumed by a new process",
 }
-REFUSAL_KINDS = {"revert_caught_by_dry_run", "cap_refused", "unknown_selector_refused"}
+REFUSAL_KINDS = {"revert_caught_by_dry_run", "dry_run_revert", "cap_refused", "unknown_selector_refused"}
 TERMINAL_OK = {"completed", "success"}
 TERMINAL_BAD = {"failed", "error", "system_error", "cancelled"}
 
@@ -114,8 +116,10 @@ async def verify_reference(reference: str, receipts: Path, chain_name: str) -> d
     """KeeperHub's verdict plus on-chain evidence, as the `verify` command prints it."""
     from almanak_keeperhub.client import DEFAULT_BASE_URL, KeeperHubClient
     from almanak_keeperhub.receipts import ReceiptLog
-    from almanak_keeperhub.verify import actor_evidence
+    from almanak_keeperhub.verify import actor_evidence, valid_reference
 
+    if not valid_reference(reference):
+        return {"error": "not a transaction hash or execution id"}
     api_key = os.environ.get("KEEPERHUB_API_KEY")
     if not api_key:
         return {"error": "KEEPERHUB_API_KEY is not set in the console's environment"}
@@ -148,19 +152,22 @@ async def verify_reference(reference: str, receipts: Path, chain_name: str) -> d
             or os.environ.get("RPC_URL_BASE")
         )
         if tx_hash and rpc_url:
-            from web3 import AsyncHTTPProvider, AsyncWeb3
+            try:
+                from web3 import AsyncHTTPProvider, AsyncWeb3
 
-            web3 = AsyncWeb3(AsyncHTTPProvider(rpc_url))
-            receipt = await web3.eth.get_transaction_receipt(tx_hash)  # type: ignore[arg-type]
-            sender = str(receipt["from"]).lower()
-            result["onchain"] = {
-                "sender": sender,
-                "sender_is_org_wallet": sender == org_wallet.lower(),
-                "status": "success" if receipt["status"] == 1 else "reverted",
-                "block": int(receipt["blockNumber"]),
-                "gas_used": int(receipt["gasUsed"]),
-            }
-            result["events"] = actor_evidence([dict(log) for log in receipt["logs"]], org_wallet)
+                web3 = AsyncWeb3(AsyncHTTPProvider(rpc_url))
+                receipt = await web3.eth.get_transaction_receipt(tx_hash)  # type: ignore[arg-type]
+                sender = str(receipt["from"]).lower()
+                result["onchain"] = {
+                    "sender": sender,
+                    "sender_is_org_wallet": sender == org_wallet.lower(),
+                    "status": "success" if receipt["status"] == 1 else "reverted",
+                    "block": int(receipt["blockNumber"]),
+                    "gas_used": int(receipt["gasUsed"]),
+                }
+                result["events"] = actor_evidence([dict(log) for log in receipt["logs"]], org_wallet)
+            except Exception as exc:  # noqa: BLE001 - KeeperHub's verdict stands even if the RPC lags
+                result["onchain_error"] = f"{type(exc).__name__}: the RPC could not return this receipt yet"
         return result
     finally:
         await client.aclose()
