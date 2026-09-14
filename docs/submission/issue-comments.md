@@ -5,7 +5,7 @@
 Thanks @subheeksh5599, that is a generous way to handle it and I appreciate it. For what it is worth your
 claim was properly made; there was nothing on the issue saying I was implementing it until I said so.
 
-PR: <PASTE PR LINK>
+PR: #2449 (opened 14 Sep)
 
 Built to @suisuss's shape: `data` validated in `contractCallInputSchema` with `functionName` conditional on
 its absence and `functionNameConflict` left intact, decoding against the caller-supplied ABI alone, re-encode
@@ -41,7 +41,7 @@ falls back to per-call estimates. If it is still open after Friday I will pick i
 
 ## In Discord, replying to Luca
 
-Thanks - both PRs are up: #2426 (raw calldata, with the re-encode-and-compare that suisuss asked for) and
+Thanks - both PRs are up: #2449 for #2426 (raw calldata, with the re-encode-and-compare that suisuss asked for) and
 #2428 (the traced frame's `from`). #2427 I have left open rather than hold it; it needs the per-chain
 eth_simulateV1 measurement first and I would rather not rush it before Friday.
 
