@@ -1,6 +1,6 @@
 # Pull request for issue #2426 (accepted 14 Sep 2026)
 
-Branch: `feat/raw-calldata-contract-call`, one commit `d1bb2ea9a`, rebased on `staging` 28233554f, pushed to
+Branch: `feat/raw-calldata-contract-call`, one commit `85519519d`, rebased on `staging` 28233554f, pushed to
 https://github.com/Prashant-thakur77/keeperhub. Base: `KeeperHub/keeperhub:staging`.
 
 Open it at:
@@ -14,8 +14,8 @@ Title (the pr-title-check workflow enforces conventional commits and the issue-l
 
 **Issue**
 
-Closes #2426. Built to the shape triage accepted, not to the shape filed: the three differences are the schema
-change, the re-encode comparison, and refusing a body that carries both `data` and a function key.
+Closes #2426. Built to the shape triage accepted: the schema change, decoding against the caller-supplied ABI
+alone, re-encode-and-compare, and the test asserting no network call on an ABI miss.
 
 **What this changes**
 
@@ -41,14 +41,12 @@ dropped silently.
 is not reachable from this path, so no 4byte.directory read and no selector-only result can put a guessed
 signature on the signing path. A test asserts that no network call is made when the ABI lacks the selector.
 
-One departure from the issue as filed: a body carrying both `data` and `functionName` (or `abiFunction`) is now
-`400` on field `data` rather than letting the typed fields win. It describes the same call twice, and the
-decode would otherwise quietly overrule the name that was typed - the same reasoning as the existing
-`functionNameConflict` guard. Say the word and I will make the typed fields win instead; it is a four-line change.
-
 **Scope**
 
-- `app/api/execute/_lib/schemas.ts`: `data` validation, `functionName` conditional on its absence, both-keys conflict.
+- `app/api/execute/_lib/schemas.ts`: `data` validation, `functionName` conditional on its absence. A body carrying
+  both keeps the filed behaviour - the typed fields win and `data` is ignored, though it is still shape-checked -
+  and `isRawCalldataRequest` applies the same non-empty-string test as `hasFunctionNameInput` so the route and the
+  schema cannot disagree about which path a body takes.
 - `app/api/execute/_lib/raw-calldata.ts` (new): selector check, ABI decode, re-encode comparison, argument rendering
   (decimal strings for integers, hex for bytes, arrays for arrays, objects keyed by component name for tuples - the
   shapes `reshapeArgsForAbi` and `coerceArgsForAbi` already accept).
@@ -60,7 +58,7 @@ decode would otherwise quietly overrule the name that was typed - the same reaso
 
 **How verified**
 
-- `pnpm vitest run tests/unit/execute-raw-calldata.test.ts tests/unit/contract-call-raw-calldata.test.ts`: 26 tests.
+- `pnpm vitest run tests/unit/execute-raw-calldata.test.ts tests/unit/contract-call-raw-calldata.test.ts`: 28 tests.
   They cover the decoder (approve, tuple/array/bytes/bool rendering, unknown selector, undecodable calldata, invalid
   ABI, trailing bytes, non-canonical padding, no network call on an ABI miss), the schema (functionName conditional,
   conflict guard intact, malformed `data`, both keys present) and the route (write path receives the canonical key
