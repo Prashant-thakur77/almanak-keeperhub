@@ -19,7 +19,7 @@ over there. A review from you would be worth more to me than the split would hav
 
 ## On #2428, with the PR open
 
-PR: <PASTE PR LINK>
+PR: #2452
 
 The shape you and @suisuss converged on, not the one I filed: the matched frame's `from` on `ExecutedCall`,
 no top-level `sender`. You were both right that `sender` as I wrote it names the wrong address under Safe
@@ -32,7 +32,7 @@ Exposing `from` there is four lines, but the issue scoped workflows out. Happy t
 
 ## On #2427, with the PR open
 
-PR: <PASTE PR LINK>
+PR: #2452
 
 Thanks @subheeksh5599 - I did end up taking this one after all, so the offer to run the probe is no longer
 needed, but it was a good one.
@@ -82,7 +82,7 @@ Thanks Luca, that is useful on both counts.
 All three PRs are up:
 - #2426 (raw calldata): https://github.com/KeeperHub/keeperhub/pull/2449
 - #2428 (the acting wallet): https://github.com/KeeperHub/keeperhub/pull/2450
-- #2427 (the call sequence): https://github.com/KeeperHub/keeperhub/pull/<N>
+- #2427 (the call sequence): https://github.com/KeeperHub/keeperhub/pull/2452
 
 #2426 and #2428 are built to the shapes suisuss specified in the issues rather than the ones I filed - the
 re-encode-and-compare on the first, the traced frame's `from` on the second.
