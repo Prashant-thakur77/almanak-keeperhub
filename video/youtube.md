@@ -43,6 +43,10 @@ until judging).
     Repo: https://github.com/Prashant-thakur77/almanak-keeperhub
     Built for the KeeperHub Agent Economy Hackathon.
 
+    Music: "Inspired" by Kevin MacLeod (incompetech.com)
+    Licensed under Creative Commons: By Attribution 4.0
+    https://creativecommons.org/licenses/by/4.0/
+
 **Chapters** (paste into the description once the final runtime is confirmed)
 
     0:00 Almanak decides, KeeperHub lands it

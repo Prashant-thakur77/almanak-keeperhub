@@ -1,7 +1,8 @@
 # Demo video
 
 Renders `demo-video.mp4`: a 1080p60 explainer built around the real Base Sepolia
-run, narrated with Chatterbox and scored with a synthesised ambient bed.
+run, narrated with Chatterbox and scored with "Inspired" by Kevin MacLeod (CC BY 4.0,
+incompetech.com - the credit is in the YouTube description).
 
 Everything on screen is real: the console screenshot is `docs/img/console.png`
 from the recorded run, and the transaction hashes, execution ids and benchmark
@@ -17,8 +18,9 @@ own `keeperhub-receipts.json`.
 # 2. picture: deterministic frame-by-frame render straight into ffmpeg
 FPS=60 OUT=anim.mp4 node render.mjs
 
-# 3. music bed + narration mix -> audio.wav   (see build-audio.sh)
-./build-audio.sh
+# 3. music + narration mix -> audio.wav
+#    MUSIC=<file> uses a real track; unset synthesises an ambient pad
+MUSIC=mus_Inspired.mp3 ./build-audio.sh
 
 # 4. mux
 ./assemble.sh
