@@ -46,9 +46,9 @@ cannot be traced, and the docs now say so.
 
 ## How it was verified
 
-- `pnpm vitest run tests/unit/trace-decode.test.ts`: 22 tests, four new - the relayer case (the frame's
+- `pnpm vitest run tests/unit/trace-decode.test.ts`: 23 tests, five new - the relayer case (the frame's
   address, not the transaction's), the delegated case (the org EOA while a relayer paid), the Safe-routed case
-  (the Safe, not the signing EOA), and lowercasing.
+  (the Safe, not the signing EOA), lowercasing, and the DELEGATECALL frame pinned as the delegating contract.
 - `pnpm vitest run tests/unit/write-contract-core.test.ts tests/unit/approve-token.test.ts tests/unit/transfer-token-core.test.ts`:
   pass. The `executedCall` fixture there now carries `from`, so the existing equality assertion covers it reaching
   the write result and therefore the status response.
