@@ -1,6 +1,6 @@
 # Second PR, for issue #2428 (accepted 14 Sep; Luca in Discord: "the easiest yes of the three, send it as its own PR")
 
-Branch: `feat/executed-call-sender`, one commit `aff90e002`, off `staging` 28233554f, pushed to
+Branch: `feat/executed-call-sender`, one commit `7f4a3fd3f`, off `staging` 28233554f, pushed to
 https://github.com/Prashant-thakur77/keeperhub. Base: `KeeperHub/keeperhub:staging`.
 
 Open it at:
@@ -50,7 +50,8 @@ cannot be traced, and the docs now say so.
   address, not the transaction's), the delegated case (the org EOA while a relayer paid), the Safe-routed case
   (the Safe, not the signing EOA), and lowercasing.
 - `pnpm vitest run tests/unit/write-contract-core.test.ts tests/unit/approve-token.test.ts tests/unit/transfer-token-core.test.ts`:
-  pass, with an added assertion that the field reaches the write result and so the status response.
+  pass. The `executedCall` fixture there now carries `from`, so the existing equality assertion covers it reaching
+  the write result and therefore the status response.
 - `pnpm check`, `pnpm type-check`, `pnpm check:api-docs`: clean.
 - Motivating integration: https://github.com/Prashant-thakur77/almanak-keeperhub, which currently recovers the
   same address by decoding Transfer/Approval/Deposit/Withdraw arguments per event signature. That is the
