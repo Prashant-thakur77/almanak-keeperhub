@@ -52,6 +52,25 @@ at broadcast, and did not add a bundle-level total - the over-cap approval polic
 second summing definition beside it looked more likely to drift than to help. If the summed figure has to be
 refused too, say so and I will add it there.
 
+## In Discord, replying to Luca (post now, with two PRs open)
+
+Thanks Luca, that is useful on both counts.
+
+Both PRs are up: #2449 for #2426 (raw calldata) and #2450 for #2428 (the acting wallet). Both are built to the
+shapes suisuss specified in the issues rather than the ones I filed - the re-encode-and-compare on the first,
+the traced frame's `from` on the second rather than the top-level `sender` I proposed, which named the wrong
+address under Safe routing.
+
+#2427 I am working on now and will open shortly. Before writing it I checked eth_simulateV1 on Base Sepolia
+and got the second call reading the first call's state, so the mechanism suisuss named is measured rather than
+assumed; nodes without it fall back to trace-derived state overrides rather than to per-call estimates.
+
+On order, if it helps: #2450 conflicts with nothing but the generated api-coverage artifact, so it is the
+cheapest to take first. #2449 and #2427 both touch the contract-call schema and route, so whichever goes
+second I will rebase.
+
+Filing the separate bounty BUIDL today, thanks for the heads-up that it stacks. See you at office hours.
+
 ## In Discord, replying to Luca (post after all three PRs are open)
 
 Thanks Luca, that is useful on both counts.
