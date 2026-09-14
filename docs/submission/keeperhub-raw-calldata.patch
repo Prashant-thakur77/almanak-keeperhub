@@ -1,31 +1,45 @@
-From e1fbf118234066ea6f6c1099bb70e19d245e432e Mon Sep 17 00:00:00 2001
+From d1bb2ea9aa9e16d6bf5ec35079fd2ee1e36f85c6 Mon Sep 17 00:00:00 2001
 From: Prashant-thakur77 <prashant101007@gmail.com>
 Date: Sat, 12 Sep 2026 02:12:36 +0530
-Subject: [PATCH] feat(execute): accept raw calldata on POST
+Subject: [PATCH] feat: #2426 accept raw calldata on POST
  /api/execute/contract-call
 
 Execution frameworks hand their executor an already-encoded data field.
-Decode it against the body or explorer ABI into the canonical function key
-and typed functionArgs, then take the existing read, simulate and write
-paths so every guard keeps reading a named function. A selector the ABI
-does not contain is a 400 on field data; no signature database is consulted.
+Accept it in place of functionName and functionArgs: contractCallInputSchema
+validates data (0x-prefixed hex, whole bytes, four bytes or more) and requires
+a function key only in its absence, then the route decodes it against the body
+or explorer ABI into the canonical function key and typed functionArgs and
+takes the existing read, simulate and write paths, so the stablecoin cap, the
+payable check, the spending caps and the execution record all keep reading a
+named function with typed arguments.
+
+The decode is lossless or it is refused. The broadcast is rebuilt from the
+decoded arguments rather than the submitted bytes, so the calldata is
+re-encoded and compared, and trailing bytes, non-minimal offsets and
+non-canonical padding answer 400 rather than being dropped silently.
+
+Nothing is guessed: decoding runs against the caller-supplied ABI alone, with
+no signature-database lookup, so a selector the ABI does not contain is a 400
+on field data and no guessed signature reaches the signing path.
 ---
- app/api/execute/_lib/raw-calldata.ts          | 123 +++++++
- app/api/execute/contract-call/route.ts        |  41 +++
- docs/api/direct-execution.md                  |  31 ++
- tests/unit/contract-call-raw-calldata.test.ts | 300 ++++++++++++++++++
- tests/unit/execute-raw-calldata.test.ts       | 162 ++++++++++
- 5 files changed, 657 insertions(+)
+ app/api/execute/_lib/raw-calldata.ts          | 146 ++++++++
+ app/api/execute/_lib/schemas.ts               |  64 +++-
+ app/api/execute/contract-call/route.ts        |  32 ++
+ docs/api/direct-execution.md                  |  42 +++
+ specs/api-coverage.json                       |   6 +-
+ tests/unit/contract-call-raw-calldata.test.ts | 333 ++++++++++++++++++
+ tests/unit/execute-raw-calldata.test.ts       | 281 +++++++++++++++
+ 7 files changed, 900 insertions(+), 4 deletions(-)
  create mode 100644 app/api/execute/_lib/raw-calldata.ts
  create mode 100644 tests/unit/contract-call-raw-calldata.test.ts
  create mode 100644 tests/unit/execute-raw-calldata.test.ts
 
 diff --git a/app/api/execute/_lib/raw-calldata.ts b/app/api/execute/_lib/raw-calldata.ts
 new file mode 100644
-index 000000000..f3d5b5026
+index 000000000..c5f9e30a9
 --- /dev/null
 +++ b/app/api/execute/_lib/raw-calldata.ts
-@@ -0,0 +1,123 @@
+@@ -0,0 +1,146 @@
 +import { ethers } from "ethers";
 +
 +/**
@@ -108,6 +122,29 @@ index 000000000..f3d5b5026
 +    };
 +  }
 +
++  // The broadcast is not the bytes that arrived. The transaction is rebuilt
++  // from the function key and the decoded arguments (lib/web3/chain-adapter/evm.ts),
++  // so anything the decode does not represent - trailing bytes past the
++  // arguments, non-minimal offsets, non-canonical padding - would be dropped
++  // silently, and a contract that reads raw msg.data would execute something
++  // other than what was sent. Re-encoding and comparing is what makes the
++  // decode lossless; a mismatch is refused rather than normalised.
++  let reencoded: string;
++  try {
++    reencoded = iface.encodeFunctionData(parsed.fragment, parsed.args);
++  } catch (err: unknown) {
++    return {
++      error: `Calldata decoded but could not be re-encoded for comparison: ${err instanceof Error ? err.message : String(err)}`,
++    };
++  }
++  if (reencoded.toLowerCase() !== data.toLowerCase()) {
++    return {
++      error:
++        `data is not the canonical encoding of the call it decodes to: ${parsed.fragment.format("sighash")} re-encodes to ${reencoded}. ` +
++        "The transaction is built from the decoded arguments, not from the bytes sent, so trailing bytes, non-minimal offsets and non-canonical padding are refused instead of being dropped silently.",
++    };
++  }
++
 +  const args = parsed.fragment.inputs.map((input, i) =>
 +    toJsonArg(parsed.args[i], input)
 +  );
@@ -149,8 +186,90 @@ index 000000000..f3d5b5026
 +  }
 +  return String(value);
 +}
+diff --git a/app/api/execute/_lib/schemas.ts b/app/api/execute/_lib/schemas.ts
+index 5f7eef65d..a836f58ca 100644
+--- a/app/api/execute/_lib/schemas.ts
++++ b/app/api/execute/_lib/schemas.ts
+@@ -73,6 +73,58 @@ function functionNameConflict(
+   };
+ }
+ 
++// #2426: `data` is an already-encoded call. The contract-call route decodes it
++// against the ABI into the function key and arguments the rest of this schema
++// describes, so `functionName` is required only in its absence. Shape is
++// checked here, before `resolveAbiForRequest` runs, because the missing
++// function key short-circuits this schema and nothing downstream would see it.
++const CALLDATA_REGEX = /^0x[\da-fA-F]*$/;
++const SELECTOR_HEX_LENGTH = 10; // "0x" + 4 bytes
++
++function hasRawCalldataInput(record: Record<string, unknown>): boolean {
++  return "data" in record;
++}
++
++function rawCalldataError(
++  record: Record<string, unknown>
++): ExecuteErrorResponse | null {
++  const data = record.data;
++  if (typeof data !== "string" || !CALLDATA_REGEX.test(data)) {
++    return {
++      error: "Invalid field type",
++      field: "data",
++      details: "data must be a 0x-prefixed hex string",
++    };
++  }
++  if (data.length % 2 !== 0) {
++    return {
++      error: "Invalid field value",
++      field: "data",
++      details: "data must contain whole bytes (an even number of hex digits)",
++    };
++  }
++  if (data.length < SELECTOR_HEX_LENGTH) {
++    return {
++      error: "Invalid field value",
++      field: "data",
++      details:
++        "data must carry at least a 4-byte function selector; a plain value transfer belongs on /api/execute/transfer",
++    };
++  }
++  return null;
++}
++
++// Both keys present is caller error for the same reason a functionName that
++// disagrees with abiFunction is: the two describe different transactions and
++// only one is what the caller meant. The route decodes `data`, so it would
++// silently win over the name that was typed.
++const dataFunctionNameConflict: ExecuteErrorResponse = {
++  error: "Conflicting field values",
++  field: "data",
++  details:
++    "data and functionName describe the same call twice; send raw calldata in data, or the function key and functionArgs, not both",
++};
++
+ function requiredFieldError(field: string): ExecuteErrorResponse {
+   return {
+     error: "Missing required field",
+@@ -186,7 +238,17 @@ export const contractCallInputSchema = objectBase.superRefine((record, ctx) => {
+     addError(ctx, chainFieldError);
+     return;
+   }
+-  if (!hasFunctionNameInput(record)) {
++  if (hasRawCalldataInput(record)) {
++    const dataError = rawCalldataError(record);
++    if (dataError) {
++      addError(ctx, dataError);
++      return;
++    }
++    if (hasFunctionNameInput(record)) {
++      addError(ctx, dataFunctionNameConflict);
++      return;
++    }
++  } else if (!hasFunctionNameInput(record)) {
+     addError(ctx, requiredFieldError("functionName"));
+     return;
+   }
 diff --git a/app/api/execute/contract-call/route.ts b/app/api/execute/contract-call/route.ts
-index b86a550dd..3684a293d 100644
+index b86a550dd..1988f9150 100644
 --- a/app/api/execute/contract-call/route.ts
 +++ b/app/api/execute/contract-call/route.ts
 @@ -36,6 +36,7 @@ import {
@@ -161,32 +280,20 @@ index b86a550dd..3684a293d 100644
  import { parseNativeValueEther } from "../_lib/reserved-value";
  import { parseSimulateFlag } from "../_lib/simulate-flag";
  import { checkAndReserveExecution } from "../_lib/spending-cap";
-@@ -343,6 +344,46 @@ export async function POST(request: Request): Promise<NextResponse> {
-     return executionGuard.response;
+@@ -357,6 +358,37 @@ export async function POST(request: Request): Promise<NextResponse> {
+     body.network = String(body.chainId);
    }
  
-+  // Raw calldata: execution frameworks (Almanak, Wayfinder, AgentKit) hand
-+  // their executor an already-encoded `data` field. Decode it against the ABI
-+  // into the typed call this route already executes, so the stablecoin cap,
-+  // the payable check, `simulate` and the audit record all keep reading a
-+  // named function with typed arguments. The ABI comes from the body or the
-+  // explorer; a selector it does not contain is refused, never looked up.
++  // #2426 raw calldata: execution frameworks (Almanak, Wayfinder, AgentKit)
++  // hand their executor an already-encoded `data` field. The schema has
++  // accepted it in place of the function key; decode it against the ABI into
++  // the typed call this route already executes, so the stablecoin cap, the
++  // payable check, `simulate` and the audit record all keep reading a named
++  // function with typed arguments. The ABI comes from the body or the
++  // explorer cache; a selector it does not contain is refused, never looked
++  // up, so no guessed signature reaches the signing path.
 +  if (isRawCalldataRequest(body)) {
-+    // Reuse the schema for everything except the function key, which is what
-+    // the decode step is about to supply.
-+    const shape = validateContractCallInput({
-+      ...body,
-+      functionName: "__raw_calldata__",
-+    });
-+    if (!shape.valid) {
-+      return NextResponse.json(shape.error, {
-+        status: HttpStatus.BAD_REQUEST,
-+      });
-+    }
-+    const rawAbi = await resolveAbiForRequest({
-+      ...body,
-+      network: body.network ?? String(body.chainId),
-+    });
++    const rawAbi = await resolveAbiForRequest(body);
 +    if ("error" in rawAbi) {
 +      return NextResponse.json(
 +        { error: rawAbi.error, field: "abi" },
@@ -203,16 +310,19 @@ index b86a550dd..3684a293d 100644
 +    body.functionName = decoded.functionName;
 +    body.functionArgs = decoded.functionArgs;
 +    body.abi = rawAbi.abi;
++    // The call is now described once, by the function key, the way every
++    // downstream read site expects it.
++    body.data = undefined;
 +  }
 +
-   const validation = validateContractCallInput(body);
-   if (!validation.valid) {
-     return NextResponse.json(validation.error, {
+   const abiResult = await resolveAbiForRequest(body);
+   if ("error" in abiResult) {
+     return NextResponse.json(
 diff --git a/docs/api/direct-execution.md b/docs/api/direct-execution.md
-index 6d9a1e394..baf6e37fe 100644
+index 6d9a1e394..4528b021c 100644
 --- a/docs/api/direct-execution.md
 +++ b/docs/api/direct-execution.md
-@@ -419,6 +419,37 @@ Call any smart contract function. Automatically detects read vs write operations
+@@ -419,6 +419,48 @@ Call any smart contract function. Automatically detects read vs write operations
  - `value` (optional): Native value to send with the call, as a decimal string in ether units (e.g. `0.1`) (for payable functions)
  - `gasLimitMultiplier` (optional): Gas limit multiplier
  
@@ -242,20 +352,62 @@ index 6d9a1e394..baf6e37fe 100644
 +
 +Nothing is inferred. A selector the ABI does not contain is rejected with
 +`400` on field `data`; supply the contract's ABI or the typed fields instead.
-+No signature database is consulted. `data` must carry at least the 4-byte
-+selector; plain value transfers use [Transfer Funds](#transfer-funds).
-+When `functionName` (or `abiFunction`) is present alongside `data`, the typed
-+fields win and `data` is ignored. `check-and-execute` does not accept `data`.
++No signature database is consulted, so a guessed signature can never reach the
++signing path. `data` must be 0x-prefixed hex of whole bytes carrying at least
++the 4-byte selector; plain value transfers use [Transfer Funds](#transfer-funds).
++
++The decode must be lossless. The transaction that is broadcast is rebuilt from
++the decoded function and arguments, not from the bytes you sent, so calldata is
++re-encoded and compared against `data`, and anything that does not survive the
++round trip - trailing bytes past the arguments (an ERC-2771 appended sender,
++for example), non-minimal offsets, non-canonical padding - is rejected with
++`400` on field `data` rather than dropped silently.
++
++Send `data` or the typed fields, not both: a body carrying `data` alongside
++`functionName` (or `abiFunction`) describes the same call twice and is
++rejected with `400` on field `data`. `check-and-execute` does not accept
++`data`.
 +
  **Direct execution vs. workflow node field names**
  
  The same values carry different field names depending on which surface you're
+diff --git a/specs/api-coverage.json b/specs/api-coverage.json
+index 57bc4c954..af2cb4877 100644
+--- a/specs/api-coverage.json
++++ b/specs/api-coverage.json
+@@ -146,7 +146,7 @@
+       "path": "/api/execute/{executionId}/status",
+       "route_file": "app/api/execute/[executionId]/status/route.ts",
+       "source": "docs/api/direct-execution.md",
+-      "line": 796
++      "line": 838
+     },
+     {
+       "method": "GET",
+@@ -391,7 +391,7 @@
+       "path": "/api/execute/check-and-execute",
+       "route_file": "app/api/execute/check-and-execute/route.ts",
+       "source": "docs/api/direct-execution.md",
+-      "line": 535
++      "line": 577
+     },
+     {
+       "method": "POST",
+@@ -545,7 +545,7 @@
+       "path": "/api/workflows/{workflowId}/simulate",
+       "route_file": "app/api/workflows/[workflowId]/simulate/route.ts",
+       "source": "docs/api/direct-execution.md",
+-      "line": 970
++      "line": 1012
+     },
+     {
+       "method": "POST",
 diff --git a/tests/unit/contract-call-raw-calldata.test.ts b/tests/unit/contract-call-raw-calldata.test.ts
 new file mode 100644
-index 000000000..cd94d552b
+index 000000000..595a2d88c
 --- /dev/null
 +++ b/tests/unit/contract-call-raw-calldata.test.ts
-@@ -0,0 +1,300 @@
+@@ -0,0 +1,333 @@
 +/**
 + * POST /api/execute/contract-call accepts raw `data` in place of
 + * functionName + functionArgs. The route decodes it against the ABI and then
@@ -538,8 +690,8 @@ index 000000000..cd94d552b
 +    expect(mockResolveAbi).not.toHaveBeenCalled();
 +  });
 +
-+  it("leaves typed requests untouched when both data and functionName are sent", async () => {
-+    await call(
++  it("refuses a body that describes the call twice", async () => {
++    const response = await call(
 +      post({
 +        chainId: 8453,
 +        contractAddress: TOKEN,
@@ -549,19 +701,52 @@ index 000000000..cd94d552b
 +        data: approveData,
 +      })
 +    );
++    const body = (await response.json()) as { error: string; field?: string };
 +
-+    expect(mockWriteContractCore.mock.calls[0][0]).toMatchObject({
-+      abiFunction: "approve",
-+      functionArgs: JSON.stringify([SPENDER, "1"]),
-+    });
++    expect(response.status).toBe(400);
++    expect(body.field).toBe("data");
++    expect(mockResolveAbi).not.toHaveBeenCalled();
++    expect(mockWriteContractCore).not.toHaveBeenCalled();
++  });
++
++  it("refuses malformed data in the schema, before the ABI is resolved", async () => {
++    for (const data of ["0x095ea7b", "095ea7b3", "0x095ea7", 12_345]) {
++      const response = await call(
++        post({ chainId: 8453, contractAddress: TOKEN, data, abi: ERC20_ABI })
++      );
++      const body = (await response.json()) as { field?: string };
++
++      expect(response.status).toBe(400);
++      expect(body.field).toBe("data");
++    }
++    expect(mockResolveAbi).not.toHaveBeenCalled();
++    expect(mockWriteContractCore).not.toHaveBeenCalled();
++  });
++
++  it("refuses calldata carrying bytes the decode does not represent", async () => {
++    const response = await call(
++      post({
++        chainId: 8453,
++        contractAddress: TOKEN,
++        data: `${approveData}deadbeef`,
++        abi: ERC20_ABI,
++      })
++    );
++    const body = (await response.json()) as { error: string; field?: string };
++
++    expect(response.status).toBe(400);
++    expect(body.field).toBe("data");
++    expect(body.error).toContain("canonical encoding");
++    expect(mockWriteContractCore).not.toHaveBeenCalled();
++    expect(mockSimulateContractCall).not.toHaveBeenCalled();
 +  });
 +});
 diff --git a/tests/unit/execute-raw-calldata.test.ts b/tests/unit/execute-raw-calldata.test.ts
 new file mode 100644
-index 000000000..5e60f329e
+index 000000000..805e3f34c
 --- /dev/null
 +++ b/tests/unit/execute-raw-calldata.test.ts
-@@ -0,0 +1,162 @@
+@@ -0,0 +1,281 @@
 +/**
 + * Raw calldata on POST /api/execute/contract-call: `data` is decoded against
 + * the ABI into the typed call the route already executes. Nothing is guessed:
@@ -570,12 +755,13 @@ index 000000000..5e60f329e
 + * Run with: pnpm vitest tests/unit/execute-raw-calldata.test.ts
 + */
 +import { ethers } from "ethers";
-+import { describe, expect, it } from "vitest";
++import { describe, expect, it, vi } from "vitest";
 +import {
 +  isRawCalldataRequest,
 +  resolveRawCalldata,
 +  selectorOf,
 +} from "@/app/api/execute/_lib/raw-calldata";
++import { validateContractCallInput } from "@/app/api/execute/_lib/validate";
 +
 +const SPENDER = "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca";
 +const OWNER = "0x0BDf000000000000000000000000000000000001";
@@ -722,6 +908,124 @@ index 000000000..5e60f329e
 +    ).toEqual({
 +      error: "Invalid ABI JSON",
 +    });
++  });
++});
++
++describe("re-encoding", () => {
++  const approveData = iface.encodeFunctionData("approve", [
++    SPENDER,
++    BigInt("1000000"),
++  ]);
++
++  it("refuses trailing bytes past the arguments", () => {
++    // ERC-2771 appends the sender to msg.data; a contract reading raw msg.data
++    // would see them, but the broadcast is rebuilt from the decoded arguments,
++    // so they would never be sent. Refuse instead of dropping them silently.
++    const result = resolveRawCalldata(
++      `${approveData}${OWNER.slice(2)}`,
++      ERC20_ABI
++    );
++    expect(result).toHaveProperty("error");
++    expect((result as { error: string }).error).toContain("canonical encoding");
++  });
++
++  it("refuses non-canonical padding of a decoded argument", () => {
++    // A bool encoded as 2 decodes as true and re-encodes as 1: same meaning to
++    // ethers, different bytes on the wire.
++    const boolAbi = JSON.stringify([
++      {
++        type: "function",
++        name: "setFlag",
++        stateMutability: "nonpayable",
++        inputs: [{ name: "on", type: "bool" }],
++        outputs: [],
++      },
++    ]);
++    const boolIface = new ethers.Interface(JSON.parse(boolAbi));
++    const fragment = boolIface.getFunction("setFlag");
++    if (fragment === null) {
++      throw new Error("setFlag missing from the test ABI");
++    }
++    const selector = fragment.selector;
++    const result = resolveRawCalldata(
++      `${selector}${"00".repeat(31)}02`,
++      boolAbi
++    );
++    expect(result).toHaveProperty("error");
++  });
++
++  it("accepts calldata that re-encodes byte for byte", () => {
++    expect(resolveRawCalldata(approveData, ERC20_ABI)).toMatchObject({
++      functionName: "approve(address,uint256)",
++    });
++  });
++});
++
++describe("the decoder never reaches the network", () => {
++  it("makes no request when the ABI does not contain the selector", async () => {
++    // decodeCalldata falls through to 4byte.directory and can return a guessed
++    // signature; this path must not, because what it returns gets signed.
++    const fetchSpy = vi.spyOn(globalThis, "fetch");
++    const unknownSelector = `0xdeadbeef${"00".repeat(32)}`;
++
++    const result = resolveRawCalldata(unknownSelector, ERC20_ABI);
++
++    expect(result).toHaveProperty("error");
++    expect((result as { error: string }).error).toContain("not in the ABI");
++    expect(fetchSpy).not.toHaveBeenCalled();
++    fetchSpy.mockRestore();
++  });
++});
++
++describe("contractCallInputSchema with raw calldata", () => {
++  const base = {
++    chainId: 8453,
++    contractAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
++    abi: ERC20_ABI,
++  };
++
++  it("requires functionName only when data is absent", () => {
++    expect(validateContractCallInput({ ...base }).valid).toBe(false);
++    expect(
++      validateContractCallInput({
++        ...base,
++        data: iface.encodeFunctionData("approve", [SPENDER, BigInt("1")]),
++      }).valid
++    ).toBe(true);
++  });
++
++  it("keeps the functionName/abiFunction conflict guard intact", () => {
++    const result = validateContractCallInput({
++      ...base,
++      functionName: "transfer",
++      abiFunction: "transferFrom",
++    });
++    expect(result.valid).toBe(false);
++    expect(result.valid === false && result.error.field).toBe("abiFunction");
++  });
++
++  it("rejects data that is not whole bytes of 0x-prefixed hex", () => {
++    for (const data of [
++      "095ea7b3",
++      "0x095ea7b",
++      "0xzz95ea7b3",
++      "0x095ea7",
++      7,
++    ]) {
++      const result = validateContractCallInput({ ...base, data });
++      expect(result.valid).toBe(false);
++      expect(result.valid === false && result.error.field).toBe("data");
++    }
++  });
++
++  it("rejects a body that carries both data and a function key", () => {
++    const result = validateContractCallInput({
++      ...base,
++      data: iface.encodeFunctionData("approve", [SPENDER, BigInt("1")]),
++      functionName: "approve",
++    });
++    expect(result.valid).toBe(false);
++    expect(result.valid === false && result.error.field).toBe("data");
 +  });
 +});
 -- 
