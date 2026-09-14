@@ -56,14 +56,18 @@ refused too, say so and I will add it there.
 
 Thanks Luca, that is useful on both counts.
 
-Both PRs are up: #2449 for #2426 (raw calldata) and #2450 for #2428 (the acting wallet). Both are built to the
-shapes suisuss specified in the issues rather than the ones I filed - the re-encode-and-compare on the first,
-the traced frame's `from` on the second rather than the top-level `sender` I proposed, which named the wrong
-address under Safe routing.
+Both PRs are up:
+- #2426 (raw calldata): https://github.com/KeeperHub/keeperhub/pull/2449
+- #2428 (the acting wallet): https://github.com/KeeperHub/keeperhub/pull/2450
 
-#2427 I am working on now and will open shortly. Before writing it I checked eth_simulateV1 on Base Sepolia
-and got the second call reading the first call's state, so the mechanism suisuss named is measured rather than
-assumed; nodes without it fall back to trace-derived state overrides rather than to per-call estimates.
+Both are built to the shapes suisuss specified in the issues rather than the ones I filed - the
+re-encode-and-compare on the first, the traced frame's `from` on the second rather than the top-level `sender`
+I proposed, which named the wrong address under Safe routing.
+
+#2427 (https://github.com/KeeperHub/keeperhub/issues/2427) I am working on now and will open shortly. Before
+writing it I checked eth_simulateV1 on Base Sepolia and got the second call reading the first call's state, so
+the mechanism suisuss named is measured rather than assumed; nodes without it fall back to trace-derived state
+overrides rather than to per-call estimates.
 
 On order, if it helps: #2450 conflicts with nothing but the generated api-coverage artifact, so it is the
 cheapest to take first. #2449 and #2427 both touch the contract-call schema and route, so whichever goes
@@ -75,9 +79,13 @@ Filing the separate bounty BUIDL today, thanks for the heads-up that it stacks. 
 
 Thanks Luca, that is useful on both counts.
 
-All three PRs are up: #2449 for #2426 (raw calldata), #2450 for #2428 (the acting wallet), and #<N> for #2427
-(the call sequence). #2426 and #2428 are built to the shapes suisuss specified in the issues rather than the
-ones I filed - the re-encode-and-compare on the first, the traced frame's `from` on the second.
+All three PRs are up:
+- #2426 (raw calldata): https://github.com/KeeperHub/keeperhub/pull/2449
+- #2428 (the acting wallet): https://github.com/KeeperHub/keeperhub/pull/2450
+- #2427 (the call sequence): https://github.com/KeeperHub/keeperhub/pull/<N>
+
+#2426 and #2428 are built to the shapes suisuss specified in the issues rather than the ones I filed - the
+re-encode-and-compare on the first, the traced frame's `from` on the second.
 
 I did take #2427 in the end. Before writing it I checked eth_simulateV1 on Base Sepolia and got the second
 call reading the first call's state, so the mechanism suisuss named is measured rather than assumed, and nodes
