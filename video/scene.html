@@ -1,0 +1,178 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>almanak-keeperhub</title>
+<style>
+  :root{
+    --bg:#07090f; --ink:#f2f5fb; --dim:#8c97ad;
+    --alm:#ffb454;        /* Almanak: warm amber */
+    --kh:#41e0d0;         /* KeeperHub: teal */
+    --bad:#ff6b6b; --ok:#7ee787;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg)}
+  body{font-family:"Noto Sans","DejaVu Sans",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  #gl{position:fixed;inset:0}
+  #ui{position:fixed;inset:0;pointer-events:none}
+  .layer{position:absolute;inset:0;opacity:0}
+  .pad{position:absolute;left:140px;right:140px}
+
+  .kicker{font-size:26px;letter-spacing:.32em;text-transform:uppercase;color:var(--kh);font-weight:600}
+  h1{font-size:104px;line-height:1.04;font-weight:800;letter-spacing:-.03em}
+  h2{font-size:68px;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+  .lede{font-size:36px;line-height:1.45;color:var(--dim);font-weight:400;max-width:1180px}
+  .amber{color:var(--alm)} .teal{color:var(--kh)} .bad{color:var(--bad)} .good{color:var(--ok)}
+  .mono{font-family:"DejaVu Sans Mono",monospace}
+
+  /* lower third caption, burned in */
+  #capscrim{position:fixed;left:0;right:0;bottom:0;height:260px;opacity:0;
+       background:linear-gradient(180deg,transparent,rgba(4,6,11,.86) 55%)}
+  #cap{position:fixed;left:220px;right:220px;bottom:52px;text-align:center;font-size:30px;
+       line-height:1.38;color:#dfe6f2;opacity:0}
+
+  .card{position:absolute;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.10);
+        border-radius:20px;padding:30px 34px;backdrop-filter:blur(6px)}
+  .card .t{font-size:29px;font-weight:700;margin-bottom:10px}
+  .card .d{font-size:23px;color:var(--dim);line-height:1.4}
+
+  .stat{position:absolute;text-align:left}
+  .stat .n{font-size:96px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .stat .l{font-size:25px;color:var(--dim);margin-top:12px;letter-spacing:.02em}
+
+  .chip{display:inline-block;border:1px solid rgba(255,255,255,.16);border-radius:999px;
+        padding:12px 26px;font-size:25px;color:var(--dim);margin-right:14px}
+  .rule{height:1px;background:linear-gradient(90deg,var(--kh),transparent);opacity:.5}
+</style>
+
+<canvas id="gl"></canvas>
+<div id="ui">
+
+  <!-- 1 TITLE -->
+  <div class="layer" id="L_title">
+    <div class="pad" style="top:376px">
+      <div class="kicker" id="t_k">Agent Economy Hackathon</div>
+      <h1 style="margin-top:30px">Almanak strategies,<br><span class="teal">executed by KeeperHub</span></h1>
+      <div class="lede" style="margin-top:38px">Almanak decides. KeeperHub lands it.<br>The strategy code never changes.</div>
+    </div>
+  </div>
+
+  <!-- 2 PROBLEM -->
+  <div class="layer" id="L_problem">
+    <div class="pad" style="top:250px">
+      <div class="kicker">The blind spot</div>
+      <h2 style="margin-top:26px">The strategy is the interesting part.<br><span class="bad">Execution is where it breaks.</span></h2>
+    </div>
+    <div class="pad" id="p_items" style="top:640px">
+      <div class="lede mono" style="font-size:33px;line-height:2.0">
+        <span id="p1">sign it</span> &nbsp;·&nbsp;
+        <span id="p2">broadcast it</span> &nbsp;·&nbsp;
+        <span id="p3">survive a stuck nonce</span> &nbsp;·&nbsp;
+        <span id="p4" class="bad">never send it twice</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 SEAM -->
+  <div class="layer" id="L_seam">
+    <div class="pad" style="top:150px">
+      <div class="kicker">The seam</div>
+      <h2 style="margin-top:22px">Three abstract classes</h2>
+    </div>
+    <div id="seam_labels">
+      <div style="position:absolute;left:230px;top:792px;width:420px;text-align:center">
+        <span style="font-size:36px;font-weight:800" class="amber">Almanak</span>
+        <span style="font-size:24px;color:#8c97ad;margin-left:14px">plans it</span>
+      </div>
+      <div style="position:absolute;left:1268px;top:792px;width:420px;text-align:center">
+        <span style="font-size:36px;font-weight:800" class="teal">KeeperHub</span>
+        <span style="font-size:24px;color:#8c97ad;margin-left:14px">lands it</span>
+      </div>
+      <div id="cl0" style="position:absolute;left:660px;top:330px;width:600px;text-align:center;opacity:0">
+        <span class="mono" style="font-size:30px;font-weight:700">Signer</span></div>
+      <div id="cl1" style="position:absolute;left:660px;top:476px;width:600px;text-align:center;opacity:0">
+        <span class="mono" style="font-size:30px;font-weight:700">Submitter</span></div>
+      <div id="cl2" style="position:absolute;left:660px;top:622px;width:600px;text-align:center;opacity:0">
+        <span class="mono" style="font-size:30px;font-weight:700">Simulator</span></div>
+    </div>
+    <div id="seam_note" style="position:absolute;left:1010px;top:150px;width:770px;opacity:0;text-align:right">
+      <div style="font-size:23px;color:#8c97ad;letter-spacing:.02em">The only change to Almanak's demo strategy</div>
+      <div class="mono teal" style="font-size:26px;margin-top:12px;line-height:1.45">
+        supported_chains=<br>&nbsp;&nbsp;["base",&nbsp;"base_sepolia"]</div>
+    </div>
+  </div>
+
+  <!-- 4 WHAT IT BUYS -->
+  <div class="layer" id="L_buys">
+    <div class="pad" style="top:190px">
+      <div class="kicker">What the strategy inherits</div>
+      <h2 style="margin-top:22px">Without knowing it exists</h2>
+    </div>
+    <div id="buys_cards"></div>
+  </div>
+
+  <!-- 5 DEMO: real artifacts from the recorded Base Sepolia run -->
+  <div class="layer" id="L_demo">
+    <div id="d_title" class="pad" style="top:430px;text-align:center">
+      <div class="kicker" style="text-align:center">Live on Base Sepolia &middot; chain 84532</div>
+      <h2 style="margin-top:28px">A real tick. A real deposit.<br><span class="teal">Verified on chain.</span></h2>
+    </div>
+
+    <div id="d_shot" style="position:absolute;left:50%;top:50%;width:1580px;height:790px;opacity:0;
+                transform:translate(-50%,-50%);border-radius:16px;overflow:hidden;
+                border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 120px rgba(0,0,0,.8)">
+      <img id="d_shot_img" src="console.png"
+           style="width:100%;display:block;transform-origin:50% 0%">
+    </div>
+
+    <div id="d_txs" class="pad" style="top:240px;opacity:0">
+      <div class="kicker">Executed through KeeperHub</div>
+      <div style="margin-top:36px" id="d_txlist"></div>
+      <div class="lede mono" style="font-size:25px;margin-top:36px;opacity:.8">
+        sepolia.basescan.org &middot; vault 0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04
+      </div>
+    </div>
+
+    <div id="d_surfaces" class="pad" style="top:330px;opacity:0">
+      <div class="kicker">One run, three surfaces</div>
+      <div id="d_surflist" style="margin-top:44px"></div>
+    </div>
+  </div>
+
+  <!-- 6 FAILURE MODES -->
+  <div class="layer" id="L_fail">
+    <div class="pad" style="top:140px">
+      <div class="kicker">Judged on what goes wrong</div>
+      <h2 style="margin-top:22px">Six failure modes, all recorded</h2>
+    </div>
+    <div id="fail_cards"></div>
+  </div>
+
+  <!-- 7 PROOF -->
+  <div class="layer" id="L_proof">
+    <div class="pad" style="top:150px">
+      <div class="kicker">Receipts</div>
+      <h2 style="margin-top:22px">Measured, not claimed</h2>
+    </div>
+    <div id="proof_stats"></div>
+    <div class="pad" id="proof_chips" style="top:812px;opacity:0">
+      <span class="chip">issue #2426 · PR #2449</span>
+      <span class="chip">issue #2428 · PR #2450</span>
+      <span class="chip">issue #2427 · PR open</span>
+    </div>
+  </div>
+
+  <!-- 8 CLOSE -->
+  <div class="layer" id="L_close">
+    <div class="pad" style="top:400px;text-align:center">
+      <h1 style="font-size:86px">Almanak strategies,<br><span class="teal">executed by KeeperHub</span></h1>
+      <div class="lede mono" style="margin:44px auto 0;font-size:30px;text-align:center;max-width:1400px">
+        github.com/Prashant-thakur77/almanak-keeperhub
+      </div>
+    </div>
+  </div>
+
+</div>
+<div id="capscrim"></div>
+<div id="cap"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="timeline.js"></script>

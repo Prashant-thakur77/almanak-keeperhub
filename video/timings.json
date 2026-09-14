@@ -1,0 +1,134 @@
+{
+  "sr": 24000,
+  "total": 121.36,
+  "lines": [
+    {
+      "id": "s1a",
+      "scene": "title",
+      "text": "Almanak decides. KeeperHub lands it. And the strategy code never changes.",
+      "file": "vo/s1a.wav",
+      "start": 0.0,
+      "dur": 4.6
+    },
+    {
+      "id": "s2a",
+      "scene": "problem",
+      "text": "Every DeFi agent framework has the same blind spot. The strategy is the interesting part. Execution is where it actually breaks.",
+      "file": "vo/s2a.wav",
+      "start": 5.05,
+      "dur": 6.76
+    },
+    {
+      "id": "s2b",
+      "scene": "problem",
+      "text": "Almanak compiles a strategy down to raw calldata, then hands it to an executor that has to sign it, broadcast it, survive a stuck nonce, and never, ever send it twice.",
+      "file": "vo/s2b.wav",
+      "start": 12.26,
+      "dur": 9.0
+    },
+    {
+      "id": "s3a",
+      "scene": "seam",
+      "text": "Almanak's execution layer is three abstract classes. A Signer, a Submitter, and a Simulator.",
+      "file": "vo/s3a.wav",
+      "start": 21.71,
+      "dur": 5.2
+    },
+    {
+      "id": "s3b",
+      "scene": "seam",
+      "text": "So I implemented all three against KeeperHub. The strategy has no idea. The only change to Almanak's own demo strategy is a single line, adding Base Sepolia to its supported chains.",
+      "file": "vo/s3b.wav",
+      "start": 27.36,
+      "dur": 10.2
+    },
+    {
+      "id": "s3c",
+      "scene": "seam",
+      "text": "Now every transaction the strategy plans goes through KeeperHub's enclave wallet, its spending caps, its simulation, and its audit log. Gas is sponsored. The private key never touches my process.",
+      "file": "vo/s3c.wav",
+      "start": 38.01,
+      "dur": 10.88
+    },
+    {
+      "id": "s4a",
+      "scene": "demo",
+      "text": "Here it is running on Base Sepolia. A real strategy tick, a real approve, a real deposit, verified on chain.",
+      "file": "vo/s4a.wav",
+      "start": 49.34,
+      "dur": 6.2
+    },
+    {
+      "id": "s4b",
+      "scene": "demo",
+      "text": "The strategy plans an approve and a deposit. Both are dry-run through KeeperHub first, then broadcast through it.",
+      "file": "vo/s4b.wav",
+      "start": 55.99,
+      "dur": 5.72
+    },
+    {
+      "id": "s4c",
+      "scene": "demo",
+      "text": "Both land. Both come back verified, with KeeperHub's relayer paying the gas, so the organization wallet never needs a native balance.",
+      "file": "vo/s4c.wav",
+      "start": 62.16,
+      "dur": 7.36
+    },
+    {
+      "id": "s4d",
+      "scene": "demo",
+      "text": "The same run is visible in the local console, in the KeeperHub dashboard, and from a Telegram bot on my phone.",
+      "file": "vo/s4d.wav",
+      "start": 69.97,
+      "dur": 5.32
+    },
+    {
+      "id": "s5a",
+      "scene": "failure",
+      "text": "But an execution backend is judged on what it does when things go wrong. So I built six failure modes and recorded every one.",
+      "file": "vo/s5a.wav",
+      "start": 75.74,
+      "dur": 6.44
+    },
+    {
+      "id": "s5b",
+      "scene": "failure",
+      "text": "An unknown selector is refused before anything is signed. A call that would revert is caught by the dry run. A duplicate is blocked by an idempotency key bound to the intent, not to the attempt.",
+      "file": "vo/s5b.wav",
+      "start": 82.63,
+      "dur": 9.8
+    },
+    {
+      "id": "s5c",
+      "scene": "failure",
+      "text": "And when the process is killed in the middle of a bundle, it resumes from the receipts log, and never broadcasts the same transaction twice.",
+      "file": "vo/s5c.wav",
+      "start": 92.88,
+      "dur": 6.64
+    },
+    {
+      "id": "s6a",
+      "scene": "proof",
+      "text": "Twenty out of twenty unsafe calls refused. Ten out of ten dry runs caught. Five out of five transactions landed, median six point nine seconds.",
+      "file": "vo/s6a.wav",
+      "start": 99.97,
+      "dur": 8.56
+    },
+    {
+      "id": "s6b",
+      "scene": "proof",
+      "text": "A hundred and thirty unit tests. And three issues I filed against KeeperHub itself, all three accepted by the maintainers, all three now open as pull requests.",
+      "file": "vo/s6b.wav",
+      "start": 108.98,
+      "dur": 7.04
+    },
+    {
+      "id": "s7a",
+      "scene": "close",
+      "text": "Almanak strategies, executed by KeeperHub. No strategy code changes.",
+      "file": "vo/s7a.wav",
+      "start": 116.47,
+      "dur": 4.44
+    }
+  ]
+}

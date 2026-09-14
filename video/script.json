@@ -1,0 +1,85 @@
+{
+  "title": "Almanak strategies, executed by KeeperHub",
+  "lines": [
+    {
+      "id": "s1a",
+      "scene": "title",
+      "text": "Almanak decides. KeeperHub lands it. And the strategy code never changes."
+    },
+    {
+      "id": "s2a",
+      "scene": "problem",
+      "text": "Every DeFi agent framework has the same blind spot. The strategy is the interesting part. Execution is where it actually breaks."
+    },
+    {
+      "id": "s2b",
+      "scene": "problem",
+      "text": "Almanak compiles a strategy down to raw calldata, then hands it to an executor that has to sign it, broadcast it, survive a stuck nonce, and never, ever send it twice."
+    },
+    {
+      "id": "s3a",
+      "scene": "seam",
+      "text": "Almanak's execution layer is three abstract classes. A Signer, a Submitter, and a Simulator."
+    },
+    {
+      "id": "s3b",
+      "scene": "seam",
+      "text": "So I implemented all three against KeeperHub. The strategy has no idea. The only change to Almanak's own demo strategy is a single line, adding Base Sepolia to its supported chains."
+    },
+    {
+      "id": "s3c",
+      "scene": "seam",
+      "text": "Now every transaction the strategy plans goes through KeeperHub's enclave wallet, its spending caps, its simulation, and its audit log. Gas is sponsored. The private key never touches my process."
+    },
+    {
+      "id": "s4a",
+      "scene": "demo",
+      "text": "Here it is running on Base Sepolia. A real strategy tick, a real approve, a real deposit, verified on chain."
+    },
+    {
+      "id": "s4b",
+      "scene": "demo",
+      "text": "The strategy plans an approve and a deposit. Both are dry-run through KeeperHub first, then broadcast through it."
+    },
+    {
+      "id": "s4c",
+      "scene": "demo",
+      "text": "Both land. Both come back verified, with KeeperHub's relayer paying the gas, so the organization wallet never needs a native balance."
+    },
+    {
+      "id": "s4d",
+      "scene": "demo",
+      "text": "The same run is visible in the local console, in the KeeperHub dashboard, and from a Telegram bot on my phone."
+    },
+    {
+      "id": "s5a",
+      "scene": "failure",
+      "text": "But an execution backend is judged on what it does when things go wrong. So I built six failure modes and recorded every one."
+    },
+    {
+      "id": "s5b",
+      "scene": "failure",
+      "text": "An unknown selector is refused before anything is signed. A call that would revert is caught by the dry run. A duplicate is blocked by an idempotency key bound to the intent, not to the attempt."
+    },
+    {
+      "id": "s5c",
+      "scene": "failure",
+      "text": "And when the process is killed in the middle of a bundle, it resumes from the receipts log, and never broadcasts the same transaction twice."
+    },
+    {
+      "id": "s6a",
+      "scene": "proof",
+      "text": "Twenty out of twenty unsafe calls refused. Ten out of ten dry runs caught. Five out of five transactions landed, median six point nine seconds."
+    },
+    {
+      "id": "s6b",
+      "scene": "proof",
+      "text": "A hundred and thirty unit tests. And three issues I filed against KeeperHub itself, all three accepted by the maintainers, all three now open as pull requests."
+    },
+    {
+      "id": "s7a",
+      "scene": "close",
+      "text": "Almanak strategies, executed by KeeperHub. No strategy code changes."
+    }
+  ]
+}

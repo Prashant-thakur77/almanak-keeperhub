@@ -1,0 +1,7 @@
+node_modules/
+frames/
+vo/
+*.wav
+anim.mp4
+demo-video*.mp4
+grab_*.png
