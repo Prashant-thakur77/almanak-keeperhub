@@ -10,14 +10,14 @@ Title:
 
 `feat: #2428 return the acting wallet on sponsored executions`
 
-## Body (follows .github/PULL_REQUEST_TEMPLATE.md)
+## Description - clear the box and paste from here down
 
-**Issue**
+## Issue
 
 Closes #2428. Built to the shape triage described rather than the one filed: the traced frame's `from`, not a
 top-level `sender`.
 
-**What this changes**
+## What this changes
 
 `ExecutedCall` carries the matched frame's `from`. That is one field and one line in `resolveExecutedCall`:
 `decodeExecutedCall` already finds the frame that actually hit the target and parses its `from`
@@ -34,7 +34,7 @@ It travels with the `executedCall` already returned under `result` on `GET /api/
 route, response type or persistence changes. It is best-effort with it: both are absent when the transaction
 cannot be traced, and the docs now say so.
 
-**Scope**
+## Scope
 
 - `lib/web3/trace-decode.ts`: `from` on the `ExecutedCall` type and on what `resolveExecutedCall` returns.
 - `docs/api/direct-execution.md`: a "Who acted" subsection under "Sponsored Executions", with the
@@ -44,7 +44,7 @@ cannot be traced, and the docs now say so.
 - Deliberately out: the `executedCall.*` workflow output fragments in `plugins/field-fragments.ts`. Exposing
   `from` there is a four-line addition if you want it, but the issue scoped workflows out.
 
-**How verified**
+## How it was verified
 
 - `pnpm vitest run tests/unit/trace-decode.test.ts`: 22 tests, four new - the relayer case (the frame's
   address, not the transaction's), the delegated case (the org EOA while a relayer paid), the Safe-routed case
@@ -56,10 +56,11 @@ cannot be traced, and the docs now say so.
   same address by decoding Transfer/Approval/Deposit/Withdraw arguments per event signature. That is the
   workaround this removes.
 
-**Checklist**
+---
 
 - [x] Targets `staging`
-- [x] `pnpm check` passes
-- [x] `pnpm type-check` passes
-- [x] Tests added
-- [x] Docs updated
+- [x] Title carries the issue number, or an exemption applies
+- [x] `pnpm check` and `pnpm type-check` pass
+- [x] No secrets, `.env` files, or credentials committed
+
+(Delete the `## Screenshots` section: the change renders nothing.)
