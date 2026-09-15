@@ -367,6 +367,7 @@ empty list), fixed the same hour.
 | `/verify <hash or execution id>` | KeeperHub's verdict, the on-chain sender, and the events naming the org wallet |
 | `/simulate` | one strategy tick dry-run through KeeperHub, nothing broadcast |
 | `/tick` then `/confirm` | one real strategy tick; the confirmation expires after 60 seconds |
+| `/exit` then `/confirm` | the guarded exit: KeeperHub re-reads the position and redeems only if it still holds |
 | `/demo revert\|cap\|duplicate\|crash\|selector\|rpc` | run a failure-mode demo and post its verdict |
 
 Long polling over the Bot API with no webhook and no public endpoint. Set `ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN` (from @BotFather); the alerts below use the same token.
@@ -408,6 +409,11 @@ During this hackathon a builder reported [KeeperHub/keeperhub#2374](https://gith
 ## What we got wrong first
 
 The first idempotency key included the nonce Almanak assigns to a transaction. An independent review showed Almanak assigns that nonce per attempt, so a genuine retry after a landed transaction would have produced a new key, which is the exact failure the README claims to prevent. The key is now the intent id plus the transaction fields (`almanak_keeperhub/signer.py`), and the duplicate demo proves it by changing the nonce on the retry. The same review found a truncated bundle could read as success and that a transport error rotated nothing but still halted the strategy; both fixed, all in `git log`.
+
+Two more came from the last day, each caught by a machine rather than a reader:
+
+- The guarded exit's first idempotency key was (vault, wallet, shares). The first scheduled run redeemed a position of the same size as one closed hours earlier, KeeperHub replayed that earlier execution, and the position stayed open. The key now carries the decision id; the guard is what prevents a double redeem.
+- Almanak's CLI loads the repository's `.env` on its own. The fork rehearsal pinned its API key and base URL but not the wallet, so once `.env` gained `KEEPERHUB_WALLET_ADDRESS` for the console, Almanak compiled the fork's deposit with the production wallet as receiver while the stand-in signed as the fork's: the shares went to an address the rehearsal did not control and the final balance check failed. `resolve_wallet_address` now refuses an explicit wallet that disagrees with the one the API signs as, and the rehearsal pins every KeeperHub variable.
 
 ## Failure modes, on purpose
 
@@ -463,7 +469,7 @@ Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/Kee
 
 ## Try it without a KeeperHub account
 
-`tests/e2e/rehearsal.sh` starts an Anvil fork of Base and a local stand-in for the KeeperHub API (`tests/e2e/fake_keeperhub.py`, documented request and response shapes, signs with a throwaway Anvil key), then runs doctor, the failure modes, a simulate-only tick and a real tick of the unmodified demo strategy, and asserts the vault deposit landed on the fork. Needs foundry and a Base RPC. It proves the wiring; it is not execution through KeeperHub.
+`tests/e2e/rehearsal.sh` starts an Anvil fork of Base and a local stand-in for the KeeperHub API (`tests/e2e/fake_keeperhub.py`, the documented request and response shapes, signing with a throwaway Anvil key), then runs doctor, the failure modes, a simulate-only tick, a real tick of the unmodified demo strategy, the keeper, the benchmark with a crash cycle, the guarded exit and its stale replay, and asserts the final balances on the fork. The stand-in speaks the merged API (raw `data` decoded losslessly, `calls[]` dry-run on an Anvil snapshot so each call sees the previous one's state, `check-and-execute`); `KEEPERHUB_FAKE_API=legacy` makes it answer like production before those changes, which rehearses the fallbacks. Needs foundry and a Base RPC. It proves the wiring; it is not execution through KeeperHub.
 
 ## Tests
 

@@ -61,13 +61,17 @@ fi
 echo "   org USDC: $(cast call "$USDC" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)"
 
 echo "== starting the KeeperHub stand-in"
-python "$ROOT/tests/e2e/fake_keeperhub.py" --rpc "$RPC" --port "$FAKE_PORT" --chain-id "$CHAIN_ID" &
+# KEEPERHUB_FAKE_API=legacy rehearses the fallbacks (typed single calls, no check-and-execute).
+python "$ROOT/tests/e2e/fake_keeperhub.py" --rpc "$RPC" --port "$FAKE_PORT" --chain-id "$CHAIN_ID" --api "${KEEPERHUB_FAKE_API:-current}" &
 FAKE_PID=$!
 sleep 2
 
-export KEEPERHUB_API_KEY=kh_rehearsal KEEPERHUB_BASE_URL="http://127.0.0.1:$FAKE_PORT"
+# Almanak loads the repo's .env by itself, so every KeeperHub variable is pinned here explicitly.
+export KEEPERHUB_API_KEY=kh_rehearsal KEEPERHUB_BASE_URL="http://127.0.0.1:$FAKE_PORT" KEEPERHUB_WALLET_ADDRESS="$ORG"
+unset TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID ALMANAK_KEEPERHUB_EXIT_ID 2>/dev/null || true
 # Fork receipts must never be mistaken for proof: keep them out of the strategy directory.
 export ALMANAK_KEEPERHUB_RECEIPTS="$WORK/keeperhub-receipts.json"
+export ALMANAK_KEEPERHUB_DEMO_RECEIPTS="$WORK/demo-receipts.json"
 export ALMANAK_KEEPERHUB_KEEPER_STATE="$WORK/keeperhub-keeper.json"
 rm -f "$STRATEGY_DIR"/almanak_state.db*
 
@@ -102,8 +106,19 @@ if [ "$MODE" != "--testnet" ]; then
   ( cd "$STRATEGY_DIR" && almanak-keeperhub run --once -c config.exit.json 2>&1 | grep -E "EXIT:|KeeperHub simulate|broadcast tx|Status:|^  [a-z]+ ->" )
 fi
 
-echo "== benchmark (small): refusals, dry runs, broadcasts, replay"
-( cd "$ROOT" && python scripts/benchmark.py --refusals 3 --simulations 3 --executions 2 | grep -E "^\|" && rm -f docs/benchmark.md docs/benchmark.json )
+echo "== benchmark (small): refusals, dry runs, broadcasts, replay, one crash cycle"
+( cd "$ROOT" && python scripts/benchmark.py --refusals 3 --simulations 3 --executions 2 --retries 2 --crashes 1 | grep -E "^\|" && rm -f docs/benchmark.md docs/benchmark.json )
+
+echo "== api features: what this KeeperHub accepts (the stand-in answers like production will once the merged changes deploy)"
+( cd "$ROOT" && almanak-keeperhub api-features --chain "$CHAIN" )
+
+if [ "$MODE" = "--testnet" ] && [ "${KEEPERHUB_FAKE_API:-current}" = "current" ]; then
+  echo "== guarded exit: KeeperHub re-reads the position, redeems it, then refuses the same decision replayed stale"
+  ( cd "$STRATEGY_DIR" && almanak-keeperhub exit --simulate --chain "$CHAIN" && almanak-keeperhub exit --chain "$CHAIN" )
+  ( cd "$ROOT/demos/failure_modes" && python stale_exit_not_executed.py )
+  echo "== and back in: one more tick so the final balances read as before"
+  ( cd "$STRATEGY_DIR" && almanak-keeperhub run --once --fresh -c "$STRATEGY_CONFIG" 2>&1 | grep -E "KeeperHub simulate|Status:|^  [a-z]+ ->" )
+fi
 
 SHARES=$(cast call "$VAULT" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)
 LEFT=$(cast call "$USDC" "balanceOf(address)(uint256)" "$ORG" --rpc-url "$RPC" | cut -d' ' -f1)

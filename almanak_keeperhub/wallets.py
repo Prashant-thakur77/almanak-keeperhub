@@ -72,15 +72,23 @@ class KeeperHubWalletRegistry:
 
 
 def resolve_wallet_address() -> str:
-    """Org wallet from ``KEEPERHUB_WALLET_ADDRESS`` or ``GET /api/user`` (sync: called at gateway boot)."""
+    """Org wallet from ``GET /api/user``, cross-checked against ``KEEPERHUB_WALLET_ADDRESS`` (sync: gateway boot).
+
+    An explicit address is only a shortcut for the same answer. If the API names a different
+    wallet, the run is refused: Almanak would compile every intent (deposit receivers, redeem
+    owners) for one address while KeeperHub signs and sends from another. A fork rehearsal
+    once did exactly that through a ``.env`` Almanak loaded on its own, and the shares went
+    to a wallet the rehearsal did not control.
+    """
     explicit = os.environ.get("KEEPERHUB_WALLET_ADDRESS")
-    if explicit:
-        return explicit
     api_key = os.environ.get("KEEPERHUB_API_KEY", "")
     if not api_key:
+        if explicit:
+            return explicit
         raise RuntimeError("KEEPERHUB_API_KEY is not set; create an organization API key with mcp:write scope")
     base_url = os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
     headers = {"Authorization": f"Bearer {api_key}"}
+    address = None
     for path in ("/api/user", "/api/user/wallet"):
         response = httpx.get(f"{base_url}{path}", headers=headers, timeout=30.0)
         if response.status_code != 200:
@@ -90,8 +98,15 @@ def resolve_wallet_address() -> str:
         except ValueError:
             address = None
         if address:
-            return str(address)
-    raise RuntimeError(
-        "KeeperHub returned no walletAddress; provision the organization wallet in the app "
-        "(Settings > Organization > Wallets) or set KEEPERHUB_WALLET_ADDRESS"
-    )
+            break
+    if not address:
+        raise RuntimeError(
+            "KeeperHub returned no walletAddress; provision the organization wallet in the app "
+            "(Settings > Organization > Wallets) or set KEEPERHUB_WALLET_ADDRESS"
+        )
+    if explicit and explicit.lower() != str(address).lower():
+        raise RuntimeError(
+            f"KEEPERHUB_WALLET_ADDRESS is {explicit} but {base_url} signs as {address}; refusing to compile "
+            "intents for a wallet KeeperHub will not send from. Unset the variable or point it at that wallet."
+        )
+    return str(address)

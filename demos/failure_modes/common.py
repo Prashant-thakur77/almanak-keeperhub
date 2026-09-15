@@ -32,7 +32,10 @@ BASE_CHAIN_ID = _TARGETS.chain_id
 USDC_BASE = _TARGETS.usdc
 VAULT_BASE = _TARGETS.vault  # Moonwell Flagship USDC vault on Base, or your TestVault on Base Sepolia
 CHAIN_NAME = _TARGETS.chain
-RECEIPTS = Path(__file__).resolve().parents[2] / "docs" / "receipts.json"
+# The demo verdicts are proof, so a fork rehearsal must point this elsewhere (ALMANAK_KEEPERHUB_DEMO_RECEIPTS).
+RECEIPTS = Path(
+    os.environ.get("ALMANAK_KEEPERHUB_DEMO_RECEIPTS") or Path(__file__).resolve().parents[2] / "docs" / "receipts.json"
+)
 
 
 def calldata(signature: str, types: list[str], args: list[Any]) -> str:

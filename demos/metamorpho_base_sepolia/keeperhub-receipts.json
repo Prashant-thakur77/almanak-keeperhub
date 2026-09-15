@@ -525,5 +525,47 @@
     ],
     "sponsored": true,
     "updated_at": "2026-09-15T19:39:41.458796+00:00"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-15T20:05:03.628084+00:00",
+    "chain_id": 84532,
+    "to": "0x20caCd479568C7D9E227da9ec182eE90d3dfcaC8",
+    "function": "redeem",
+    "success": true,
+    "would_revert": false,
+    "guarded": true,
+    "condition": {
+      "met": true,
+      "observed_value": "5000000",
+      "target_value": "5000000",
+      "operator": "gte"
+    },
+    "error": null
+  },
+  {
+    "execution_id": "22cb62ff8ce74a6c90f69",
+    "recorded_at": "2026-09-15T20:05:05.024854+00:00",
+    "chain_id": 84532,
+    "to": "0x20caCd479568C7D9E227da9ec182eE90d3dfcaC8",
+    "function": "redeem",
+    "tx_hash": "0x6a59318674a980d7f4725b414ad10dca25faab98ed95d8319280cd042f3cdf60",
+    "status": "completed",
+    "idempotency_key": "260d0a7208890a2532ba07ea4a3b762681803703b9d642010b88321e85213d14",
+    "idempotent_replay": false,
+    "guarded": true,
+    "condition": {
+      "met": true,
+      "observed_value": "5000000",
+      "target_value": "5000000",
+      "operator": "gte"
+    },
+    "transaction_link": "https://fake.explorer/tx/0x6a59318674a980d7f4725b414ad10dca25faab98ed95d8319280cd042f3cdf60",
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": false,
+    "updated_at": "2026-09-15T20:05:05.027611+00:00"
   }
 ]

@@ -124,7 +124,8 @@ class KeeperHubSimulator(Simulator):
                     reason = f"tx[{index}] {call.label()} would fail after tx[0..{index - 1}]: {reason}"
                 return await self._refuse(tx, call, reason, result.code, result.would_revert)
             gas_estimates.append(result.gas_estimate or tx.gas_limit or FALLBACK_GAS)
-            self._record_ok(tx, call, result.gas_estimate, result.sender, mechanism=sequence.mechanism)
+            sender = result.sender or sequence.raw.get("from")
+            self._record_ok(tx, call, result.gas_estimate, sender, mechanism=sequence.mechanism)
         if len(gas_estimates) < len(txs):
             return _failure("KeeperHub answered for fewer calls than were sent", simulated=False)
         return SimulationResult(

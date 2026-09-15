@@ -39,7 +39,8 @@ HELP = """almanak-keeperhub operator bot
 /verify <tx hash or execution id>   KeeperHub verdict and who acted on chain
 /simulate   dry-run one strategy tick through KeeperHub (nothing broadcast)
 /tick       run one real strategy tick (asks for /confirm)
-/demo <revert|cap|duplicate|crash|selector|rpc>   run a failure-mode demo
+/exit       redeem the vault position, guarded: KeeperHub re-reads the balance first (asks for /confirm)
+/demo <revert|cap|duplicate|crash|selector|rpc|stale>   run a failure-mode demo
 /help       this list"""
 DEMOS = {
     "revert": "revert_caught_by_dry_run",
@@ -147,6 +148,7 @@ class OperatorBot:
             "/verify": self._verify,
             "/simulate": self._simulate,
             "/tick": self._tick,
+            "/exit": self._exit,
             "/confirm": self._confirm,
             "/demo": self._demo,
         }.get(command)
@@ -282,11 +284,20 @@ class OperatorBot:
         self._pending = ("tick", time.time())
         return "This runs one REAL strategy tick through KeeperHub (value may move). Send /confirm within 60 seconds."
 
+    async def _exit(self, _args: list[str]) -> str:
+        self._pending = ("exit", time.time())
+        return (
+            "This redeems the whole vault position through KeeperHub's check-and-execute: KeeperHub re-reads "
+            "the balance right before the redeem and refuses if it no longer covers it. Send /confirm within 60 seconds."
+        )
+
     async def _confirm(self, _args: list[str]) -> str:
         if not self._pending or time.time() - self._pending[1] > 60:
             self._pending = None
-            return "Nothing pending (or it expired). Send /tick first."
-        self._pending = None
+            return "Nothing pending (or it expired). Send /tick or /exit first."
+        action, self._pending = self._pending[0], None
+        if action == "exit":
+            return await self._run_cli(["exit", "-d", str(self._strategy_dir), "--chain", self._chain], "guarded exit")
         return await self._run_cli(["run", "-d", str(self._strategy_dir), "--once"], "real tick")
 
     async def _demo(self, args: list[str]) -> str:
@@ -364,7 +375,7 @@ class OperatorBot:
     async def _answer(self, chat_id: str, text: str, sent_at: float) -> None:
         if time.time() - sent_at > STALE_AFTER_SECONDS:
             return
-        if text.split()[0].lower() in ("/simulate", "/confirm", "/demo"):
+        if text.split()[0].lower() in ("/simulate", "/confirm", "/demo", "/exit"):
             await self.send(chat_id, "working…")
         reply = await self.handle(chat_id=chat_id, text=text, sent_at=sent_at)
         if reply:

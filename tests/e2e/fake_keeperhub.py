@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import secrets
 import threading
 import time
@@ -34,7 +35,10 @@ CAP_USD = 100
 
 
 class State:
-    def __init__(self, rpc: str, private_key: str, chain_id: int) -> None:
+    def __init__(self, rpc: str, private_key: str, chain_id: int, api: str = "current") -> None:
+        self.api = (
+            api  # "current": raw calldata, calls[] sequences, check-and-execute; "legacy": typed single calls only
+        )
         self.web3 = Web3(HTTPProvider(rpc))
         self.account = Account.from_key(private_key)
         self.chain_id = chain_id
@@ -44,14 +48,49 @@ class State:
         self.lock = threading.Lock()
 
 
+class ShapeError(Exception):
+    """A 400 with a named field, the way KeeperHub's schema answers."""
+
+    def __init__(self, field: str, details: str, error: str = "Missing required field") -> None:
+        super().__init__(details)
+        self.payload = {"error": error, "field": field, "details": details}
+
+
+def _missing(body: dict[str, Any], field: str) -> None:
+    if not isinstance(body.get(field), str) or not body.get(field):
+        raise ShapeError(field, f"{field} is required and must be a non-empty string")
+
+
 def _encode_call(state: State, body: dict[str, Any]) -> tuple[str, bytes, int]:
+    """Typed spelling, or raw ``data`` decoded losslessly against the ABI (the merged upstream shape)."""
+    _missing(body, "contractAddress")
     abi = json.loads(body["abi"]) if isinstance(body.get("abi"), str) else body.get("abi")
+    value_wei = int(Web3.to_wei(body["value"], "ether")) if body.get("value") else 0
+    if "data" in body and state.api == "current":
+        if "functionName" in body:
+            raise ShapeError("data", "data and functionName describe the same call twice", "Invalid request")
+        data = str(body["data"])
+        if not abi:
+            raise ShapeError("data", "no verified ABI for this contract on the stand-in; supply abi", "Invalid data")
+        contract = state.web3.eth.contract(address=Web3.to_checksum_address(body["contractAddress"]), abi=abi)
+        try:
+            fn, args = contract.decode_function_input(data)
+        except Exception as exc:  # noqa: BLE001
+            raise ShapeError(
+                "data", f"selector {data[:10]} is not in the contract ABI ({exc})", "Invalid data"
+            ) from exc
+        ordered = [args[i["name"]] for i in fn.abi["inputs"]]
+        if contract.encode_abi(fn.fn_name, args=ordered).lower() != data.lower():
+            raise ShapeError("data", "calldata does not survive a lossless re-encode", "Invalid data")
+        # Downstream (the cap check) sees the decoded call, exactly as KeeperHub's route does.
+        body["functionName"], body["functionArgs"] = fn.fn_name, json.dumps([str(a) for a in ordered])
+        return body["contractAddress"], bytes.fromhex(data[2:]), value_wei
+    _missing(body, "functionName")
     contract = state.web3.eth.contract(address=Web3.to_checksum_address(body["contractAddress"]), abi=abi)
     args = json.loads(body.get("functionArgs") or "[]")
     fn = contract.get_function_by_name(body["functionName"])
     typed_args = [_coerce(a, spec) for a, spec in zip(args, fn.abi["inputs"], strict=True)]
     data = contract.encode_abi(body["functionName"], args=typed_args)
-    value_wei = int(Web3.to_wei(body["value"], "ether")) if body.get("value") else 0
     return body["contractAddress"], bytes.fromhex(data[2:]), value_wei
 
 
@@ -75,7 +114,7 @@ def _coerce(value: Any, spec: dict[str, Any]) -> Any:
 def _stablecoin_refusal(state: State, body: dict[str, Any]) -> str | None:
     token = str(body["contractAddress"]).lower()
     meta = STABLECOINS.get(state.chain_id, {}).get(token)
-    if not meta or body["functionName"] not in ("transfer", "approve"):
+    if not meta or body.get("functionName") not in ("transfer", "approve"):
         return None
     symbol, decimals = meta
     amount = int(json.loads(body.get("functionArgs") or "[]")[1])
@@ -211,14 +250,23 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.startswith("/api/workflows"):
             self._workflows_post(body)
             return
+        if self.path == "/api/execute/check-and-execute":
+            self._check_and_execute(body)
+            return
         if self.path != "/api/execute/contract-call":
             self._send(404, {"error": "not found"})
             return
         if "simulate" in body and not isinstance(body["simulate"], bool):
             self._send(400, {"error": "simulate must be a boolean"})
             return
+        if "calls" in body and self.state.api == "current":
+            self._sequence(body)
+            return
         try:
             to, data, value_wei = _encode_call(self.state, body)
+        except ShapeError as exc:
+            self._send(400, exc.payload)
+            return
         except Exception as exc:  # noqa: BLE001
             self._send(400, {"error": f"Invalid request: {exc}"})
             return
@@ -232,12 +280,145 @@ class Handler(BaseHTTPRequestHandler):
             return
         self._execute(key, body, to, data, value_wei, refusal)
 
-    def _simulate(self, to: str, data: bytes, value_wei: int, refusal: str | None) -> None:
+    def _sequence(self, body: dict[str, Any]) -> None:
+        """calls[] dry run: each call is sent for real on an anvil snapshot, then the chain is reverted."""
+        if not body.get("simulate"):
+            self._send(400, {"error": "calls is a dry-run shape; set simulate: true", "field": "calls"})
+            return
+        calls = body.get("calls")
+        if not isinstance(calls, list) or not calls or len(calls) > 10:
+            self._send(400, {"error": "calls must contain 1 to 10 calls", "field": "calls"})
+            return
+        web3 = self.state.web3
+        sender = self.state.account.address
+        results: list[dict[str, Any]] = []
+        worst = 200
+        snapshot = web3.provider.make_request("evm_snapshot", [])["result"]
+        try:
+            for index, call in enumerate(calls):
+                entry = {**call, "chainId": body.get("chainId")}
+                if "abi" not in entry and "abi" in body:
+                    entry["abi"] = body["abi"]
+                try:
+                    to, data, value_wei = _encode_call(self.state, entry)
+                except ShapeError as exc:
+                    self._send(400, {**exc.payload, "field": f"calls[{index}].{exc.payload['field']}"})
+                    return
+                refusal = _stablecoin_refusal(self.state, entry)
+                if refusal:
+                    results.append(
+                        {
+                            "success": False,
+                            "status": "simulated",
+                            "failureKind": "validation",
+                            "wouldRevert": True,
+                            "revertReason": refusal,
+                        }
+                    )
+                    worst = max(worst, 400)
+                    continue
+                tx = {"from": sender, "to": Web3.to_checksum_address(to), "data": data, "value": value_wei}
+                try:
+                    gas = web3.eth.estimate_gas(tx)
+                    web3.eth.call(tx)
+                except Exception as exc:  # noqa: BLE001
+                    args = getattr(exc, "args", ())
+                    reason = str(args[0]) if args and isinstance(args[0], str) else str(exc)
+                    results.append(
+                        {
+                            "success": False,
+                            "status": "simulated",
+                            "failureKind": "revert",
+                            "wouldRevert": True,
+                            "revertReason": reason,
+                        }
+                    )
+                    worst = max(worst, 400)
+                    continue
+                web3.provider.make_request("anvil_impersonateAccount", [sender])
+                tx_hash = web3.eth.send_transaction({**tx, "gas": int(gas * 1.3)})
+                web3.eth.wait_for_transaction_receipt(tx_hash, timeout=30)  # state carried to the next call
+                results.append({"success": True, "status": "simulated", "gasEstimate": str(gas), "wouldRevert": False})
+        finally:
+            web3.provider.make_request("evm_revert", [snapshot])
+        ok = all(r["success"] for r in results)
+        self._send(
+            worst if not ok else 200,
+            {
+                "success": ok,
+                "status": "simulated",
+                "from": sender,
+                "atomic": False,
+                "mechanism": "anvil-snapshot",
+                "wouldRevert": not ok,
+                "results": results,
+            },
+        )
+
+    def _check_and_execute(self, body: dict[str, Any]) -> None:
+        """Read the check function, compare, and run the action only when the condition holds."""
+        if self.state.api != "current":
+            self._send(404, {"error": "not found"})
+            return
+        try:
+            _missing(body, "contractAddress")
+            _missing(body, "functionName")
+            abi = json.loads(body["abi"]) if isinstance(body.get("abi"), str) else body.get("abi")
+            contract = self.state.web3.eth.contract(address=Web3.to_checksum_address(body["contractAddress"]), abi=abi)
+            fn = contract.get_function_by_name(body["functionName"])
+            args = [
+                _coerce(a, spec)
+                for a, spec in zip(json.loads(body.get("functionArgs") or "[]"), fn.abi["inputs"], strict=True)
+            ]
+            observed = int(fn(*args).call())
+            condition = body["condition"]
+            target = int(str(condition["value"]), 0)
+            op = condition["operator"]
+            met = {
+                "eq": observed == target,
+                "neq": observed != target,
+                "gt": observed > target,
+                "lt": observed < target,
+                "gte": observed >= target,
+                "lte": observed <= target,
+            }[op]
+        except ShapeError as exc:
+            self._send(400, exc.payload)
+            return
+        except Exception as exc:  # noqa: BLE001
+            self._send(400, {"error": f"Invalid request: {exc}"})
+            return
+        condition_result = {"met": met, "observedValue": str(observed), "targetValue": str(target), "operator": op}
+        if not met:
+            self._send(200, {"executed": False, "conditionResult": condition_result})
+            return
+        action = {**body["action"], "chainId": body.get("chainId")}
+        try:
+            to, data, value_wei = _encode_call(self.state, action)
+        except ShapeError as exc:
+            self._send(400, exc.payload)
+            return
+        refusal = _stablecoin_refusal(self.state, action)
+        if body.get("simulate"):
+            self._simulate(to, data, value_wei, refusal, extra={"executed": True, "conditionResult": condition_result})
+            return
+        key = self.headers.get("Idempotency-Key")
+        if not key:
+            self._send(400, {"error": "Idempotency-Key header required by this fake for writes"})
+            return
+        self._execute(
+            key, body, to, data, value_wei, refusal, extra={"executed": True, "conditionResult": condition_result}
+        )
+
+    def _simulate(
+        self, to: str, data: bytes, value_wei: int, refusal: str | None, extra: dict[str, Any] | None = None
+    ) -> None:
         sender = self.state.account.address
         if refusal:
             self._send(
                 400,
                 {
+                    **(extra or {}),
                     "success": False,
                     "status": "simulated",
                     "from": sender,
@@ -260,6 +441,7 @@ class Handler(BaseHTTPRequestHandler):
             self._send(
                 400,
                 {
+                    **(extra or {}),
                     "success": False,
                     "status": "simulated",
                     "from": sender,
@@ -275,6 +457,7 @@ class Handler(BaseHTTPRequestHandler):
         self._send(
             200,
             {
+                **(extra or {}),
                 "success": True,
                 "status": "simulated",
                 "from": sender,
@@ -287,8 +470,16 @@ class Handler(BaseHTTPRequestHandler):
         )
 
     def _execute(
-        self, key: str, body: dict[str, Any], to: str, data: bytes, value_wei: int, refusal: str | None
+        self,
+        key: str,
+        body: dict[str, Any],
+        to: str,
+        data: bytes,
+        value_wei: int,
+        refusal: str | None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
+        extra = extra or {}
         digest = hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest()
         with self.state.lock:
             seen = self.state.idempotency.get(key)
@@ -309,15 +500,18 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(
                     202,
                     {
-                        k: replay.get(k)
-                        for k in (
-                            "executionId",
-                            "status",
-                            "transactionHash",
-                            "transactionLink",
-                            "error",
-                            "idempotentReplay",
-                        )
+                        **extra,
+                        **{
+                            k: replay.get(k)
+                            for k in (
+                                "executionId",
+                                "status",
+                                "transactionHash",
+                                "transactionLink",
+                                "error",
+                                "idempotentReplay",
+                            )
+                        },
                     },
                 )
                 return
@@ -336,7 +530,7 @@ class Handler(BaseHTTPRequestHandler):
                     "sponsored": False,
                 }
                 self.state.executions[execution_id] = execution
-                self._send(202, {"executionId": execution_id, "status": "failed", "error": refusal})
+                self._send(202, {**extra, "executionId": execution_id, "status": "failed", "error": refusal})
                 return
             execution = {
                 "executionId": execution_id,
@@ -369,7 +563,7 @@ class Handler(BaseHTTPRequestHandler):
             tx_hash = tx_hash if tx_hash.startswith("0x") else "0x" + tx_hash
         except Exception as exc:  # noqa: BLE001
             execution.update(status="failed", error=f"Contract call failed: {exc}")
-            self._send(202, {"executionId": execution_id, "status": "failed", "error": execution["error"]})
+            self._send(202, {**extra, "executionId": execution_id, "status": "failed", "error": execution["error"]})
             return
         execution.update(
             transactionHash=tx_hash,
@@ -411,6 +605,7 @@ class Handler(BaseHTTPRequestHandler):
             gasUsedWei=str(receipt["gasUsed"] * receipt["effectiveGasPrice"]),
         )
         payload = {
+            **extra,
             "executionId": execution_id,
             "status": execution["status"],
             "transactionHash": tx_hash,
@@ -421,12 +616,14 @@ class Handler(BaseHTTPRequestHandler):
         self._send(202, payload)
 
 
-def serve(rpc: str, port: int, private_key: str, chain_id: int) -> ThreadingHTTPServer:
-    Handler.state = State(rpc, private_key, chain_id)
+def serve(rpc: str, port: int, private_key: str, chain_id: int, api: str = "current") -> ThreadingHTTPServer:
+    Handler.state = State(rpc, private_key, chain_id, api)
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    print(f"[fake-keeperhub] listening on http://127.0.0.1:{port} wallet={Handler.state.account.address} rpc={rpc}")
+    print(
+        f"[fake-keeperhub] listening on http://127.0.0.1:{port} wallet={Handler.state.account.address} rpc={rpc} api={api}"
+    )
     return server
 
 
@@ -436,8 +633,14 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8790)
     parser.add_argument("--private-key", default=ANVIL_KEY_0)
     parser.add_argument("--chain-id", type=int, default=8453)
+    parser.add_argument(
+        "--api",
+        choices=["current", "legacy"],
+        default=os.environ.get("KEEPERHUB_FAKE_API", "current"),
+        help="current: raw calldata, calls[] sequences, check-and-execute; legacy: typed single calls only",
+    )
     args = parser.parse_args()
-    serve(args.rpc, args.port, args.private_key, args.chain_id)
+    serve(args.rpc, args.port, args.private_key, args.chain_id, args.api)
     try:
         while True:
             time.sleep(3600)

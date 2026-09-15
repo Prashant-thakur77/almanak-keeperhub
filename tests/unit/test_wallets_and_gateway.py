@@ -57,14 +57,32 @@ def test_registry_unknown_chain_raises_key_error_so_gateway_falls_back() -> None
         registry.resolve("ethereum")
 
 
-def test_registry_accepts_wallet_address_from_env_without_network(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_registry_accepts_wallet_address_from_env_without_a_key(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("KEEPERHUB_WALLET_ADDRESS", ORG_WALLET)
+    monkeypatch.delenv("KEEPERHUB_API_KEY")
     registry = KeeperHubWalletRegistry.from_env(default_chains=["base"])
     assert registry.resolve("base").account_address == ORG_WALLET
 
 
+@respx.mock
+def test_an_explicit_wallet_that_disagrees_with_the_api_is_refused(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Otherwise Almanak compiles intents for one wallet while KeeperHub sends from another."""
+    monkeypatch.setenv("KEEPERHUB_WALLET_ADDRESS", "0x0bdf000000000000000000000000000000000002")
+    respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET}))
+    with pytest.raises(RuntimeError, match="refusing to compile"):
+        KeeperHubWalletRegistry.from_env(default_chains=["base"])
+
+
+@respx.mock
+def test_an_explicit_wallet_that_matches_the_api_is_fine_in_any_case(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("KEEPERHUB_WALLET_ADDRESS", ORG_WALLET.lower())
+    respx.get(f"{BASE}/api/user").mock(return_value=httpx.Response(200, json={"walletAddress": ORG_WALLET}))
+    assert KeeperHubWalletRegistry.from_env(default_chains=["base"]).resolve("base").account_address == ORG_WALLET
+
+
 def test_registry_ignores_chains_of_other_kinds(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("KEEPERHUB_WALLET_ADDRESS", ORG_WALLET)
+    monkeypatch.delenv("KEEPERHUB_API_KEY")
     monkeypatch.setenv(
         "ALMANAK_GATEWAY_WALLETS", json.dumps({"base": {"kind": "keeperhub"}, "ethereum": {"kind": "zodiac"}})
     )
