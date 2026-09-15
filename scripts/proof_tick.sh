@@ -41,10 +41,9 @@ step "ask production which upstream features it has yet (raw calldata, sequence 
 almanak-keeperhub api-features --chain base_sepolia --out "$ROOT/docs/api-features.json" || true
 
 step "merge every receipts log into docs/all-receipts.json"
-almanak-keeperhub merge-receipts \
-  "$STRATEGY/keeperhub-receipts.json" \
-  "$ROOT/demos/failure_modes/keeperhub-receipts.json" \
-  --into "$ROOT/docs/all-receipts.json"
+LOGS=("$STRATEGY/keeperhub-receipts.json" "$ROOT/demos/failure_modes/keeperhub-receipts.json")
+[ -f "$ROOT/keeperhub-receipts.json" ] && LOGS+=("$ROOT/keeperhub-receipts.json")   # the benchmark's log, local only
+almanak-keeperhub merge-receipts "${LOGS[@]}" --into "$ROOT/docs/all-receipts.json"
 
 step "export the console over all of it (verdicts already frozen are kept)"
 almanak-keeperhub console --export "$ROOT/docs" --receipts "$ROOT/docs/all-receipts.json" --docs "$ROOT/docs" \
