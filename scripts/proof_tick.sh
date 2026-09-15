@@ -25,6 +25,9 @@ STRATEGY="$ROOT/demos/metamorpho_base_sepolia"
 step() { echo; echo "================ $1"; echo; }
 
 if [ "${1:-}" != "--no-tick" ]; then
+  step "before the tick: redeem anything a previous run left in the vault, so this one has its USDC"
+  almanak-keeperhub exit -d "$STRATEGY" --chain base_sepolia || true   # "nothing to redeem" is the normal case
+
   step "tick: Almanak plans, KeeperHub dry-runs, then approve + deposit through KeeperHub"
   almanak-keeperhub run -d "$STRATEGY" --once --fresh 2>&1 \
     | grep -E "KeeperHub simulate|broadcast tx|Status:|executions this run|^  [a-z]+ ->|^    tx|refused|error" || true
