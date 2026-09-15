@@ -19,3 +19,4 @@ out/
 cache/
 contracts/cache/
 contracts/out/
+docs/benchmark-*.log
