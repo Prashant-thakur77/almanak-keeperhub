@@ -620,6 +620,43 @@ def _read_keeper_state(working_dir: Path) -> dict:
 
 
 @main.command()
+@click.option("--working-dir", "-d", default=".", help="Strategy directory the server operates (config.json, receipts).")
+@click.option("--chain", "chain_name", default=None, help="Chain name; defaults to config.json 'chain'.")
+@click.option("--write", "allow_broadcast", is_flag=True, help="Also register run_tick, which signs and broadcasts.")
+def mcp(working_dir: str, chain_name: str | None, allow_broadcast: bool) -> None:
+    """Serve this strategy to any MCP client over stdio: Claude, Cursor, an n8n agent.
+
+    Read tools and the KeeperHub dry run are always on. Broadcasting needs --write, the
+    same split as KeeperHub's own mcp:read and mcp:write keys. Needs `pip install
+    almanak-keeperhub[mcp]`.
+    """
+    try:
+        from almanak_keeperhub.mcp_server import serve
+    except ModuleNotFoundError as exc:
+        raise click.ClickException("the MCP server needs the optional dependency: pip install 'almanak-keeperhub[mcp]'") from exc
+
+    strategy = Path(working_dir).resolve()
+    chain = chain_name or _chain_from_config(strategy, None) or "base"
+    os.environ.setdefault("ALMANAK_KEEPERHUB_RECEIPTS", str(strategy / DEFAULT_FILENAME))
+    if not os.environ.get("KEEPERHUB_WALLET_ADDRESS") and os.environ.get("KEEPERHUB_API_KEY"):
+        try:
+            os.environ["KEEPERHUB_WALLET_ADDRESS"] = asyncio.run(_resolve_wallet(os.environ["KEEPERHUB_API_KEY"]))
+        except click.ClickException as exc:
+            click.echo(f"org wallet unknown ({exc.message})", err=True)
+    # stdout is the MCP transport; everything human goes to stderr.
+    click.echo(
+        f"mcp server: strategy={strategy} chain={chain} broadcast={'on (--write)' if allow_broadcast else 'off'}",
+        err=True,
+    )
+    serve(
+        strategy_dir=strategy,
+        chain=chain,
+        base_url=os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com"),
+        allow_broadcast=allow_broadcast,
+    )
+
+
+@main.command()
 @click.option("--working-dir", "-d", default=".", help="Strategy directory the bot operates (config.json, receipts).")
 @click.option("--chain", "chain_name", default=None, help="Chain name; defaults to config.json 'chain'.")
 def bot(working_dir: str, chain_name: str | None) -> None:

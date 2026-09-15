@@ -2,78 +2,15 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import httpx
-import pytest
 import respx
 
 from almanak_keeperhub.bot import OperatorBot
 
 BASE = "https://app.keeperhub.com"
 ORG = "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9"
-
-
-@pytest.fixture
-def strategy_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    d = tmp_path / "strategy"
-    d.mkdir()
-    (d / "keeperhub-receipts.json").write_text(
-        json.dumps(
-            [
-                {
-                    "type": "simulation",
-                    "recorded_at": "2026-09-12T06:18:00+00:00",
-                    "chain_id": 84532,
-                    "to": "0xUSDC",
-                    "function": "approve",
-                    "success": True,
-                    "gas_estimate": 56240,
-                },
-                {
-                    "execution_id": "az13",
-                    "recorded_at": "2026-09-12T06:19:20+00:00",
-                    "chain_id": 84532,
-                    "to": "0xUSDC",
-                    "function": "approve",
-                    "tx_hash": "0x" + "29" * 32,
-                    "status": "completed",
-                    "verified": True,
-                    "sponsored": True,
-                    "transaction_link": "https://sepolia.basescan.org/tx/0x29",
-                },
-                {
-                    "execution_id": "au5z",
-                    "recorded_at": "2026-09-12T06:19:28+00:00",
-                    "chain_id": 84532,
-                    "to": "0xVault",
-                    "function": "deposit",
-                    "tx_hash": "0x" + "70" * 32,
-                    "status": "completed",
-                    "verified": True,
-                    "sponsored": True,
-                },
-            ]
-        )
-    )
-    (d / "keeperhub-keeper.json").write_text(
-        json.dumps(
-            {
-                "workflow_id": "7clo",
-                "enabled": True,
-                "cron": "0 */6 * * *",
-                "min": "1",
-                "max": "90",
-                "validation": {"valid": True},
-            }
-        )
-    )
-    monkeypatch.setenv("ALMANAK_KEEPERHUB_RECEIPTS", str(d / "keeperhub-receipts.json"))
-    monkeypatch.setenv("ALMANAK_KEEPERHUB_KEEPER_STATE", str(d / "keeperhub-keeper.json"))
-    monkeypatch.setenv("KEEPERHUB_API_KEY", "kh_x")
-    monkeypatch.setenv("KEEPERHUB_BASE_URL", BASE)
-    return d
 
 
 def make_bot(strategy_dir: Path, owner: str | None = "42", runner=None) -> OperatorBot:

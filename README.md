@@ -169,6 +169,7 @@ Files:
 | `almanak_keeperhub/keeper.py` | Generates, deploys, enables and reads the scheduled compounder workflow |
 | `almanak_keeperhub/notify.py` | Optional Telegram alerts on broadcast, settlement and refusals |
 | `almanak_keeperhub/bot.py` | The Telegram operator bot: status, executions, keeper, verify, simulate, tick, demos |
+| `almanak_keeperhub/mcp_server.py` | The same tools over MCP for Claude, Cursor or an n8n agent; broadcast only with `--write` |
 | `almanak_keeperhub/testnet.py` | Registers `base_sepolia` as an Almanak chain, its tokens, and the vault connector on it |
 | `almanak_keeperhub/demo_targets.py` | Chain switch for the demos and the benchmark (`ALMANAK_KEEPERHUB_CHAIN`) |
 | `contracts/TestVault.sol` | Dependency-free ERC-4626 test vault for Base Sepolia |
@@ -190,6 +191,42 @@ Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak inte
 | MCP | no | Almanak's execution layer is Python inside a gRPC gateway; the REST surface is the right one there. The bounty adds a `data` input to the same endpoint the MCP tool wraps |
 | CLI (`kh`) | no | not needed by the integration |
 | x402 / MPP | no, deliberately | this executes a framework's own transactions; nothing here is sold per call |
+
+## MCP server: the strategy as tools for any agent
+
+`almanak-keeperhub mcp` serves the same proof and controls to any MCP client: Claude Desktop, Claude Code,
+Cursor, an n8n AI Agent. An agent can read every execution with KeeperHub's verified receipt, ask KeeperHub for
+its verdict on a hash, dry-run a strategy tick, and replay the failure modes. Broadcasting is off unless the
+server is started with `--write`, the same split as KeeperHub's own `mcp:read` and `mcp:write` keys, so an agent
+given the default server can inspect and simulate everything and sign nothing.
+
+```bash
+pip install 'almanak-keeperhub[mcp]'
+cd demos/metamorpho_base_sepolia && almanak-keeperhub mcp --chain base_sepolia          # read + dry run
+cd demos/metamorpho_base_sepolia && almanak-keeperhub mcp --chain base_sepolia --write  # adds run_tick
+```
+
+| Tool | What it does | Touches the chain |
+|---|---|---|
+| `status` | org wallet, chain, counts, keeper state, whether broadcast is enabled | no |
+| `list_executions`, `list_dry_runs` | the recorded executions and dry runs, newest first, with links | no |
+| `verify <hash or execution id>` | KeeperHub's verdict, the receipt, and who acted decoded from the events | reads |
+| `benchmark`, `failure_modes`, `keeper` | the recorded benchmark, the six failure-mode verdicts, the compounder workflow | no |
+| `simulate_tick` | one strategy tick, dry-run through KeeperHub | dry run only |
+| `run_failure_demo <revert\|cap\|duplicate\|crash\|selector\|rpc>` | replay one failure mode | dry run, or a refused broadcast |
+| `run_tick` (`--write` only) | one real tick: sign and broadcast through KeeperHub; needs `confirm=true` | broadcasts |
+
+Resource `almanak-keeperhub://receipts` is the raw receipts log. Claude Desktop / Cursor config:
+
+```json
+{ "mcpServers": { "almanak-keeperhub": {
+    "command": "almanak-keeperhub",
+    "args": ["mcp", "-d", "/path/to/demos/metamorpho_base_sepolia", "--chain", "base_sepolia"],
+    "env": { "KEEPERHUB_API_KEY": "kh_...", "ALMANAK_BASE_SEPOLIA_RPC_URL": "https://sepolia.base.org" } } } }
+```
+
+The tools are the bot's handlers behind an MCP surface (`almanak_keeperhub/mcp_server.py`, `StrategyTools`),
+so the phone, the console and the agent can never disagree about what happened.
 
 ## Telegram operator bot (optional)
 

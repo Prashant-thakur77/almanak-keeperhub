@@ -1,0 +1,39 @@
+{
+  "run_id": "bench-1789194432",
+  "started_at": "2026-09-12T06:27:12.047155+00:00",
+  "base_url": "https://app.keeperhub.com",
+  "wallet": "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9",
+  "chain": "base_sepolia",
+  "chain_id": 84532,
+  "refusals": {
+    "attempted": 20,
+    "refused_before_broadcast": 20
+  },
+  "simulations": {
+    "attempted": 10,
+    "succeeded": 10,
+    "gas_estimate_median": 38680
+  },
+  "retry": {
+    "same_work_replayed_not_resent": true,
+    "latency_s": 0.3
+  },
+  "executions": {
+    "attempted": 5,
+    "landed_and_verified": 5,
+    "tx_hashes": [
+      "0x2f5c558aef9eef123e10075db9538173bdb92e39cbe5203dfe7cae9c826184fe",
+      "0xbb12525911dcabacdc596b93128f5d02f93c1a07af9ca0eeca5f1cb2179fda8e",
+      "0xdc272cbf01f3e6be5c13c6212bb20a2776b2de6787af12fd0f9bf8d0aa2dc8d6",
+      "0x4df347ccca4a6736dde0b5a7a02b4b1509dab34d9d86707f85d44db757a91a28",
+      "0x2f4d047fa871d92cc87c53e7330b7b624af635f187f4cd2e68db1ff99f2ad064"
+    ],
+    "latency_p50_s": 6.88,
+    "latency_p95_s": 9.59
+  },
+  "simulation_latency": {
+    "p50_s": 0.36,
+    "p95_s": 0.41
+  },
+  "finished_at": "2026-09-12T06:28:00.264247+00:00"
+}
