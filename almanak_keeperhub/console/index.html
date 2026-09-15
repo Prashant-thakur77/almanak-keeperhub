@@ -48,7 +48,10 @@
   .lede { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
 
   .card { background: var(--frame); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
-  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .row { display: grid; grid-template-columns: minmax(180px, 1.3fr) auto minmax(0, 2fr) auto auto; align-items: center; gap: 8px 14px; }
+  .row .flags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .row .ids { display: flex; flex-wrap: wrap; gap: 4px 14px; min-width: 0; }
+  @media (max-width: 900px) { .row { grid-template-columns: 1fr auto; } .row .ids { grid-column: 1 / -1; } }
   .fn { font-weight: 700; }
   .fn small { font-weight: 500; color: var(--muted); }
   .addr, .hash { font: 12px var(--mono); }
@@ -58,8 +61,12 @@
   .pill.warn { background: var(--warn-bg); color: var(--warn-ink); border-color: #f4dd8a; }
   .pill.bad { background: var(--bad-bg); color: var(--bad-ink); border-color: #f3b4b4; }
   .pill.info { background: var(--info-bg); color: var(--info-ink); border-color: #c7d6fa; }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+  .chip { font: inherit; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--frame); color: var(--muted); cursor: pointer; }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .chip.on { border-color: var(--ink); color: var(--ink); }
   .pill.muted { background: #f0f0ec; color: var(--muted); border-color: var(--line); }
-  .when { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .when { color: var(--muted); font-size: 12px; white-space: nowrap; }
   button.inspect { font: 600 12px var(--sans); padding: 5px 10px; border: 1px solid var(--ink); border-radius: 8px; background: var(--frame); cursor: pointer; }
   button.inspect:hover { background: var(--ok); }
   .evidence { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 10px; display: grid; gap: 6px; }
@@ -109,6 +116,7 @@
   <section>
     <h2>Executions</h2>
     <p class="lede">Every transaction Almanak compiled and KeeperHub carried, newest first. Inspect asks KeeperHub for its verdict and reads the receipt events to show who acted, even when the relayer paid the gas.</p>
+    <div class="filters" id="filters"></div>
     <div id="executions"></div>
   </section>
 
@@ -148,7 +156,10 @@
   const short = (h) => (h && h.length > 14 ? h.slice(0, 8) + "…" + h.slice(-6) : h || "");
   // A revert reason sometimes arrives as a tuple/list repr with the raw error bytes attached; show the message.
   const reason = (text) => { const t = String(text || ""); const m = t.match(/^[\[(]?\s*['"]([^'"]{1,240})['"]/); return (m ? m[1] : t).slice(0, 240); };
-  const when = (iso) => { try { return new Date(iso).toLocaleTimeString(); } catch { return ""; } };
+  const when = (iso) => { try { const d = new Date(iso); return d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch { return ""; } };
+  let sourceFilter = "all";
+  const SOURCES = [["all", "all"], ["strategy", "strategy ticks"], ["guarded", "guarded exits"], ["failure-modes", "failure modes"], ["benchmark", "benchmark"], ["replay", "replays"]];
+  const matches = (e) => sourceFilter === "all" || (sourceFilter === "guarded" ? !!e.guarded : sourceFilter === "replay" ? !!e.idempotent_replay : (e.source || "strategy") === sourceFilter);
   const open = new Set();
   const evidence = {};
   let lastSignature = "";
@@ -185,23 +196,27 @@
     return `<span class="pill warn">${esc(e.status)}</span>`;
   }
 
-  function executions(list) {
-    if (!list.length) { $("executions").innerHTML = `<div class="empty">No executions yet. Run <code>almanak-keeperhub run --once</code> in a terminal; this page updates as receipts land.</div>`; return; }
+  function executions(all) {
+    if (!all.length) { $("executions").innerHTML = `<div class="empty">No executions yet. Run <code>almanak-keeperhub run --once</code> in a terminal; this page updates as receipts land.</div>`; return; }
+    const counts = Object.fromEntries(SOURCES.map(([k]) => [k, k === "all" ? all.length : all.filter((e) => (k === "guarded" ? !!e.guarded : k === "replay" ? !!e.idempotent_replay : (e.source || "strategy") === k)).length]));
+    $("filters").innerHTML = SOURCES.filter(([k]) => counts[k] > 0).map(([k, label]) => `<button class="chip${sourceFilter === k ? " on" : ""}" data-source="${k}">${label} <b>${counts[k]}</b></button>`).join("");
+    document.querySelectorAll("button.chip").forEach((b) => b.addEventListener("click", () => { sourceFilter = b.dataset.source; lastSignature = ""; render(lastState); }));
+    const list = all.filter(matches);
     $("executions").innerHTML = list.map((e) => {
       const key = `${e.execution_id}@${e.recorded_at}`;
       const flags = [
         e.verified === true ? `<span class="pill ok">verified</span>` : e.verified === false ? `<span class="pill bad">unverified</span>` : "",
         e.sponsored ? `<span class="pill info">sponsored</span>` : "",
         e.idempotent_replay ? `<span class="pill info">replay</span>` : "",
+        e.guarded ? `<span class="pill warn" title="KeeperHub re-read the position before this redeem (check-and-execute)">guarded</span>` : "",
       ].join("");
       const link = e.explorer ? `<a href="${esc(e.explorer)}" target="_blank" rel="noopener">${esc(short(e.tx_hash))}</a>` : esc(short(e.tx_hash));
       const ev = evidence[key];
       return `<div class="card" data-id="${esc(key)}">
         <div class="row">
           <span class="fn">${esc(e.function)} <small>→</small> <span class="addr">${esc(short(e.to))}</span></span>
-          ${pill(e)} ${flags}
-          <span class="hash">tx ${link}</span>
-          <span class="hash">exec ${esc(e.execution_id)}</span>
+          <span class="flags">${pill(e)} ${flags}</span>
+          <span class="ids"><span class="hash">tx ${link}</span><span class="hash">exec ${esc(e.execution_id)}</span></span>
           <span class="when">${when(e.recorded_at)}</span>
           <button class="inspect" data-ref="${esc(e.tx_hash || key)}" data-id="${esc(key)}">${open.has(key) ? "Hide" : "Inspect"}</button>
         </div>

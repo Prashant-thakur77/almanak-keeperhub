@@ -438,7 +438,9 @@ def guarded_exit(chain_name: str | None, working_dir: str, simulate: bool, expec
                 shares=shares,
                 work_id=os.environ.get("ALMANAK_KEEPERHUB_EXIT_ID") or f"exit-{int(time.time())}",
             )
-            receipts = ReceiptLog(Path(working_dir) / "keeperhub-receipts.json")
+            # ALMANAK_KEEPERHUB_RECEIPTS wins, as for every other write: a rehearsal points it away from the proof.
+            configured = os.environ.get("ALMANAK_KEEPERHUB_RECEIPTS")
+            receipts = ReceiptLog(Path(configured) if configured else Path(working_dir) / "keeperhub-receipts.json")
             outcome = await run_guarded_exit(client, exit_, simulate=simulate, receipts=receipts)
             for key, value in describe(outcome, exit_, started).items():
                 click.echo(f"{key:<18}: {value}")

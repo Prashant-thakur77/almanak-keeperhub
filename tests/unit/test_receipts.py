@@ -150,3 +150,23 @@ def test_merge_logs_ignores_a_missing_log(tmp_path: Path) -> None:
     present.write_text(json.dumps([{"execution_id": "x1", "recorded_at": "2026-09-12T06:00:00+00:00"}]))
 
     assert [e["execution_id"] for e in merge_logs(tmp_path / "absent.json", present)] == ["x1"]
+
+
+def test_merge_logs_tags_each_entry_with_its_source(tmp_path: Path) -> None:
+    from almanak_keeperhub.receipts import merge_logs
+
+    strategy = tmp_path / "metamorpho_base_sepolia" / "keeperhub-receipts.json"
+    demos = tmp_path / "failure_modes" / "keeperhub-receipts.json"
+    bench = tmp_path / "keeperhub-receipts.json"
+    union = tmp_path / "docs" / "all-receipts.json"
+    for i, path in enumerate((strategy, demos, bench)):
+        path.parent.mkdir(exist_ok=True)
+        path.write_text(json.dumps([{"execution_id": f"x{i}", "recorded_at": f"2026-09-12T0{i}:00:00+00:00"}]))
+    union.parent.mkdir()
+    union.write_text(
+        json.dumps([{"execution_id": "old", "recorded_at": "2026-09-11T00:00:00+00:00", "source": "strategy"}])
+    )
+
+    merged = {e["execution_id"]: e.get("source") for e in merge_logs(union, strategy, demos, bench)}
+
+    assert merged == {"old": "strategy", "x0": "strategy", "x1": "failure-modes", "x2": "benchmark"}

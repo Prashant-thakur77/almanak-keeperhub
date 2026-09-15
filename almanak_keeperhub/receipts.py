@@ -33,6 +33,21 @@ def entry_key(entry: dict[str, Any]) -> str:
     return str(entry.get("execution_id") or entry.get("tx_hash") or entry.get("recorded_at") or "")
 
 
+def source_of(path: Path) -> str:
+    """Which log an entry came from, named for the page: the strategy, the failure demos, or the benchmark.
+
+    A union file (docs/all-receipts.json) is not a source; its entries keep the source they were saved with.
+    """
+    parent = path.resolve().parent.name
+    if parent == "docs":
+        return ""
+    if parent == "failure_modes":
+        return "failure-modes"
+    if parent.startswith("metamorpho") or (path.parent / "strategy.py").exists():
+        return "strategy"
+    return "benchmark"
+
+
 def merge_logs(*paths: Path) -> list[dict[str, Any]]:
     """The union of several receipts logs, one entry per execution, oldest first.
 
@@ -44,6 +59,8 @@ def merge_logs(*paths: Path) -> list[dict[str, Any]]:
     merged: dict[str, dict[str, Any]] = {}
     for path in paths:
         for entry in ReceiptLog(path)._read():
+            if not entry.get("source") and (source := source_of(path)):
+                entry["source"] = source
             key = entry_key(entry)
             previous = merged.get(key)
             if previous is None or str(entry.get("updated_at", "")) >= str(previous.get("updated_at", "")):

@@ -7,7 +7,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56240
+  "gas_estimate": 56240,
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -17,7 +18,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56240
+  "gas_estimate": 56240,
+  "source": "strategy"
  },
  {
   "execution_id": "az13hw7qn9y9dhs52s4rg",
@@ -35,7 +37,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:19:36.046589+00:00"
+  "updated_at": "2026-09-12T06:19:36.046589+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "au5z8vtzv8s9xm811z93j",
@@ -53,7 +56,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:19:37.169687+00:00"
+  "updated_at": "2026-09-12T06:19:37.169687+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -63,7 +67,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "failure-modes"
  },
  {
   "execution_id": "ckw2xejqqd03eqaw2w3nj",
@@ -81,7 +86,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:20:10.106252+00:00"
+  "updated_at": "2026-09-12T06:20:10.106252+00:00",
+  "source": "failure-modes"
  },
  {
   "execution_id": "4ts3qrhvrml9b9ux6pp6n",
@@ -99,7 +105,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:20:59.394138+00:00"
+  "updated_at": "2026-09-12T06:20:59.394138+00:00",
+  "source": "failure-modes"
  },
  {
   "execution_id": "yqtgom0p5v7rpqc9zdkxz",
@@ -117,7 +124,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:22:01.022961+00:00"
+  "updated_at": "2026-09-12T06:22:01.022961+00:00",
+  "source": "failure-modes"
  },
  {
   "type": "simulation",
@@ -127,7 +135,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -137,7 +146,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -147,7 +157,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -157,7 +168,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -167,7 +179,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -177,7 +190,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -187,7 +201,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -197,7 +212,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -207,7 +223,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -217,7 +234,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -227,7 +245,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -237,7 +256,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -247,7 +267,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -257,7 +278,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -267,7 +289,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -277,7 +300,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -287,7 +311,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -297,7 +322,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -307,7 +333,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -317,7 +344,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -327,7 +355,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -337,7 +366,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -347,7 +377,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -357,7 +388,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -367,7 +399,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -377,7 +410,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -387,7 +421,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -397,7 +432,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -407,7 +443,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -417,7 +454,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "execution_id": "piz1p5belu4fvdvmoqufp",
@@ -435,7 +473,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:23:02.867956+00:00"
+  "updated_at": "2026-09-12T06:23:02.867956+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -445,7 +484,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "failure-modes"
  },
  {
   "execution_id": "0w8daipzivbp8merzysca",
@@ -463,7 +503,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:26:45.196376+00:00"
+  "updated_at": "2026-09-12T06:26:45.196376+00:00",
+  "source": "failure-modes"
  },
  {
   "execution_id": "c9qyie4kt2rqebfb01t1h",
@@ -481,7 +522,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:26:52.869454+00:00"
+  "updated_at": "2026-09-12T06:26:52.869454+00:00",
+  "source": "failure-modes"
  },
  {
   "execution_id": "otzkaujo4qhzsgwfgjobs",
@@ -499,7 +541,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:27:10.171978+00:00"
+  "updated_at": "2026-09-12T06:27:10.171978+00:00",
+  "source": "failure-modes"
  },
  {
   "type": "simulation",
@@ -509,7 +552,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -519,7 +563,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -529,7 +574,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -539,7 +585,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -549,7 +596,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -559,7 +607,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -569,7 +618,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -579,7 +629,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -589,7 +640,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -599,7 +651,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -609,7 +662,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -619,7 +673,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -629,7 +684,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -639,7 +695,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -649,7 +706,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -659,7 +717,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -669,7 +728,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -679,7 +739,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -689,7 +750,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -699,7 +761,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -709,7 +772,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -719,7 +783,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -729,7 +794,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -739,7 +805,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -749,7 +816,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -759,7 +827,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -769,7 +838,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -779,7 +849,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -789,7 +860,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -799,7 +871,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "execution_id": "0axxmc1husv37l2lx5wu7",
@@ -817,7 +890,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:27:27.870862+00:00"
+  "updated_at": "2026-09-12T06:27:27.870862+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "5z8cjhtd51wg5zaodbedw",
@@ -835,7 +909,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:27:38.932257+00:00"
+  "updated_at": "2026-09-12T06:27:38.932257+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "j0d4888nm9y9io2buzgex",
@@ -853,7 +928,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:27:45.695519+00:00"
+  "updated_at": "2026-09-12T06:27:45.695519+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pxqyb36aaf46p743f3gci",
@@ -871,7 +947,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:27:52.720815+00:00"
+  "updated_at": "2026-09-12T06:27:52.720815+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "dl6hifoyur6a29rr0cji6",
@@ -889,7 +966,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T06:27:59.581336+00:00"
+  "updated_at": "2026-09-12T06:27:59.581336+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -899,7 +977,8 @@
   "function": "redeem",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 85057
+  "gas_estimate": 85057,
+  "source": "strategy"
  },
  {
   "execution_id": "7rshlqcgwoxkia3iz052b",
@@ -917,7 +996,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-12T07:19:35.865212+00:00"
+  "updated_at": "2026-09-12T07:19:35.865212+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -927,7 +1007,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -937,7 +1018,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -947,7 +1029,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -957,7 +1040,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -967,7 +1051,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -977,7 +1062,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -987,7 +1073,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -997,7 +1084,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1007,7 +1095,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1017,7 +1106,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1027,7 +1117,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1037,7 +1128,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1047,7 +1139,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1057,7 +1150,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1067,7 +1161,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1077,7 +1172,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1087,7 +1183,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1097,7 +1194,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1107,7 +1205,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1117,7 +1216,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1127,7 +1227,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1137,7 +1238,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1147,7 +1249,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1157,7 +1260,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1167,7 +1271,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1177,7 +1282,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1187,7 +1293,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1197,7 +1304,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1207,7 +1315,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1217,7 +1326,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1227,7 +1337,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1237,7 +1348,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1247,7 +1359,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1257,7 +1370,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1267,7 +1381,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1277,7 +1392,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1287,7 +1403,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1297,7 +1414,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1307,7 +1425,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1317,7 +1436,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1327,7 +1447,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1337,7 +1458,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1347,7 +1469,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1357,7 +1480,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1367,7 +1491,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1377,7 +1502,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1387,7 +1513,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1397,7 +1524,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1407,7 +1535,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1417,7 +1546,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1427,7 +1557,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1437,7 +1568,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1447,7 +1579,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1457,7 +1590,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1467,7 +1601,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1477,7 +1612,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1487,7 +1623,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1497,7 +1634,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1507,7 +1645,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1517,7 +1656,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1527,7 +1667,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1537,7 +1678,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1547,7 +1689,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1557,7 +1700,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1567,7 +1711,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1577,7 +1722,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1587,7 +1733,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1597,7 +1744,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1607,7 +1755,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1617,7 +1766,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1627,7 +1777,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1637,7 +1788,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1647,7 +1799,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1657,7 +1810,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1667,7 +1821,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1677,7 +1832,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1687,7 +1843,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1697,7 +1854,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1707,7 +1865,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1717,7 +1876,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1727,7 +1887,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1737,7 +1898,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1747,7 +1909,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1757,7 +1920,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1767,7 +1931,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1777,7 +1942,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1787,7 +1953,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1797,7 +1964,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1807,7 +1975,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1817,7 +1986,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1827,7 +1997,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1837,7 +2008,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1847,7 +2019,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1857,7 +2030,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1867,7 +2041,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1877,7 +2052,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1887,7 +2063,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1897,7 +2074,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1907,7 +2085,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -1917,7 +2096,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 56216
+  "gas_estimate": 56216,
+  "source": "benchmark"
  },
  {
   "execution_id": "58h7pco3r4vdobn9klmh1",
@@ -1935,7 +2115,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:51:43.187282+00:00"
+  "updated_at": "2026-09-15T15:51:43.187282+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ivwpr6mj278vguvag2v23",
@@ -1953,7 +2134,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:51:55.121012+00:00"
+  "updated_at": "2026-09-15T15:51:55.121012+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9hxvhcoy3o3lj9d5x6jjq",
@@ -1971,7 +2153,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:52:01.488201+00:00"
+  "updated_at": "2026-09-15T15:52:01.488201+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "vw54weyj3jpq4jc12kyxp",
@@ -1989,7 +2172,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:52:11.300397+00:00"
+  "updated_at": "2026-09-15T15:52:11.300397+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "eqhr5k9452zw4vfr6vgt7",
@@ -2007,7 +2191,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:52:21.042333+00:00"
+  "updated_at": "2026-09-15T15:52:21.042333+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "y379e6cip4o2ughlkkrxq",
@@ -2025,7 +2210,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:52:27.391800+00:00"
+  "updated_at": "2026-09-15T15:52:27.391800+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "o8jfvflcnkbqxhwki8rup",
@@ -2043,7 +2229,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:52:37.429912+00:00"
+  "updated_at": "2026-09-15T15:52:37.429912+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wzwf850ij97yvpg8qix1v",
@@ -2061,7 +2248,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:52:47.890683+00:00"
+  "updated_at": "2026-09-15T15:52:47.890683+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ij3m5bkdtoy1qcr7b1a8o",
@@ -2079,7 +2267,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:52:56.140607+00:00"
+  "updated_at": "2026-09-15T15:52:56.140607+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8equqf0dw2tv8rm1nn9sn",
@@ -2097,7 +2286,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:53:07.626618+00:00"
+  "updated_at": "2026-09-15T15:53:07.626618+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "5q8118y4yoyl91n9i5en3",
@@ -2115,7 +2305,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:53:20.743599+00:00"
+  "updated_at": "2026-09-15T15:53:20.743599+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "q193yzkqy7w2b7d5xxj62",
@@ -2133,7 +2324,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:53:31.051627+00:00"
+  "updated_at": "2026-09-15T15:53:31.051627+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ebxnnxfnml3lw53nvxiev",
@@ -2151,7 +2343,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:53:39.997791+00:00"
+  "updated_at": "2026-09-15T15:53:39.997791+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8n0ynt64cy3qejv32jpnx",
@@ -2169,7 +2362,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:53:49.965382+00:00"
+  "updated_at": "2026-09-15T15:53:49.965382+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "cd9nstogebeohvut9jr8m",
@@ -2187,7 +2381,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:53:56.641722+00:00"
+  "updated_at": "2026-09-15T15:53:56.641722+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "lifq0s1st9o85f6oxqxl7",
@@ -2205,7 +2400,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:54:04.505784+00:00"
+  "updated_at": "2026-09-15T15:54:04.505784+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "fcsjg36dyd1ld6bdreh79",
@@ -2223,7 +2419,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:54:12.346107+00:00"
+  "updated_at": "2026-09-15T15:54:12.346107+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8hc5t0c54u0m6rxrd79z3",
@@ -2241,7 +2438,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:54:19.428693+00:00"
+  "updated_at": "2026-09-15T15:54:19.428693+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "h8ghrfwib3x7ifenp14wy",
@@ -2259,7 +2457,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:54:28.135994+00:00"
+  "updated_at": "2026-09-15T15:54:28.135994+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "kwb2ty9125khno3qnbdju",
@@ -2277,7 +2476,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:54:38.677361+00:00"
+  "updated_at": "2026-09-15T15:54:38.677361+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2xn30f4nnfa5y6mh3xh52",
@@ -2295,7 +2495,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:54:46.549025+00:00"
+  "updated_at": "2026-09-15T15:54:46.549025+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "q2l6j2vrw0p5oybynrf59",
@@ -2313,7 +2514,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:54:52.594138+00:00"
+  "updated_at": "2026-09-15T15:54:52.594138+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0krtly6hqopwo9qqy9vte",
@@ -2331,7 +2533,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:55:02.444388+00:00"
+  "updated_at": "2026-09-15T15:55:02.444388+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "lmo9cjyr5w5zw5epqlq9n",
@@ -2349,7 +2552,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:55:14.057885+00:00"
+  "updated_at": "2026-09-15T15:55:14.057885+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "i76b6axx0boj5flxgxpnz",
@@ -2367,7 +2571,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:55:26.483355+00:00"
+  "updated_at": "2026-09-15T15:55:26.483355+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "c0p474ot69hmgf1kss3bj",
@@ -2385,7 +2590,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:55:39.867084+00:00"
+  "updated_at": "2026-09-15T15:55:39.867084+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pcyhwzo5khse5av7czy5c",
@@ -2403,7 +2609,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:55:49.258475+00:00"
+  "updated_at": "2026-09-15T15:55:49.258475+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "obcqm65fr7o1ne8k8kc3c",
@@ -2421,7 +2628,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:55:55.877302+00:00"
+  "updated_at": "2026-09-15T15:55:55.877302+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "qp5nloy2e0zitv3mgw1a6",
@@ -2439,7 +2647,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:56:04.617322+00:00"
+  "updated_at": "2026-09-15T15:56:04.617322+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8fhtexe3uionzxolvu5a3",
@@ -2457,7 +2666,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:56:15.143575+00:00"
+  "updated_at": "2026-09-15T15:56:15.143575+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "m0s1vmfb7yi3abrrazpa9",
@@ -2475,7 +2685,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:56:22.948623+00:00"
+  "updated_at": "2026-09-15T15:56:22.948623+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "56sgn8igr70xxkvt5stmu",
@@ -2493,7 +2704,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:56:29.782583+00:00"
+  "updated_at": "2026-09-15T15:56:29.782583+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "37ok9fyjxpot2h7wdvhow",
@@ -2511,7 +2723,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:56:37.201388+00:00"
+  "updated_at": "2026-09-15T15:56:37.201388+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "gan5gea1umjvlbq7g8449",
@@ -2529,7 +2742,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:56:42.686239+00:00"
+  "updated_at": "2026-09-15T15:56:42.686239+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "y1i9cwm23i3pu8j9zk5vj",
@@ -2547,7 +2761,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:56:52.701804+00:00"
+  "updated_at": "2026-09-15T15:56:52.701804+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "o03csi2pvi15f7h1ilnpo",
@@ -2565,7 +2780,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:02.969786+00:00"
+  "updated_at": "2026-09-15T15:57:02.969786+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ee63t6f2sb8o9nqrmj6ur",
@@ -2583,7 +2799,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:09.897753+00:00"
+  "updated_at": "2026-09-15T15:57:09.897753+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "1au4c89m9a1ziew7ydyrc",
@@ -2601,7 +2818,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:16.213978+00:00"
+  "updated_at": "2026-09-15T15:57:16.213978+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "mm3j1xahb57jt28npqcef",
@@ -2619,7 +2837,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:24.620783+00:00"
+  "updated_at": "2026-09-15T15:57:24.620783+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ppshq7osy67gtpxw1309e",
@@ -2637,7 +2856,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:30.886603+00:00"
+  "updated_at": "2026-09-15T15:57:30.886603+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "aafc2cxzsl7nvu1l928fw",
@@ -2655,7 +2875,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:38.398850+00:00"
+  "updated_at": "2026-09-15T15:57:38.398850+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "w30xdt7nbz9mucnf1bufn",
@@ -2673,7 +2894,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:44.518995+00:00"
+  "updated_at": "2026-09-15T15:57:44.518995+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0gj3i6pfkle9slweex892",
@@ -2691,7 +2913,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:57:54.326796+00:00"
+  "updated_at": "2026-09-15T15:57:54.326796+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xydoay3lchcldevdcoh71",
@@ -2709,7 +2932,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:58:05.757283+00:00"
+  "updated_at": "2026-09-15T15:58:05.757283+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "t6k1h9cwp1tco21dst2fi",
@@ -2727,7 +2951,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:58:16.428599+00:00"
+  "updated_at": "2026-09-15T15:58:16.428599+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "olrxo5kjiod8rfc2fom7c",
@@ -2745,7 +2970,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:58:22.665936+00:00"
+  "updated_at": "2026-09-15T15:58:22.665936+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7gjdr91rmfkihv5lyepfc",
@@ -2763,7 +2989,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:58:31.297324+00:00"
+  "updated_at": "2026-09-15T15:58:31.297324+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4az4qyr05p07v6nxjxt6x",
@@ -2781,7 +3008,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:58:37.693822+00:00"
+  "updated_at": "2026-09-15T15:58:37.693822+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "5r5ej4fn3voycxc6ces0d",
@@ -2799,7 +3027,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:58:45.955879+00:00"
+  "updated_at": "2026-09-15T15:58:45.955879+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "r9x9maomcwlc34lecll73",
@@ -2817,7 +3046,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:58:58.286082+00:00"
+  "updated_at": "2026-09-15T15:58:58.286082+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7ex4rrn0pvgix4ipx82xm",
@@ -2835,7 +3065,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:59:09.013468+00:00"
+  "updated_at": "2026-09-15T15:59:09.013468+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "n7qmimozx0aokup9ebyzm",
@@ -2853,7 +3084,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:59:19.393387+00:00"
+  "updated_at": "2026-09-15T15:59:19.393387+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tbduvq69l2bo89d7kac15",
@@ -2871,7 +3103,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:59:28.843448+00:00"
+  "updated_at": "2026-09-15T15:59:28.843448+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4dnxmfxyy5p6uclbzn655",
@@ -2889,7 +3122,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:59:35.212493+00:00"
+  "updated_at": "2026-09-15T15:59:35.212493+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "f12etimuzyhyfzipyklj2",
@@ -2907,7 +3141,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:59:43.673771+00:00"
+  "updated_at": "2026-09-15T15:59:43.673771+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "6kzwh95odznwzu4ncw1ey",
@@ -2925,7 +3160,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T15:59:54.513479+00:00"
+  "updated_at": "2026-09-15T15:59:54.513479+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "c0o19j9hj86lhi8tlf48l",
@@ -2943,7 +3179,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:00:01.411957+00:00"
+  "updated_at": "2026-09-15T16:00:01.411957+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "jiewgfx1pmcjdw4qiudxt",
@@ -2961,7 +3198,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:00:11.001486+00:00"
+  "updated_at": "2026-09-15T16:00:11.001486+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0odn1p1yt3u6i5o3x9tga",
@@ -2979,7 +3217,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:00:22.596688+00:00"
+  "updated_at": "2026-09-15T16:00:22.596688+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "lkf0vwtwsklyp3rqipkzp",
@@ -2997,7 +3236,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:00:33.547093+00:00"
+  "updated_at": "2026-09-15T16:00:33.547093+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "eg657a5k40mgi8ylvs03r",
@@ -3015,7 +3255,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:00:41.203258+00:00"
+  "updated_at": "2026-09-15T16:00:41.203258+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "c8f7zrcrip46ky2iy3gfn",
@@ -3033,7 +3274,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:00:49.908026+00:00"
+  "updated_at": "2026-09-15T16:00:49.908026+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "47bag0thxordzh982xs63",
@@ -3051,7 +3293,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:01:01.069021+00:00"
+  "updated_at": "2026-09-15T16:01:01.069021+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0p1zzx4snlbsyjh3tzezu",
@@ -3069,7 +3312,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:01:07.213497+00:00"
+  "updated_at": "2026-09-15T16:01:07.213497+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8n9y3wvjuz33z2o7qybns",
@@ -3087,7 +3331,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:01:16.840470+00:00"
+  "updated_at": "2026-09-15T16:01:16.840470+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8o5o0q0ly4nfyvyjcu184",
@@ -3105,7 +3350,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:01:26.874044+00:00"
+  "updated_at": "2026-09-15T16:01:26.874044+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "zxazzwvguzlautetx6rhs",
@@ -3123,7 +3369,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:01:33.940127+00:00"
+  "updated_at": "2026-09-15T16:01:33.940127+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "j1t5rv7208dcrhcxqlw6c",
@@ -3141,7 +3388,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:01:43.873049+00:00"
+  "updated_at": "2026-09-15T16:01:43.873049+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "v57liqa8k23f13oivwkuq",
@@ -3159,7 +3407,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:01:53.498003+00:00"
+  "updated_at": "2026-09-15T16:01:53.498003+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "z4ytjk0idpznfy8pxscpv",
@@ -3177,7 +3426,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:02:03.739083+00:00"
+  "updated_at": "2026-09-15T16:02:03.739083+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "lsflgvm5duaq90xraynj2",
@@ -3195,7 +3445,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:02:15.621589+00:00"
+  "updated_at": "2026-09-15T16:02:15.621589+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "katlixyg16v1gjbqix8ca",
@@ -3213,7 +3464,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:02:23.913189+00:00"
+  "updated_at": "2026-09-15T16:02:23.913189+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2g2oin3s3ko1ctiuj31kt",
@@ -3231,7 +3483,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:02:33.437907+00:00"
+  "updated_at": "2026-09-15T16:02:33.437907+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "813ygpl8cpvw0e9na8mxd",
@@ -3249,7 +3502,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:02:41.121095+00:00"
+  "updated_at": "2026-09-15T16:02:41.121095+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "lklrg0xzps926047pl0e6",
@@ -3267,7 +3521,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:02:48.000216+00:00"
+  "updated_at": "2026-09-15T16:02:48.000216+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "oarpoy29ipfqukw7rwg36",
@@ -3285,7 +3540,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:02:54.945274+00:00"
+  "updated_at": "2026-09-15T16:02:54.945274+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "j0zeilsmx847ga73nrr8r",
@@ -3303,7 +3559,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:03:01.421110+00:00"
+  "updated_at": "2026-09-15T16:03:01.421110+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "1iojgg3jxh8caj9d9luzo",
@@ -3321,7 +3578,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:03:10.101374+00:00"
+  "updated_at": "2026-09-15T16:03:10.101374+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "asq8wy3c3lhlf9v9puk3l",
@@ -3339,7 +3597,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:03:20.963329+00:00"
+  "updated_at": "2026-09-15T16:03:20.963329+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2acv1woclg2t3sqjgsza8",
@@ -3357,7 +3616,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:03:30.411070+00:00"
+  "updated_at": "2026-09-15T16:03:30.411070+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "dgl13iz3y4j9hcqkz6vuc",
@@ -3375,7 +3635,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:03:45.264780+00:00"
+  "updated_at": "2026-09-15T16:03:45.264780+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "r0hd7e2c5pjsertk87lwz",
@@ -3393,7 +3654,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:03:53.927523+00:00"
+  "updated_at": "2026-09-15T16:03:53.927523+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "k3b7alxlg7dh5zstd1adt",
@@ -3411,7 +3673,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:04:05.737912+00:00"
+  "updated_at": "2026-09-15T16:04:05.737912+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2331z310g3p7tsn0g31c6",
@@ -3429,7 +3692,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:04:11.990986+00:00"
+  "updated_at": "2026-09-15T16:04:11.990986+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "5o0zttq63omahwddy15na",
@@ -3447,7 +3711,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:04:20.452502+00:00"
+  "updated_at": "2026-09-15T16:04:20.452502+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "49uq3b6glcktq7u9cr3ug",
@@ -3465,7 +3730,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:04:31.714133+00:00"
+  "updated_at": "2026-09-15T16:04:31.714133+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "85kxb3g2q1x83pnzsv771",
@@ -3483,7 +3749,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:04:40.309577+00:00"
+  "updated_at": "2026-09-15T16:04:40.309577+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "kzwyqtt1accnp1myy5skf",
@@ -3501,7 +3768,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:04:52.709833+00:00"
+  "updated_at": "2026-09-15T16:04:52.709833+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ibwfcfucoxf6sqapn3k9v",
@@ -3519,7 +3787,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:05:07.037098+00:00"
+  "updated_at": "2026-09-15T16:05:07.037098+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ijty5j9t7xu5ppux3ual1",
@@ -3537,7 +3806,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:05:18.534506+00:00"
+  "updated_at": "2026-09-15T16:05:18.534506+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nk00piu75p6dfilv8bn10",
@@ -3555,7 +3825,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:05:31.201443+00:00"
+  "updated_at": "2026-09-15T16:05:31.201443+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xlkgvjjxdr4a6civlb094",
@@ -3573,7 +3844,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:05:42.163212+00:00"
+  "updated_at": "2026-09-15T16:05:42.163212+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "hhtdvktpemk1avp3lo19f",
@@ -3591,7 +3863,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:05:53.932723+00:00"
+  "updated_at": "2026-09-15T16:05:53.932723+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ze1krokabqhl05eojyaol",
@@ -3609,7 +3882,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:06:03.896121+00:00"
+  "updated_at": "2026-09-15T16:06:03.896121+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "spve3olsmimx30zwsgrct",
@@ -3627,7 +3901,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:06:15.155291+00:00"
+  "updated_at": "2026-09-15T16:06:15.155291+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xxhejt05w90qxdwk2te3d",
@@ -3645,7 +3920,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:06:23.734763+00:00"
+  "updated_at": "2026-09-15T16:06:23.734763+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2vk7tlnxagtsqk83i0i0m",
@@ -3663,7 +3939,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:06:37.701443+00:00"
+  "updated_at": "2026-09-15T16:06:37.701443+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "sbf5ycmyt3csp00w7a4yn",
@@ -3681,7 +3958,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:06:48.532066+00:00"
+  "updated_at": "2026-09-15T16:06:48.532066+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ebw7uv79u0pnft368q8x7",
@@ -3699,7 +3977,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:07:03.153637+00:00"
+  "updated_at": "2026-09-15T16:07:03.153637+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tisn6a7fjuqtjum28lz6s",
@@ -3717,7 +3996,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:07:11.449772+00:00"
+  "updated_at": "2026-09-15T16:07:11.449772+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "vudbyrsm8y4mphhtr6f7o",
@@ -3735,7 +4015,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:07:19.848732+00:00"
+  "updated_at": "2026-09-15T16:07:19.848732+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tnejs5fwgu9evhqamb62f",
@@ -3753,7 +4034,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:07:31.933360+00:00"
+  "updated_at": "2026-09-15T16:07:31.933360+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8chjk18f8oymykss22ojq",
@@ -3771,7 +4053,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:07:44.530152+00:00"
+  "updated_at": "2026-09-15T16:07:44.530152+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "i7tbemz6i4exffyez3cuu",
@@ -3789,7 +4072,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:07:56.317574+00:00"
+  "updated_at": "2026-09-15T16:07:56.317574+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9zkgh2s92q81hi9slhbx8",
@@ -3807,7 +4091,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:08:07.815249+00:00"
+  "updated_at": "2026-09-15T16:08:07.815249+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "93zbgl0erj1c1a5v0jr0m",
@@ -3825,7 +4110,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:08:14.941646+00:00"
+  "updated_at": "2026-09-15T16:08:14.941646+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "hk6xncm744chjtrnpsl1l",
@@ -3843,7 +4129,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:08:22.820252+00:00"
+  "updated_at": "2026-09-15T16:08:22.820252+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "jsqugebqykl2lb1p5yfu4",
@@ -3861,7 +4148,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:08:33.777327+00:00"
+  "updated_at": "2026-09-15T16:08:33.777327+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "mv851b61vy85fvvq61dyw",
@@ -3879,7 +4167,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:08:41.968477+00:00"
+  "updated_at": "2026-09-15T16:08:41.968477+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "fdvnu5xuhxvxambgfnged",
@@ -3897,7 +4186,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:08:55.694956+00:00"
+  "updated_at": "2026-09-15T16:08:55.694956+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ydizdrn8y1q8n6dkgjxjp",
@@ -3915,7 +4205,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:09:08.591933+00:00"
+  "updated_at": "2026-09-15T16:09:08.591933+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "zznlkf9vt5ttpm1jinzcf",
@@ -3933,7 +4224,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:09:17.437403+00:00"
+  "updated_at": "2026-09-15T16:09:17.437403+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "q3dl3wy8jy668a5pxvgq2",
@@ -3951,7 +4243,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:09:27.484782+00:00"
+  "updated_at": "2026-09-15T16:09:27.484782+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "b2pnk81rkai2zp5ygau2y",
@@ -3969,7 +4262,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:09:38.325025+00:00"
+  "updated_at": "2026-09-15T16:09:38.325025+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ep0x7r1t62hcmns6wau62",
@@ -3987,7 +4281,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:09:49.573100+00:00"
+  "updated_at": "2026-09-15T16:09:49.573100+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "umchjxd3elfskoeibtf3a",
@@ -4005,7 +4300,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:09:55.096801+00:00"
+  "updated_at": "2026-09-15T16:09:55.096801+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "63x2klgxqgg69nb7ofpm3",
@@ -4023,7 +4319,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:10:11.178548+00:00"
+  "updated_at": "2026-09-15T16:10:11.178548+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "73o42y7cv9s2kw661ndx2",
@@ -4041,7 +4338,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:10:23.155585+00:00"
+  "updated_at": "2026-09-15T16:10:23.155585+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8mab7se6pp21nr17aoit2",
@@ -4059,7 +4357,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:10:29.874117+00:00"
+  "updated_at": "2026-09-15T16:10:29.874117+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "66bljasfi4zvrqstgswgf",
@@ -4077,7 +4376,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:10:37.922490+00:00"
+  "updated_at": "2026-09-15T16:10:37.922490+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "qnplzqma0zw1va8gxrgcv",
@@ -4095,7 +4395,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:10:48.837870+00:00"
+  "updated_at": "2026-09-15T16:10:48.837870+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "qxt442jiwh0gzp87k0r5g",
@@ -4113,7 +4414,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:10:57.275718+00:00"
+  "updated_at": "2026-09-15T16:10:57.275718+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "dxnj2eelwaru8rq4urjzi",
@@ -4131,7 +4433,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:11:08.057189+00:00"
+  "updated_at": "2026-09-15T16:11:08.057189+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "aphgkz0p5z8pcnkw8mgp0",
@@ -4149,7 +4452,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:11:15.250160+00:00"
+  "updated_at": "2026-09-15T16:11:15.250160+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "zf4mayxo284v4kqfzfzvz",
@@ -4167,7 +4471,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:11:23.370211+00:00"
+  "updated_at": "2026-09-15T16:11:23.370211+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "w23hn67r7uc5p2vpwgmqq",
@@ -4185,7 +4490,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:11:34.056892+00:00"
+  "updated_at": "2026-09-15T16:11:34.056892+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2enheg2fb3d3144h77ugr",
@@ -4203,7 +4509,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:11:42.134193+00:00"
+  "updated_at": "2026-09-15T16:11:42.134193+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "saj4m5vdwnl9hi4ss0ns7",
@@ -4221,7 +4528,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:11:53.815545+00:00"
+  "updated_at": "2026-09-15T16:11:53.815545+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3k2evje4mxtg0avz1jvy3",
@@ -4239,7 +4547,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:00.983741+00:00"
+  "updated_at": "2026-09-15T16:12:00.983741+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "m486fvhgkof3ndcozyo2s",
@@ -4257,7 +4566,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:07.643821+00:00"
+  "updated_at": "2026-09-15T16:12:07.643821+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "sijuvxfmvveolg1ou8m14",
@@ -4275,7 +4585,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:15.671252+00:00"
+  "updated_at": "2026-09-15T16:12:15.671252+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nbzp2enwbta3evkbsxyjz",
@@ -4293,7 +4604,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:27.873831+00:00"
+  "updated_at": "2026-09-15T16:12:27.873831+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8p71lekss7068jzczto98",
@@ -4311,7 +4623,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:38.503641+00:00"
+  "updated_at": "2026-09-15T16:12:38.503641+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3xwnsnbrg1viwjcbhamtr",
@@ -4329,7 +4642,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:45.663102+00:00"
+  "updated_at": "2026-09-15T16:12:45.663102+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pstdw0jkvdc9s8yezgipz",
@@ -4347,7 +4661,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:53.250764+00:00"
+  "updated_at": "2026-09-15T16:12:53.250764+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ikoph873m7r58bbb6m2u4",
@@ -4365,7 +4680,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:12:59.704445+00:00"
+  "updated_at": "2026-09-15T16:12:59.704445+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "n5l3dn8u3kqevua8gj7v6",
@@ -4383,7 +4699,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:13:07.595956+00:00"
+  "updated_at": "2026-09-15T16:13:07.595956+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "m48kww37xmougfywqd3sh",
@@ -4401,7 +4718,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:13:13.948929+00:00"
+  "updated_at": "2026-09-15T16:13:13.948929+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3g4c0jcsuwn0irxluz5cl",
@@ -4419,7 +4737,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:13:20.588405+00:00"
+  "updated_at": "2026-09-15T16:13:20.588405+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2i1r2w15dwzbo7k6pgeus",
@@ -4437,7 +4756,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:13:27.669814+00:00"
+  "updated_at": "2026-09-15T16:13:27.669814+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ml897u3rbklfk933sqk1h",
@@ -4455,7 +4775,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:13:34.854385+00:00"
+  "updated_at": "2026-09-15T16:13:34.854385+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "6ilya063tb22nj6ppr1ur",
@@ -4473,7 +4794,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:13:43.850148+00:00"
+  "updated_at": "2026-09-15T16:13:43.850148+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "y04a4fhr8qci7k54cbumg",
@@ -4491,7 +4813,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:13:55.699573+00:00"
+  "updated_at": "2026-09-15T16:13:55.699573+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tpnl8k53t2no0kky2dl75",
@@ -4509,7 +4832,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:14:07.482306+00:00"
+  "updated_at": "2026-09-15T16:14:07.482306+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "avn640hk0shu5mokoz6sv",
@@ -4527,7 +4851,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:14:19.537333+00:00"
+  "updated_at": "2026-09-15T16:14:19.537333+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wzem9t41vk0wsar97zm37",
@@ -4545,7 +4870,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:14:26.370549+00:00"
+  "updated_at": "2026-09-15T16:14:26.370549+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nbofzbbaw3el2v6bimp21",
@@ -4563,7 +4889,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:14:33.912629+00:00"
+  "updated_at": "2026-09-15T16:14:33.912629+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ujs4cn63f624louuio1k5",
@@ -4581,7 +4908,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:14:40.417417+00:00"
+  "updated_at": "2026-09-15T16:14:40.417417+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wjjl4c9vdbbpw62j8jb13",
@@ -4599,7 +4927,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:14:46.903807+00:00"
+  "updated_at": "2026-09-15T16:14:46.903807+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "75qwphdj8a5y0xuydg14p",
@@ -4617,7 +4946,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:14:53.682407+00:00"
+  "updated_at": "2026-09-15T16:14:53.682407+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "b26ix9aaz1j1dojm3vkfg",
@@ -4635,7 +4965,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:15:03.265277+00:00"
+  "updated_at": "2026-09-15T16:15:03.265277+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nvj151s21ck0m7cyjo3mt",
@@ -4653,7 +4984,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:15:14.208804+00:00"
+  "updated_at": "2026-09-15T16:15:14.208804+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4lz1hmtxezzje5ddwru4f",
@@ -4671,7 +5003,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:16:57.195780+00:00"
+  "updated_at": "2026-09-15T16:16:57.195780+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ozx253o8q3ogydocv18tb",
@@ -4689,7 +5022,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:03.758873+00:00"
+  "updated_at": "2026-09-15T16:17:03.758873+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "d6cwoo3jugh5znxl5pr5k",
@@ -4707,7 +5041,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:10.918917+00:00"
+  "updated_at": "2026-09-15T16:17:10.918917+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rndfck1iexg7922g3p81f",
@@ -4725,7 +5060,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:18.408825+00:00"
+  "updated_at": "2026-09-15T16:17:18.408825+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "dxdfvn1ndn1dbqmv8fjln",
@@ -4743,7 +5079,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:27.637125+00:00"
+  "updated_at": "2026-09-15T16:17:27.637125+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rwar1jqfqepham3ubvzpx",
@@ -4761,7 +5098,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:37.071110+00:00"
+  "updated_at": "2026-09-15T16:17:37.071110+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rxh93xuh597wzqvpoult8",
@@ -4779,7 +5117,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:43.686443+00:00"
+  "updated_at": "2026-09-15T16:17:43.686443+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "e2rojlnk6yh0znfdyrvzp",
@@ -4797,7 +5136,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:51.374359+00:00"
+  "updated_at": "2026-09-15T16:17:51.374359+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "sedds7altkgp0zqsqokxp",
@@ -4815,7 +5155,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:17:58.431138+00:00"
+  "updated_at": "2026-09-15T16:17:58.431138+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "zv00zczied9txxo22zzlm",
@@ -4833,7 +5174,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:18:05.927294+00:00"
+  "updated_at": "2026-09-15T16:18:05.927294+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "o081dkc96le326brwcrma",
@@ -4851,7 +5193,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:18:14.069572+00:00"
+  "updated_at": "2026-09-15T16:18:14.069572+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "v9f9jox0d5wunwo319cgh",
@@ -4869,7 +5212,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:18:26.890738+00:00"
+  "updated_at": "2026-09-15T16:18:26.890738+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xnsbk6kddqslmhnh39efi",
@@ -4887,7 +5231,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:18:37.163844+00:00"
+  "updated_at": "2026-09-15T16:18:37.163844+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "gs6oskamkk3zyl5v4ddbm",
@@ -4905,7 +5250,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:18:43.787219+00:00"
+  "updated_at": "2026-09-15T16:18:43.787219+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3kwh8zddl1mvt2qfy1tmg",
@@ -4923,7 +5269,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:18:52.173370+00:00"
+  "updated_at": "2026-09-15T16:18:52.173370+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wv7fdgl3cwu89jh81y62m",
@@ -4941,7 +5288,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:19:03.202870+00:00"
+  "updated_at": "2026-09-15T16:19:03.202870+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "n6yc4yqc70lv1nbwjs1td",
@@ -4959,7 +5307,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:19:12.746567+00:00"
+  "updated_at": "2026-09-15T16:19:12.746567+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8ejdvynz9f0fc38kjbzs9",
@@ -4977,7 +5326,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:19:22.451882+00:00"
+  "updated_at": "2026-09-15T16:19:22.451882+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "z3b7g9a4v07vna1wvl2x1",
@@ -4995,7 +5345,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:19:31.089685+00:00"
+  "updated_at": "2026-09-15T16:19:31.089685+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "u71zdlpty5gny6i55csj7",
@@ -5013,7 +5364,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:19:42.619806+00:00"
+  "updated_at": "2026-09-15T16:19:42.619806+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3pr1sst2m86h4wwgmb0ld",
@@ -5031,7 +5383,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:19:52.983337+00:00"
+  "updated_at": "2026-09-15T16:19:52.983337+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9uvqn6lko4j1ohtdbat0y",
@@ -5049,7 +5402,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:20:01.415903+00:00"
+  "updated_at": "2026-09-15T16:20:01.415903+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3jpezg715hbhoo8wjxnen",
@@ -5067,7 +5421,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:20:11.065579+00:00"
+  "updated_at": "2026-09-15T16:20:11.065579+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3zwsynx3dvy5kintb6vpl",
@@ -5085,7 +5440,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:20:20.718598+00:00"
+  "updated_at": "2026-09-15T16:20:20.718598+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9witase3ykr7nc9nmwnvw",
@@ -5103,7 +5459,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:20:30.251274+00:00"
+  "updated_at": "2026-09-15T16:20:30.251274+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "b48baiso8oo58g8cucdli",
@@ -5121,7 +5478,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:20:37.122492+00:00"
+  "updated_at": "2026-09-15T16:20:37.122492+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "1lhi4wzrl0vmigy4ded0y",
@@ -5139,7 +5497,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:20:43.411138+00:00"
+  "updated_at": "2026-09-15T16:20:43.411138+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ntney16dp56qw4pen2wmf",
@@ -5157,7 +5516,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:20:52.118630+00:00"
+  "updated_at": "2026-09-15T16:20:52.118630+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pmir6742zesg40dhk8vr0",
@@ -5175,7 +5535,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:21:03.687578+00:00"
+  "updated_at": "2026-09-15T16:21:03.687578+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "l8zouz3feyngp72h5tj04",
@@ -5193,7 +5554,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:21:16.778219+00:00"
+  "updated_at": "2026-09-15T16:21:16.778219+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "dkwwbbk6q60hpv2huyb0x",
@@ -5211,7 +5573,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:21:26.870752+00:00"
+  "updated_at": "2026-09-15T16:21:26.870752+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "br5ys3esmzqf5obissnhg",
@@ -5229,7 +5592,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:21:34.568324+00:00"
+  "updated_at": "2026-09-15T16:21:34.568324+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wqaljajc6obwpz96jvtue",
@@ -5247,7 +5611,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:21:42.928611+00:00"
+  "updated_at": "2026-09-15T16:21:42.928611+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "z8vct3nc9k7foy5mf5x3y",
@@ -5265,7 +5630,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:21:53.880880+00:00"
+  "updated_at": "2026-09-15T16:21:53.880880+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "i54bnemgzoce8gli9p2fz",
@@ -5283,7 +5649,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:22:01.458920+00:00"
+  "updated_at": "2026-09-15T16:22:01.458920+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "lyilgw3czt0olno04qktc",
@@ -5301,7 +5668,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:22:07.889388+00:00"
+  "updated_at": "2026-09-15T16:22:07.889388+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "za22l3sgz76gdkrebe400",
@@ -5319,7 +5687,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:22:20.734298+00:00"
+  "updated_at": "2026-09-15T16:22:20.734298+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "se518kal2koico9z7ph6z",
@@ -5337,7 +5706,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:22:31.941408+00:00"
+  "updated_at": "2026-09-15T16:22:31.941408+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "kewuxkzgk83dydacbkcmz",
@@ -5355,7 +5725,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:22:39.994350+00:00"
+  "updated_at": "2026-09-15T16:22:39.994350+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "mknspi77nc9ny99xxzays",
@@ -5373,7 +5744,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:22:45.427740+00:00"
+  "updated_at": "2026-09-15T16:22:45.427740+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2ego6nrp1o591klxkxwwi",
@@ -5391,7 +5763,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:22:52.864276+00:00"
+  "updated_at": "2026-09-15T16:22:52.864276+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "duia34b6kcgco4d5uatpp",
@@ -5409,7 +5782,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:23:01.229710+00:00"
+  "updated_at": "2026-09-15T16:23:01.229710+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nwh770srxeev9nf4inyhu",
@@ -5427,7 +5801,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:23:13.670087+00:00"
+  "updated_at": "2026-09-15T16:23:13.670087+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "soxsqkvboxd5sl8cojud1",
@@ -5445,7 +5820,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:23:20.187833+00:00"
+  "updated_at": "2026-09-15T16:23:20.187833+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "6u43vvog0hr1xqwpr39yb",
@@ -5463,7 +5839,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:23:30.989479+00:00"
+  "updated_at": "2026-09-15T16:23:30.989479+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4t6o9iwn3acdnqqiicejf",
@@ -5481,7 +5858,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:23:38.748895+00:00"
+  "updated_at": "2026-09-15T16:23:38.748895+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "u7b29c0rn9n7z1flpzma4",
@@ -5499,7 +5877,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:23:45.166412+00:00"
+  "updated_at": "2026-09-15T16:23:45.166412+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4k4qm0kkjrkfc095jubo9",
@@ -5517,7 +5896,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T16:23:53.071499+00:00"
+  "updated_at": "2026-09-15T16:23:53.071499+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5527,7 +5907,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38704
+  "gas_estimate": 38704,
+  "source": "strategy"
  },
  {
   "execution_id": "au0b0rld7tddhnip6kyra",
@@ -5545,7 +5926,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T17:21:01.325267+00:00"
+  "updated_at": "2026-09-15T17:21:01.325267+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "nmad5ulevjp5o3by2mdh5",
@@ -5563,7 +5945,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T17:21:03.223449+00:00"
+  "updated_at": "2026-09-15T17:21:03.223449+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5573,7 +5956,8 @@
   "function": "redeem",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 67899
+  "gas_estimate": 67899,
+  "source": "strategy"
  },
  {
   "execution_id": "nee8iqbgqxt2fh9smo3rg",
@@ -5591,7 +5975,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T17:21:25.057923+00:00"
+  "updated_at": "2026-09-15T17:21:25.057923+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5601,7 +5986,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38704
+  "gas_estimate": 38704,
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5611,7 +5997,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38704
+  "gas_estimate": 38704,
+  "source": "strategy"
  },
  {
   "execution_id": "389lzsqaq40606gy396hr",
@@ -5629,7 +6016,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T17:34:05.685913+00:00"
+  "updated_at": "2026-09-15T17:34:05.685913+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "mgwqs6texgo4xpzvu3j4j",
@@ -5647,7 +6035,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T17:34:07.571155+00:00"
+  "updated_at": "2026-09-15T17:34:07.571155+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5657,7 +6046,8 @@
   "function": "redeem",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 67899
+  "gas_estimate": 67899,
+  "source": "strategy"
  },
  {
   "execution_id": "efunua9neom9ftf13g18t",
@@ -5675,7 +6065,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T17:34:55.489303+00:00"
+  "updated_at": "2026-09-15T17:34:55.489303+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5685,7 +6076,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38704
+  "gas_estimate": 38704,
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5695,7 +6087,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38704
+  "gas_estimate": 38704,
+  "source": "strategy"
  },
  {
   "execution_id": "0gwi6sqpo72xscopsxuvi",
@@ -5713,7 +6106,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:12:01.815757+00:00"
+  "updated_at": "2026-09-15T18:12:01.815757+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "0kjjlj8zbjs7c0xrufg01",
@@ -5731,7 +6125,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:12:04.248474+00:00"
+  "updated_at": "2026-09-15T18:12:04.248474+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5741,7 +6136,8 @@
   "function": "redeem",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 67899
+  "gas_estimate": 67899,
+  "source": "strategy"
  },
  {
   "execution_id": "apeif2n7h8ykghxojd56k",
@@ -5759,7 +6155,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:12:30.785037+00:00"
+  "updated_at": "2026-09-15T18:12:30.785037+00:00",
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5769,7 +6166,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5779,7 +6177,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38680
+  "gas_estimate": 38680,
+  "source": "benchmark"
  },
  {
   "execution_id": "43lvh7vb6xc1037qjl4fk",
@@ -5797,7 +6196,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:14:27.030734+00:00"
+  "updated_at": "2026-09-15T18:14:27.030734+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "1v28gfixnvexfgwnwbfby",
@@ -5815,7 +6215,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:14:39.554242+00:00"
+  "updated_at": "2026-09-15T18:14:39.554242+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "hhzlrqrvhexwt8rgl8pm6",
@@ -5833,7 +6234,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:14:54.786648+00:00"
+  "updated_at": "2026-09-15T18:14:54.786648+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5843,7 +6245,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5853,7 +6256,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "execution_id": "thyw3zk1uke5spyml89vv",
@@ -5871,7 +6275,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:15:24.039363+00:00"
+  "updated_at": "2026-09-15T18:15:24.039363+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4dx9nzo7q0z4wt9hnlgk3",
@@ -5889,7 +6294,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:15:31.285537+00:00"
+  "updated_at": "2026-09-15T18:15:31.285537+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wib4i07xhkn48gzn226wz",
@@ -5907,7 +6313,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:15:46.882134+00:00"
+  "updated_at": "2026-09-15T18:15:46.882134+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5917,7 +6324,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5927,7 +6335,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5937,7 +6346,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5947,7 +6357,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5957,7 +6368,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5967,7 +6379,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5977,7 +6390,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5987,7 +6401,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -5997,7 +6412,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6007,7 +6423,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6017,7 +6434,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6027,7 +6445,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6037,7 +6456,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6047,7 +6467,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6057,7 +6478,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6067,7 +6489,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6077,7 +6500,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6087,7 +6511,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6097,7 +6522,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6107,7 +6533,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6117,7 +6544,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6127,7 +6555,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6137,7 +6566,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6147,7 +6577,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6157,7 +6588,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6167,7 +6599,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6177,7 +6610,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6187,7 +6621,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6197,7 +6632,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6207,7 +6643,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6217,7 +6654,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6227,7 +6665,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6237,7 +6676,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6247,7 +6687,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6257,7 +6698,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6267,7 +6709,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6277,7 +6720,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6287,7 +6731,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6297,7 +6742,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6307,7 +6753,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6317,7 +6764,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6327,7 +6775,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6337,7 +6786,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6347,7 +6797,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6357,7 +6808,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6367,7 +6819,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6377,7 +6830,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6387,7 +6841,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6397,7 +6852,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6407,7 +6863,8 @@
   "function": "deposit",
   "success": false,
   "would_revert": true,
-  "error": "Error(ERC20: transfer amount exceeds allowance)"
+  "error": "Error(ERC20: transfer amount exceeds allowance)",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6417,7 +6874,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6427,7 +6885,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6437,7 +6896,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6447,7 +6907,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6457,7 +6918,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6467,7 +6929,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6477,7 +6940,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6487,7 +6951,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6497,7 +6962,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6507,7 +6973,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6517,7 +6984,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6527,7 +6995,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6537,7 +7006,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6547,7 +7017,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6557,7 +7028,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6567,7 +7039,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6577,7 +7050,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6587,7 +7061,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6597,7 +7072,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6607,7 +7083,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6617,7 +7094,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6627,7 +7105,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6637,7 +7116,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6647,7 +7127,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6657,7 +7138,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6667,7 +7149,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6677,7 +7160,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6687,7 +7171,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6697,7 +7182,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6707,7 +7193,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6717,7 +7204,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6727,7 +7215,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6737,7 +7226,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6747,7 +7237,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6757,7 +7248,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6767,7 +7259,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6777,7 +7270,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6787,7 +7281,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6797,7 +7292,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6807,7 +7303,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6817,7 +7314,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6827,7 +7325,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6837,7 +7336,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6847,7 +7347,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6857,7 +7358,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6867,7 +7369,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6877,7 +7380,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6887,7 +7391,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6897,7 +7402,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -6907,7 +7413,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 35874
+  "gas_estimate": 35874,
+  "source": "benchmark"
  },
  {
   "execution_id": "3ljk9yxnwfhjgiy98u742",
@@ -6925,7 +7432,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:17:41.746932+00:00"
+  "updated_at": "2026-09-15T18:17:41.746932+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "i3f2m45uz2buwzfr6qg1f",
@@ -6943,7 +7451,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:17:49.764074+00:00"
+  "updated_at": "2026-09-15T18:17:49.764074+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4r4p9j3lcsakjdxnppg35",
@@ -6961,7 +7470,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:01.274345+00:00"
+  "updated_at": "2026-09-15T18:18:01.274345+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "bk54f0usjhmyy8jocdrkx",
@@ -6979,7 +7489,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:08.060236+00:00"
+  "updated_at": "2026-09-15T18:18:08.060236+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xor7t4tfuuci9q636txi1",
@@ -6997,7 +7508,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:18.366480+00:00"
+  "updated_at": "2026-09-15T18:18:18.366480+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0fzv3gaqxjo1qgal08epd",
@@ -7015,7 +7527,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:27.428848+00:00"
+  "updated_at": "2026-09-15T18:18:27.428848+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "bo25rn3c71oh8zrkmz832",
@@ -7033,7 +7546,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:34.112419+00:00"
+  "updated_at": "2026-09-15T18:18:34.112419+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3hx6a549gv3th1we81s88",
@@ -7051,7 +7565,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:41.070708+00:00"
+  "updated_at": "2026-09-15T18:18:41.070708+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "19x421wyobgmofrrw19gx",
@@ -7069,7 +7584,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:47.809627+00:00"
+  "updated_at": "2026-09-15T18:18:47.809627+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "q8u2sc8z8bx3cawoxr058",
@@ -7087,7 +7603,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:18:54.644190+00:00"
+  "updated_at": "2026-09-15T18:18:54.644190+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "s7qr5no6p0zbbh2obp8cr",
@@ -7105,7 +7622,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:19:02.956186+00:00"
+  "updated_at": "2026-09-15T18:19:02.956186+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "55ehuo6xw520i72k0lixa",
@@ -7123,7 +7641,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:19:08.754049+00:00"
+  "updated_at": "2026-09-15T18:19:08.754049+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7lrwahyyj7alrzq9wc4zh",
@@ -7141,7 +7660,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:19:17.076478+00:00"
+  "updated_at": "2026-09-15T18:19:17.076478+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "vq9b384cym6a92ap2hh8s",
@@ -7159,7 +7679,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:19:28.810615+00:00"
+  "updated_at": "2026-09-15T18:19:28.810615+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0ozjtyi9rmwxd7c19qrfn",
@@ -7177,7 +7698,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:19:35.305011+00:00"
+  "updated_at": "2026-09-15T18:19:35.305011+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "gvoiu9eq6r11stzdk991r",
@@ -7195,7 +7717,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:19:45.222922+00:00"
+  "updated_at": "2026-09-15T18:19:45.222922+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "gdbm18dj320se2ee6079j",
@@ -7213,7 +7736,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:19:55.964550+00:00"
+  "updated_at": "2026-09-15T18:19:55.964550+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pw94pjlxt1b0hguajxzv8",
@@ -7231,7 +7755,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:20:07.254409+00:00"
+  "updated_at": "2026-09-15T18:20:07.254409+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8fehrd0rr4609kr3mck8b",
@@ -7249,7 +7774,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:20:13.906403+00:00"
+  "updated_at": "2026-09-15T18:20:13.906403+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "mypdl3nwy884hpihlx8tu",
@@ -7267,7 +7793,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:20:21.565288+00:00"
+  "updated_at": "2026-09-15T18:20:21.565288+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "aaohnummk8e7533bok90m",
@@ -7285,7 +7812,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:20:27.399484+00:00"
+  "updated_at": "2026-09-15T18:20:27.399484+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ufq3ls1ks5ok125lp1ocu",
@@ -7303,7 +7831,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:20:36.983957+00:00"
+  "updated_at": "2026-09-15T18:20:36.983957+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7hqkqf8r3tl4uvdoysllm",
@@ -7321,7 +7850,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:20:44.184311+00:00"
+  "updated_at": "2026-09-15T18:20:44.184311+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "96hbmonuqrabqboz59iac",
@@ -7339,7 +7869,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:20:54.899021+00:00"
+  "updated_at": "2026-09-15T18:20:54.899021+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "jw0x7wzqa7eeu37yvyw4j",
@@ -7357,7 +7888,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:21:05.350542+00:00"
+  "updated_at": "2026-09-15T18:21:05.350542+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "vcofs9inlfsnt5puq7cja",
@@ -7375,7 +7907,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:21:15.446958+00:00"
+  "updated_at": "2026-09-15T18:21:15.446958+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2goumhwqgof7flig5t2u1",
@@ -7393,7 +7926,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:21:27.451252+00:00"
+  "updated_at": "2026-09-15T18:21:27.451252+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "uc4r3vcp3lffe51ko1jd7",
@@ -7411,7 +7945,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:21:39.516976+00:00"
+  "updated_at": "2026-09-15T18:21:39.516976+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ni2121xuhrk1xuvkki1a6",
@@ -7429,7 +7964,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:21:49.331621+00:00"
+  "updated_at": "2026-09-15T18:21:49.331621+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "t0yhtjfac88al7e2dhizw",
@@ -7447,7 +7983,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:21:59.246036+00:00"
+  "updated_at": "2026-09-15T18:21:59.246036+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "bs6uw64ebzrk69a6r45x7",
@@ -7465,7 +8002,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:22:09.805077+00:00"
+  "updated_at": "2026-09-15T18:22:09.805077+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "owrkhyubwpgpyhteb0lcd",
@@ -7483,7 +8021,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:22:18.852818+00:00"
+  "updated_at": "2026-09-15T18:22:18.852818+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "kf9kj15cwqajktrymwobd",
@@ -7501,7 +8040,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:22:28.729063+00:00"
+  "updated_at": "2026-09-15T18:22:28.729063+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "uistdc72bsbsv5xc1mb2u",
@@ -7519,7 +8059,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:22:35.516868+00:00"
+  "updated_at": "2026-09-15T18:22:35.516868+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "btw5th3r39jeg550jp2r3",
@@ -7537,7 +8078,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:22:44.288794+00:00"
+  "updated_at": "2026-09-15T18:22:44.288794+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "uxwtn2jqei36cdhtc2bnw",
@@ -7555,7 +8097,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:22:55.128384+00:00"
+  "updated_at": "2026-09-15T18:22:55.128384+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "63w7o3ejqoeyli0uygjb8",
@@ -7573,7 +8116,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:01.606768+00:00"
+  "updated_at": "2026-09-15T18:23:01.606768+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "afohpmthf2neea5k5wf28",
@@ -7591,7 +8135,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:09.527457+00:00"
+  "updated_at": "2026-09-15T18:23:09.527457+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "bhj8qxfpinfwxlk834qz5",
@@ -7609,7 +8154,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:15.143424+00:00"
+  "updated_at": "2026-09-15T18:23:15.143424+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "h24lgk07jx0axevnamcqa",
@@ -7627,7 +8173,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:22.981885+00:00"
+  "updated_at": "2026-09-15T18:23:22.981885+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "3z7xsh4johdu4hnezl7cb",
@@ -7645,7 +8192,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:29.080574+00:00"
+  "updated_at": "2026-09-15T18:23:29.080574+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "fvu23bux5yl45p24fwj5q",
@@ -7663,7 +8211,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:36.798847+00:00"
+  "updated_at": "2026-09-15T18:23:36.798847+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "doc2yvpp0o3531kx3q8hk",
@@ -7681,7 +8230,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:43.369412+00:00"
+  "updated_at": "2026-09-15T18:23:43.369412+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rjn4317vie4snneli2c36",
@@ -7699,7 +8249,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:23:52.571272+00:00"
+  "updated_at": "2026-09-15T18:23:52.571272+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wghkn40s5nmot7x6ri20b",
@@ -7717,7 +8268,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:24:05.509445+00:00"
+  "updated_at": "2026-09-15T18:24:05.509445+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "n1tpawjt936jzvp2cevnh",
@@ -7735,7 +8287,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:24:15.781997+00:00"
+  "updated_at": "2026-09-15T18:24:15.781997+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "lu795upl9bvhsiejl295b",
@@ -7753,7 +8306,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:24:27.233974+00:00"
+  "updated_at": "2026-09-15T18:24:27.233974+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "iret0vgfgzolh46xpi3ha",
@@ -7771,7 +8325,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:24:34.033627+00:00"
+  "updated_at": "2026-09-15T18:24:34.033627+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "h3tcn4y3tu4rx7whsm708",
@@ -7789,7 +8344,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:24:40.894703+00:00"
+  "updated_at": "2026-09-15T18:24:40.894703+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "jzmt2z8b8vibhghykcqj0",
@@ -7807,7 +8363,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:24:47.393588+00:00"
+  "updated_at": "2026-09-15T18:24:47.393588+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4t6l25kmjwitu3mohnfrr",
@@ -7825,7 +8382,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:24:55.298277+00:00"
+  "updated_at": "2026-09-15T18:24:55.298277+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "jnxgg1lfz4n298im0rgjg",
@@ -7843,7 +8401,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:01.409778+00:00"
+  "updated_at": "2026-09-15T18:25:01.409778+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "cxk0desqxgjuzzpocrj87",
@@ -7861,7 +8420,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:09.270564+00:00"
+  "updated_at": "2026-09-15T18:25:09.270564+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tu4ybylfbojxbqpa2korg",
@@ -7879,7 +8439,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:15.683894+00:00"
+  "updated_at": "2026-09-15T18:25:15.683894+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "h6fsv5zttxxgq2anavp7l",
@@ -7897,7 +8458,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:25.100786+00:00"
+  "updated_at": "2026-09-15T18:25:25.100786+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "kqyocn03ykwkx5q3tdfym",
@@ -7915,7 +8477,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:32.957231+00:00"
+  "updated_at": "2026-09-15T18:25:32.957231+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "szwtej5qxou21on5girow",
@@ -7933,7 +8496,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:38.816107+00:00"
+  "updated_at": "2026-09-15T18:25:38.816107+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "5hw5wnsus8hiuu1h323sr",
@@ -7951,7 +8515,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:47.755310+00:00"
+  "updated_at": "2026-09-15T18:25:47.755310+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4v0ohiufs7mjv957wjb3z",
@@ -7969,7 +8534,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:25:59.496067+00:00"
+  "updated_at": "2026-09-15T18:25:59.496067+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8q56jby85zlnxa4ujgpzb",
@@ -7987,7 +8553,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:11.336031+00:00"
+  "updated_at": "2026-09-15T18:26:11.336031+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "cna6jq3065wtvovnp95ya",
@@ -8005,7 +8572,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:17.025998+00:00"
+  "updated_at": "2026-09-15T18:26:17.025998+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9nlfygn4p44pfbaj7wzq9",
@@ -8023,7 +8591,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:24.997560+00:00"
+  "updated_at": "2026-09-15T18:26:24.997560+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -8033,7 +8602,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38704
+  "gas_estimate": 38704,
+  "source": "strategy"
  },
  {
   "execution_id": "f682xo3xxwz0mdns0rs7h",
@@ -8051,7 +8621,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:38.002272+00:00"
+  "updated_at": "2026-09-15T18:26:38.002272+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "192v2jx8eu99va7ytfy6y",
@@ -8069,7 +8640,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:53.817965+00:00"
+  "updated_at": "2026-09-15T18:26:53.817965+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "j1wk3dxv4cl1ipa8ox6t0",
@@ -8087,7 +8659,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:55.852358+00:00"
+  "updated_at": "2026-09-15T18:26:55.852358+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "z4rm0oveq4npy5ic2n5f7",
@@ -8105,7 +8678,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:49.094506+00:00"
+  "updated_at": "2026-09-15T18:26:49.094506+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9zcy2964uqpa794dlqcg5",
@@ -8123,7 +8697,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:26:57.037321+00:00"
+  "updated_at": "2026-09-15T18:26:57.037321+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7bkh5v6avy35jfdf587vr",
@@ -8141,7 +8716,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:27:09.453493+00:00"
+  "updated_at": "2026-09-15T18:27:09.453493+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "yxteib0lleuf5p1w9yuhl",
@@ -8159,7 +8735,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:27:14.884144+00:00"
+  "updated_at": "2026-09-15T18:27:14.884144+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -8176,7 +8753,8 @@
    "target_value": "5000000",
    "operator": "gte"
   },
-  "error": null
+  "error": null,
+  "source": "strategy"
  },
  {
   "execution_id": "c2k6eu0wt5ksmjxfom5rn",
@@ -8194,7 +8772,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:27:23.224075+00:00"
+  "updated_at": "2026-09-15T18:27:23.224075+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -8211,7 +8790,8 @@
    "target_value": "5000000",
    "operator": "gte"
   },
-  "error": "guard not met: vault balance 0 gte 5000000 is false; nothing broadcast"
+  "error": "guard not met: vault balance 0 gte 5000000 is false; nothing broadcast",
+  "source": "strategy"
  },
  {
   "execution_id": "mio8d1itgpvx2iy62816l",
@@ -8229,7 +8809,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:27:33.322222+00:00"
+  "updated_at": "2026-09-15T18:27:33.322222+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "42ktvw3c1j0yj69749ojh",
@@ -8247,7 +8828,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:27:45.423982+00:00"
+  "updated_at": "2026-09-15T18:27:45.423982+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "n8prsgs10ig9ffqwh12l8",
@@ -8265,7 +8847,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:27:57.973472+00:00"
+  "updated_at": "2026-09-15T18:27:57.973472+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "l0tmj2iil0o3adte1p6fi",
@@ -8283,7 +8866,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:28:09.748238+00:00"
+  "updated_at": "2026-09-15T18:28:09.748238+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "obnrsmvyylvaukx0oka8i",
@@ -8301,7 +8885,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:28:20.461714+00:00"
+  "updated_at": "2026-09-15T18:28:20.461714+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4otjrmizekrw0u6bo6hr2",
@@ -8319,7 +8904,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:28:27.200649+00:00"
+  "updated_at": "2026-09-15T18:28:27.200649+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "mnjj2p2z9b4h38xqdllr5",
@@ -8337,7 +8923,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:28:35.242324+00:00"
+  "updated_at": "2026-09-15T18:28:35.242324+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "thz7f9anqn9tsza0k7e5h",
@@ -8355,7 +8942,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:28:42.654789+00:00"
+  "updated_at": "2026-09-15T18:28:42.654789+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "qeix43sh58cvep43j8gqe",
@@ -8373,7 +8961,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:28:49.294646+00:00"
+  "updated_at": "2026-09-15T18:28:49.294646+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "okzmt6xl62mdrx020fjxe",
@@ -8391,7 +8980,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:28:55.632793+00:00"
+  "updated_at": "2026-09-15T18:28:55.632793+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -8408,7 +8998,8 @@
    "target_value": "1",
    "operator": "gte"
   },
-  "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast"
+  "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
+  "source": "failure-modes"
  },
  {
   "execution_id": "o7hnpm5iib7qguax5czu9",
@@ -8426,7 +9017,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:29:03.202763+00:00"
+  "updated_at": "2026-09-15T18:29:03.202763+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "fc1gfi23h8imorw2nwj2q",
@@ -8444,7 +9036,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:29:09.994301+00:00"
+  "updated_at": "2026-09-15T18:29:09.994301+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "31y1z7fgjx3mvzrgri75f",
@@ -8462,7 +9055,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:29:17.467719+00:00"
+  "updated_at": "2026-09-15T18:29:17.467719+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "zzttoo5p8cpqywqv9pfup",
@@ -8480,7 +9074,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:29:25.525065+00:00"
+  "updated_at": "2026-09-15T18:29:25.525065+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "dgjdfvrg1ssja72092jz7",
@@ -8498,7 +9093,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:29:36.890950+00:00"
+  "updated_at": "2026-09-15T18:29:36.890950+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "f3t36vvqv1kqbmsqon0nb",
@@ -8516,7 +9112,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:29:43.062769+00:00"
+  "updated_at": "2026-09-15T18:29:43.062769+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "uelzmiuxbrd16n22ywf45",
@@ -8534,7 +9131,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:29:52.138352+00:00"
+  "updated_at": "2026-09-15T18:29:52.138352+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0pitsyemjvrr1caeqz8jd",
@@ -8552,7 +9150,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:30:03.093045+00:00"
+  "updated_at": "2026-09-15T18:30:03.093045+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tsgk3dveyjc2hqg29n7td",
@@ -8570,7 +9169,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:30:15.473693+00:00"
+  "updated_at": "2026-09-15T18:30:15.473693+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "h4n9rx5fml5tdfyvqgiwd",
@@ -8588,7 +9188,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:30:27.168527+00:00"
+  "updated_at": "2026-09-15T18:30:27.168527+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xd8not0j6oebsc7wmhr5q",
@@ -8606,7 +9207,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:30:39.159607+00:00"
+  "updated_at": "2026-09-15T18:30:39.159607+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "a3087f688qdjryrhv920i",
@@ -8624,7 +9226,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:30:49.077476+00:00"
+  "updated_at": "2026-09-15T18:30:49.077476+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "56gn1g3ru5axnbjxiipko",
@@ -8642,7 +9245,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:30:59.283885+00:00"
+  "updated_at": "2026-09-15T18:30:59.283885+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pdv2bsz6wh08bb75mvxr8",
@@ -8660,7 +9264,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:31:09.246648+00:00"
+  "updated_at": "2026-09-15T18:31:09.246648+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "m14c1qqklmszv6qplj4vy",
@@ -8678,7 +9283,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:31:18.883831+00:00"
+  "updated_at": "2026-09-15T18:31:18.883831+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8n2yi54416099mjsg7kcs",
@@ -8696,7 +9302,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:31:27.795588+00:00"
+  "updated_at": "2026-09-15T18:31:27.795588+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "zd7csohmn56ysiuwf3s5a",
@@ -8714,7 +9321,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:31:39.482938+00:00"
+  "updated_at": "2026-09-15T18:31:39.482938+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ce8o7ap9iltg0a1ux664b",
@@ -8732,7 +9340,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:31:50.452688+00:00"
+  "updated_at": "2026-09-15T18:31:50.452688+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "0gamh22pxuaonras7gcj9",
@@ -8750,7 +9359,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:31:57.057396+00:00"
+  "updated_at": "2026-09-15T18:31:57.057396+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "okw52dgd06fogvvy7nhiq",
@@ -8768,7 +9378,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:04.801844+00:00"
+  "updated_at": "2026-09-15T18:32:04.801844+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "igpjgbyrev6xy316cj1se",
@@ -8786,7 +9397,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:11.348926+00:00"
+  "updated_at": "2026-09-15T18:32:11.348926+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "6txapsexbuqn1qpkvtkk8",
@@ -8804,7 +9416,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:19.140965+00:00"
+  "updated_at": "2026-09-15T18:32:19.140965+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7jmvq03ixzvzrrncbjuzi",
@@ -8822,7 +9435,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:26.055544+00:00"
+  "updated_at": "2026-09-15T18:32:26.055544+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "mzjiuwywem88m0v62zbh4",
@@ -8840,7 +9454,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:33.319759+00:00"
+  "updated_at": "2026-09-15T18:32:33.319759+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nrxdt3hi5rzu5drdx8u6x",
@@ -8858,7 +9473,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:39.792378+00:00"
+  "updated_at": "2026-09-15T18:32:39.792378+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "wcs4mj8whybjb210vioky",
@@ -8876,7 +9492,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:47.391596+00:00"
+  "updated_at": "2026-09-15T18:32:47.391596+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2oypan79o4fz9zbwk9juo",
@@ -8894,7 +9511,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:32:54.325290+00:00"
+  "updated_at": "2026-09-15T18:32:54.325290+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tdkaodi08su954vrfdbm5",
@@ -8912,7 +9530,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:00.690647+00:00"
+  "updated_at": "2026-09-15T18:33:00.690647+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pd8188o7ec6xcy04kwmsh",
@@ -8930,7 +9549,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:07.578506+00:00"
+  "updated_at": "2026-09-15T18:33:07.578506+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "5ukj9emc8vx4lkr6bmy1d",
@@ -8948,7 +9568,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:15.196630+00:00"
+  "updated_at": "2026-09-15T18:33:15.196630+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tlo3sl2wo0ewnvylreh7m",
@@ -8966,7 +9587,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:21.857166+00:00"
+  "updated_at": "2026-09-15T18:33:21.857166+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "g94dchlclgsgzcgzfc63x",
@@ -8984,7 +9606,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:28.296556+00:00"
+  "updated_at": "2026-09-15T18:33:28.296556+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ng9v04q7530zp75n3m34s",
@@ -9002,7 +9625,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:35.735855+00:00"
+  "updated_at": "2026-09-15T18:33:35.735855+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "a6myhwrw1xxa1ogy2fare",
@@ -9020,7 +9644,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:43.004291+00:00"
+  "updated_at": "2026-09-15T18:33:43.004291+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "s383vexp3tneimswyuiti",
@@ -9038,7 +9663,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:50.840790+00:00"
+  "updated_at": "2026-09-15T18:33:50.840790+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "m6jfzvcm8gh5oq8n6fbiu",
@@ -9056,7 +9682,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:33:57.371275+00:00"
+  "updated_at": "2026-09-15T18:33:57.371275+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "v2sdts4y7ntwp4xglrsn8",
@@ -9074,7 +9701,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:34:05.545797+00:00"
+  "updated_at": "2026-09-15T18:34:05.545797+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xbmfitufox80wcxdnqqwn",
@@ -9092,7 +9720,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:34:16.861711+00:00"
+  "updated_at": "2026-09-15T18:34:16.861711+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "svmjjh8nlqj7qtq6yrru5",
@@ -9110,7 +9739,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:34:24.941589+00:00"
+  "updated_at": "2026-09-15T18:34:24.941589+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tt6rrtqt38lb78k0vkate",
@@ -9128,7 +9758,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:34:34.727140+00:00"
+  "updated_at": "2026-09-15T18:34:34.727140+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nfkwy31rkce9bffmelm4o",
@@ -9146,7 +9777,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:34:42.459997+00:00"
+  "updated_at": "2026-09-15T18:34:42.459997+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "watzvu350qifxyuwbn2jm",
@@ -9164,7 +9796,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:34:48.523977+00:00"
+  "updated_at": "2026-09-15T18:34:48.523977+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "c6h1nldrhd9ywwbscqdgx",
@@ -9182,7 +9815,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:34:57.578525+00:00"
+  "updated_at": "2026-09-15T18:34:57.578525+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "s7en8supaxbgz4ez157zf",
@@ -9200,7 +9834,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:35:08.487150+00:00"
+  "updated_at": "2026-09-15T18:35:08.487150+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pzjh7o42bzbrp6rwy4xh6",
@@ -9218,7 +9853,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:35:15.222884+00:00"
+  "updated_at": "2026-09-15T18:35:15.222884+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xdw6nrfjek0pl65sdvp9g",
@@ -9236,7 +9872,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:35:24.799248+00:00"
+  "updated_at": "2026-09-15T18:35:24.799248+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "bp337fr2hjflpkujl8lvv",
@@ -9254,7 +9891,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:35:33.040062+00:00"
+  "updated_at": "2026-09-15T18:35:33.040062+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4jhbsm7c6m8w0scxn2ld5",
@@ -9272,7 +9910,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:35:39.330465+00:00"
+  "updated_at": "2026-09-15T18:35:39.330465+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4udqy5aiakn4zwbqsrozh",
@@ -9290,7 +9929,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:35:47.325049+00:00"
+  "updated_at": "2026-09-15T18:35:47.325049+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "d5ti1jc4yp7pudjmbc2eg",
@@ -9308,7 +9948,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:35:59.202558+00:00"
+  "updated_at": "2026-09-15T18:35:59.202558+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "o8w2g9q5vfy6ububdsqok",
@@ -9326,7 +9967,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:04.759024+00:00"
+  "updated_at": "2026-09-15T18:36:04.759024+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "vk3ehywcxq5lvfa0qo3qi",
@@ -9344,7 +9986,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:13.444794+00:00"
+  "updated_at": "2026-09-15T18:36:13.444794+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tvktcqpr5zwv7pdcqsofx",
@@ -9362,7 +10005,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:18.919320+00:00"
+  "updated_at": "2026-09-15T18:36:18.919320+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "r0pweqlfnlkxp7ak605qt",
@@ -9380,7 +10024,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:27.113203+00:00"
+  "updated_at": "2026-09-15T18:36:27.113203+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pds4jvh2tsfy0kd8tzk8g",
@@ -9398,7 +10043,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:33.710938+00:00"
+  "updated_at": "2026-09-15T18:36:33.710938+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "alvs0yalvll4j7bpdhe06",
@@ -9416,7 +10062,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:40.699053+00:00"
+  "updated_at": "2026-09-15T18:36:40.699053+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "gcr7g1nq1obnjrepu2kza",
@@ -9434,7 +10081,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:47.830194+00:00"
+  "updated_at": "2026-09-15T18:36:47.830194+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ljoke53xp9jeuf52e26bg",
@@ -9452,7 +10100,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:36:54.859054+00:00"
+  "updated_at": "2026-09-15T18:36:54.859054+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "ka2et4j9a80wlrloah56z",
@@ -9470,7 +10119,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:01.499811+00:00"
+  "updated_at": "2026-09-15T18:37:01.499811+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "u4ii2m8m7uyei5yx4vx1p",
@@ -9488,7 +10138,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:09.288951+00:00"
+  "updated_at": "2026-09-15T18:37:09.288951+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "99btt7ahh63qdeokrrxil",
@@ -9506,7 +10157,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:17.015050+00:00"
+  "updated_at": "2026-09-15T18:37:17.015050+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4ogtalfzkawajeb31i857",
@@ -9524,7 +10176,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:22.619796+00:00"
+  "updated_at": "2026-09-15T18:37:22.619796+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "i1c2e4s6i0y5hnxdh6ipd",
@@ -9542,7 +10195,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:31.479573+00:00"
+  "updated_at": "2026-09-15T18:37:31.479573+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "xbqsy8763jsa1e7ajzcdu",
@@ -9560,7 +10214,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:36.832987+00:00"
+  "updated_at": "2026-09-15T18:37:36.832987+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "n707tn9p42antbpgfuf8a",
@@ -9578,7 +10233,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:44.700983+00:00"
+  "updated_at": "2026-09-15T18:37:44.700983+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "l498u6q0nyknkwzodjuvy",
@@ -9596,7 +10252,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:51.484802+00:00"
+  "updated_at": "2026-09-15T18:37:51.484802+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "zw85rbqkmndn7eeugg5ze",
@@ -9614,7 +10271,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:37:59.199900+00:00"
+  "updated_at": "2026-09-15T18:37:59.199900+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "qduwmnylz3okel67nfl1z",
@@ -9632,7 +10290,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:38:04.693525+00:00"
+  "updated_at": "2026-09-15T18:38:04.693525+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "pp6lxw3lleuj4kgupca8k",
@@ -9650,7 +10309,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:38:13.292389+00:00"
+  "updated_at": "2026-09-15T18:38:13.292389+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7g6cnyw72mfuhm51lllmi",
@@ -9668,7 +10328,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:38:25.615170+00:00"
+  "updated_at": "2026-09-15T18:38:25.615170+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "iwy9bxnjqea4d44zqa8rj",
@@ -9686,7 +10347,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:38:32.440157+00:00"
+  "updated_at": "2026-09-15T18:38:32.440157+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "l6bb50hn4wlmlv99flf42",
@@ -9704,7 +10366,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:38:39.202777+00:00"
+  "updated_at": "2026-09-15T18:38:39.202777+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "nphq0se9vp03qtm0cvjs2",
@@ -9722,7 +10385,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:38:46.127460+00:00"
+  "updated_at": "2026-09-15T18:38:46.127460+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "u81l01ge34yzidrni52cw",
@@ -9740,7 +10404,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:38:53.833209+00:00"
+  "updated_at": "2026-09-15T18:38:53.833209+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "7m94464fre8hi6b69kl47",
@@ -9758,7 +10423,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:39:05.119058+00:00"
+  "updated_at": "2026-09-15T18:39:05.119058+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "oy1mfugd8iv494r7ut0ci",
@@ -9776,7 +10442,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:39:12.893041+00:00"
+  "updated_at": "2026-09-15T18:39:12.893041+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8stzs7ix6qs1934z4dmow",
@@ -9794,7 +10461,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:39:19.761457+00:00"
+  "updated_at": "2026-09-15T18:39:19.761457+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rgw4yfugv0nr9gvdar9ns",
@@ -9812,7 +10480,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:39:27.324139+00:00"
+  "updated_at": "2026-09-15T18:39:27.324139+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rtsbwrb40youm5i4gph13",
@@ -9830,7 +10499,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:39:38.887974+00:00"
+  "updated_at": "2026-09-15T18:39:38.887974+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4q1ktyzwniq07146dqhoc",
@@ -9848,7 +10518,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:39:45.893693+00:00"
+  "updated_at": "2026-09-15T18:39:45.893693+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2spmws7p5v8c62qqgfnfg",
@@ -9866,7 +10537,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:39:53.739005+00:00"
+  "updated_at": "2026-09-15T18:39:53.739005+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "b3fzrsjp74rff5tqbe5fc",
@@ -9884,7 +10556,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:40:04.816389+00:00"
+  "updated_at": "2026-09-15T18:40:04.816389+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "57b7by293bicma2u284kt",
@@ -9902,7 +10575,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:40:11.717812+00:00"
+  "updated_at": "2026-09-15T18:40:11.717812+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8njzdsvwnmi9ogz07z58i",
@@ -9920,7 +10594,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:40:19.351589+00:00"
+  "updated_at": "2026-09-15T18:40:19.351589+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "up5rycsfa18yj48t4w9qf",
@@ -9938,7 +10613,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:40:30.889683+00:00"
+  "updated_at": "2026-09-15T18:40:30.889683+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4mvvkpvsjetdnlvj4xqnf",
@@ -9956,7 +10632,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:40:40.757769+00:00"
+  "updated_at": "2026-09-15T18:40:40.757769+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "qtx9nc3156unee0udj0nl",
@@ -9974,7 +10651,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:40:47.619087+00:00"
+  "updated_at": "2026-09-15T18:40:47.619087+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8qgbfff5h9miu7kp4n20c",
@@ -9992,7 +10670,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:40:55.008527+00:00"
+  "updated_at": "2026-09-15T18:40:55.008527+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "263rcsgzsgqh6lst0dide",
@@ -10010,7 +10689,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:01.929482+00:00"
+  "updated_at": "2026-09-15T18:41:01.929482+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "d4s8a5wmlk1eikwsv8fai",
@@ -10028,7 +10708,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:08.908448+00:00"
+  "updated_at": "2026-09-15T18:41:08.908448+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8371ddwnmyz20fvkkb0sw",
@@ -10046,7 +10727,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:16.097270+00:00"
+  "updated_at": "2026-09-15T18:41:16.097270+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "812pic8ubhokyn23788mq",
@@ -10064,7 +10746,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:23.436515+00:00"
+  "updated_at": "2026-09-15T18:41:23.436515+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "oduqa13vsdbi8k8kfg6hw",
@@ -10082,7 +10765,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:31.121119+00:00"
+  "updated_at": "2026-09-15T18:41:31.121119+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8hi1sh9aki5dlwjciqn9t",
@@ -10100,7 +10784,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:36.412952+00:00"
+  "updated_at": "2026-09-15T18:41:36.412952+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "j0kr37nrlkjlthenzwn9h",
@@ -10118,7 +10803,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:44.577539+00:00"
+  "updated_at": "2026-09-15T18:41:44.577539+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "mjixgl7rt5pt5m829yce5",
@@ -10136,7 +10822,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:51.044544+00:00"
+  "updated_at": "2026-09-15T18:41:51.044544+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "fwnk8r1ak0b5tr2indku4",
@@ -10154,7 +10841,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:41:59.128063+00:00"
+  "updated_at": "2026-09-15T18:41:59.128063+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2oy5jje5dxkb540nzhr0j",
@@ -10172,7 +10860,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:04.649723+00:00"
+  "updated_at": "2026-09-15T18:42:04.649723+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "u9a19qyiiv8cwbs3snntl",
@@ -10190,7 +10879,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:13.618862+00:00"
+  "updated_at": "2026-09-15T18:42:13.618862+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rzzqjhgo89moiidemijdm",
@@ -10208,7 +10898,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:19.440734+00:00"
+  "updated_at": "2026-09-15T18:42:19.440734+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "m949gzmtvw3fknsrlic7d",
@@ -10226,7 +10917,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:27.796913+00:00"
+  "updated_at": "2026-09-15T18:42:27.796913+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "h1nh3askq6n2velymov68",
@@ -10244,7 +10936,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:33.314474+00:00"
+  "updated_at": "2026-09-15T18:42:33.314474+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "1s7kot4upfjue28t24bjj",
@@ -10262,7 +10955,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:41.250741+00:00"
+  "updated_at": "2026-09-15T18:42:41.250741+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "uv2483q0c31n1nnxioimu",
@@ -10280,7 +10974,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:48.066196+00:00"
+  "updated_at": "2026-09-15T18:42:48.066196+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "un4ywh5ly6wf42rd8pucq",
@@ -10298,7 +10993,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:42:54.843687+00:00"
+  "updated_at": "2026-09-15T18:42:54.843687+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "1mycolrfj4vcalna3vg6u",
@@ -10316,7 +11012,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:43:03.421475+00:00"
+  "updated_at": "2026-09-15T18:43:03.421475+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "v90cfdal8va07vaaz5y68",
@@ -10334,7 +11031,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:43:15.328669+00:00"
+  "updated_at": "2026-09-15T18:43:15.328669+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "cdcgnnsu97jo9mm4n52x3",
@@ -10352,7 +11050,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:43:27.511962+00:00"
+  "updated_at": "2026-09-15T18:43:27.511962+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "4bnc8isa28bly7xzyallf",
@@ -10370,7 +11069,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:43:38.725200+00:00"
+  "updated_at": "2026-09-15T18:43:38.725200+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9p1piptdx2sybqqx91l07",
@@ -10388,7 +11088,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:43:44.795976+00:00"
+  "updated_at": "2026-09-15T18:43:44.795976+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "rovtf4wqg8ite6yj1bwhn",
@@ -10406,7 +11107,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:43:52.359800+00:00"
+  "updated_at": "2026-09-15T18:43:52.359800+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "kf95f538ipz3t8v7s8of3",
@@ -10424,7 +11126,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:43:59.321621+00:00"
+  "updated_at": "2026-09-15T18:43:59.321621+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "s993bj5nf1uyw3kwwmb1u",
@@ -10442,7 +11145,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:44:18.849689+00:00"
+  "updated_at": "2026-09-15T18:44:18.849689+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "fzilsqk8gm8ttjhe3zcps",
@@ -10460,7 +11164,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:44:24.634241+00:00"
+  "updated_at": "2026-09-15T18:44:24.634241+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "batts406hnx6f1otxyfl3",
@@ -10478,7 +11183,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:44:31.312304+00:00"
+  "updated_at": "2026-09-15T18:44:31.312304+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "q4zhg650ta8bjubcwql5w",
@@ -10496,7 +11202,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:44:38.995071+00:00"
+  "updated_at": "2026-09-15T18:44:38.995071+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "98n2dhbc4jtwqmvclc9ip",
@@ -10514,7 +11221,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:44:46.630344+00:00"
+  "updated_at": "2026-09-15T18:44:46.630344+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "621s2hn5ce65eylwohw0r",
@@ -10532,7 +11240,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:44:53.693086+00:00"
+  "updated_at": "2026-09-15T18:44:53.693086+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "k42msk3smk11dk39ldwmg",
@@ -10550,7 +11259,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:45:01.380632+00:00"
+  "updated_at": "2026-09-15T18:45:01.380632+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "cpeba2dob6i1mm9cjft20",
@@ -10568,7 +11278,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:45:13.532395+00:00"
+  "updated_at": "2026-09-15T18:45:13.532395+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "dilrjhq85s8ppc9wc7qvt",
@@ -10586,7 +11297,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:45:25.539351+00:00"
+  "updated_at": "2026-09-15T18:45:25.539351+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "k1cysn1p0ah7kzah86hdq",
@@ -10604,7 +11316,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:45:35.876072+00:00"
+  "updated_at": "2026-09-15T18:45:35.876072+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "psoqc5pqp4akp1muujwxy",
@@ -10622,7 +11335,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:46:56.426407+00:00"
+  "updated_at": "2026-09-15T18:46:56.426407+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "44qkugo4oztqnxhgv6sbl",
@@ -10640,7 +11354,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:47:10.326913+00:00"
+  "updated_at": "2026-09-15T18:47:10.326913+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "5o9aj0vi8wbcumwovoe2e",
@@ -10658,7 +11373,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:47:22.232530+00:00"
+  "updated_at": "2026-09-15T18:47:22.232530+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "v4jkfmsao6u5fj0zqy1uc",
@@ -10676,7 +11392,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:47:34.984927+00:00"
+  "updated_at": "2026-09-15T18:47:34.984927+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "tf9hwlk05niy1l04qu1af",
@@ -10694,7 +11411,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:47:48.034502+00:00"
+  "updated_at": "2026-09-15T18:47:48.034502+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "v3x497rebxfwphqcri8um",
@@ -10712,7 +11430,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:47:59.636303+00:00"
+  "updated_at": "2026-09-15T18:47:59.636303+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "9qjv0vsm7mnfrkg4rmxfh",
@@ -10730,7 +11449,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:48:11.388198+00:00"
+  "updated_at": "2026-09-15T18:48:11.388198+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "70lil6mpkchnx85riu0cj",
@@ -10748,7 +11468,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:48:23.484820+00:00"
+  "updated_at": "2026-09-15T18:48:23.484820+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "8vuzsav5lk6c6ubinb9rg",
@@ -10766,7 +11487,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:48:35.177406+00:00"
+  "updated_at": "2026-09-15T18:48:35.177406+00:00",
+  "source": "benchmark"
  },
  {
   "execution_id": "2d4aavwaba5p8a7bfh3vl",
@@ -10784,7 +11506,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T18:48:47.086793+00:00"
+  "updated_at": "2026-09-15T18:48:47.086793+00:00",
+  "source": "benchmark"
  },
  {
   "type": "simulation",
@@ -10794,7 +11517,8 @@
   "function": "approve",
   "success": true,
   "would_revert": false,
-  "gas_estimate": 38704
+  "gas_estimate": 38704,
+  "source": "strategy"
  },
  {
   "execution_id": "mgaek215ox6e9jclsc6yz",
@@ -10812,7 +11536,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T19:36:41.586528+00:00"
+  "updated_at": "2026-09-15T19:36:41.586528+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "qpiqh98mn589bwn81p4t0",
@@ -10830,7 +11555,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T19:36:41.915563+00:00"
+  "updated_at": "2026-09-15T19:36:41.915563+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "dixwqqavpw77vpqsftrt7",
@@ -10855,7 +11581,8 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T19:36:54.784339+00:00"
+  "updated_at": "2026-09-15T19:36:54.784339+00:00",
+  "source": "strategy"
  },
  {
   "execution_id": "aosg8v3car9365nxplk07",
@@ -10880,6 +11607,7 @@
    "success"
   ],
   "sponsored": true,
-  "updated_at": "2026-09-15T19:39:41.458796+00:00"
+  "updated_at": "2026-09-15T19:39:41.458796+00:00",
+  "source": "strategy"
  }
 ]
