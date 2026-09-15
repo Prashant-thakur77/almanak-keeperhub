@@ -185,7 +185,9 @@ async def validate_remote(client: KeeperHubClient, workflow_id: str) -> dict[str
     if response.status_code >= 400:
         return {"status": response.status_code, "error": payload}
     # The hosted app wraps the verdict: {"ok": true, "result": {"valid": ..., "nodeCount": ...}}
-    result = payload.get("result") if isinstance(payload, dict) and isinstance(payload.get("result"), dict) else payload
+    result: dict = (
+        payload.get("result") if isinstance(payload, dict) and isinstance(payload.get("result"), dict) else payload
+    ) or {}
     return {
         "valid": result.get("valid"),
         "errors": result.get("errors") or [],

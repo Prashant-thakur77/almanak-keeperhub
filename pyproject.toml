@@ -19,7 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 mcp = ["mcp>=2.0"]
-dev = ["pytest>=8", "pytest-asyncio>=0.24", "respx>=0.21", "ruff>=0.6", "mypy>=1.11"]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "respx>=0.21", "hypothesis>=6", "ruff>=0.6", "mypy>=1.11"]
 
 [project.scripts]
 almanak-keeperhub = "almanak_keeperhub.cli:main"
@@ -43,7 +43,8 @@ include = ["/almanak_keeperhub", "/tests/unit", "/README.md", "/LICENSE", "/pypr
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["tests/unit"]
+testpaths = ["tests/unit", "tests/live"]
+markers = ["doc(section): the KeeperHub docs section a live conformance test checks"]
 filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.ruff]

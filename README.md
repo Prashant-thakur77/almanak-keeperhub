@@ -19,7 +19,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Failure modes recorded, on purpose | 6 of 6, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Unit tests | 149 |
+| Tests | 553 unit and property, 11 live against production every six hours |
 | Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, **2 pull requests merged**, 1 in review |
 
 ## Judge links
@@ -440,11 +440,24 @@ Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/Kee
 ## Tests
 
 ```bash
-pytest -q                      # 121 unit tests: API shapes from the docs, decoder, adapters against Almanak's real interfaces
-ruff check almanak_keeperhub tests
+pytest -q                      # 553 unit and property tests; the live suite skips unless opted in
+ALMANAK_KEEPERHUB_LIVE=1 pytest -q tests/live   # 11 documented API behaviours, checked against app.keeperhub.com
+ruff check almanak_keeperhub tests scripts && mypy almanak_keeperhub --ignore-missing-imports
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
 tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end
 ```
+
+Four layers, each answering a different question:
+
+| Layer | What it checks | Count |
+|---|---|---|
+| Unit | API shapes from KeeperHub's docs (respx), the decoder, the adapters against Almanak's real `Signer`/`Submitter`/`Simulator` interfaces, the console, the MCP server, the bot | 150 |
+| Property (hypothesis) | every one of the 339 signatures in the selector index decodes losslessly under random arguments; trailing bytes and unknown selectors are always refused; the idempotency key identifies work, never the attempt; ether strings are exact at any magnitude | 403 |
+| Live conformance | one test per sentence of the Direct Execution docs, against production: replay by key, conflict on a changed body, verified receipt, sponsorship, the poll hint, and whether the two upstream features have deployed yet. Run by the proof workflow every six hours; the result is on the console footer and in `docs/conformance.json` | 11 |
+| Rehearsal | the whole lifecycle on an Anvil fork, mainnet and Sepolia | 2 scripts |
+
+The property layer found one bug the unit layer had not: `wei_to_ether_string` went through `Decimal` at its
+default 28-digit precision, so amounts past 10^28 wei rounded. Fixed with integer arithmetic.
 
 ## What still breaks or is unfinished
 

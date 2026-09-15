@@ -139,6 +139,6 @@ def _install() -> None:
     import almanak.gateway.server as server
 
     if server.ExecutionServiceServicer is not KeeperHubExecutionServiceServicer:
-        server.ExecutionServiceServicer = KeeperHubExecutionServiceServicer
+        server.ExecutionServiceServicer = KeeperHubExecutionServiceServicer  # type: ignore[misc]
     if not hasattr(helpers.reinitialize_market_service, "__almanak_keeperhub_wrapped__"):
         helpers.reinitialize_market_service = skip_redundant_market_reinit(helpers.reinitialize_market_service)

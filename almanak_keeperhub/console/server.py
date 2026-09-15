@@ -99,6 +99,7 @@ def build_state(
     }
     bench = _read_json(benchmark, None)
     features = _read_json(benchmark.parent / "api-features.json", None)
+    conformance = _read_json(benchmark.parent / "conformance.json", None)
     return {
         "generated_at": datetime.now(UTC).isoformat(),
         "org_wallet": org_wallet,
@@ -110,6 +111,7 @@ def build_state(
         "failure_modes": failure_modes,
         "benchmark": bench if isinstance(bench, dict) else None,
         "api_features": features if isinstance(features, dict) else None,
+        "conformance": conformance if isinstance(conformance, dict) else None,
         "sources": {"receipts": str(receipts), "demo_receipts": str(demo_receipts), "benchmark": str(benchmark)},
     }
 

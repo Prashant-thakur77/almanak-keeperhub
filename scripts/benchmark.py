@@ -33,7 +33,7 @@ _TARGETS = demo_targets()  # ALMANAK_KEEPERHUB_CHAIN=base (default) or base_sepo
 BASE_CHAIN_ID = _TARGETS.chain_id
 USDC_BASE = _TARGETS.usdc
 VAULT_BASE = _TARGETS.vault
-DOCS = Path(__file__).resolve().parents[1] / "docs"
+DOCS = Path(os.environ.get("ALMANAK_KEEPERHUB_BENCHMARK_DIR") or Path(__file__).resolve().parents[1] / "docs")
 
 
 def calldata(signature: str, types: list[str], args: list) -> str:
@@ -64,7 +64,7 @@ def pct(values: list[float], p: float) -> float:
     return ordered[index]
 
 
-async def main(args: argparse.Namespace) -> int:
+async def main(args: argparse.Namespace) -> dict:
     api_key = os.environ.get("KEEPERHUB_API_KEY")
     if not api_key:
         sys.exit("KEEPERHUB_API_KEY is not set")
@@ -144,18 +144,97 @@ async def main(args: argparse.Namespace) -> int:
         "latency_p50_s": round(pct(exec_latency, 50), 2),
         "latency_p95_s": round(pct(exec_latency, 95), 2),
     }
+
+    # 4. Retries at scale: the same work id again, for the first N landed approvals. Every
+    #    one must come back as the hash that already landed; a new hash is a double spend.
+    retries = min(args.retries, len(hashes))
+    replayed, doubled, retry_latency = 0, 0, []
+    for i in range(retries):
+        with work_id_scope(f"{run_id}-{i}"):
+            again = await signer.sign(approve, _TARGETS.chain)
+        started = time.perf_counter()
+        outcomes = await submitter.submit([again])
+        retry_latency.append(time.perf_counter() - started)
+        if outcomes[0].submitted and outcomes[0].tx_hash == hashes[i]:
+            replayed += 1
+        elif outcomes[0].submitted:
+            doubled += 1
+    results["retries"] = {
+        "attempted": retries,
+        "replayed_same_hash": replayed,
+        "double_broadcasts": doubled,
+        "latency_p50_s": round(pct(retry_latency, 50), 2),
+    }
+
+    # 5. Crash cycles: a child process broadcasts and dies before settlement; a fresh
+    #    submitter here settles the hash from the receipts log, then the same work is
+    #    retried and must replay rather than resend.
+    resumed, resent, crash_hashes = 0, 0, []
+    for i in range(args.crashes):
+        work_id = f"{run_id}-crash-{i}"
+        tx_hash = _crash_after_broadcast(work_id)
+        if tx_hash is None:
+            continue
+        crash_hashes.append(tx_hash)
+        fresh = KeeperHubSubmitter(client, rpc_url=rpc_url)
+        receipt = await fresh.get_receipt(tx_hash, timeout=180)
+        resumed += int(receipt.success)
+        with work_id_scope(work_id):
+            again = await signer.sign(approve, _TARGETS.chain)
+        outcomes = await fresh.submit([again])
+        resent += int(outcomes[0].submitted and outcomes[0].tx_hash != tx_hash)
+    results["crashes"] = {
+        "attempted": args.crashes,
+        "resumed_and_verified_by_a_fresh_process": resumed,
+        "resent_after_resume": resent,
+        "tx_hashes": crash_hashes,
+    }
     results["simulation_latency"] = {
         "p50_s": round(pct(sim_latency + refusal_latency, 50), 2),
         "p95_s": round(pct(sim_latency + refusal_latency, 95), 2),
     }
     results["finished_at"] = datetime.now(UTC).isoformat()
     await client.aclose()
+    return results
 
+
+def write_results(results: dict) -> None:
     DOCS.mkdir(exist_ok=True)
     (DOCS / "benchmark.json").write_text(json.dumps(results, indent=2) + "\n")
     (DOCS / "benchmark.md").write_text(render(results))
     print(render(results))
-    return 0
+
+
+def _crash_after_broadcast(work_id: str) -> str | None:
+    """Broadcast one approve in a child that hard-exits right after submit; return its hash."""
+    import subprocess
+
+    child = subprocess.run(  # noqa: S603 - our own script, fixed argv
+        [sys.executable, __file__, "--phase", "broadcast", "--work-id", work_id],
+        capture_output=True,
+        text=True,
+        env=os.environ,
+        check=False,
+    )
+    line = next((ln for ln in child.stdout.splitlines() if ln.startswith("BROADCAST ")), None)
+    if line is None:
+        print(f"crash child did not broadcast: {child.stderr[-400:]}", file=sys.stderr)
+        return None
+    return line.split()[1]
+
+
+async def phase_broadcast(work_id: str) -> None:
+    api_key = os.environ.get("KEEPERHUB_API_KEY") or sys.exit("KEEPERHUB_API_KEY is not set")
+    client = KeeperHubClient(
+        api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", "https://app.keeperhub.com")
+    )
+    address = await client.wallet_address()
+    approve = tx(USDC_BASE, calldata("approve(address,uint256)", ["address", "uint256"], [VAULT_BASE, 1]), address)
+    with work_id_scope(work_id):
+        signed = await KeeperHubSigner(client, address).sign(approve, _TARGETS.chain)
+    results = await KeeperHubSubmitter(client, rpc_url=_TARGETS.rpc).submit([signed])
+    print(f"BROADCAST {results[0].tx_hash}", flush=True)
+    os._exit(0)  # the crash: no settlement, no receipt phase, no clean shutdown
 
 
 def render(r: dict) -> str:
@@ -177,8 +256,22 @@ def render(r: dict) -> str:
         lines.append(
             f"| Retry of already-landed work replayed, not resent | {r['retry']['same_work_replayed_not_resent']} ({r['retry']['latency_s']}s) |"
         )
-    lines += ["", "Transaction hashes:", ""] + [f"- {h}" for h in ex["tx_hashes"]] + [""]
-    return "\n".join(lines)
+    if r.get("retries", {}).get("attempted"):
+        rt = r["retries"]
+        lines.append(
+            f"| Retries of landed work replayed by idempotency key | {rt['replayed_same_hash']}/{rt['attempted']}, "
+            f"{rt['double_broadcasts']} double broadcasts (p50 {rt['latency_p50_s']}s) |"
+        )
+    if r.get("crashes", {}).get("attempted"):
+        cr = r["crashes"]
+        lines.append(
+            f"| Process killed after broadcast, settled by a fresh process | "
+            f"{cr['resumed_and_verified_by_a_fresh_process']}/{cr['attempted']}, {cr['resent_after_resume']} resent |"
+        )
+    lines += ["", "Transaction hashes:", ""] + [f"- {h}" for h in ex["tx_hashes"]]
+    if r.get("crashes", {}).get("tx_hashes"):
+        lines += ["", "Crash-cycle hashes:", ""] + [f"- {h}" for h in r["crashes"]["tx_hashes"]]
+    return "\n".join(lines) + "\n"
 
 
 if __name__ == "__main__":
@@ -186,4 +279,11 @@ if __name__ == "__main__":
     parser.add_argument("--refusals", type=int, default=20)
     parser.add_argument("--simulations", type=int, default=10)
     parser.add_argument("--executions", type=int, default=5)
-    sys.exit(asyncio.run(main(parser.parse_args())))
+    parser.add_argument("--retries", type=int, default=5, help="retry this many of the landed approvals")
+    parser.add_argument("--crashes", type=int, default=0, help="crash-after-broadcast cycles")
+    parser.add_argument("--phase", choices=["broadcast"], help=argparse.SUPPRESS)
+    parser.add_argument("--work-id", help=argparse.SUPPRESS)
+    parsed = parser.parse_args()
+    if parsed.phase == "broadcast":
+        asyncio.run(phase_broadcast(parsed.work_id))
+    write_results(asyncio.run(main(parsed)))

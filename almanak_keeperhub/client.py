@@ -14,7 +14,6 @@ import json
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from decimal import Decimal
 from typing import Any
 
 import httpx
@@ -95,11 +94,15 @@ def _rejects_unknown_shape(status: int, payload: dict[str, Any], missing_field: 
 
 
 def wei_to_ether_string(value_wei: int) -> str:
-    """Exact decimal ether string without exponent, e.g. 10**15 -> ``0.001``."""
-    text = format(Decimal(value_wei) / Decimal(10**18), "f")
-    if "." in text:
-        text = text.rstrip("0").rstrip(".")
-    return text or "0"
+    """Exact decimal ether string without exponent, e.g. 10**15 -> ``0.001``.
+
+    Integer arithmetic, not Decimal: Decimal's default 28-digit context rounds anything past
+    10**28 wei, and "exact" has to mean exact whatever the amount.
+    """
+    whole, frac = divmod(int(value_wei), 10**18)
+    if frac == 0:
+        return str(whole)
+    return f"{whole}.{frac:018d}".rstrip("0")
 
 
 @dataclass(frozen=True)

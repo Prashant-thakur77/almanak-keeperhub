@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
       - run: uv python install 3.12
-      - run: uv venv --python 3.12 && . .venv/bin/activate && uv pip install -e .
+      - run: uv venv --python 3.12 && . .venv/bin/activate && uv pip install -e ".[dev]"
       - name: tick and republish
         env:
           KEEPERHUB_API_KEY: ${{ secrets.KEEPERHUB_API_KEY }}
