@@ -37,6 +37,9 @@ step "live conformance: the documented API behaviours, checked against productio
 ALMANAK_KEEPERHUB_LIVE=1 ALMANAK_KEEPERHUB_CONFORMANCE_OUT="$ROOT/docs/conformance.json" \
   python -m pytest -q "$ROOT/tests/live" -p no:cacheprovider || echo "!!! conformance failures recorded in docs/conformance.json"
 
+step "reproduce the API findings against production (two of them are this project's merged fixes, awaiting deployment)"
+python "$ROOT/scripts/verify_api_notes.py" > "$ROOT/docs/api-notes-verified.md" || echo "!!! api notes failed"
+
 step "ask production which upstream features it has yet (raw calldata, sequence dry run)"
 almanak-keeperhub api-features --chain base_sepolia --out "$ROOT/docs/api-features.json" || true
 

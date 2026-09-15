@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "almanak-keeperhub"
-version = "0.1.0"
+version = "1.0.0"
 description = "KeeperHub as the execution backend for Almanak strategies: dry run, idempotent broadcast, verified receipts."
 readme = "README.md"
 requires-python = ">=3.12"

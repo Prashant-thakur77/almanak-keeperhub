@@ -30,9 +30,37 @@ async def finding_1_no_raw_calldata(client: httpx.AsyncClient) -> tuple[str, str
     }
     response = await client.post("/api/execute/contract-call", json=body)
     text = response.text[:160].replace("\n", " ")
-    expected = "4xx: functionName is required (raw calldata not accepted)"
+    expected = "before KeeperHub#2449 deploys: 400 functionName required; after: 200, the calldata dry-runs"
     actual = f"HTTP {response.status_code}: {text}"
-    verdict = "REPRODUCED" if response.status_code >= 400 and "functionName" in response.text else "FIXED?"
+    if response.status_code >= 400 and "functionName" in response.text:
+        verdict = "REPRODUCED (fix merged upstream, not deployed yet)"
+    elif response.status_code == 200:
+        verdict = "FIXED UPSTREAM AND LIVE"
+    else:
+        verdict = "CHANGED?"
+    return expected, actual, verdict
+
+
+async def finding_2_no_sequence_dry_run(client: httpx.AsyncClient) -> tuple[str, str, str]:
+    """A bundle's second call cannot be dry-run against the first's effects (fixed upstream in KeeperHub#2452)."""
+    body = {
+        "chainId": 8453,
+        "simulate": True,
+        "calls": [
+            {"contractAddress": USDC_BASE, "functionName": "approve", "functionArgs": json.dumps([VAULT_BASE, "1"])},
+            {"contractAddress": USDC_BASE, "functionName": "approve", "functionArgs": json.dumps([VAULT_BASE, "2"])},
+        ],
+    }
+    response = await client.post("/api/execute/contract-call", json=body)
+    text = response.text[:160].replace("\n", " ")
+    expected = "before KeeperHub#2452 deploys: 400 contractAddress required; after: results[] with one entry per call"
+    actual = f"HTTP {response.status_code}: {text}"
+    if response.status_code == 400 and "contractAddress" in response.text:
+        verdict = "REPRODUCED (fix merged upstream, not deployed yet)"
+    elif "results" in response.text:
+        verdict = "FIXED UPSTREAM AND LIVE"
+    else:
+        verdict = "CHANGED?"
     return expected, actual, verdict
 
 
@@ -87,6 +115,7 @@ async def finding_spend_cap_endpoint(client: httpx.AsyncClient) -> tuple[str, st
 
 FINDINGS = [
     ("1", "no raw-calldata write on contract-call", finding_1_no_raw_calldata),
+    ("2", "no dry run of a call sequence against carried state", finding_2_no_sequence_dry_run),
     ("5", "MCP guide URL in the brief redirects", finding_5_docs_redirect),
     ("6", "network vs chainId precedence on contract-call", finding_6_chain_field_precedence),
     ("+", "spend-cap endpoint reachable with an API key", finding_spend_cap_endpoint),
