@@ -155,8 +155,11 @@ async def verify_reference(reference: str, receipts: Path, chain_name: str) -> d
             try:
                 from web3 import AsyncHTTPProvider, AsyncWeb3
 
-                web3 = AsyncWeb3(AsyncHTTPProvider(rpc_url))
-                receipt = await web3.eth.get_transaction_receipt(tx_hash)  # type: ignore[arg-type]
+                provider = AsyncHTTPProvider(rpc_url)
+                try:
+                    receipt = await AsyncWeb3(provider).eth.get_transaction_receipt(tx_hash)  # type: ignore[arg-type]
+                finally:
+                    await provider.disconnect()
                 sender = str(receipt["from"]).lower()
                 result["onchain"] = {
                     "sender": sender,

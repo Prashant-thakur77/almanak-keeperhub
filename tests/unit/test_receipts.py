@@ -108,3 +108,45 @@ def test_a_corrupt_file_is_not_silently_replaced(tmp_path: Path) -> None:
     with pytest.raises(ValueError):
         log.record("new", chain_id=1, function="f", to="0x", tx_hash="0x1", status="completed")
     assert path.read_text().startswith('[{"execution_id": "keep"}')  # untouched
+
+
+def test_merge_logs_unions_by_execution_and_keeps_the_later_settlement(tmp_path: Path) -> None:
+    from almanak_keeperhub.receipts import merge_logs
+
+    a = tmp_path / "a.json"
+    b = tmp_path / "b.json"
+    a.write_text(
+        json.dumps(
+            [
+                {"execution_id": "x1", "recorded_at": "2026-09-12T06:00:00+00:00", "status": "pending"},
+                {"type": "simulation", "recorded_at": "2026-09-12T05:00:00+00:00", "success": True},
+            ]
+        )
+    )
+    b.write_text(
+        json.dumps(
+            [
+                {
+                    "execution_id": "x1",
+                    "recorded_at": "2026-09-12T06:00:00+00:00",
+                    "status": "completed",
+                    "updated_at": "2026-09-12T06:00:09+00:00",
+                },
+                {"execution_id": "x2", "recorded_at": "2026-09-12T07:00:00+00:00", "status": "completed"},
+            ]
+        )
+    )
+
+    merged = merge_logs(a, b)
+
+    assert [e.get("execution_id") or e["type"] for e in merged] == ["simulation", "x1", "x2"]
+    assert merged[1]["status"] == "completed"  # the settled copy wins over the pending one
+
+
+def test_merge_logs_ignores_a_missing_log(tmp_path: Path) -> None:
+    from almanak_keeperhub.receipts import merge_logs
+
+    present = tmp_path / "present.json"
+    present.write_text(json.dumps([{"execution_id": "x1", "recorded_at": "2026-09-12T06:00:00+00:00"}]))
+
+    assert [e["execution_id"] for e in merge_logs(tmp_path / "absent.json", present)] == ["x1"]

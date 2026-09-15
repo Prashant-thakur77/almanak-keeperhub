@@ -17,6 +17,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from almanak_keeperhub.client import TERMINAL_STATUSES
 from almanak_keeperhub.console.server import PAGE, build_state, keeper_state, verify_reference
 
 logger = logging.getLogger(__name__)
@@ -33,9 +34,15 @@ async def collect_site(
     base_url: str,
     chain: str,
     verify: bool = True,
+    reuse: Path | None = None,
 ) -> dict[str, Any]:
     """Everything the page fetches, gathered once: the state, the keeper, and KeeperHub's
-    evidence for each execution."""
+    evidence for each execution.
+
+    ``reuse`` is a previous export's ``console-data/verify`` directory. A verdict already
+    frozen there is kept, so a scheduled re-export only asks KeeperHub about executions
+    it has not seen; a file holding an error or a non-terminal status is asked again.
+    """
     state = build_state(receipts, demo_receipts, benchmark, org_wallet=org_wallet, base_url=base_url, chain=chain)
     state["snapshot_at"] = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     # The page shows these as provenance; on a public site the local paths mean nothing.
@@ -52,11 +59,27 @@ async def collect_site(
             ref = execution.get("execution_id") or execution.get("tx_hash")
             if not ref:
                 continue
+            frozen = _frozen_evidence(reuse, str(ref))
+            if frozen is not None:
+                evidence[str(ref)] = frozen
+                continue
             try:
                 evidence[str(ref)] = await verify_reference(str(ref), receipts, chain)
             except Exception as exc:  # noqa: BLE001 - one bad row must not sink the export
                 evidence[str(ref)] = {"error": f"{type(exc).__name__}: {exc}"}
     return {"state": state, "keeper": keeper, "evidence": evidence}
+
+
+def _frozen_evidence(reuse: Path | None, ref: str) -> dict[str, Any] | None:
+    if reuse is None:
+        return None
+    try:
+        data = json.loads((reuse / f"{ref}.json").read_text())
+    except (OSError, ValueError):
+        return None
+    if not isinstance(data, dict) or "error" in data or data.get("status") not in TERMINAL_STATUSES:
+        return None
+    return data
 
 
 def write_site(out_dir: Path, collected: dict[str, Any]) -> dict[str, Any]:

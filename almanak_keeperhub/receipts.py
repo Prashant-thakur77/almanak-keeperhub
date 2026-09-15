@@ -28,6 +28,29 @@ def receipts_path() -> Path:
     return Path(configured) if configured else Path.cwd() / DEFAULT_FILENAME
 
 
+def entry_key(entry: dict[str, Any]) -> str:
+    """What makes an entry the same piece of work across two logs."""
+    return str(entry.get("execution_id") or entry.get("tx_hash") or entry.get("recorded_at") or "")
+
+
+def merge_logs(*paths: Path) -> list[dict[str, Any]]:
+    """The union of several receipts logs, one entry per execution, oldest first.
+
+    A strategy, the failure-mode demos and the benchmark each keep their own log; the
+    published proof is all of them together. When the same execution appears twice the
+    later-updated copy wins, so a settlement recorded after the union was last built is
+    not lost.
+    """
+    merged: dict[str, dict[str, Any]] = {}
+    for path in paths:
+        for entry in ReceiptLog(path)._read():
+            key = entry_key(entry)
+            previous = merged.get(key)
+            if previous is None or str(entry.get("updated_at", "")) >= str(previous.get("updated_at", "")):
+                merged[key] = entry
+    return sorted(merged.values(), key=lambda e: str(e.get("recorded_at", "")))
+
+
 class ReceiptLog:
     def __init__(self, path: Path | None = None) -> None:
         self._path = path or receipts_path()

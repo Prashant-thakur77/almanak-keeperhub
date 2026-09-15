@@ -302,8 +302,19 @@ async def _verify(reference: str, api_key: str, chain_name: str) -> int:
     default=None,
     help="Write the console as a static site into this directory (with every execution's evidence frozen) and exit.",
 )
+@click.option(
+    "--refresh-evidence",
+    is_flag=True,
+    help="With --export: ask KeeperHub again about every execution instead of keeping the verdicts already frozen.",
+)
 def console(
-    receipts: str | None, docs_dir: str | None, port: int, chain_name: str, open_browser: bool, export_dir: str | None
+    receipts: str | None,
+    docs_dir: str | None,
+    port: int,
+    chain_name: str,
+    open_browser: bool,
+    export_dir: str | None,
+    refresh_evidence: bool,
 ) -> None:
     """Serve the execution console: executions, verdicts, failure modes and the benchmark, live.
 
@@ -337,6 +348,7 @@ def console(
             org_wallet=org_wallet,
             base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL),
             chain=chain_name,
+            reuse=None if refresh_evidence else Path(export_dir) / "console-data" / "verify",
         )
         click.echo(
             f"static console written to {summary['out_dir']}: {summary['executions']} executions, "
@@ -373,6 +385,26 @@ def _find_docs_dir() -> Path:
         if (candidate / "docs" / "receipts.json").exists() or (candidate / "pyproject.toml").exists():
             return candidate / "docs"
     return Path.cwd() / "docs"
+
+
+@main.command("merge-receipts")
+@click.argument("logs", nargs=-1, required=True, type=click.Path(exists=True, dir_okay=False))
+@click.option("--into", "into", required=True, type=click.Path(dir_okay=False), help="The union to write.")
+def merge_receipts(logs: tuple[str, ...], into: str) -> None:
+    """Union several receipts logs into one file, one entry per execution, oldest first.
+
+    The file named by --into is read as one of the inputs, so entries only ever accumulate.
+    """
+    from almanak_keeperhub.receipts import merge_logs
+
+    target = Path(into)
+    sources = [target] if target.exists() else []
+    sources += [Path(log) for log in logs]
+    merged = merge_logs(*sources)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(merged, indent=1) + "\n")
+    executions = sum(1 for e in merged if e.get("execution_id"))
+    click.echo(f"{target}: {len(merged)} entries, {executions} executions")
 
 
 @main.group()
@@ -646,7 +678,9 @@ def _read_keeper_state(working_dir: Path) -> dict:
 
 
 @main.command()
-@click.option("--working-dir", "-d", default=".", help="Strategy directory the server operates (config.json, receipts).")
+@click.option(
+    "--working-dir", "-d", default=".", help="Strategy directory the server operates (config.json, receipts)."
+)
 @click.option("--chain", "chain_name", default=None, help="Chain name; defaults to config.json 'chain'.")
 @click.option("--write", "allow_broadcast", is_flag=True, help="Also register run_tick, which signs and broadcasts.")
 def mcp(working_dir: str, chain_name: str | None, allow_broadcast: bool) -> None:
@@ -659,7 +693,9 @@ def mcp(working_dir: str, chain_name: str | None, allow_broadcast: bool) -> None
     try:
         from almanak_keeperhub.mcp_server import serve
     except ModuleNotFoundError as exc:
-        raise click.ClickException("the MCP server needs the optional dependency: pip install 'almanak-keeperhub[mcp]'") from exc
+        raise click.ClickException(
+            "the MCP server needs the optional dependency: pip install 'almanak-keeperhub[mcp]'"
+        ) from exc
 
     strategy = Path(working_dir).resolve()
     chain = chain_name or _chain_from_config(strategy, None) or "base"

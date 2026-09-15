@@ -1,0 +1,48 @@
+name: proof
+# A real strategy tick through KeeperHub on Base Sepolia, four times a day, with the
+# console republished from the result. Every execution it adds was made by this runner.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      tick:
+        description: "Run the strategy tick (false: only republish the console)"
+        default: "true"
+permissions:
+  contents: write
+concurrency:
+  group: proof
+  cancel-in-progress: false
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv python install 3.12
+      - run: uv venv --python 3.12 && . .venv/bin/activate && uv pip install -e .
+      - name: tick and republish
+        env:
+          KEEPERHUB_API_KEY: ${{ secrets.KEEPERHUB_API_KEY }}
+          ALMANAK_BASE_SEPOLIA_RPC_URL: ${{ secrets.BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org' }}
+        run: |
+          . .venv/bin/activate
+          if [ "${{ github.event.inputs.tick || 'true' }}" = "true" ]; then
+            scripts/proof_tick.sh
+          else
+            scripts/proof_tick.sh --no-tick
+          fi
+      - name: commit the proof
+        run: |
+          git config user.name "proof-tick"
+          git config user.email "proof-tick@users.noreply.github.com"
+          git add docs demos/metamorpho_base_sepolia/keeperhub-receipts.json
+          if git diff --cached --quiet; then
+            echo "nothing new"
+            exit 0
+          fi
+          n=$(python3 -c "import json; print(sum(1 for e in json.load(open('docs/all-receipts.json')) if e.get('execution_id')))")
+          git commit -m "Proof tick: $n executions on the console"
+          git push

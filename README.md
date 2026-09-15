@@ -19,7 +19,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Failure modes recorded, on purpose | 6 of 6, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Unit tests | 139 |
+| Unit tests | 142 |
 | Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, **2 pull requests merged**, 1 in review |
 
 ## Judge links
@@ -28,6 +28,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 |---|---|
 | Live proof console (every execution, KeeperHub's verdict, decoded events) | https://prashant-thakur77.github.io/almanak-keeperhub/ |
 | Demo video | VIDEO_URL |
+| The proof refreshing itself: a strategy tick through KeeperHub every six hours, run and committed by a GitHub runner | [proof workflow runs](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml) · [`scripts/proof_tick.sh`](scripts/proof_tick.sh) |
 | A real strategy tick: approve | [0x29dd40a6…5203c8](https://sepolia.basescan.org/tx/0x29dd40a6db7016bf0b75f49ef56da3b64b44e81e25e473cc6d19c7930a5203c8) · execution `az13hw7qn9y9dhs52s4rg` |
 | The same tick: deposit of 5 USDC | [0x70b453be…5a7a87](https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87) · execution `au5z8vtzv8s9xm811z93j` |
 | The exit, through KeeperHub | [0x91777e39…17f0a4](https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4) · execution `7rshlqcgwoxkia3iz052b` |
@@ -118,6 +119,15 @@ almanak-keeperhub console            # http://127.0.0.1:8642, opens a browser; -
 ```
 
 No framework and no build step: one HTML file served by the standard library's HTTP server, with the package's own client behind the Inspect endpoint. Open it beside the terminal for the demo.
+
+`almanak-keeperhub console --export docs` writes the same page as a static site with every execution's
+evidence frozen next to it, which is what https://prashant-thakur77.github.io/almanak-keeperhub/ serves.
+That site does not wait for a human: `.github/workflows/proof.yml` runs `scripts/proof_tick.sh` on a GitHub
+runner every six hours, which puts the demo strategy through one full lifecycle on Base Sepolia (Almanak plans,
+KeeperHub dry-runs, approve and deposit land, the position is redeemed so the test USDC comes back), merges
+every receipts log into `docs/all-receipts.json`, re-exports the console keeping the verdicts already frozen,
+and commits the result. The newest rows on the console were made by that runner, and the commit that added
+them is signed `proof-tick`.
 
 To show a judge who acted when KeeperHub's relayer paid the gas:
 

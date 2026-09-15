@@ -207,3 +207,36 @@ async def test_export_writes_a_self_contained_snapshot(strategy_dir: Path, tmp_p
     assert state["sources"]["receipts"] == "keeperhub-receipts.json"  # no local paths leak onto the site
     assert sorted(p.name for p in (out / "console-data" / "verify").iterdir()) == ["au5z.json", "az13.json"]
     assert (out / ".nojekyll").exists()
+
+
+async def test_export_reuses_frozen_verdicts_and_reasks_the_unsettled(strategy_dir: Path, tmp_path: Path) -> None:
+    """A scheduled re-export must not ask KeeperHub about every execution it already froze."""
+    from almanak_keeperhub.console.export import export_site
+
+    out = tmp_path / "site"
+    verify_dir = out / "console-data" / "verify"
+    verify_dir.mkdir(parents=True)
+    (verify_dir / "az13.json").write_text(json.dumps({"status": "completed", "frozen": True}))
+    (verify_dir / "au5z.json").write_text(json.dumps({"status": "pending"}))
+    with respx.mock(base_url=BASE) as mock:
+        mock.get("/api/workflows/7clo/executions").mock(return_value=httpx.Response(200, json={"executions": []}))
+        mock.get("/api/user").mock(return_value=httpx.Response(200, json={"walletAddress": ORG}))
+        status = mock.get(path__regex=r"/api/execute/.*/status").mock(
+            return_value=httpx.Response(
+                200, json={"status": "completed", "sponsored": True, "receipts": [{"verified": True}], "result": {}}
+            )
+        )
+        await export_site(
+            out,
+            receipts=strategy_dir / "keeperhub-receipts.json",
+            demo_receipts=strategy_dir / "missing-demos.json",
+            benchmark=strategy_dir / "missing-benchmark.json",
+            org_wallet=ORG,
+            base_url=BASE,
+            chain="base_sepolia",
+            reuse=verify_dir,
+        )
+
+    assert status.call_count == 1  # only the pending one
+    assert json.loads((verify_dir / "az13.json").read_text())["frozen"] is True
+    assert json.loads((verify_dir / "au5z.json").read_text())["status"] == "completed"
