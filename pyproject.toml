@@ -29,6 +29,11 @@ almanak-keeperhub = "almanak_keeperhub.cli:main"
 [project.entry-points."almanak.wallets"]
 registry = "almanak_keeperhub.wallets:KeeperHubWalletRegistry"
 
+# The entry-point group proposed upstream (patches/almanak-execution-backend.diff). Almanak
+# ignores it until that lands; with it, this package needs no gateway subclass.
+[project.entry-points."almanak.execution_backends"]
+keeperhub = "almanak_keeperhub.backend:KeeperHubBackend"
+
 [tool.hatch.build.targets.wheel]
 packages = ["almanak_keeperhub"]
 

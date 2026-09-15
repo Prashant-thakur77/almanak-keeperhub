@@ -1,3 +1,72 @@
+# Issue for github.com/almanak-co/sdk
+
+File at https://github.com/almanak-co/sdk/issues/new. Title, then the body. Attach the diff by
+pasting it into the collapsed section at the end (it is `patches/almanak-execution-backend.diff`).
+
+## Title
+
+Proposal: let a plugin provide the execution stack for a wallet kind (`almanak.execution_backends`)
+
+## Body
+
+`almanak/framework/execution/interfaces.py` describes the execution layer as "enabling multiple
+signing backends (local EOA, cloud KMS) and submission methods (public mempool, Flashbots, direct
+RPC)", and `Signer`, `Submitter` and `Simulator` are clean ABCs. The gateway does not let anything
+outside the package use them, though:
+
+- `ExecutionServiceServicer._create_signer_from_resolved` (`almanak/gateway/services/execution_service.py`,
+  main at f98b7896, line 683) knows the kinds `zodiac`, `direct` and `squads` and raises
+  `Unknown wallet kind` for anything else, so a wallet registry plugin (the `almanak.wallets`
+  entry-point group, which the gateway already discovers) can name a wallet but cannot say how it
+  signs.
+- `_get_orchestrator` (line 754) always constructs `PublicMempoolSubmitter` and the built-in
+  simulator, whatever the signer is.
+- The only other submitter that ships, `PrivateRelaySubmitter`, raises
+  `SubmissionError("Private relay backend is not implemented in local-first stub")`.
+
+So a signer that does not hold a private key locally (a custody API, a KMS, or an execution service
+that signs, simulates and broadcasts as one unit) has no supported way in. I hit this integrating
+KeeperHub as an execution backend (https://github.com/Prashant-thakur77/almanak-keeperhub): the
+package implements all three ABCs, and the only way to get them into the gateway today is a
+subclass of `ExecutionServiceServicer` that overrides those two methods.
+
+### Proposal
+
+One entry-point group, `almanak.execution_backends`, keyed by wallet kind, mirroring how
+`almanak.wallets` already works. A plugin registered there exposes three factories:
+
+```python
+class MyBackend:
+    def create_signer(self, wallet, *, settings) -> Signer: ...
+    def create_submitter(self, signer, *, chain, rpc_url, settings) -> Submitter: ...
+    def create_simulator(self, signer, *, chain, rpc_url, settings) -> Simulator: ...
+```
+
+`_create_signer_from_resolved` consults the group before raising `Unknown wallet kind`, and
+`_get_orchestrator` asks the same backend for the submitter and simulator when the signer came
+from one. The built-in kinds and the current simulator selection (`SIMULATION_BACKEND=rpc` or
+not) are untouched when no plugin claims the kind, and a wallet kind with no plugin still fails
+closed exactly as now.
+
+The diff below applies to main at f98b7896 (`patch -p1`, no fuzz) and is what I run against
+2.28.0 with the equivalent hunks. It is 76 lines, with the discovery helper being most of it.
+
+### What it enables
+
+With the group, a registry entry of kind `keeperhub` gets a complete execution stack: the
+strategy is unchanged, `almanak strat run` compiles as today, and the plugin signs through a
+custody API, dry-runs through it, broadcasts with an idempotency key, and hands back a normal
+`TransactionReceipt`. The same mechanism would serve a KMS signer with the public mempool, or
+a Flashbots submitter with the local signer, without either needing to subclass the servicer.
+
+Happy to adjust the shape (a single `create_execution_stack` returning the three, or a class
+attribute on the signer instead of `execution_backend`) if you prefer; the entry-point
+discovery is the part that matters.
+
+<details>
+<summary>almanak-execution-backend.diff</summary>
+
+```diff
 --- a/almanak/gateway/services/execution_service.py
 +++ b/almanak/gateway/services/execution_service.py
 @@ -57,6 +57,28 @@
@@ -74,3 +143,6 @@
              simulator = create_simulator(config=simulation_config, rpc_url=rpc_url)
  
          orchestrator = ExecutionOrchestrator(
+```
+
+</details>

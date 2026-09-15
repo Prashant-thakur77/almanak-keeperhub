@@ -1,7 +1,15 @@
 # Almanak feedback (almanak 2.28.0 from PyPI)
 
 Found while making KeeperHub an execution backend. Both are reproducible with the
-package alone; neither needs KeeperHub.
+2.28.0 package alone; neither needs KeeperHub.
+
+Checked against `main` on 15 Sep 2026 (commit f98b7896): both are fixed there. Bug 1 by
+`87428eaa` "fix(gateway): keep token discovery on owned async paths" (9 Sep), which passes
+`skip_gateway=True` from `LivePriceSource._build_token_pair_map`; bug 2 by the runner now
+building its `ExecutionContext` with `simulation_enabled=self.config.simulation_enabled`
+(`strategy_runner.py`, absent in 2.28.0). Neither is in a PyPI release yet, so this
+package keeps its two wrappers until one ships. Item 3 is still open on main and is
+filed as an issue with a diff that applies to main (`docs/submission/almanak-issue.md`).
 
 ## 1. In-process managed gateway deadlocks for 30 s in `RegisterChains` when a wallet registry plugin is installed
 
