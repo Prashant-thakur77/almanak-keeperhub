@@ -19,7 +19,9 @@ async def main() -> None:
         held = await current_shares(targets.rpc, targets.vault, stack.address)
         stale = max(held + 1, 1)  # one share more than the position holds: a decision the chain has outrun
         banner(f"exit {stale} shares while the wallet holds {held}: KeeperHub checks before it redeems")
-        exit_ = GuardedExit(vault=targets.vault, chain_id=targets.chain_id, wallet=stack.address, shares=stale)
+        exit_ = GuardedExit(
+            vault=targets.vault, chain_id=targets.chain_id, wallet=stack.address, shares=stale, work_id=f"demo-{stale}"
+        )
         outcome = await run_guarded_exit(stack.client, exit_, receipts=stack.submitter._receipts)
         if outcome.executed:
             raise SystemExit(f"KeeperHub redeemed on a failed guard: {outcome.execution_id}")

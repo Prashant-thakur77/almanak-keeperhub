@@ -175,7 +175,10 @@ position can change: the keeper compounded, another process already redeemed, a 
 that landed. `almanak-keeperhub exit` sends the redeem as KeeperHub's `check-and-execute`: KeeperHub reads
 `balanceOf(wallet)` itself right before the write and runs `redeem(shares)` only if the balance still covers
 it. A stale decision comes back `executed: false` with the observed balance, recorded as a refusal, and
-nothing is broadcast. One idempotency key per (vault, wallet, shares), so the same exit never redeems twice.
+nothing is broadcast. The idempotency key identifies the decision, not the shape: the first scheduled run
+taught that lesson, when a key made of (vault, wallet, shares) collided with an earlier same-size exit and
+KeeperHub replayed it instead of redeeming. The guard is what prevents a double redeem; the key only covers
+an immediate retry of one decision.
 
 ```
 $ almanak-keeperhub exit --simulate         # guard holds: executed True, status simulated, nothing signed

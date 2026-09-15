@@ -19,8 +19,8 @@ WALLET = "0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9"
 TX = "0x" + "7c" * 32
 
 
-def exit_(shares: int = 5_000_000) -> GuardedExit:
-    return GuardedExit(vault=VAULT, chain_id=84532, wallet=WALLET, shares=shares)
+def exit_(shares: int = 5_000_000, work_id: str = "decision-1") -> GuardedExit:
+    return GuardedExit(vault=VAULT, chain_id=84532, wallet=WALLET, shares=shares, work_id=work_id)
 
 
 def test_the_request_is_the_documented_shape() -> None:
@@ -36,8 +36,11 @@ def test_the_request_is_the_documented_shape() -> None:
     assert action["functionName"] == "redeem"
     assert json.loads(action["functionArgs"]) == ["5000000", WALLET, WALLET]
     assert e.action.data and e.action.data.startswith("0xba087652")  # redeem(uint256,address,address)
-    assert e.idempotency_key() == exit_().idempotency_key()
+    assert e.idempotency_key() == exit_().idempotency_key()  # a retry of the same decision
     assert e.idempotency_key() != exit_(1).idempotency_key()
+    # Two exits of the same size are different decisions when the position was rebuilt in between;
+    # the first CI run proved it: a same-shape key replayed an old redeem and left the position open.
+    assert e.idempotency_key() != exit_(work_id="decision-2").idempotency_key()
 
 
 @respx.mock

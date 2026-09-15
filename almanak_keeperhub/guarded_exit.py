@@ -53,6 +53,7 @@ class GuardedExit:
     chain_id: int
     wallet: str
     shares: int
+    work_id: str = ""  # the decision this exit carries out; a retry of it reuses the id, a new decision does not
 
     @property
     def check(self) -> ContractCall:
@@ -69,9 +70,19 @@ class GuardedExit:
         )
 
     def idempotency_key(self) -> str:
+        """Identifies one exit decision. The guard, not this key, is what prevents a second redeem:
+        two exits of the same size within KeeperHub's replay window are different decisions
+        (the position was rebuilt in between), so the decision id is part of the key."""
         import hashlib
 
-        parts = ["guarded-exit/v1", str(self.chain_id), self.wallet.lower(), self.vault.lower(), str(self.shares)]
+        parts = [
+            "guarded-exit/v2",
+            str(self.chain_id),
+            self.wallet.lower(),
+            self.vault.lower(),
+            str(self.shares),
+            self.work_id,
+        ]
         return hashlib.sha256("|".join(parts).encode()).hexdigest()
 
 
@@ -85,8 +96,9 @@ async def run_guarded_exit(
 ) -> GuardedOutcome:
     """Ask KeeperHub to redeem ``shares`` only if the wallet still holds at least that many.
 
-    One idempotency key per (vault, wallet, shares), so a retried exit replays rather than
-    redeems twice. Records the execution in the receipts log like any other broadcast.
+    One idempotency key per decision (``exit_.work_id``), so a retry of the same decision replays
+    rather than redeems twice; the guard covers everything else. Records the execution in the
+    receipts log like any other broadcast.
     """
     outcome = await client.check_and_execute(
         check=exit_.check,

@@ -403,7 +403,7 @@ def guarded_exit(chain_name: str | None, working_dir: str, simulate: bool, expec
 
     A decision taken on a stale snapshot (the keeper compounded, another process already exited,
     a retry of an exit that landed) comes back executed=false with the observed balance, instead of
-    a revert. One idempotency key per (vault, wallet, shares), so the same exit never redeems twice.
+    a revert. Set ALMANAK_KEEPERHUB_EXIT_ID to retry one decision under its own idempotency key.
     """
     import time
 
@@ -431,13 +431,23 @@ def guarded_exit(chain_name: str | None, working_dir: str, simulate: bool, expec
             if targets.chain_id != 84532 and not simulate and not click.confirm("redeem on a mainnet?"):
                 return 2
             started = time.perf_counter()
-            exit_ = GuardedExit(vault=targets.vault, chain_id=targets.chain_id, wallet=wallet, shares=shares)
+            exit_ = GuardedExit(
+                vault=targets.vault,
+                chain_id=targets.chain_id,
+                wallet=wallet,
+                shares=shares,
+                work_id=os.environ.get("ALMANAK_KEEPERHUB_EXIT_ID") or f"exit-{int(time.time())}",
+            )
             receipts = ReceiptLog(Path(working_dir) / "keeperhub-receipts.json")
             outcome = await run_guarded_exit(client, exit_, simulate=simulate, receipts=receipts)
             for key, value in describe(outcome, exit_, started).items():
                 click.echo(f"{key:<18}: {value}")
             if outcome.executed and outcome.transaction_hash:
                 click.echo(f"{'explorer':<18}: {targets.explorer}{outcome.transaction_hash}")
+            if outcome.idempotent_replay:
+                click.echo(
+                    "note              : KeeperHub replayed an earlier execution of this decision; nothing new landed"
+                )
             return 0 if outcome.executed or simulate else 3
         finally:
             await client.aclose()
