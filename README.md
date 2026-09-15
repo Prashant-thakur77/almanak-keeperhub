@@ -4,6 +4,53 @@
 
 Almanak decides. KeeperHub lands it. No strategy code changes.
 
+## The result
+
+Every figure below comes from a KeeperHub execution record or a transaction receipt on Base Sepolia. Nothing is
+estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is its raw output.
+
+| Measure | Result |
+|---|---|
+| Impossible deposits refused before broadcast | BENCH_REFUSED |
+| Valid dry runs through KeeperHub | BENCH_SIMS |
+| Real executions landed and verified | BENCH_LANDED |
+| Broadcast to verified receipt | BENCH_LATENCY |
+| Retry of already-landed work | replayed by idempotency key, not resent (BENCH_RETRY) |
+| Failure modes recorded, on purpose | 6 of 6, none reached the chain except the ones meant to |
+| Private keys on the machine | 0 |
+| Strategy code changed | 1 line (the chain list) |
+| Unit tests | 139 |
+| Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, 3 pull requests open, 2 labelled approve |
+
+## Judge links
+
+| What | Where |
+|---|---|
+| Live proof console (every execution, KeeperHub's verdict, decoded events) | https://prashant-thakur77.github.io/almanak-keeperhub/ |
+| Demo video | VIDEO_URL |
+| A real strategy tick: approve | [0x29dd40a6…5203c8](https://sepolia.basescan.org/tx/0x29dd40a6db7016bf0b75f49ef56da3b64b44e81e25e473cc6d19c7930a5203c8) · execution `az13hw7qn9y9dhs52s4rg` |
+| The same tick: deposit of 5 USDC | [0x70b453be…5a7a87](https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87) · execution `au5z8vtzv8s9xm811z93j` |
+| The exit, through KeeperHub | [0x91777e39…17f0a4](https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4) · execution `7rshlqcgwoxkia3iz052b` |
+| A keeper run by KeeperHub's own engine, no Almanak process | [0x3e31e8c1…68cf16](https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16) · workflow `7cloybpqfrjvjv756dd2r` |
+| Upstream: raw calldata on `contract-call` | [issue #2426](https://github.com/KeeperHub/keeperhub/issues/2426) → [PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449) |
+| Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450) |
+| Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452) |
+| Every execution hash, verdict and link | [`docs/console-data/state.json`](docs/console-data/state.json), [`docs/receipts.json`](docs/receipts.json), [`docs/benchmark.json`](docs/benchmark.json) |
+| Reproducible API findings | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
+
+Verify any row yourself: `almanak-keeperhub verify <hash or execution id>` asks KeeperHub for its verdict and
+decodes the receipt to name who acted, or open the execution in the KeeperHub app under Runs.
+
+## Three ways to use it
+
+| Surface | For | Start it |
+|---|---|---|
+| CLI | the strategy operator | `almanak-keeperhub run --once` |
+| MCP server | any agent: Claude, Cursor, an n8n AI Agent | `almanak-keeperhub mcp` (read + dry run; `--write` to broadcast) |
+| Telegram bot | the operator's phone | `almanak-keeperhub bot` |
+
+All three read the same receipts and drive the same CLI, so they cannot disagree about what happened.
+
 **In sixty seconds.** [Almanak](https://github.com/almanak-co/sdk) is a live DeFi strategy framework whose execution layer is three abstract classes: sign, simulate, submit. This package implements all three against KeeperHub, so every Almanak strategy, unmodified, dry-runs through KeeperHub, broadcasts with one idempotency key per intent, and gets a verified receipt back into Almanak's own parsers, with no private key on the machine. Verified on the hosted app on Base Sepolia on 12 Sep 2026: the packaged demo strategy's [deposit](https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87), a KeeperHub-scheduled keeper generated from the strategy config and [run by KeeperHub's own engine](https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16), the [redeem](https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4), six deliberate failure modes, and a benchmark (20 of 20 impossible deposits refused before broadcast, 5 of 5 approvals landed and verified, median 6.9 s). Everything cost nothing: gas sponsored by KeeperHub, faucet USDC. Proof table below; live console and Telegram operator bot included.
 
 [Almanak](https://github.com/almanak-co/sdk) is an open-source DeFi strategy framework (PyPI `almanak`, Apache-2.0, 46 protocol connectors). Its execution layer is built around three abstract classes, `Signer`, `Submitter` and `Simulator`, so that "multiple signing backends and submission methods" can be plugged in (`almanak/framework/execution/interfaces.py`). Today the only submitter that ships is the public mempool, and the private-relay submitter is a stub that rejects every transaction.
@@ -124,6 +171,23 @@ almanak-keeperhub keeper status    # GET /api/workflows/{id}/executions
 The keeper only moves balances inside a bounded window (1 to 90 USDC by default). Anything larger is left for the strategy to size, which keeps the two layers from fighting. It uses free-tier nodes only (the Code, HTTP request and Send Webhook nodes need a Pro plan; checked against `GET /api/action-schemas` on the hosted app). The generated JSON passes KeeperHub's hosted validator (`GET /api/workflows/{id}/validate?deepCheck=true`, recorded in `keeperhub-keeper.json`) and its structural validator in `tests/e2e/keeperhub-validator/`, which runs inside a KeeperHub checkout against `docs/keeper-workflow.json`.
 
 ## Two policy layers, both refusing
+
+The strategy, or Almanak's AI agent, only ever proposes. Nothing it says can turn into a broadcast without passing
+two independent gates it does not control, and the private key sits behind the second one, in an enclave.
+
+```mermaid
+flowchart LR
+    A[Almanak strategy or agent<br/>proposes an intent] --> P{Almanak policy<br/>trade limits, allowlists}
+    P -- denied --> R1[refused: nothing compiled]
+    P -- allowed --> C[compiled transactions]
+    C --> S{KeeperHub dry run<br/>simulate: true}
+    S -- would revert --> R2[refused: nothing signed]
+    S -- clean --> K{KeeperHub caps<br/>0.02 ETH/day, 100 USD stablecoin}
+    K -- over cap --> R3[refused: nothing signed]
+    K -- allowed --> T[Turnkey enclave signs<br/>one idempotency key per intent]
+    T --> B[broadcast, gas sponsored]
+    B --> V[verified receipt back into Almanak's parsers]
+```
 
 Almanak's agent policy refuses before anything is compiled; KeeperHub's caps refuse before anything is signed. Both are demonstrated:
 
