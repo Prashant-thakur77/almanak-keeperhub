@@ -29,8 +29,8 @@ if [ "${1:-}" != "--no-tick" ]; then
   almanak-keeperhub run -d "$STRATEGY" --once --fresh 2>&1 \
     | grep -E "KeeperHub simulate|broadcast tx|Status:|executions this run|^  [a-z]+ ->|^    tx|refused|error" || true
 
-  step "exit: redeem the whole position through KeeperHub (the test USDC comes back)"
-  ( cd "$STRATEGY" && python "$ROOT/scripts/redeem_all.py" )
+  step "exit: KeeperHub re-reads the position and redeems it only if it still holds (check-and-execute)"
+  almanak-keeperhub exit -d "$STRATEGY" --chain base_sepolia
 fi
 
 step "live conformance: the documented API behaviours, checked against production"

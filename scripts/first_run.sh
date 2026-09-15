@@ -42,7 +42,7 @@ if [ "${1:-}" != "--skip-real" ]; then
 fi
 
 step "5/7 failure modes (each script explains what it proves)"
-( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency rpc_outage crash_and_resume; do
+( cd "$ROOT/demos/failure_modes" && for s in unknown_selector_refused revert_caught_by_dry_run cap_refused duplicate_blocked_by_idempotency rpc_outage crash_and_resume stale_exit_not_executed; do
     echo "--- $s"; python "$s.py" || echo "!!! $s failed; read the output above"
   done )
 echo

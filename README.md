@@ -16,7 +16,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Real executions landed and verified | **200/200** |
 | Broadcast to verified receipt | p50 8.95s, p95 12.88s |
 | Retry of already-landed work | replayed by idempotency key, not resent (1.47s) |
-| Failure modes recorded, on purpose | 6 of 6, none reached the chain except the ones meant to |
+| Failure modes recorded, on purpose | 7 of 7, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
 | Tests | 553 unit and property, 11 live against production every six hours |
@@ -167,6 +167,27 @@ almanak-keeperhub run --once --fresh                        # approve + deposit
 almanak-keeperhub run --once -c config.exit.json            # EXIT: APY 4.2% < floor 50% -> redeem, back to idle
 ```
 
+## The exit that KeeperHub double-checks
+
+Almanak decides to leave a vault on a snapshot of the position. Between that decision and the broadcast the
+position can change: the keeper compounded, another process already redeemed, a retry is replaying an exit
+that landed. `almanak-keeperhub exit` sends the redeem as KeeperHub's `check-and-execute`: KeeperHub reads
+`balanceOf(wallet)` itself right before the write and runs `redeem(shares)` only if the balance still covers
+it. A stale decision comes back `executed: false` with the observed balance, recorded as a refusal, and
+nothing is broadcast. One idempotency key per (vault, wallet, shares), so the same exit never redeems twice.
+
+```
+$ almanak-keeperhub exit --simulate         # guard holds: executed True, status simulated, nothing signed
+$ almanak-keeperhub exit                    # executed True, execution dixwqqavpw77vpqsftrt7, tx 0x11217e29..., completed
+$ almanak-keeperhub exit --expect-shares 5000000   # the same decision again, position already closed:
+executed          : False
+guard             : balanceOf(0xe7dbacbd...36ac9) gte 5000000
+observed          : 0
+```
+
+Those three are a real sequence on Base Sepolia on 15 Sep 2026; the proof tick runs the guarded exit every
+six hours, and `exit_position` exposes it to an agent over MCP.
+
 ## The keeper: a scheduled KeeperHub workflow generated from the strategy
 
 Almanak decides entry and exit on its own tick. Between ticks, or when no Almanak process is running at all, a KeeperHub workflow keeps small idle balances working. `almanak-keeperhub keeper` generates it from the strategy's `config.json` (vault, token, chain), creates it in KeeperHub, validates it, and enables it on request:
@@ -200,7 +221,7 @@ flowchart LR
     B --> V[verified receipt back into Almanak's parsers]
 ```
 
-Almanak's agent policy refuses before anything is compiled; KeeperHub's caps refuse before anything is signed. Both are demonstrated:
+Almanak's agent policy refuses before anything is compiled; KeeperHub's caps refuse before anything is signed. [`SECURITY.md`](SECURITY.md) is the full model: who can act through which gate, what the package refuses on its own, what a stolen key can and cannot do. Both gates are demonstrated:
 
 ```bash
 almanak-keeperhub ax --chain base --max-trade-usd 0.5 swap USDC WETH 1 --yes
@@ -270,11 +291,12 @@ prints it; the day production ships the merged code, the fallbacks stop running 
 
 | Surface | Used | How |
 |---|---|---|
-| Direct execution REST | yes | `POST /api/execute/contract-call` with `simulate: true`, then with `Idempotency-Key`; `GET /api/execute/{id}/status` |
+| Direct execution REST | yes | `POST /api/execute/contract-call` with `simulate: true`, then with `Idempotency-Key`; `GET /api/execute/{id}/status`; raw `data` and `calls[]` sequences the moment production deploys them |
+| Check and execute | yes | `almanak-keeperhub exit`: the vault exit as `POST /api/execute/check-and-execute`, KeeperHub reading the balance right before the redeem and refusing a stale decision with `executed: false` |
 | Audit trail | yes | every execution id, hash, verified flag and link recorded in `keeperhub-receipts.json`, printed at the end of each run, plus the Runs page in the app |
 | Agent-authored workflows | yes | `almanak-keeperhub keeper` generates a Schedule-triggered workflow from the strategy config and creates it through `POST /api/workflows/create`; KeeperHub's scheduler runs it with no Almanak process |
 | Agent-authored execution | yes | Almanak's `ax` agent (structured or natural language) decides; KeeperHub executes the compiled transactions |
-| MCP | no | Almanak's execution layer is Python inside a gRPC gateway; the REST surface is the right one there. The bounty adds a `data` input to the same endpoint the MCP tool wraps |
+| MCP | as a server | Almanak's execution layer is Python inside a gRPC gateway, so it consumes REST; the other direction is `almanak-keeperhub mcp`, which serves the strategy's proof and controls to any MCP client with the same read/write split as KeeperHub's own keys |
 | CLI (`kh`) | no | not needed by the integration |
 | x402 / MPP | no, deliberately | this executes a framework's own transactions; nothing here is sold per call |
 
@@ -299,8 +321,9 @@ cd demos/metamorpho_base_sepolia && almanak-keeperhub mcp --chain base_sepolia -
 | `verify <hash or execution id>` | KeeperHub's verdict, the receipt, and who acted decoded from the events | reads |
 | `benchmark`, `failure_modes`, `keeper` | the recorded benchmark, the six failure-mode verdicts, the compounder workflow | no |
 | `simulate_tick` | one strategy tick, dry-run through KeeperHub | dry run only |
-| `run_failure_demo <revert\|cap\|duplicate\|crash\|selector\|rpc>` | replay one failure mode | dry run, or a refused broadcast |
-| `run_tick` (`--write` only) | one real tick: sign and broadcast through KeeperHub; needs `confirm=true` | broadcasts |
+| `run_failure_demo <revert\|cap\|duplicate\|crash\|selector\|rpc\|stale>` | replay one failure mode | dry run, or a refused broadcast |
+| `run_tick` (`--write` only) | one real tick: sign and broadcast through KeeperHub; needs `confirm=true`; `fresh=true` after an exit outside Almanak | broadcasts |
+| `exit_position` (`--write` only) | the guarded exit: KeeperHub re-reads the balance, redeems only if it still covers it; needs `confirm=true` | broadcasts, or refuses |
 
 Resource `almanak-keeperhub://receipts` is the raw receipts log. Claude Desktop / Cursor config:
 
@@ -392,7 +415,8 @@ Each script uses the same signer, simulator and submitter the gateway uses.
 | `demos/failure_modes/duplicate_blocked_by_idempotency.py` | The same compiled approve submitted twice: same execution id, same hash, `idempotentReplay: true`, one transaction on chain |
 | `demos/failure_modes/cap_refused.py` | 150 USDC transfer: refused by KeeperHub's 100 USD per-transaction stablecoin cap, `submitted=False`, nothing signed |
 | `demos/failure_modes/rpc_outage.py` | Dead local RPC: the broadcast still lands through KeeperHub's RPC pool; only the local log fetch fails, and says so |
-| `demos/failure_modes/unknown_selector_refused.py` | Calldata with an unknown selector is refused at SIGNING, offline |
+| `demos/failure_modes/unknown_selector_refused.py` | Calldata with an unknown selector is handed to KeeperHub as raw bytes to decode against the verified ABI, or refused before signing on a KeeperHub that takes no raw calldata; never guessed, never broadcast |
+| `demos/failure_modes/stale_exit_not_executed.py` | An exit decided for more shares than the wallet holds: KeeperHub's check-and-execute reads the balance first, answers `executed: false` with what it observed, nothing broadcast |
 | `demos/failure_modes/crash_and_resume.py` | A child process broadcasts and dies before settlement; a fresh process is handed only the hash (what Almanak's runner does on restart), resumes the KeeperHub execution from `keeperhub-receipts.json`, and settles it without a second broadcast |
 
 ## Proof

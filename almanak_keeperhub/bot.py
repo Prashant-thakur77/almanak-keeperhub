@@ -48,6 +48,7 @@ DEMOS = {
     "crash": "crash_and_resume",
     "selector": "unknown_selector_refused",
     "rpc": "rpc_outage",
+    "stale": "stale_exit_not_executed",
 }
 SUMMARY_MARKERS = (
     "Status:",

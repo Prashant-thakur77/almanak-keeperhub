@@ -387,6 +387,64 @@ def _find_docs_dir() -> Path:
     return Path.cwd() / "docs"
 
 
+@main.command("exit")
+@click.option("--chain", "chain_name", default=None, help="Chain name; defaults to config.json 'chain'.")
+@click.option("-d", "--working-dir", default=".", show_default=True, help="Strategy directory (config.json, receipts).")
+@click.option("--simulate", is_flag=True, help="Dry-run the guarded exit; nothing is signed.")
+@click.option(
+    "--expect-shares",
+    type=int,
+    default=None,
+    help="Redeem this many shares instead of the current balance; the guard then decides whether it still holds.",
+)
+def guarded_exit(chain_name: str | None, working_dir: str, simulate: bool, expect_shares: int | None) -> None:
+    """Redeem the vault position through KeeperHub's check-and-execute: KeeperHub re-reads the balance
+    right before the write and only redeems if it still covers the request.
+
+    A decision taken on a stale snapshot (the keeper compounded, another process already exited,
+    a retry of an exit that landed) comes back executed=false with the observed balance, instead of
+    a revert. One idempotency key per (vault, wallet, shares), so the same exit never redeems twice.
+    """
+    import time
+
+    from almanak_keeperhub.demo_targets import demo_targets
+    from almanak_keeperhub.guarded_exit import GuardedExit, current_shares, describe, run_guarded_exit
+    from almanak_keeperhub.receipts import ReceiptLog
+
+    chain = chain_name or _chain_from_config(Path(working_dir), None) or "base"
+    os.environ["ALMANAK_KEEPERHUB_CHAIN"] = chain
+    targets = demo_targets()
+    api_key = os.environ.get("KEEPERHUB_API_KEY")
+    if not api_key:
+        raise click.ClickException("KEEPERHUB_API_KEY is not set")
+
+    async def run() -> int:
+        client = KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL))
+        try:
+            wallet = await client.wallet_address()
+            held = await current_shares(targets.rpc, targets.vault, wallet)
+            shares = held if expect_shares is None else expect_shares
+            click.echo(f"vault {targets.vault} on {targets.chain}: {held} shares held by {wallet}; asking for {shares}")
+            if shares <= 0:
+                click.echo("nothing to redeem")
+                return 0
+            if targets.chain_id != 84532 and not simulate and not click.confirm("redeem on a mainnet?"):
+                return 2
+            started = time.perf_counter()
+            exit_ = GuardedExit(vault=targets.vault, chain_id=targets.chain_id, wallet=wallet, shares=shares)
+            receipts = ReceiptLog(Path(working_dir) / "keeperhub-receipts.json")
+            outcome = await run_guarded_exit(client, exit_, simulate=simulate, receipts=receipts)
+            for key, value in describe(outcome, exit_, started).items():
+                click.echo(f"{key:<18}: {value}")
+            if outcome.executed and outcome.transaction_hash:
+                click.echo(f"{'explorer':<18}: {targets.explorer}{outcome.transaction_hash}")
+            return 0 if outcome.executed or simulate else 3
+        finally:
+            await client.aclose()
+
+    sys.exit(asyncio.run(run()))
+
+
 @main.command("merge-receipts")
 @click.argument("logs", nargs=-1, required=True, type=click.Path(exists=True, dir_okay=False))
 @click.option("--into", "into", required=True, type=click.Path(dir_okay=False), help="The union to write.")

@@ -318,7 +318,9 @@
     const f = state.api_features;
     const yn = (v) => v === true ? "yes" : v === false ? "not yet" : "unknown";
     const upstream = f ? ` Upstream features this project contributed, as answered by <code>${esc(f.base_url || "")}</code> at ${esc(f.probed_at || "")}: raw calldata <b>${yn(f.raw_calldata)}</b>, sequence dry run <b>${yn(f.call_sequence)}</b>; the client uses each the moment the answer is yes.` : "";
-    $("sources").innerHTML = `Sources: <code>${esc(state.sources.receipts)}</code> · <code>${esc(state.sources.demo_receipts)}</code> · <code>${esc(state.sources.benchmark)}</code>. Nothing on this page is typed in by hand; every row is read from a file the run wrote.${upstream}`;
+    const c = state.conformance;
+    const conformance = c ? ` Live conformance: <b>${c.passed}/${c.passed + c.failed}</b> documented API behaviours held on <code>${esc(c.base_url || "")}</code> at ${esc(c.ran_at || "")}.` : "";
+    $("sources").innerHTML = `Sources: <code>${esc(state.sources.receipts)}</code> · <code>${esc(state.sources.demo_receipts)}</code> · <code>${esc(state.sources.benchmark)}</code>. Nothing on this page is typed in by hand; every row is read from a file the run wrote.${upstream}${conformance}`;
   }
 
   async function poll() {

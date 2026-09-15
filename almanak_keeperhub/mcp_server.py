@@ -151,6 +151,17 @@ class StrategyTools:
         args = ["run", "-d", str(self.strategy_dir), "--once"]
         return await self._cli(args + ["--fresh"] if fresh else args)
 
+    async def exit_position(self, confirm: bool = False) -> dict[str, Any]:
+        """Redeem the vault position through KeeperHub's check-and-execute; KeeperHub re-reads the balance first."""
+        if not self.allow_broadcast:
+            return {"ok": False, "error": "broadcast is disabled on this server; start it with --write to allow exits"}
+        if not confirm:
+            return {
+                "ok": False,
+                "error": "a real exit signs and broadcasts through KeeperHub; call again with confirm=true",
+            }
+        return await self._cli(["exit", "-d", str(self.strategy_dir), "--chain", self.chain])
+
     async def run_failure_demo(self, name: str) -> dict[str, Any]:
         script = DEMOS.get(name)
         if script is None:
@@ -236,6 +247,12 @@ def build_server(tools: StrategyTools):
         return await tools.run_failure_demo(name)
 
     if tools.allow_broadcast:
+
+        @server.tool()
+        async def exit_position(confirm: bool = False) -> dict[str, Any]:
+            """Redeem the whole vault position, guarded: KeeperHub re-reads the balance right before the
+            redeem and answers executed=false if it no longer covers it. Requires confirm=true."""
+            return await tools.exit_position(confirm)
 
         @server.tool()
         async def run_tick(confirm: bool = False, fresh: bool = False) -> dict[str, Any]:

@@ -138,6 +138,27 @@ class SequenceOutcome:
 
 
 @dataclass(frozen=True)
+class ConditionResult:
+    met: bool
+    observed_value: str | None
+    target_value: str | None
+    operator: str | None
+
+
+@dataclass(frozen=True)
+class GuardedOutcome:
+    """The answer of ``POST /api/execute/check-and-execute``: KeeperHub read the guard, compared, and acted or not."""
+
+    executed: bool
+    condition: ConditionResult
+    execution_id: str | None = None
+    status: str | None = None
+    transaction_hash: str | None = None
+    idempotent_replay: bool = False
+    raw: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
 class ExecutionEnvelope:
     """The 202 body of a broadcast (or its 24-hour replay)."""
 
@@ -309,6 +330,50 @@ class KeeperHubClient:
             results=[_simulation_outcome(r, ok=bool(r.get("success"))) for r in results if isinstance(r, dict)],
             mechanism=payload.get("mechanism"),
             atomic=bool(payload.get("atomic")),
+            raw=payload,
+        )
+
+    async def check_and_execute(
+        self,
+        *,
+        check: ContractCall,
+        operator: str,
+        value: str,
+        action: ContractCall,
+        idempotency_key: str | None = None,
+        simulate: bool = False,
+    ) -> GuardedOutcome:
+        """Have KeeperHub read ``check``, compare it with ``value``, and only then run ``action``.
+
+        The read happens on KeeperHub's side right before the write, so a decision made on a
+        stale snapshot (a position already closed by the keeper or another process) comes back
+        ``executed: false`` with the observed value instead of a broadcast that reverts.
+        """
+        body: dict[str, Any] = {
+            **check.body(),
+            "condition": {"operator": operator, "value": value},
+            "action": {k: v for k, v in action.body().items() if k != "chainId"},
+        }
+        if simulate:
+            body["simulate"] = True
+        headers = {"Idempotency-Key": idempotency_key} if idempotency_key else None
+        response = await self._http.post("/api/execute/check-and-execute", json=body, headers=headers)
+        payload = _json_or_empty(response)
+        if response.status_code >= 400 and not (response.status_code == 400 and payload.get("conditionResult")):
+            _raise_for_status(response, payload)
+        cond = payload.get("conditionResult") if isinstance(payload.get("conditionResult"), dict) else {}
+        return GuardedOutcome(
+            executed=bool(payload.get("executed")),
+            condition=ConditionResult(
+                met=bool(cond.get("met")),
+                observed_value=str(cond["observedValue"]) if cond.get("observedValue") is not None else None,
+                target_value=str(cond["targetValue"]) if cond.get("targetValue") is not None else None,
+                operator=cond.get("operator"),
+            ),
+            execution_id=payload.get("executionId") if isinstance(payload.get("executionId"), str) else None,
+            status=payload.get("status"),
+            transaction_hash=payload.get("transactionHash"),
+            idempotent_replay=payload.get("idempotentReplay") is True,
             raw=payload,
         )
 

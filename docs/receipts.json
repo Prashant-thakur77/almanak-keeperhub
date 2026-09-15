@@ -36,5 +36,17 @@
     "execution_id": "otzkaujo4qhzsgwfgjobs",
     "tx_hash": "0xaf144a42c2ec331d7541f4a0a4e20708f28fed18228048838fbff0aa0b98608c",
     "resumed": true
+  },
+  {
+    "kind": "stale_exit_not_executed",
+    "shares_requested": 1,
+    "shares_observed_by_keeperhub": "0",
+    "broadcast": false
+  },
+  {
+    "kind": "unknown_selector_refused",
+    "selector": "0xdeadbeef",
+    "broadcast": false,
+    "refused_by": "submitter (this KeeperHub takes no raw calldata)"
   }
 ]

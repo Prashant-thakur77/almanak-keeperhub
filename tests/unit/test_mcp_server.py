@@ -106,6 +106,12 @@ async def test_run_tick_is_refused_unless_the_server_allows_broadcast(strategy_d
     await on.run_tick(confirm=True, fresh=True)
     assert seen[-1] == ["run", "-d", str(strategy_dir), "--once", "--fresh"]
 
+    off_exit = await make_tools(strategy_dir, runner=runner).exit_position(confirm=True)
+    assert off_exit["ok"] is False and "--write" in off_exit["error"]
+    assert (await on.exit_position(confirm=False))["ok"] is False
+    await on.exit_position(confirm=True)
+    assert seen[-1] == ["exit", "-d", str(strategy_dir), "--chain", "base_sepolia"]
+
 
 async def test_run_tick_reports_the_executions_it_produced(strategy_dir: Path) -> None:
     receipts = strategy_dir / "keeperhub-receipts.json"
