@@ -33,6 +33,9 @@ if [ "${1:-}" != "--no-tick" ]; then
   ( cd "$STRATEGY" && python "$ROOT/scripts/redeem_all.py" )
 fi
 
+step "ask production which upstream features it has yet (raw calldata, sequence dry run)"
+almanak-keeperhub api-features --chain base_sepolia --out "$ROOT/docs/api-features.json" || true
+
 step "merge every receipts log into docs/all-receipts.json"
 almanak-keeperhub merge-receipts \
   "$STRATEGY/keeperhub-receipts.json" \

@@ -19,7 +19,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Failure modes recorded, on purpose | 6 of 6, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Unit tests | 143 |
+| Unit tests | 149 |
 | Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, **2 pull requests merged**, 1 in review |
 
 ## Judge links
@@ -255,6 +255,17 @@ Files:
 
 Idempotency key: `sha256(v2 | chain_id | from | to | data | value | almanak intent id)`. Almanak assigns a fresh nonce on every attempt, so the nonce is deliberately not part of the key: a retry of the same intent reproduces it and KeeperHub replays the first execution. The intent id (the execution context's correlation id) separates two intents that compile to identical calldata within KeeperHub's 24-hour replay window. Set `ALMANAK_KEEPERHUB_IDEMPOTENCY_SALT` for a deliberate repeat outside an orchestrated run.
 
+## The loop closed: what this project fixed upstream, it now uses
+
+The two hardest limits met while building this were KeeperHub's, not Almanak's: no raw calldata on
+`contract-call`, and a dry run that could not see the state an earlier call produces. Both were filed as
+issues, accepted, built to the maintainers' spec and merged into KeeperHub. The client here already speaks
+both shapes: `ContractCall` carries the typed and the raw spelling, `KeeperHubSimulator` offers a bundle as
+a sequence, and each capability latches from the API's own answer, so nothing is configured and nothing
+breaks on the deployment that has not caught up yet. `almanak-keeperhub api-features` asks the live API,
+the proof tick records the answer in `docs/api-features.json` every six hours, and the console footer
+prints it; the day production ships the merged code, the fallbacks stop running by themselves.
+
 ## KeeperHub surfaces used
 
 | Surface | Used | How |
@@ -437,8 +448,8 @@ tests/e2e/rehearsal.sh --testnet  # Base Sepolia fork: the free path end to end
 
 ## What still breaks or is unfinished
 
-- KeeperHub has no raw-calldata write on EVM, so calldata is decoded against an offline selector index (339 signatures: Almanak's shipped ABIs plus a curated list). A connector whose selector is missing is refused, not guessed. Add the signature to `almanak_keeperhub/signatures.json`.
-- KeeperHub simulate cannot chain calls, so only the first transaction of a bundle is dry-run against live state; later ones use Almanak's compiler gas limit, exactly like Almanak's own `LocalSimulator`. A revert in a dependent transaction is caught at broadcast, with the hash.
+- KeeperHub had no raw-calldata write on EVM, so calldata was decoded against an offline selector index (339 signatures: Almanak's shipped ABIs plus a curated list) and an unknown selector was refused. This project fixed that upstream ([merged](https://github.com/KeeperHub/keeperhub/pull/2449)): the client now sends Almanak's calldata as `data` first and KeeperHub decodes it losslessly against the contract's verified ABI, so an unknown selector is KeeperHub's call to refuse, not the index's. Production has not deployed it yet, so the client falls back to the typed spelling the moment the API answers with the old schema, and `doctor` says which path is live.
+- KeeperHub simulate could not chain calls, so only the first transaction of a bundle was dry-run against live state and later ones used Almanak's compiler gas limit, like Almanak's own `LocalSimulator`. Fixed upstream too ([merged](https://github.com/KeeperHub/keeperhub/pull/2452)): a bundle is offered as one `calls[]` sequence and every transaction is dry-run against the state the one before it produces, with the failing index named. Same fallback until production deploys it; the console footer shows the answer of the last probe.
 - Almanak's Safe plus Zodiac Roles deployment mode is not covered; this runs Almanak's EOA mode with KeeperHub's org wallet as the EOA.
 - Multi-transaction bundles are submitted one at a time with confirmation in between, slower than Almanak's parallel public submitter.
 - Two Almanak bugs in the 2.28.0 release needed workarounds inside `gateway.py` (see `docs/almanak-feedback.md`): the in-process gateway deadlocks for 30 s during `RegisterChains` when any wallet registry plugin is installed, and the strategy runner never enables the orchestrator's simulate phase on live networks. Both are fixed on Almanak's `main` since 9 Sep 2026 and not yet released; the workarounds stay until they are.

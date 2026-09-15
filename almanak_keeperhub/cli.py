@@ -827,9 +827,100 @@ async def _check_account(api_key: str, base_url: str, chain_name: str) -> int:
             click.echo(f"spend caps         : could not read ({exc})")
         if wanted is not None:
             problems += await _report_balances(address, chain_name, wanted)
+            await _report_api_features(client, address, wanted)
     finally:
         await client.aclose()
     return problems
+
+
+USDC_BY_CHAIN = {
+    8453: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    84532: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+}
+APPROVE_ABI = [
+    {
+        "type": "function",
+        "name": "approve",
+        "stateMutability": "nonpayable",
+        "inputs": [{"name": "spender", "type": "address"}, {"name": "amount", "type": "uint256"}],
+        "outputs": [{"name": "", "type": "bool"}],
+    }
+]
+
+
+async def probe_api_features(client: KeeperHubClient, address: str, chain_id: int) -> dict:
+    """Whether this KeeperHub takes raw calldata and sequence dry runs (both contributed upstream).
+
+    Probes with a zero-amount USDC approve to the org wallet itself, simulate only, so nothing
+    is signed. Each answer latches on the client the way a real call would.
+    """
+    from datetime import UTC, datetime
+
+    from almanak_keeperhub.client import ContractCall
+
+    usdc = USDC_BY_CHAIN.get(chain_id)
+    result: dict = {
+        "probed_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "base_url": str(client._http.base_url),
+        "chain_id": chain_id,
+        "raw_calldata": None,
+        "call_sequence": None,
+    }
+    if usdc is None:
+        result["error"] = "no known USDC on this chain to probe with"
+        return result
+    data = "0x095ea7b3" + address[2:].lower().rjust(64, "0") + "0" * 64
+    call = ContractCall(usdc, chain_id, "approve", [address, "0"], APPROVE_ABI, data=data)
+    try:
+        await client.simulate_contract_call(call)
+        result["raw_calldata"] = client.capabilities.raw_calldata
+        await client.simulate_call_sequence([call, call])
+        result["call_sequence"] = client.capabilities.call_sequence
+    except Exception as exc:  # noqa: BLE001 - a probe reports, never crashes
+        result["error"] = f"{type(exc).__name__}: {exc}"
+    return result
+
+
+async def _report_api_features(client: KeeperHubClient, address: str, chain_id: int) -> None:
+    features = await probe_api_features(client, address, chain_id)
+    if features.get("error"):
+        click.echo(f"api features       : probe failed ({features['error']})")
+        return
+    raw = "yes" if features["raw_calldata"] else "no (typed calls sent instead)"
+    sequence = "yes" if features["call_sequence"] else "no (first call only, as before)"
+    click.echo(f"raw calldata       : {raw}")
+    click.echo(f"sequence dry run   : {sequence}")
+
+
+@main.command("api-features")
+@click.option("--chain", "chain_name", default="base", show_default=True)
+@click.option("--out", "out_path", default=None, help="Also write the answer as JSON to this file.")
+def api_features(chain_name: str, out_path: str | None) -> None:
+    """Ask the live KeeperHub whether it accepts raw calldata and sequence dry runs.
+
+    Both were contributed upstream by this project; this records whether the deployment
+    this client talks to has them yet. The proof workflow runs it on every tick.
+    """
+    from almanak.core.chains import ChainRegistry
+
+    api_key = os.environ.get("KEEPERHUB_API_KEY")
+    if not api_key:
+        raise click.ClickException("KEEPERHUB_API_KEY is not set")
+    descriptor = ChainRegistry.try_resolve(chain_name)
+    if descriptor is None:
+        raise click.ClickException(f"'{chain_name}' is unknown to almanak")
+
+    async def run() -> dict:
+        client = KeeperHubClient(api_key=api_key, base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL))
+        try:
+            return await probe_api_features(client, await client.wallet_address(), descriptor.chain_id)
+        finally:
+            await client.aclose()
+
+    features = asyncio.run(run())
+    click.echo(json.dumps(features, indent=1))
+    if out_path:
+        Path(out_path).write_text(json.dumps(features, indent=1) + "\n")
 
 
 async def _report_balances(address: str, chain_name: str, chain_id: int) -> int:

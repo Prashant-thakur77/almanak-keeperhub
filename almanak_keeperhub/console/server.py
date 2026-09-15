@@ -98,6 +98,7 @@ def build_state(
         "dry_run_refusals": sum(1 for s in simulations if not s.get("success")),
     }
     bench = _read_json(benchmark, None)
+    features = _read_json(benchmark.parent / "api-features.json", None)
     return {
         "generated_at": datetime.now(UTC).isoformat(),
         "org_wallet": org_wallet,
@@ -108,6 +109,7 @@ def build_state(
         "simulations": simulations[:50],
         "failure_modes": failure_modes,
         "benchmark": bench if isinstance(bench, dict) else None,
+        "api_features": features if isinstance(features, dict) else None,
         "sources": {"receipts": str(receipts), "demo_receipts": str(demo_receipts), "benchmark": str(benchmark)},
     }
 

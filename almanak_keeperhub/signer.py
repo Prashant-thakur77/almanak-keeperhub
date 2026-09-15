@@ -76,6 +76,42 @@ def idempotency_key_for(tx: UnsignedTransaction, sender: str, work_id: str = "")
     return hashlib.sha256("|".join(parts).encode()).hexdigest()
 
 
+def call_for(tx: UnsignedTransaction, *, index: SelectorIndex | None, raw_calldata: bool | None) -> ContractCall:
+    """The KeeperHub call for a compiled transaction, in both spellings when possible.
+
+    The typed spelling comes from the local selector index. When the selector is not there,
+    the call is raw-only: KeeperHub decodes the bytes against the contract's verified ABI
+    and refuses them if it cannot, which is the same refusal the index used to make, moved
+    to the party that signs. That path needs a KeeperHub that accepts raw calldata; when
+    this process already knows it does not, the refusal happens here.
+    """
+    data = tx.data or "0x"
+    value_wei = int(tx.value or 0)
+    try:
+        decoded = decode_calldata(data, to=str(tx.to), value_wei=value_wei, index=index)
+    except UndecodableCalldata as exc:
+        if raw_calldata is False or len(data) < 10:
+            raise SigningError(str(exc)) from exc
+        return ContractCall(
+            contract_address=str(tx.to),
+            chain_id=int(tx.chain_id),
+            function_name="",
+            function_args=[],
+            abi=[],
+            value_wei=value_wei,
+            data=data,
+        )
+    return ContractCall(
+        contract_address=str(tx.to),
+        chain_id=int(tx.chain_id),
+        function_name=decoded.function_name,
+        function_args=decoded.function_args,
+        abi=decoded.abi,
+        value_wei=value_wei,
+        data=data,
+    )
+
+
 class KeeperHubSigner(Signer):
     def __init__(self, client: KeeperHubClient, address: str, index: SelectorIndex | None = None) -> None:
         self._client = client
@@ -93,18 +129,7 @@ class KeeperHubSigner(Signer):
             raise SigningError(
                 f"tx.from_address {tx.from_address} is not the KeeperHub organization wallet {self._address}"
             )
-        try:
-            decoded = decode_calldata(tx.data or "0x", to=tx.to, value_wei=int(tx.value or 0), index=self._index)
-        except UndecodableCalldata as exc:
-            raise SigningError(str(exc)) from exc
-        call = ContractCall(
-            contract_address=tx.to,
-            chain_id=int(tx.chain_id),
-            function_name=decoded.function_name,
-            function_args=decoded.function_args,
-            abi=decoded.abi,
-            value_wei=int(tx.value or 0),
-        )
+        call = call_for(tx, index=self._index, raw_calldata=self._client.capabilities.raw_calldata)
         key = idempotency_key_for(tx, self._address, current_work_id())
         return KeeperHubSignedTransaction(
             raw_tx="0x",

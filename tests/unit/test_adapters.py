@@ -116,6 +116,47 @@ def client() -> KeeperHubClient:
 
 
 @pytest.fixture
+def old_client() -> KeeperHubClient:
+    """A client that already knows this KeeperHub predates raw calldata and sequence dry runs."""
+    c = KeeperHubClient(api_key="kh_test", base_url=BASE)
+    c.capabilities.raw_calldata = False
+    c.capabilities.call_sequence = False
+    return c
+
+
+OLD_API_RAW = httpx.Response(
+    400,
+    json={
+        "error": "Missing required field",
+        "field": "functionName",
+        "details": "functionName is required and must be a non-empty string",
+    },
+)
+OLD_API_CALLS = httpx.Response(
+    400,
+    json={
+        "error": "Missing required field",
+        "field": "contractAddress",
+        "details": "contractAddress is required and must be a non-empty string",
+    },
+)
+
+
+def old_api(response: httpx.Response):
+    """Answer like production before the upstream changes: typed bodies only."""
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        body = json.loads(request.content)
+        if "calls" in body:
+            return OLD_API_CALLS
+        if "data" in body:
+            return OLD_API_RAW
+        return response
+
+    return respond
+
+
+@pytest.fixture
 def signer(client: KeeperHubClient) -> KeeperHubSigner:
     return KeeperHubSigner(client=client, address=ORG_WALLET)
 
@@ -167,12 +208,30 @@ async def test_idempotency_key_honours_salt(client: KeeperHubClient, monkeypatch
     assert plain.idempotency_key != salted.idempotency_key
 
 
-async def test_sign_refuses_unknown_selector_as_signing_error(signer: KeeperHubSigner) -> None:
+async def test_sign_refuses_unknown_selector_when_keeperhub_cannot_decode_it(old_client: KeeperHubClient) -> None:
     tx = approve_tx()
     tx.data = "0xdeadbeef" + "00" * 64
     with pytest.raises(SigningError) as excinfo:
-        await signer.sign(tx, "base")
+        await KeeperHubSigner(client=old_client, address=ORG_WALLET).sign(tx, "base")
     assert "0xdeadbeef" in str(excinfo.value)
+
+
+async def test_sign_hands_an_unknown_selector_to_keeperhub_as_raw_calldata(signer: KeeperHubSigner) -> None:
+    """KeeperHub decodes against the verified ABI and refuses what it cannot; the index no longer decides."""
+    tx = approve_tx()
+    tx.data = "0xdeadbeef" + "00" * 64
+    signed = await signer.sign(tx, "base")
+    assert signed.call.raw_only
+    assert signed.call.body() == {"contractAddress": USDC, "chainId": 8453, "data": tx.data}
+
+
+async def test_sign_carries_both_spellings_for_a_known_selector(signer: KeeperHubSigner) -> None:
+    tx = approve_tx()
+    signed = await signer.sign(tx, "base")
+    assert signed.call.function_name == "approve"
+    assert signed.call.data == tx.data
+    assert set(signed.call.body(raw=True)) == {"contractAddress", "chainId", "data", "abi"}
+    assert set(signed.call.body()) == {"contractAddress", "chainId", "functionName", "functionArgs", "abi"}
 
 
 async def test_sign_refuses_contract_creation(signer: KeeperHubSigner) -> None:
@@ -226,13 +285,15 @@ def test_submitter_implements_almanak_interface(client: KeeperHubClient) -> None
 async def test_submit_broadcasts_with_key_and_replaces_placeholder_hash(
     client: KeeperHubClient, signer: KeeperHubSigner
 ) -> None:
-    route = respx.post(EXEC_URL).mock(return_value=httpx.Response(202, json=completed()))
+    route = respx.post(EXEC_URL).mock(side_effect=old_api(httpx.Response(202, json=completed())))
     signed = await signer.sign(approve_tx(), "base")
 
     results = await _submitter(client).submit([signed])
 
     assert route.calls[0].request.headers["idempotency-key"] == signed.idempotency_key
-    assert json.loads(route.calls[0].request.content)["functionName"] == "approve"
+    assert "data" in json.loads(route.calls[0].request.content)  # raw first
+    assert json.loads(route.calls[1].request.content)["functionName"] == "approve"  # then typed, on the old API
+    assert client.capabilities.raw_calldata is False
     assert results == [SubmissionResult(tx_hash=TX_HASH, submitted=True, submitted_at=results[0].submitted_at)]
     assert signed.tx_hash == TX_HASH  # orchestrator indexes results by this
 
@@ -431,24 +492,134 @@ async def test_simulate_revert_fails_with_decoded_reason(client: KeeperHubClient
 
 
 @respx.mock
-async def test_simulate_only_first_tx_of_bundle_and_warns_for_dependents(client: KeeperHubClient) -> None:
+async def test_simulate_only_first_tx_of_bundle_and_warns_for_dependents_on_an_old_api(
+    client: KeeperHubClient,
+) -> None:
     route = respx.post(EXEC_URL).mock(
-        return_value=httpx.Response(200, json={"success": True, "gasEstimate": "46000", "wouldRevert": False})
+        side_effect=old_api(httpx.Response(200, json={"success": True, "gasEstimate": "46000", "wouldRevert": False}))
     )
     result = await _simulator(client).simulate([approve_tx(), deposit_tx()], "base")
 
-    assert route.call_count == 1
+    bodies = [json.loads(c.request.content) for c in route.calls]
+    assert "calls" in bodies[0]  # the sequence shape was offered first
+    assert client.capabilities.call_sequence is False
     assert result.success is True
     assert result.gas_estimates == [46000, 450_000]  # second uses the compiler gas limit
     assert any("depends on" in w for w in result.warnings)
 
 
-async def test_simulate_never_raises_for_undecodable_calldata(client: KeeperHubClient) -> None:
+@respx.mock
+async def test_simulate_runs_a_bundle_as_one_sequence(client: KeeperHubClient) -> None:
+    """On a KeeperHub with sequence dry runs, the deposit is simulated after the approve, not against latest."""
+    route = respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "success": True,
+                "status": "simulated",
+                "atomic": False,
+                "mechanism": "eth_simulateV1",
+                "wouldRevert": False,
+                "results": [
+                    {"success": True, "status": "simulated", "gasEstimate": "46000", "wouldRevert": False},
+                    {"success": True, "status": "simulated", "gasEstimate": "88000", "wouldRevert": False},
+                ],
+            },
+        )
+    )
+    result = await _simulator(client).simulate([approve_tx(), deposit_tx()], "base")
+
+    assert route.call_count == 1
+    body = json.loads(route.calls[0].request.content)
+    assert body["simulate"] is True and body["chainId"] == 8453
+    assert [c["functionName"] for c in body["calls"]] == ["approve", "deposit"]
+    assert result.success is True
+    assert result.gas_estimates == [46000, 88000]
+    assert result.warnings == []
+    assert client.capabilities.call_sequence is True
+
+
+@respx.mock
+async def test_simulate_sequence_names_the_call_that_would_fail(client: KeeperHubClient) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            400,
+            json={
+                "success": False,
+                "status": "simulated",
+                "atomic": False,
+                "mechanism": "state-overrides",
+                "wouldRevert": True,
+                "results": [
+                    {"success": True, "status": "simulated", "gasEstimate": "46000", "wouldRevert": False},
+                    {
+                        "success": False,
+                        "status": "simulated",
+                        "failureKind": "revert",
+                        "wouldRevert": True,
+                        "revertReason": "ERC4626: deposit more than max",
+                    },
+                ],
+            },
+        )
+    )
+    result = await _simulator(client).simulate([approve_tx(), deposit_tx()], "base")
+
+    assert result.success is False and result.simulated is True
+    assert result.revert_reason == "tx[1] deposit would fail after tx[0..0]: ERC4626: deposit more than max"
+
+
+@respx.mock
+async def test_simulate_sequence_refuses_when_later_calls_could_not_be_chained(client: KeeperHubClient) -> None:
+    respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            503,
+            json={
+                "success": False,
+                "status": "simulated",
+                "atomic": False,
+                "mechanism": None,
+                "results": [
+                    {"success": True, "status": "simulated", "gasEstimate": "46000", "wouldRevert": False},
+                    {"success": False, "status": "unavailable", "failureKind": "unavailable", "wouldRevert": False},
+                ],
+            },
+        )
+    )
+    result = await _simulator(client).simulate([approve_tx(), deposit_tx()], "base")
+
+    assert result.success is False
+    assert "could not be simulated against the state tx[0] produces" in (result.revert_reason or "")
+
+
+async def test_simulate_never_raises_for_undecodable_calldata_on_an_old_api(old_client: KeeperHubClient) -> None:
     tx = deposit_tx()
     tx.data = "0xdeadbeef"
-    result = await _simulator(client).simulate([tx], "base")
+    result = await _simulator(old_client).simulate([tx], "base")
     assert result.success is False
     assert "0xdeadbeef" in (result.revert_reason or "")
+
+
+@respx.mock
+async def test_simulate_lets_keeperhub_refuse_calldata_it_cannot_decode(client: KeeperHubClient) -> None:
+    """The refusal for an unknown selector now comes from KeeperHub's ABI check, with its words."""
+    route = respx.post(EXEC_URL).mock(
+        return_value=httpx.Response(
+            400,
+            json={
+                "error": "Invalid data",
+                "field": "data",
+                "details": "selector 0xdeadbeef is not in the contract ABI",
+            },
+        )
+    )
+    tx = deposit_tx()
+    tx.data = "0xdeadbeef" + "00" * 32
+    result = await _simulator(client).simulate([tx], "base")
+
+    assert json.loads(route.calls[0].request.content)["data"] == tx.data
+    assert result.success is False and result.simulated is True
+    assert "Invalid data" in (result.revert_reason or "")
 
 
 @respx.mock
