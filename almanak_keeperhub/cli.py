@@ -296,11 +296,20 @@ async def _verify(reference: str, api_key: str, chain_name: str) -> int:
 @click.option("--port", default=8642, show_default=True)
 @click.option("--chain", "chain_name", default="base", show_default=True)
 @click.option("--open/--no-open", "open_browser", default=True, help="Open the page in a browser.")
-def console(receipts: str | None, docs_dir: str | None, port: int, chain_name: str, open_browser: bool) -> None:
+@click.option(
+    "--export",
+    "export_dir",
+    default=None,
+    help="Write the console as a static site into this directory (with every execution's evidence frozen) and exit.",
+)
+def console(
+    receipts: str | None, docs_dir: str | None, port: int, chain_name: str, open_browser: bool, export_dir: str | None
+) -> None:
     """Serve the execution console: executions, verdicts, failure modes and the benchmark, live.
 
     Keep it open in a browser while `run`, `ax` or the demos execute in a terminal; it re-reads
     the proof files every two seconds. Inspect asks KeeperHub and the chain for the evidence.
+    With --export it writes the same page as a static site instead, for GitHub Pages.
     """
     import webbrowser
 
@@ -317,6 +326,23 @@ def console(receipts: str | None, docs_dir: str | None, port: int, chain_name: s
             org_wallet = asyncio.run(_resolve_wallet(api_key))
         except click.ClickException as exc:
             click.echo(f"org wallet unknown ({exc.message}); Inspect will still try", err=True)
+    if export_dir:
+        from almanak_keeperhub.console.export import export_site_sync
+
+        summary = export_site_sync(
+            Path(export_dir),
+            receipts=receipts_path.resolve(),
+            demo_receipts=(docs / "receipts.json").resolve(),
+            benchmark=(docs / "benchmark.json").resolve(),
+            org_wallet=org_wallet,
+            base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL),
+            chain=chain_name,
+        )
+        click.echo(
+            f"static console written to {summary['out_dir']}: {summary['executions']} executions, "
+            f"{summary['evidence_files']} evidence files, snapshot {summary['snapshot_at']}"
+        )
+        return
     server = ConsoleServer(
         receipts=receipts_path.resolve(),
         demo_receipts=(docs / "receipts.json").resolve(),

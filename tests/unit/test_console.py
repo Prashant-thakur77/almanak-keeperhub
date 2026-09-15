@@ -8,8 +8,12 @@ from pathlib import Path
 
 import httpx
 import pytest
+import respx
 
 from almanak_keeperhub.console.server import ConsoleServer, build_state
+
+BASE = "https://app.keeperhub.com"
+ORG = "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9"
 
 
 def _write(path: Path, data: object) -> Path:
@@ -169,3 +173,37 @@ def test_server_serves_page_and_state(proof_files: dict[str, Path]) -> None:
         assert missing.status_code == 404
     finally:
         server.shutdown()
+
+
+async def test_export_writes_a_self_contained_snapshot(strategy_dir: Path, tmp_path: Path) -> None:
+    """The static site carries the page, the state, the keeper and one evidence file per execution."""
+    from almanak_keeperhub.console.export import export_site
+
+    out = tmp_path / "site"
+    with respx.mock(base_url=BASE) as mock:
+        mock.get("/api/workflows/7clo/executions").mock(return_value=httpx.Response(200, json={"executions": []}))
+        mock.get("/api/user").mock(return_value=httpx.Response(200, json={"walletAddress": ORG}))
+        mock.get(path__regex=r"/api/execute/.*/status").mock(
+            return_value=httpx.Response(
+                200, json={"status": "completed", "sponsored": True, "receipts": [{"verified": True}], "result": {}}
+            )
+        )
+        summary = await export_site(
+            out,
+            receipts=strategy_dir / "keeperhub-receipts.json",
+            demo_receipts=strategy_dir / "missing-demos.json",
+            benchmark=strategy_dir / "missing-benchmark.json",
+            org_wallet=ORG,
+            base_url=BASE,
+            chain="base_sepolia",
+        )
+
+    assert summary["executions"] == 2
+    assert summary["evidence_files"] == 2
+    page = (out / "index.html").read_text()
+    assert "window.__CONSOLE_SNAPSHOT__ = true" in page
+    state = json.loads((out / "console-data" / "state.json").read_text())
+    assert state["snapshot_at"].endswith("UTC")
+    assert state["sources"]["receipts"] == "keeperhub-receipts.json"  # no local paths leak onto the site
+    assert sorted(p.name for p in (out / "console-data" / "verify").iterdir()) == ["au5z.json", "az13.json"]
+    assert (out / ".nojekyll").exists()
