@@ -19,7 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 mcp = ["mcp>=2.0"]
-dev = ["pytest>=8", "pytest-asyncio>=0.24", "respx>=0.21", "hypothesis>=6", "ruff>=0.6", "mypy>=1.11"]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "respx>=0.21", "hypothesis>=6", "ruff>=0.6", "mypy>=1.11", "mcp>=2.0"]
 
 [project.scripts]
 almanak-keeperhub = "almanak_keeperhub.cli:main"

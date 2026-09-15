@@ -361,7 +361,8 @@ class KeeperHubClient:
         payload = _json_or_empty(response)
         if response.status_code >= 400 and not (response.status_code == 400 and payload.get("conditionResult")):
             _raise_for_status(response, payload)
-        cond = payload.get("conditionResult") if isinstance(payload.get("conditionResult"), dict) else {}
+        raw_cond = payload.get("conditionResult")
+        cond: dict[str, Any] = raw_cond if isinstance(raw_cond, dict) else {}
         return GuardedOutcome(
             executed=bool(payload.get("executed")),
             condition=ConditionResult(
