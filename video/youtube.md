@@ -34,11 +34,11 @@ until judging).
     a process killed mid-bundle that resumes from the receipts log without broadcasting
     twice.
 
-    Three issues filed against KeeperHub itself, all accepted by the maintainers, all
-    three open as pull requests:
-      #2426 raw calldata on POST /api/execute/contract-call   -> PR #2449
-      #2428 the acting wallet on sponsored executions         -> PR #2450
-      #2427 simulating a sequence against carried state       -> PR open
+    Three issues filed against KeeperHub itself, all accepted by the maintainers; two of the
+    three pull requests are already merged:
+      #2426 raw calldata on POST /api/execute/contract-call   -> PR #2449, merged
+      #2427 simulating a sequence against carried state       -> PR #2452, merged
+      #2428 the acting wallet on sponsored executions         -> PR #2450, in review
 
     Repo: https://github.com/Prashant-thakur77/almanak-keeperhub
     Built for the KeeperHub Agent Economy Hackathon.

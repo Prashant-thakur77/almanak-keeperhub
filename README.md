@@ -20,7 +20,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
 | Unit tests | 139 |
-| Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, 3 pull requests open, 2 labelled approve |
+| Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, **2 pull requests merged**, 1 in review |
 
 ## Judge links
 
@@ -32,9 +32,9 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | The same tick: deposit of 5 USDC | [0x70b453be…5a7a87](https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87) · execution `au5z8vtzv8s9xm811z93j` |
 | The exit, through KeeperHub | [0x91777e39…17f0a4](https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4) · execution `7rshlqcgwoxkia3iz052b` |
 | A keeper run by KeeperHub's own engine, no Almanak process | [0x3e31e8c1…68cf16](https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16) · workflow `7cloybpqfrjvjv756dd2r` |
-| Upstream: raw calldata on `contract-call` | [issue #2426](https://github.com/KeeperHub/keeperhub/issues/2426) → [PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449) |
-| Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450) |
-| Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452) |
+| Upstream: raw calldata on `contract-call` | [issue #2426](https://github.com/KeeperHub/keeperhub/issues/2426) → [PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449), **merged** |
+| Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), in review |
+| Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), **merged** |
 | Every execution hash, verdict and link | [`docs/console-data/state.json`](docs/console-data/state.json), [`docs/receipts.json`](docs/receipts.json), [`docs/benchmark.json`](docs/benchmark.json) |
 | Reproducible API findings | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
 
