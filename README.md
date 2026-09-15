@@ -20,26 +20,29 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Failure modes recorded, on purpose | 7 of 7, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Tests | 553 unit and property, 11 live against production every six hours |
+| Tests | 560 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
 | Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, **2 pull requests merged**, 1 in review |
 
 ## Judge links
 
 | What | Where |
 |---|---|
-| Live proof console: 443 executions, KeeperHub's verdict and decoded events on each, refreshed by a runner every six hours | https://prashant-thakur77.github.io/almanak-keeperhub/ |
+| Live proof console: every execution this project produced, KeeperHub's verdict and decoded events on each, growing by one lifecycle every six hours | https://prashant-thakur77.github.io/almanak-keeperhub/ |
 | Demo video | VIDEO_URL |
 | An agent (Claude over MCP) running and verifying a tick, unedited | [`docs/agent-session.md`](docs/agent-session.md) |
 | The proof refreshing itself: a strategy tick through KeeperHub every six hours, run and committed by a GitHub runner | [proof workflow runs](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml) · [`scripts/proof_tick.sh`](scripts/proof_tick.sh) |
 | A real strategy tick: approve | [0x29dd40a6…5203c8](https://sepolia.basescan.org/tx/0x29dd40a6db7016bf0b75f49ef56da3b64b44e81e25e473cc6d19c7930a5203c8) · execution `az13hw7qn9y9dhs52s4rg` |
 | The same tick: deposit of 5 USDC | [0x70b453be…5a7a87](https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87) · execution `au5z8vtzv8s9xm811z93j` |
 | The exit, through KeeperHub | [0x91777e39…17f0a4](https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4) · execution `7rshlqcgwoxkia3iz052b` |
+| A full lifecycle run by a GitHub runner with nobody present, ending in a guarded exit KeeperHub re-checked before redeeming | [0xdf51810b…41f7d4](https://sepolia.basescan.org/tx/0xdf51810ba2851e7c4c29863e4945c41787ce8e8f0e21bca39694bf9f0541f7d4) · execution `8q6azz7iy224ef6jh8x5w` · [the run](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml) |
 | A keeper run by KeeperHub's own engine, no Almanak process | [0x3e31e8c1…68cf16](https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16) · workflow `7cloybpqfrjvjv756dd2r` |
 | Upstream: raw calldata on `contract-call` | [issue #2426](https://github.com/KeeperHub/keeperhub/issues/2426) → [PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449), **merged** |
 | Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), in review |
 | Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), **merged** |
 | Every execution hash, verdict and link | [`docs/console-data/state.json`](docs/console-data/state.json), [`docs/receipts.json`](docs/receipts.json), [`docs/benchmark.json`](docs/benchmark.json) |
-| Reproducible API findings | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
+| Reproducible API findings, re-verified every six hours | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
+| Who can act through which gate, and what a stolen key cannot do | [`SECURITY.md`](SECURITY.md) |
+| Reproduce it with no KeeperHub account: an Anvil fork plus a stand-in that speaks the merged API | `tests/e2e/rehearsal.sh --testnet` |
 
 Verify any row yourself: `almanak-keeperhub verify <hash or execution id>` asks KeeperHub for its verdict and
 decodes the receipt to name who acted, or open the execution in the KeeperHub app under Runs.

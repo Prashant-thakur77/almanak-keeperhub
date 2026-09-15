@@ -25,14 +25,21 @@ until judging).
     redeem   0x91777e39d4fc1748f6...  exec 7rshlqcgwoxkia3iz052b  verified, sponsored
     vault    0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04
 
-    Measured, not claimed: 20/20 unsafe calls refused before broadcast, 10/10 dry runs
-    caught, 5/5 transactions landed with a p50 of 6.88s to a verified receipt, a retry
-    of already-landed work replayed rather than resent, 130 unit tests.
+    Measured, not claimed: 50/50 impossible deposits refused before broadcast, 200/200
+    executions landed and verified with a p50 of 7.8s to a verified receipt, 50/50 retries
+    of landed work replayed by idempotency key with zero double broadcasts, 10/10 processes
+    killed after broadcast and settled by a fresh process, 560 unit and property tests, and
+    11 documented API behaviours checked against production every six hours.
 
-    Six failure modes are recorded in the repo: unknown selector, would-revert, over the
-    spend cap, duplicate blocked by an idempotency key bound to intent, RPC outage, and
-    a process killed mid-bundle that resumes from the receipts log without broadcasting
-    twice.
+    Seven failure modes are recorded in the repo: unknown selector, would-revert, over the
+    spend cap, duplicate blocked by an idempotency key bound to intent, RPC outage, a
+    process killed mid-bundle that resumes from the receipts log without broadcasting
+    twice, and a stale exit KeeperHub refuses after re-reading the position.
+
+    The proof keeps itself current: a GitHub workflow runs a full lifecycle through
+    KeeperHub every six hours and republishes the console, and three real Claude sessions
+    over the project's MCP server are recorded unedited.
+      Console: https://prashant-thakur77.github.io/almanak-keeperhub/
 
     Three issues filed against KeeperHub itself, all accepted by the maintainers; two of the
     three pull requests are already merged:
