@@ -95,7 +95,7 @@ class StrategyTools:
         return [{k: e.get(k) for k in keys} for e in rows]
 
     def list_dry_runs(self, limit: int = 5) -> list[dict[str, Any]]:
-        rows = self.state().get("dry_runs", [])[: max(1, min(int(limit), 50))]
+        rows = self.state()["simulations"][: max(1, min(int(limit), 50))]
         return [dict(r) for r in rows]
 
     async def verify(self, reference: str) -> dict[str, Any]:
@@ -137,7 +137,7 @@ class StrategyTools:
         """One strategy tick, dry-run through KeeperHub; nothing is signed or broadcast."""
         return await self._cli(["run", "-d", str(self.strategy_dir), "--once", "--fresh", "--simulate-only"])
 
-    async def run_tick(self, confirm: bool = False) -> dict[str, Any]:
+    async def run_tick(self, confirm: bool = False, fresh: bool = False) -> dict[str, Any]:
         if not self.allow_broadcast:
             return {
                 "ok": False,
@@ -148,7 +148,8 @@ class StrategyTools:
                 "ok": False,
                 "error": "a real tick signs and broadcasts through KeeperHub; call again with confirm=true",
             }
-        return await self._cli(["run", "-d", str(self.strategy_dir), "--once"])
+        args = ["run", "-d", str(self.strategy_dir), "--once"]
+        return await self._cli(args + ["--fresh"] if fresh else args)
 
     async def run_failure_demo(self, name: str) -> dict[str, Any]:
         script = DEMOS.get(name)
@@ -237,9 +238,13 @@ def build_server(tools: StrategyTools):
     if tools.allow_broadcast:
 
         @server.tool()
-        async def run_tick(confirm: bool = False) -> dict[str, Any]:
-            """Run one REAL strategy tick: sign and broadcast through KeeperHub. Requires confirm=true."""
-            return await tools.run_tick(confirm)
+        async def run_tick(confirm: bool = False, fresh: bool = False) -> dict[str, Any]:
+            """Run one REAL strategy tick: sign and broadcast through KeeperHub. Requires confirm=true.
+
+            fresh=true starts from a clean strategy state, for when the position was exited
+            outside Almanak (a redeem through KeeperHub) and the strategy would otherwise HOLD.
+            """
+            return await tools.run_tick(confirm, fresh)
 
     @server.resource("almanak-keeperhub://receipts")
     def receipts() -> str:

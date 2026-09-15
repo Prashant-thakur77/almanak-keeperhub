@@ -19,7 +19,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Failure modes recorded, on purpose | 6 of 6, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Unit tests | 142 |
+| Unit tests | 143 |
 | Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, **2 pull requests merged**, 1 in review |
 
 ## Judge links
@@ -28,6 +28,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 |---|---|
 | Live proof console (every execution, KeeperHub's verdict, decoded events) | https://prashant-thakur77.github.io/almanak-keeperhub/ |
 | Demo video | VIDEO_URL |
+| An agent (Claude over MCP) running and verifying a tick, unedited | [`docs/agent-session.md`](docs/agent-session.md) |
 | The proof refreshing itself: a strategy tick through KeeperHub every six hours, run and committed by a GitHub runner | [proof workflow runs](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml) · [`scripts/proof_tick.sh`](scripts/proof_tick.sh) |
 | A real strategy tick: approve | [0x29dd40a6…5203c8](https://sepolia.basescan.org/tx/0x29dd40a6db7016bf0b75f49ef56da3b64b44e81e25e473cc6d19c7930a5203c8) · execution `az13hw7qn9y9dhs52s4rg` |
 | The same tick: deposit of 5 USDC | [0x70b453be…5a7a87](https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87) · execution `au5z8vtzv8s9xm811z93j` |
@@ -301,6 +302,19 @@ Resource `almanak-keeperhub://receipts` is the raw receipts log. Claude Desktop 
 
 The tools are the bot's handlers behind an MCP surface (`almanak_keeperhub/mcp_server.py`, `StrategyTools`),
 so the phone, the console and the agent can never disagree about what happened.
+
+### An agent at the controls, recorded
+
+[`docs/agent-session.md`](docs/agent-session.md) is three real Claude sessions over this server, captured
+headless by `scripts/agent_session.py` and rendered without editing. Given the read-only server and told to
+run a real tick, the agent reports `broadcast_enabled: false`, finds no `run_tick` tool, and stops. Given the
+`--write` server, its first tick comes back `HOLD` (the strategy still remembered a position that had been
+redeemed through KeeperHub outside Almanak) and the agent says so instead of claiming a deposit. Started fresh,
+it lands approve `389lzsqaq40606gy396hr` and deposit `mgwqs6texgo4xpzvu3j4j`, both sponsored and verified, then
+calls `verify` and reads off the receipt that the transaction sender is the sponsor's relayer while every
+Transfer, mint and Deposit event names the org wallet: the agent decided, KeeperHub executed, and the agent
+could prove who acted. Its first recording also found a bug in this package (`list_dry_runs` answered with an
+empty list), fixed the same hour.
 
 ## Telegram operator bot (optional)
 

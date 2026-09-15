@@ -55,6 +55,15 @@ def test_executions_are_newest_first_and_structured(strategy_dir: Path) -> None:
     ]
 
 
+def test_dry_runs_are_listed_from_the_same_log(strategy_dir: Path) -> None:
+    """A simulate-only tick leaves a row the agent can see, not an empty list."""
+    rows = make_tools(strategy_dir).list_dry_runs(limit=5)
+
+    assert len(rows) == 1
+    assert rows[0]["function"] == "approve"
+    assert rows[0]["success"] is True
+
+
 async def test_verify_rejects_a_bad_reference_before_any_request(strategy_dir: Path) -> None:
     with respx.mock(base_url=BASE, assert_all_called=False) as mock:
         route = mock.get(path__regex=r"/api/execute/.*")
@@ -93,6 +102,9 @@ async def test_run_tick_is_refused_unless_the_server_allows_broadcast(strategy_d
     confirmed = await on.run_tick(confirm=True)
     assert confirmed["ok"] is True
     assert seen == [["run", "-d", str(strategy_dir), "--once"]]
+
+    await on.run_tick(confirm=True, fresh=True)
+    assert seen[-1] == ["run", "-d", str(strategy_dir), "--once", "--fresh"]
 
 
 async def test_run_tick_reports_the_executions_it_produced(strategy_dir: Path) -> None:
