@@ -486,11 +486,22 @@ class OperatorBot:
                     body["reply_markup"] = {
                         "inline_keyboard": [[{"text": t, "callback_data": d} for t, d in row] for row in keyboard]
                     }
-                response = await http.post(f"https://api.telegram.org/bot{self._token}/sendMessage", json=body)
+                response = await self._post_with_retries(http, body)
                 if response.status_code == 400:  # markup Telegram would not take: send it plain rather than lose it
                     body.pop("parse_mode")
                     body["text"] = re.sub(r"<[^>]+>", "", chunk)
                     await http.post(f"https://api.telegram.org/bot{self._token}/sendMessage", json=body)
+
+    async def _post_with_retries(self, http: httpx.AsyncClient, body: dict[str, Any]) -> httpx.Response:
+        """A dropped connection must not lose a reply: retry the send a few times before giving up."""
+        last: Exception | None = None
+        for attempt in range(4):
+            try:
+                return await http.post(f"https://api.telegram.org/bot{self._token}/sendMessage", json=body)
+            except httpx.TransportError as exc:
+                last = exc
+                await asyncio.sleep(1.5 * (attempt + 1))
+        raise last if last else RuntimeError("send failed")
 
     async def _typing(self, chat_id: str) -> None:
         async with httpx.AsyncClient(timeout=10.0) as http:
@@ -583,11 +594,17 @@ class OperatorBot:
             return
         command = text.split()[0].lower() if text.split() else ""
         if command in ("/simulate", "/confirm", "/demo", "/verify"):
-            await self.send(chat_id, "Working. This goes through KeeperHub; a real tick takes about half a minute.")
-            await self._typing(chat_id)
+            try:
+                await self.send(chat_id, "Working. This goes through KeeperHub; a real tick takes about half a minute.")
+                await self._typing(chat_id)
+            except Exception as exc:  # noqa: BLE001 - the notice is optional; the command still runs
+                logger.warning("could not send the working notice: %s", exc)
         reply = await self.handle(chat_id=chat_id, text=text, sent_at=sent_at)
         if reply:
-            await self.send(chat_id, reply, self.keyboard_for(command, reply))
+            try:
+                await self.send(chat_id, reply, self.keyboard_for(command, reply))
+            except Exception as exc:  # noqa: BLE001
+                logger.error("reply lost after retries: %s", exc)
 
 
 def bot_from_env(strategy_dir: Path, chain: str, runner: Runner | None = None) -> OperatorBot:
