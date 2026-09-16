@@ -20,7 +20,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Failure modes recorded, on purpose | 7 of 7, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Tests | 560 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
+| Tests | 563 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
 | Features contributed upstream to KeeperHub | 3 issues filed, 3 accepted, **2 pull requests merged**, 1 in review |
 
 ## Judge links
@@ -482,7 +482,7 @@ Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/Kee
 ## Tests
 
 ```bash
-pytest -q                      # 553 unit and property tests; the live suite skips unless opted in
+pytest -q                      # 563 unit and property tests; the live suite skips unless opted in
 ALMANAK_KEEPERHUB_LIVE=1 pytest -q tests/live   # 11 documented API behaviours, checked against app.keeperhub.com
 ruff check almanak_keeperhub tests scripts && mypy almanak_keeperhub --ignore-missing-imports
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
@@ -493,8 +493,8 @@ Four layers, each answering a different question:
 
 | Layer | What it checks | Count |
 |---|---|---|
-| Unit | API shapes from KeeperHub's docs (respx), the decoder, the adapters against Almanak's real `Signer`/`Submitter`/`Simulator` interfaces, the console, the MCP server, the bot | 150 |
-| Property (hypothesis) | every one of the 339 signatures in the selector index decodes losslessly under random arguments; trailing bytes and unknown selectors are always refused; the idempotency key identifies work, never the attempt; ether strings are exact at any magnitude | 403 |
+| Unit | API shapes from KeeperHub's docs (respx), the decoder, the adapters against Almanak's real `Signer`/`Submitter`/`Simulator` interfaces, the console, the MCP server, the bot | 159 |
+| Property (hypothesis) | every one of the 339 signatures in the selector index decodes losslessly under random arguments; trailing bytes and unknown selectors are always refused; the idempotency key identifies work, never the attempt; ether strings are exact at any magnitude | 404 |
 | Live conformance | one test per sentence of the Direct Execution docs, against production: replay by key, conflict on a changed body, verified receipt, sponsorship, the poll hint, and whether the two upstream features have deployed yet. Run by the proof workflow every six hours; the result is on the console footer and in `docs/conformance.json` | 11 |
 | Rehearsal | the whole lifecycle on an Anvil fork, mainnet and Sepolia | 2 scripts |
 
