@@ -1,20 +1,111 @@
 {
- "generated_at": "2026-09-16T11:39:24.968978+00:00",
+ "generated_at": "2026-09-16T16:59:58.966794+00:00",
  "org_wallet": "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9",
  "base_url": "https://app.keeperhub.com",
  "chain": "base_sepolia",
  "summary": {
-  "executions": 456,
-  "verified": 456,
-  "replays": 4,
-  "sponsored": 456,
+  "executions": 463,
+  "verified": 463,
+  "replays": 6,
+  "sponsored": 463,
   "in_flight": 0,
   "failed": 0,
   "refused_before_broadcast": 4,
-  "dry_runs": 285,
-  "dry_run_refusals": 146
+  "dry_runs": 296,
+  "dry_run_refusals": 151
  },
  "executions": [
+  {
+   "execution_id": "nf765s4p8czvejg8r3iua",
+   "recorded_at": "2026-09-16T12:25:24.904566+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "redeem",
+   "tx_hash": "0x8ca336ecbd22acd4b803b055c94bfc9c4263f7788f55d7a3fc8f93565cbd1421",
+   "status": "completed",
+   "idempotency_key": "bfad22e059739da4f90a8b324d08863c16d813db2be4e2afd38cc5d73b54abdb",
+   "idempotent_replay": false,
+   "guarded": true,
+   "condition": {
+    "met": true,
+    "observed_value": "5000000",
+    "target_value": "5000000",
+    "operator": "gte"
+   },
+   "transaction_link": "https://sepolia.basescan.org/tx/0x8ca336ecbd22acd4b803b055c94bfc9c4263f7788f55d7a3fc8f93565cbd1421",
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-16T12:25:25.254003+00:00",
+   "source": "benchmark",
+   "explorer": "https://sepolia.basescan.org/tx/0x8ca336ecbd22acd4b803b055c94bfc9c4263f7788f55d7a3fc8f93565cbd1421",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "dka4q6p7v12w2jzfv6tiz",
+   "recorded_at": "2026-09-16T12:24:44.931745+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "deposit",
+   "tx_hash": "0xcc59e0d39cf981e7de900a2e1fea11ab8ee53f2a5695ee24df7e4cd3597b6486",
+   "transaction_link": "https://sepolia.basescan.org/tx/0xcc59e0d39cf981e7de900a2e1fea11ab8ee53f2a5695ee24df7e4cd3597b6486",
+   "status": "completed",
+   "idempotency_key": "af2510d9e24991b0ca79cc5e7caf09e9806c91aabc8944ae37504916b64a9d73",
+   "idempotent_replay": false,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-16T12:24:54.670865+00:00",
+   "source": "benchmark",
+   "explorer": "https://sepolia.basescan.org/tx/0xcc59e0d39cf981e7de900a2e1fea11ab8ee53f2a5695ee24df7e4cd3597b6486",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "533uk0m5fjsxq2ayitg5g",
+   "recorded_at": "2026-09-16T12:24:37.584121+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "tx_hash": "0x044b14954e71717ef3ab94b1661127f21da8e494146530ffa3e8a5cf8ff63f35",
+   "transaction_link": "https://sepolia.basescan.org/tx/0x044b14954e71717ef3ab94b1661127f21da8e494146530ffa3e8a5cf8ff63f35",
+   "status": "completed",
+   "idempotency_key": "b5f036c8a17ed59afe3516216a86ed643ecdd4255e5f63070eb7e78dd92eb4af",
+   "idempotent_replay": false,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-16T12:24:53.240822+00:00",
+   "source": "benchmark",
+   "explorer": "https://sepolia.basescan.org/tx/0x044b14954e71717ef3ab94b1661127f21da8e494146530ffa3e8a5cf8ff63f35",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "7x2mmkfw87ashp8zmz1i0",
+   "recorded_at": "2026-09-16T12:13:32.141973+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "tx_hash": "0xf161134803fd3a28c8b1b55e5958701d9d4fb361c8d4bbd6111ec08c7ac6dae6",
+   "transaction_link": "https://sepolia.basescan.org/tx/0xf161134803fd3a28c8b1b55e5958701d9d4fb361c8d4bbd6111ec08c7ac6dae6",
+   "status": "completed",
+   "idempotency_key": "68acdc4fb5dddfb74eb8625669a17982606a2f04c4a7e284027a781d874d997c",
+   "idempotent_replay": true,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-16T12:13:34.123051+00:00",
+   "source": "benchmark",
+   "explorer": "https://sepolia.basescan.org/tx/0xf161134803fd3a28c8b1b55e5958701d9d4fb361c8d4bbd6111ec08c7ac6dae6",
+   "outcome": "ok"
+  },
   {
    "execution_id": "so0vlbj5n9yz9qzn5s7sq",
    "recorded_at": "2026-09-16T11:38:45.194236+00:00",
@@ -39,7 +130,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-16T11:38:45.272485+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x871e861c3921f72edd130ec5990a25c0734e4c80624115d1a9f78c0f8e2ebf9b",
    "outcome": "ok"
   },
@@ -60,7 +151,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-16T11:38:33.050555+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xec20cbe99534d314b6ab39212cc07b6719fa4531f316bc244cc9ab6ae2986267",
    "outcome": "ok"
   },
@@ -81,7 +172,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-16T11:38:32.902605+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x0cbcf8ff69d2103f5e751ce3f9db035c23866518b0d278b85b9b8237b4802ea3",
    "outcome": "ok"
   },
@@ -109,8 +200,71 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-16T11:38:02.720802+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x691c9d927d6cff3f3208da384416154701af2c1fcfc40f4b85d2dd4ce5da0e65",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "hc9526ibc149q3b5mqxcs",
+   "recorded_at": "2026-09-16T10:54:54.647051+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "tx_hash": "0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
+   "transaction_link": "https://sepolia.basescan.org/tx/0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
+   "status": "completed",
+   "idempotency_key": "d03cf9482530371a9cfcb1d2c3d0cc56d7ec245792c2182c207d9eac0e51704f",
+   "idempotent_replay": true,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-16T10:54:56.476618+00:00",
+   "source": "benchmark",
+   "explorer": "https://sepolia.basescan.org/tx/0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "rsvhlpb6xagsb8z1ujvb9",
+   "recorded_at": "2026-09-16T10:53:58.826265+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "deposit",
+   "tx_hash": "0x4e9f865946e3fb1b56b93774c5f57b6b1c92bbf446b034af9602457829f638e5",
+   "transaction_link": "https://sepolia.basescan.org/tx/0x4e9f865946e3fb1b56b93774c5f57b6b1c92bbf446b034af9602457829f638e5",
+   "status": "completed",
+   "idempotency_key": "3fd1437e3b36d6c040a33be940e2a4a08878fa723aa9f84b6d66159d5e1393b4",
+   "idempotent_replay": false,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-16T10:54:08.530073+00:00",
+   "source": "benchmark",
+   "explorer": "https://sepolia.basescan.org/tx/0x4e9f865946e3fb1b56b93774c5f57b6b1c92bbf446b034af9602457829f638e5",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "yqi8n6zatlsjzdl56mz8g",
+   "recorded_at": "2026-09-16T10:53:50.641736+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "tx_hash": "0xc60da4c5f7c0c3fe9a24ad672af9173a674709715ed44bea81406d66d6130422",
+   "transaction_link": "https://sepolia.basescan.org/tx/0xc60da4c5f7c0c3fe9a24ad672af9173a674709715ed44bea81406d66d6130422",
+   "status": "completed",
+   "idempotency_key": "33c1e39cb83dccf3b9cb8b2981670d8298d54b1732f325fc7c333d0a32c47edd",
+   "idempotent_replay": false,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-16T10:54:06.969860+00:00",
+   "source": "benchmark",
+   "explorer": "https://sepolia.basescan.org/tx/0xc60da4c5f7c0c3fe9a24ad672af9173a674709715ed44bea81406d66d6130422",
    "outcome": "ok"
   },
   {
@@ -137,7 +291,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-16T04:52:23.231893+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x37dbfd710b27e80d0008b14214b5f7580d321763179e4bfb1dc7e1ef9d923494",
    "outcome": "ok"
   },
@@ -158,7 +312,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-16T04:52:11.786346+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xf706f2c1d3b509505a8a80206a314310d0ebcdfeb795a67faa0b9f9dea24a97e",
    "outcome": "ok"
   },
@@ -179,7 +333,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-16T04:52:11.655034+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x1da496394fb228fba1de649a6da453b470a7c6a3cb33511833f147e14d5d2cfb",
    "outcome": "ok"
   },
@@ -207,7 +361,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T20:18:33.063674+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xdf51810ba2851e7c4c29863e4945c41787ce8e8f0e21bca39694bf9f0541f7d4",
    "outcome": "ok"
   },
@@ -228,7 +382,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T20:18:16.174864+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xc4c024b7815cd88425377ad472bc0faa5e466ad4c0ce850b7e6c5f7f4d3c5936",
    "outcome": "ok"
   },
@@ -249,7 +403,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T20:18:15.891617+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x396738a249cb26b16e678d72b492c3307fa952000dff4513ed984258d7244d6d",
    "outcome": "ok"
   },
@@ -277,7 +431,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T19:39:41.458796+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x84cbf8b5eb1e30b6eebfae3005948fa7ce12fe2217c528fa5232b49fa7e03ac5",
    "outcome": "ok"
   },
@@ -305,7 +459,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T19:36:54.784339+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x11217e295995d289ea18be2491fc34a04646655cf109d1487dcc19495b9fedae",
    "outcome": "ok"
   },
@@ -326,7 +480,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T19:36:41.915563+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x55ba396daf83e9f5c7e6654bc6f543efa7fe231e3af484219933f14b0ff27498",
    "outcome": "ok"
   },
@@ -347,7 +501,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T19:36:41.586528+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x18d07f4cf5e7bf81880435577d654be0c3389f532a7e253eda2a87dcb6d186d2",
    "outcome": "ok"
   },
@@ -3455,7 +3609,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T18:26:55.852358+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xb000adfb02b3dfbcc781750604e1cad21341795c1f2983dfb2b96eb3eab7d14e",
    "outcome": "ok"
   },
@@ -3476,7 +3630,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T18:26:53.817965+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x55716c0e22b3f465559b1b6b863040bffabbb479f4a84b82bb719b680a1bf31e",
    "outcome": "ok"
   },
@@ -4946,7 +5100,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T18:12:30.785037+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x6cff7526e8fd0e533f4f2da9c4d2abe2fe61465b53b03d28d3c9db42a83f0ab5",
    "outcome": "ok"
   },
@@ -4967,7 +5121,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T18:12:04.248474+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xb02b7cd47b5409a6c52c8eeec74d43424d511689d6295873287349a26e00b4c7",
    "outcome": "ok"
   },
@@ -4988,7 +5142,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T18:12:01.815757+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xdd74fd844dbdfa4e3b478cc2d5cbb1aba8add3c05b28a8806999eaef8f5112fe",
    "outcome": "ok"
   },
@@ -5009,7 +5163,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T17:34:55.489303+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xa64ab555151b9ce13ddea49ea020c925afd14a323c27d1d67ba5f83c106ae569",
    "outcome": "ok"
   },
@@ -5030,7 +5184,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T17:34:07.571155+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x00568b426a383c6a7657f51802f387236e2dd4c7df288a1f7987b65fb86667ab",
    "outcome": "ok"
   },
@@ -5051,7 +5205,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T17:34:05.685913+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0xf782d77ec1943a0fb291d0cb22599ddd819f1ab82f92a8d6aabbd2dc3eec8304",
    "outcome": "ok"
   },
@@ -5072,7 +5226,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T17:21:25.057923+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x7cdf6460589fbd626376303c1724736c545dd0f8ba799fdff4a5782850bc2cdb",
    "outcome": "ok"
   },
@@ -5093,7 +5247,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T17:21:03.223449+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x0dd81aab1b6e3005782e9dffc2336e563fc83313c19cfa7490fccffc58b4066d",
    "outcome": "ok"
   },
@@ -5114,7 +5268,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-15T17:21:01.325267+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x27c3e795fc00e1fded0d3bde8e0213506a4659db9847e581ec24ff195ba37b5a",
    "outcome": "ok"
   },
@@ -9335,7 +9489,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-12T07:19:35.865212+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4",
    "outcome": "ok"
   },
@@ -9608,7 +9762,7 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-12T06:19:37.169687+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87",
    "outcome": "ok"
   },
@@ -9629,12 +9783,130 @@
    ],
    "sponsored": true,
    "updated_at": "2026-09-12T06:19:36.046589+00:00",
-   "source": "strategy",
+   "source": "benchmark",
    "explorer": "https://sepolia.basescan.org/tx/0x29dd40a6db7016bf0b75f49ef56da3b64b44e81e25e473cc6d19c7930a5203c8",
    "outcome": "ok"
   }
  ],
  "simulations": [
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T16:59:39.422572+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "deposit",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 121604,
+   "mechanism": "eth_simulateV1",
+   "source": "strategy"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T16:59:39.421160+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 38337,
+   "mechanism": "eth_simulateV1",
+   "source": "strategy"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T12:25:43.494641+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "redeem",
+   "success": false,
+   "would_revert": false,
+   "guarded": true,
+   "condition": {
+    "met": false,
+    "observed_value": "0",
+    "target_value": "1",
+    "operator": "gte"
+   },
+   "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T12:24:28.060250+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 38704,
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T12:13:03.930647+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "redeem",
+   "success": false,
+   "would_revert": false,
+   "guarded": true,
+   "condition": {
+    "met": false,
+    "observed_value": "0",
+    "target_value": "1",
+    "operator": "gte"
+   },
+   "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T12:11:46.724494+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 38704,
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T11:59:33.440746+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "redeem",
+   "success": false,
+   "would_revert": false,
+   "guarded": true,
+   "condition": {
+    "met": false,
+    "observed_value": "0",
+    "target_value": "1",
+    "operator": "gte"
+   },
+   "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T11:41:45.859068+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "redeem",
+   "success": false,
+   "would_revert": false,
+   "guarded": true,
+   "condition": {
+    "met": false,
+    "observed_value": "0",
+    "target_value": "1",
+    "operator": "gte"
+   },
+   "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
+   "source": "benchmark"
+  },
   {
    "type": "simulation",
    "recorded_at": "2026-09-16T11:38:12.157460+00:00",
@@ -9644,7 +9916,47 @@
    "success": true,
    "would_revert": false,
    "gas_estimate": 38704,
-   "source": "strategy"
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T10:54:21.494902+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "redeem",
+   "success": false,
+   "would_revert": false,
+   "guarded": true,
+   "condition": {
+    "met": false,
+    "observed_value": "5000000",
+    "target_value": "5000001",
+    "operator": "gte"
+   },
+   "error": "guard not met: vault balance 5000000 gte 5000001 is false; nothing broadcast",
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T10:53:42.345958+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 38704,
+   "source": "benchmark"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-16T10:52:52.689005+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 38704,
+   "source": "benchmark"
   },
   {
    "type": "simulation",
@@ -9655,7 +9967,7 @@
    "success": true,
    "would_revert": false,
    "gas_estimate": 38704,
-   "source": "strategy"
+   "source": "benchmark"
   },
   {
    "type": "simulation",
@@ -9666,7 +9978,7 @@
    "success": true,
    "would_revert": false,
    "gas_estimate": 38704,
-   "source": "strategy"
+   "source": "benchmark"
   },
   {
    "type": "simulation",
@@ -9677,7 +9989,7 @@
    "success": true,
    "would_revert": false,
    "gas_estimate": 38704,
-   "source": "strategy"
+   "source": "benchmark"
   },
   {
    "type": "simulation",
@@ -9713,7 +10025,7 @@
     "operator": "gte"
    },
    "error": "guard not met: vault balance 0 gte 5000000 is false; nothing broadcast",
-   "source": "strategy"
+   "source": "benchmark"
   },
   {
    "type": "simulation",
@@ -9731,7 +10043,7 @@
     "operator": "gte"
    },
    "error": null,
-   "source": "strategy"
+   "source": "benchmark"
   },
   {
    "type": "simulation",
@@ -9742,7 +10054,7 @@
    "success": true,
    "would_revert": false,
    "gas_estimate": 38704,
-   "source": "strategy"
+   "source": "benchmark"
   },
   {
    "type": "simulation",
@@ -10084,127 +10396,6 @@
    "would_revert": false,
    "gas_estimate": 35874,
    "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:20.961105+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:20.510584+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:20.057703+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:19.441518+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:18.786948+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:18.327323+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:17.887922+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:17.448279+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:16.989412+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:16.496308+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:17:16.052572+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 35874,
-   "source": "benchmark"
   }
  ],
  "failure_modes": [
@@ -10265,22 +10456,73 @@
    "broadcast": false,
    "refused_by": "submitter (this KeeperHub takes no raw calldata)",
    "title": "Unknown selector refused offline"
+  },
+  {
+   "kind": "stale_exit_not_executed",
+   "shares_requested": 5000001,
+   "shares_observed_by_keeperhub": "5000000",
+   "broadcast": false,
+   "title": "Stale exit not executed"
+  },
+  {
+   "kind": "duplicate_blocked",
+   "idempotency_key": "d03cf9482530371a9cfcb1d2c3d0cc56d7ec245792c2182c207d9eac0e51704f",
+   "execution_id": "hc9526ibc149q3b5mqxcs",
+   "tx_hash": "0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
+   "second_attempt_replayed": true,
+   "title": "Duplicate blocked by idempotency"
+  },
+  {
+   "kind": "stale_exit_not_executed",
+   "shares_requested": 1,
+   "shares_observed_by_keeperhub": "0",
+   "broadcast": false,
+   "title": "Stale exit not executed"
+  },
+  {
+   "kind": "stale_exit_not_executed",
+   "shares_requested": 1,
+   "shares_observed_by_keeperhub": "0",
+   "broadcast": false,
+   "title": "Stale exit not executed"
+  },
+  {
+   "kind": "stale_exit_not_executed",
+   "shares_requested": 1,
+   "shares_observed_by_keeperhub": "0",
+   "broadcast": false,
+   "title": "Stale exit not executed"
+  },
+  {
+   "kind": "duplicate_blocked",
+   "idempotency_key": "68acdc4fb5dddfb74eb8625669a17982606a2f04c4a7e284027a781d874d997c",
+   "execution_id": "7x2mmkfw87ashp8zmz1i0",
+   "tx_hash": "0xf161134803fd3a28c8b1b55e5958701d9d4fb361c8d4bbd6111ec08c7ac6dae6",
+   "second_attempt_replayed": true,
+   "title": "Duplicate blocked by idempotency"
+  },
+  {
+   "kind": "stale_exit_not_executed",
+   "shares_requested": 1,
+   "shares_observed_by_keeperhub": "0",
+   "broadcast": false,
+   "title": "Stale exit not executed"
   }
  ],
  "benchmark": null,
  "api_features": {
-  "probed_at": "2026-09-16T11:39:23+00:00",
+  "probed_at": "2026-09-16T16:59:56+00:00",
   "base_url": "https://app.keeperhub.com",
   "chain_id": 84532,
-  "raw_calldata": false,
-  "call_sequence": false
+  "raw_calldata": true,
+  "call_sequence": true
  },
  "conformance": {
-  "ran_at": "2026-09-16T11:39:21+00:00",
+  "ran_at": "2026-09-16T16:59:52+00:00",
   "base_url": "https://app.keeperhub.com",
   "chain_id": 84532,
-  "passed": 11,
-  "failed": 0,
+  "passed": 8,
+  "failed": 3,
   "tests": [
    {
     "test": "test_the_api_key_names_one_organization_wallet",
@@ -10292,61 +10534,61 @@
     "test": "test_a_bad_key_is_refused_with_401",
     "doc": "Authentication",
     "outcome": "passed",
-    "duration_s": 0.1
+    "duration_s": 0.24
    },
    {
     "test": "test_a_valid_write_dry_runs_with_a_gas_estimate_from_the_org_wallet",
     "doc": "Dry-Run Simulation",
     "outcome": "passed",
-    "duration_s": 0.37
+    "duration_s": 0.34
    },
    {
     "test": "test_an_impossible_write_is_refused_before_broadcast_with_a_reason",
     "doc": "Dry-Run Simulation / Response - would-revert",
     "outcome": "passed",
-    "duration_s": 0.26
+    "duration_s": 0.12
    },
    {
     "test": "test_the_same_key_replays_the_first_execution_instead_of_sending_again",
     "doc": "Idempotency / Recognising a replay",
     "outcome": "passed",
-    "duration_s": 5.46
+    "duration_s": 0.54
    },
    {
     "test": "test_the_same_key_with_a_different_body_is_a_conflict",
     "doc": "Idempotency / When to reuse a key, and when to rotate it",
-    "outcome": "passed",
-    "duration_s": 7.29
+    "outcome": "failed",
+    "duration_s": 0.51
    },
    {
     "test": "test_status_reaches_a_terminal_state_with_a_verified_receipt",
     "doc": "Get Execution Status",
-    "outcome": "passed",
-    "duration_s": 7.74
+    "outcome": "failed",
+    "duration_s": 0.25
    },
    {
     "test": "test_a_base_sepolia_write_is_gas_sponsored",
     "doc": "Sponsored Executions",
-    "outcome": "passed",
-    "duration_s": 6.18
+    "outcome": "failed",
+    "duration_s": 0.24
    },
    {
     "test": "test_raw_calldata_is_either_accepted_or_refused_the_old_way",
     "doc": "Call Smart Contract / Raw calldata",
     "outcome": "passed",
-    "duration_s": 0.12
+    "duration_s": 0.26
    },
    {
     "test": "test_a_call_sequence_is_either_simulated_in_order_or_refused_the_old_way",
     "doc": "Dry-Run Simulation / A sequence of calls",
     "outcome": "passed",
-    "duration_s": 0.09
+    "duration_s": 0.31
    },
    {
     "test": "test_status_responses_carry_a_poll_interval_hint",
     "doc": "Rate Limits",
     "outcome": "passed",
-    "duration_s": 7.4
+    "duration_s": 0.25
    }
   ]
  },
@@ -10355,5 +10597,5 @@
   "demo_receipts": "receipts.json",
   "benchmark": "benchmark.json"
  },
- "snapshot_at": "2026-09-16 11:39 UTC"
+ "snapshot_at": "2026-09-16 16:59 UTC"
 }

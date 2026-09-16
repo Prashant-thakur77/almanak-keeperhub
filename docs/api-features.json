@@ -1,7 +1,7 @@
 {
- "probed_at": "2026-09-16T11:39:23+00:00",
+ "probed_at": "2026-09-16T16:59:56+00:00",
  "base_url": "https://app.keeperhub.com",
  "chain_id": 84532,
- "raw_calldata": false,
- "call_sequence": false
+ "raw_calldata": true,
+ "call_sequence": true
 }
