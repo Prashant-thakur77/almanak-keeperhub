@@ -6,15 +6,15 @@ Branch `feat/workflow-preflight-sequence` in /home/prashant/KeeperHub/keeperhub,
 Order of operations:
 1. File the issue from `issue-4-workflow-preflight.md` (title: `feat: workflow preflight simulates each write node
    against the state the earlier nodes produced`). Mention it at office hours.
-2. When it has `accepted` and a number N: tell me, I amend the commit title to `feat: #N ...`, then you push and
-   open the PR with the body below. Title: `feat: #N workflow preflight simulates each write node against the
+2. When it has `accepted` and a number N: tell me, I amend the commit title to `feat: #2519 ...`, then you push and
+   open the PR with the body below. Title: `feat: #2519 workflow preflight simulates each write node against the
    state the earlier nodes produced`.
 
 ## Body
 
 ## Issue
 
-Closes #N.
+Closes #2519.
 
 ## What this changes
 
