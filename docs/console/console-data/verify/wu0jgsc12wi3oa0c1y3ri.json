@@ -1,0 +1,25 @@
+{
+ "execution_id": "wu0jgsc12wi3oa0c1y3ri",
+ "status": "completed",
+ "sponsored": false,
+ "transaction_link": "https://sepolia.basescan.org/tx/0x335528d4892d49af2863fa7c9abc9868743cda7533f5b3f609648e8d4597050c",
+ "receipts": [
+  {
+   "hash": "0x335528d4892d49af2863fa7c9abc9868743cda7533f5b3f609648e8d4597050c",
+   "verified": true,
+   "receipt_status": "success"
+  }
+ ],
+ "org_wallet": "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9",
+ "tx_hash": "0x335528d4892d49af2863fa7c9abc9868743cda7533f5b3f609648e8d4597050c",
+ "events": [
+  "Approval at 0x036cbd53842c5426634e7929541ec2318f3dcf7e: owner=0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9 spender=0xd36e12a5b2926a5cbe6b4de42a0d60fd35d3cb04 value=5500000 -> actor is org wallet"
+ ],
+ "onchain": {
+  "sender": "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9",
+  "sender_is_org_wallet": true,
+  "status": "success",
+  "block": 46912672,
+  "gas_used": 38337
+ }
+}
