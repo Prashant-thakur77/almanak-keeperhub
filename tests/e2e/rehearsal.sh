@@ -107,7 +107,7 @@ if [ "$MODE" != "--testnet" ]; then
 fi
 
 echo "== benchmark (small): refusals, dry runs, broadcasts, replay, one crash cycle"
-( cd "$ROOT" && python scripts/benchmark.py --refusals 3 --simulations 3 --executions 2 --retries 2 --crashes 1 | grep -E "^\|" && rm -f docs/benchmark.md docs/benchmark.json )
+( cd "$ROOT" && ALMANAK_KEEPERHUB_BENCHMARK_DIR="$WORK" python scripts/benchmark.py --refusals 3 --simulations 3 --executions 2 --retries 2 --crashes 1 | grep -E "^\|" )   # written to the scratch dir, never to docs/
 
 echo "== api features: what this KeeperHub accepts (the stand-in answers like production will once the merged changes deploy)"
 ( cd "$ROOT" && almanak-keeperhub api-features --chain "$CHAIN" )

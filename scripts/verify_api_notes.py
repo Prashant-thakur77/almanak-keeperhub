@@ -35,7 +35,7 @@ async def finding_1_no_raw_calldata(client: httpx.AsyncClient) -> tuple[str, str
     if response.status_code >= 400 and "functionName" in response.text:
         verdict = "REPRODUCED (fix merged upstream, not deployed yet)"
     elif response.status_code == 200:
-        verdict = "FIXED UPSTREAM AND LIVE"
+        verdict = "FIXED UPSTREAM BY THIS PROJECT, LIVE ON PRODUCTION"
     else:
         verdict = "CHANGED?"
     return expected, actual, verdict
@@ -58,7 +58,7 @@ async def finding_2_no_sequence_dry_run(client: httpx.AsyncClient) -> tuple[str,
     if response.status_code == 400 and "contractAddress" in response.text:
         verdict = "REPRODUCED (fix merged upstream, not deployed yet)"
     elif "results" in response.text:
-        verdict = "FIXED UPSTREAM AND LIVE"
+        verdict = "FIXED UPSTREAM BY THIS PROJECT, LIVE ON PRODUCTION"
     else:
         verdict = "CHANGED?"
     return expected, actual, verdict

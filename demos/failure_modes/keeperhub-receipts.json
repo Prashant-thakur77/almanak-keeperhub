@@ -7,7 +7,8 @@
     "function": "deposit",
     "success": false,
     "would_revert": true,
-    "error": "Error(ERC20: transfer amount exceeds allowance)"
+    "error": "Error(ERC20: transfer amount exceeds allowance)",
+    "source": "failure-modes"
   },
   {
     "execution_id": "ckw2xejqqd03eqaw2w3nj",
@@ -25,7 +26,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:20:10.106234+00:00"
+    "updated_at": "2026-09-12T06:20:10.106234+00:00",
+    "source": "failure-modes"
   },
   {
     "execution_id": "ckw2xejqqd03eqaw2w3nj",
@@ -43,7 +45,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:20:10.106252+00:00"
+    "updated_at": "2026-09-12T06:20:10.106252+00:00",
+    "source": "failure-modes"
   },
   {
     "execution_id": "4ts3qrhvrml9b9ux6pp6n",
@@ -61,7 +64,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:20:59.394138+00:00"
+    "updated_at": "2026-09-12T06:20:59.394138+00:00",
+    "source": "failure-modes"
   },
   {
     "execution_id": "yqtgom0p5v7rpqc9zdkxz",
@@ -79,7 +83,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:22:01.022961+00:00"
+    "updated_at": "2026-09-12T06:22:01.022961+00:00",
+    "source": "failure-modes"
   },
   {
     "type": "simulation",
@@ -89,7 +94,8 @@
     "function": "deposit",
     "success": false,
     "would_revert": true,
-    "error": "Error(ERC20: transfer amount exceeds allowance)"
+    "error": "Error(ERC20: transfer amount exceeds allowance)",
+    "source": "failure-modes"
   },
   {
     "execution_id": "0w8daipzivbp8merzysca",
@@ -107,7 +113,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:26:45.196357+00:00"
+    "updated_at": "2026-09-12T06:26:45.196357+00:00",
+    "source": "failure-modes"
   },
   {
     "execution_id": "0w8daipzivbp8merzysca",
@@ -125,7 +132,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:26:45.196376+00:00"
+    "updated_at": "2026-09-12T06:26:45.196376+00:00",
+    "source": "failure-modes"
   },
   {
     "execution_id": "c9qyie4kt2rqebfb01t1h",
@@ -143,7 +151,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:26:52.869454+00:00"
+    "updated_at": "2026-09-12T06:26:52.869454+00:00",
+    "source": "failure-modes"
   },
   {
     "execution_id": "otzkaujo4qhzsgwfgjobs",
@@ -161,7 +170,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:27:10.171978+00:00"
+    "updated_at": "2026-09-12T06:27:10.171978+00:00",
+    "source": "failure-modes"
   },
   {
     "type": "simulation",
@@ -178,6 +188,7 @@
       "target_value": "1",
       "operator": "gte"
     },
-    "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast"
+    "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
+    "source": "failure-modes"
   }
 ]

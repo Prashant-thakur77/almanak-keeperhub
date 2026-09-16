@@ -348,7 +348,7 @@ def console(
             org_wallet=org_wallet,
             base_url=os.environ.get("KEEPERHUB_BASE_URL", DEFAULT_BASE_URL),
             chain=chain_name,
-            reuse=None if refresh_evidence else Path(export_dir) / "console-data" / "verify",
+            reuse=None if refresh_evidence else Path(export_dir) / "console" / "console-data" / "verify",
         )
         click.echo(
             f"static console written to {summary['out_dir']}: {summary['executions']} executions, "

@@ -38,14 +38,14 @@ def source_of(path: Path) -> str:
 
     A union file (docs/all-receipts.json) is not a source; its entries keep the source they were saved with.
     """
-    parent = path.resolve().parent.name
-    if parent == "docs":
-        return ""
-    if parent == "failure_modes":
+    parent = path.resolve().parent
+    if parent.name == "failure_modes":
         return "failure-modes"
-    if parent.startswith("metamorpho") or (path.parent / "strategy.py").exists():
+    if parent.name.startswith("metamorpho") or (parent / "strategy.py").exists():
         return "strategy"
-    return "benchmark"
+    if (parent / "pyproject.toml").exists():
+        return "benchmark"  # the repository root log: scripts/benchmark.py writes there
+    return ""  # a union file or a scratch copy: keep whatever source the entries already carry
 
 
 def merge_logs(*paths: Path) -> list[dict[str, Any]]:

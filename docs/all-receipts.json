@@ -38,7 +38,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-12T06:19:36.046589+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "au5z8vtzv8s9xm811z93j",
@@ -57,7 +57,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-12T06:19:37.169687+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -997,7 +997,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-12T07:19:35.865212+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5927,7 +5927,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T17:21:01.325267+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "nmad5ulevjp5o3by2mdh5",
@@ -5946,7 +5946,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T17:21:03.223449+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -5976,7 +5976,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T17:21:25.057923+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -6017,7 +6017,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T17:34:05.685913+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "mgwqs6texgo4xpzvu3j4j",
@@ -6036,7 +6036,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T17:34:07.571155+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -6066,7 +6066,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T17:34:55.489303+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -6107,7 +6107,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T18:12:01.815757+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "0kjjlj8zbjs7c0xrufg01",
@@ -6126,7 +6126,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T18:12:04.248474+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -6156,7 +6156,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T18:12:30.785037+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -8641,7 +8641,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T18:26:53.817965+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "j1wk3dxv4cl1ipa8ox6t0",
@@ -8660,7 +8660,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T18:26:55.852358+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "z4rm0oveq4npy5ic2n5f7",
@@ -11537,7 +11537,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T19:36:41.586528+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "qpiqh98mn589bwn81p4t0",
@@ -11556,7 +11556,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T19:36:41.915563+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "dixwqqavpw77vpqsftrt7",
@@ -11582,7 +11582,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T19:36:54.784339+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "aosg8v3car9365nxplk07",
@@ -11608,7 +11608,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T19:39:41.458796+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -11638,7 +11638,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T20:18:15.891617+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "ll7c9ce8t427z39fv7u54",
@@ -11657,7 +11657,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T20:18:16.174864+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "8q6azz7iy224ef6jh8x5w",
@@ -11683,7 +11683,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-15T20:18:33.063674+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -11713,7 +11713,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T04:52:11.655034+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "vhruxvzhimruddr0qhfop",
@@ -11732,7 +11732,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T04:52:11.786346+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "vcxexqt2oh6xkigrjt1ja",
@@ -11758,7 +11758,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T04:52:23.231893+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -11799,7 +11799,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T10:54:06.969860+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "rsvhlpb6xagsb8z1ujvb9",
@@ -11818,7 +11818,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T10:54:08.530073+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -11855,7 +11855,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T10:54:56.476618+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "odttc6wxsq7wmswp0r50p",
@@ -11881,7 +11881,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T11:38:02.720802+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -11911,7 +11911,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T11:38:32.902605+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "206e9nqersuy08mduga3g",
@@ -11930,7 +11930,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T11:38:33.050555+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "so0vlbj5n9yz9qzn5s7sq",
@@ -11956,7 +11956,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T11:38:45.272485+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -12040,7 +12040,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T12:13:34.123051+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",
@@ -12070,7 +12070,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T12:24:53.240822+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "dka4q6p7v12w2jzfv6tiz",
@@ -12089,7 +12089,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T12:24:54.670865+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "execution_id": "nf765s4p8czvejg8r3iua",
@@ -12115,7 +12115,7 @@
   ],
   "sponsored": true,
   "updated_at": "2026-09-16T12:25:25.254003+00:00",
-  "source": "benchmark"
+  "source": "strategy"
  },
  {
   "type": "simulation",

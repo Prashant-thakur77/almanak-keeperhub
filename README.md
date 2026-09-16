@@ -27,7 +27,8 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 
 | What | Where |
 |---|---|
-| Live proof console: every execution this project produced, KeeperHub's verdict and decoded events on each, growing by one lifecycle every six hours | https://prashant-thakur77.github.io/almanak-keeperhub/ |
+| The site: live counters, the latest runner lifecycle, the results, the video, the failure modes | https://prashant-thakur77.github.io/almanak-keeperhub/ |
+| The console: every execution this project produced, KeeperHub's verdict and decoded events on each, searchable, every row a permalink | https://prashant-thakur77.github.io/almanak-keeperhub/console/ |
 | Demo video | VIDEO_URL |
 | An agent (Claude over MCP) running and verifying a tick, unedited | [`docs/agent-session.md`](docs/agent-session.md) |
 | The proof refreshing itself: a strategy tick through KeeperHub every six hours, run and committed by a GitHub runner | [proof workflow runs](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml) · [`scripts/proof_tick.sh`](scripts/proof_tick.sh) |
@@ -40,7 +41,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), in review |
 | Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), **merged** |
 | Upstream to Almanak: a pluggable execution backend for the gateway, with a diff that applies to their `main` | [almanak-co/sdk#3](https://github.com/almanak-co/sdk/issues/3) |
-| Every execution hash, verdict and link | [`docs/console-data/state.json`](docs/console-data/state.json), [`docs/receipts.json`](docs/receipts.json), [`docs/benchmark.json`](docs/benchmark.json) |
+| Every execution hash, verdict and link | [`docs/console/console-data/state.json`](docs/console/console-data/state.json), [`docs/receipts.json`](docs/receipts.json), [`docs/benchmark.json`](docs/benchmark.json) |
 | Reproducible API findings, re-verified every six hours | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
 | Who can act through which gate, and what a stolen key cannot do | [`SECURITY.md`](SECURITY.md) |
 | Reproduce it with no KeeperHub account: an Anvil fork plus a stand-in that speaks the merged API | `tests/e2e/rehearsal.sh --testnet` |
@@ -131,7 +132,10 @@ almanak-keeperhub console            # http://127.0.0.1:8642, opens a browser; -
 No framework and no build step: one HTML file served by the standard library's HTTP server, with the package's own client behind the Inspect endpoint. Open it beside the terminal for the demo.
 
 `almanak-keeperhub console --export docs` writes the same page as a static site with every execution's
-evidence frozen next to it, which is what https://prashant-thakur77.github.io/almanak-keeperhub/ serves.
+evidence frozen next to it, under `console/`, plus a front page at the root with live counters, the latest
+lifecycle, the results and the video, all read from the same `state.json`; that is what
+https://prashant-thakur77.github.io/almanak-keeperhub/ serves. Every console row is a permalink
+(`console/#<execution id>`) and the console searches by id, hash, contract or function.
 That site does not wait for a human: `.github/workflows/proof.yml` runs `scripts/proof_tick.sh` on a GitHub
 runner every six hours, which puts the demo strategy through one full lifecycle on Base Sepolia (Almanak plans,
 KeeperHub dry-runs, approve and deposit land, the position is redeemed so the test USDC comes back), merges
@@ -297,7 +301,9 @@ both shapes: `ContractCall` carries the typed and the raw spelling, `KeeperHubSi
 a sequence, and each capability latches from the API's own answer, so nothing is configured and nothing
 breaks on the deployment that has not caught up yet. `almanak-keeperhub api-features` asks the live API,
 the proof tick records the answer in `docs/api-features.json` every six hours, and the console footer
-prints it; the day production ships the merged code, the fallbacks stop running by themselves.
+prints it. That day came on 16 Sep 2026, two days before the deadline: production started answering yes to
+both, the runner's next tick dry-ran its bundle as a sequence on `eth_simulateV1`, and nothing in this
+repository had to change.
 
 ## KeeperHub surfaces used
 
@@ -503,8 +509,8 @@ default 28-digit precision, so amounts past 10^28 wei rounded. Fixed with intege
 
 ## What still breaks or is unfinished
 
-- KeeperHub had no raw-calldata write on EVM, so calldata was decoded against an offline selector index (339 signatures: Almanak's shipped ABIs plus a curated list) and an unknown selector was refused. This project fixed that upstream ([merged](https://github.com/KeeperHub/keeperhub/pull/2449)): the client now sends Almanak's calldata as `data` first and KeeperHub decodes it losslessly against the contract's verified ABI, so an unknown selector is KeeperHub's call to refuse, not the index's. Production has not deployed it yet, so the client falls back to the typed spelling the moment the API answers with the old schema, and `doctor` says which path is live.
-- KeeperHub simulate could not chain calls, so only the first transaction of a bundle was dry-run against live state and later ones used Almanak's compiler gas limit, like Almanak's own `LocalSimulator`. Fixed upstream too ([merged](https://github.com/KeeperHub/keeperhub/pull/2452)): a bundle is offered as one `calls[]` sequence and every transaction is dry-run against the state the one before it produces, with the failing index named. Same fallback until production deploys it; the console footer shows the answer of the last probe.
+- KeeperHub had no raw-calldata write on EVM, so calldata was decoded against an offline selector index (339 signatures: Almanak's shipped ABIs plus a curated list) and an unknown selector was refused. This project fixed that upstream ([merged](https://github.com/KeeperHub/keeperhub/pull/2449), and live on app.keeperhub.com since 16 Sep): the client sends Almanak's calldata as `data` and KeeperHub decodes it losslessly against the contract's verified ABI, so an unknown selector is KeeperHub's call to refuse, not the index's. The typed fallback stays for any deployment that still answers with the old schema; `doctor` says which path is live.
+- KeeperHub simulate could not chain calls, so only the first transaction of a bundle was dry-run against live state and later ones used Almanak's compiler gas limit, like Almanak's own `LocalSimulator`. Fixed upstream too ([merged](https://github.com/KeeperHub/keeperhub/pull/2452), live since 16 Sep): a bundle goes out as one `calls[]` sequence and every transaction is dry-run against the state the one before it produces, with the failing index named. The proof runner's 16:59 UTC tick on 16 Sep was the first to dry-run approve and deposit as a sequence on production, via `eth_simulateV1`.
 - Almanak's Safe plus Zodiac Roles deployment mode is not covered; this runs Almanak's EOA mode with KeeperHub's org wallet as the EOA.
 - Multi-transaction bundles are submitted one at a time with confirmation in between, slower than Almanak's parallel public submitter.
 - Two Almanak bugs in the 2.28.0 release needed workarounds inside `gateway.py` (see `docs/almanak-feedback.md`): the in-process gateway deadlocks for 30 s during `RegisterChains` when any wallet registry plugin is installed, and the strategy runner never enables the orchestrator's simulate phase on live networks. Both are fixed on Almanak's `main` since 9 Sep 2026 and not yet released; the workarounds stay until they are.

@@ -27,7 +27,7 @@ Testnet, and the proof is live rather than a snapshot. Almanak ships no testnet 
 
 **What still breaks or is unfinished?**
 
-- Production KeeperHub has not yet deployed the two merged changes, so today the client's raw-calldata and sequence paths fall back to the typed single-call shapes on every run. The fallbacks are the pre-existing behaviour, `doctor` reports which path is live, and nothing needs changing when the deployment catches up.
+- The two merged changes went live on production on 16 Sep, two days before the deadline; the client detected it from the API's own answers and switched to raw calldata and sequence dry runs without a change here. The typed fallback stays for older deployments, and `doctor` reports which path is live.
 - Two Almanak bugs in the 2.28.0 release need contained workarounds in `gateway.py` (a 30 s gateway deadlock during `RegisterChains` with any wallet registry plugin installed; the simulate phase never enabled on live networks). Both are fixed on Almanak's `main` since 9 Sep and not yet released. The third finding, a pluggable execution backend, is still open and filed as almanak-co/sdk#3 with a diff that applies to their `main`.
 - Almanak's Safe plus Zodiac Roles mode is not covered; the demo runs Almanak's EOA mode with the KeeperHub org wallet as the EOA.
 - Bundles are submitted one transaction at a time with confirmation in between, slower than Almanak's parallel public submitter, and they are not atomic; the sequence dry run says so.

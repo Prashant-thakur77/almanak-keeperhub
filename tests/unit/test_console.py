@@ -200,12 +200,14 @@ async def test_export_writes_a_self_contained_snapshot(strategy_dir: Path, tmp_p
 
     assert summary["executions"] == 2
     assert summary["evidence_files"] == 2
-    page = (out / "index.html").read_text()
+    page = (out / "console" / "index.html").read_text()
     assert "window.__CONSOLE_SNAPSHOT__ = true" in page
-    state = json.loads((out / "console-data" / "state.json").read_text())
+    assert "Almanak decides" in (out / "index.html").read_text()  # the front page at the root
+    assert json.loads((out / "site.json").read_text()) == {"video_url": ""}
+    state = json.loads((out / "console" / "console-data" / "state.json").read_text())
     assert state["snapshot_at"].endswith("UTC")
     assert state["sources"]["receipts"] == "keeperhub-receipts.json"  # no local paths leak onto the site
-    assert sorted(p.name for p in (out / "console-data" / "verify").iterdir()) == ["au5z.json", "az13.json"]
+    assert sorted(p.name for p in (out / "console" / "console-data" / "verify").iterdir()) == ["au5z.json", "az13.json"]
     assert (out / ".nojekyll").exists()
 
 
@@ -214,7 +216,7 @@ async def test_export_reuses_frozen_verdicts_and_reasks_the_unsettled(strategy_d
     from almanak_keeperhub.console.export import export_site
 
     out = tmp_path / "site"
-    verify_dir = out / "console-data" / "verify"
+    verify_dir = out / "console" / "console-data" / "verify"
     verify_dir.mkdir(parents=True)
     (verify_dir / "az13.json").write_text(json.dumps({"status": "completed", "frozen": True}))
     (verify_dir / "au5z.json").write_text(json.dumps({"status": "pending"}))

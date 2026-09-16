@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -82,14 +83,30 @@ def _frozen_evidence(reuse: Path | None, ref: str) -> dict[str, Any] | None:
     return data
 
 
+SITE = PAGE.with_name("site.html")
+
+
 def write_site(out_dir: Path, collected: dict[str, Any]) -> dict[str, Any]:
-    data = out_dir / "console-data"
+    """The front page at the root, the console under console/, its data under console/console-data/."""
+    console = out_dir / "console"
+    data = console / "console-data"
     (data / "verify").mkdir(parents=True, exist_ok=True)
     (data / "state.json").write_text(json.dumps(collected["state"], indent=1))
     (data / "keeper.json").write_text(json.dumps(collected["keeper"], indent=1))
     for ref, evidence in collected["evidence"].items():
         (data / "verify" / f"{ref}.json").write_text(json.dumps(evidence, indent=1))
-    (out_dir / "index.html").write_text(PAGE.read_text().replace("<script>", SNAPSHOT_TAG, 1))
+    (console / "index.html").write_text(PAGE.read_text().replace("<script>", SNAPSHOT_TAG, 1))
+    (out_dir / "index.html").write_text(SITE.read_text())
+    site_cfg = out_dir / "site.json"
+    cfg: dict[str, Any] = {}
+    try:
+        cfg = json.loads(site_cfg.read_text())
+    except (OSError, ValueError):
+        pass
+    if os.environ.get("ALMANAK_KEEPERHUB_VIDEO_URL"):
+        cfg["video_url"] = os.environ["ALMANAK_KEEPERHUB_VIDEO_URL"]
+    cfg.setdefault("video_url", "")
+    site_cfg.write_text(json.dumps(cfg, indent=1) + "\n")
     (out_dir / ".nojekyll").write_text("")
     return {
         "out_dir": str(out_dir),
