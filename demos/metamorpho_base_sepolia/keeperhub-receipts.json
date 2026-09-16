@@ -7,7 +7,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 56240
+    "gas_estimate": 56240,
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -17,7 +18,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 56240
+    "gas_estimate": 56240,
+    "source": "benchmark"
   },
   {
     "execution_id": "az13hw7qn9y9dhs52s4rg",
@@ -35,7 +37,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:19:36.046589+00:00"
+    "updated_at": "2026-09-12T06:19:36.046589+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "au5z8vtzv8s9xm811z93j",
@@ -53,7 +56,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T06:19:37.169687+00:00"
+    "updated_at": "2026-09-12T06:19:37.169687+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -63,7 +67,8 @@
     "function": "redeem",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 85057
+    "gas_estimate": 85057,
+    "source": "benchmark"
   },
   {
     "execution_id": "7rshlqcgwoxkia3iz052b",
@@ -81,7 +86,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-12T07:19:35.865212+00:00"
+    "updated_at": "2026-09-12T07:19:35.865212+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -91,7 +97,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "au0b0rld7tddhnip6kyra",
@@ -109,7 +116,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T17:21:01.325267+00:00"
+    "updated_at": "2026-09-15T17:21:01.325267+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "nmad5ulevjp5o3by2mdh5",
@@ -127,7 +135,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T17:21:03.223449+00:00"
+    "updated_at": "2026-09-15T17:21:03.223449+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -137,7 +146,8 @@
     "function": "redeem",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 67899
+    "gas_estimate": 67899,
+    "source": "benchmark"
   },
   {
     "execution_id": "nee8iqbgqxt2fh9smo3rg",
@@ -155,7 +165,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T17:21:25.057923+00:00"
+    "updated_at": "2026-09-15T17:21:25.057923+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -165,7 +176,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -175,7 +187,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "389lzsqaq40606gy396hr",
@@ -193,7 +206,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T17:34:05.685913+00:00"
+    "updated_at": "2026-09-15T17:34:05.685913+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "mgwqs6texgo4xpzvu3j4j",
@@ -211,7 +225,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T17:34:07.571155+00:00"
+    "updated_at": "2026-09-15T17:34:07.571155+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -221,7 +236,8 @@
     "function": "redeem",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 67899
+    "gas_estimate": 67899,
+    "source": "benchmark"
   },
   {
     "execution_id": "efunua9neom9ftf13g18t",
@@ -239,7 +255,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T17:34:55.489303+00:00"
+    "updated_at": "2026-09-15T17:34:55.489303+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -249,7 +266,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -259,7 +277,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "0gwi6sqpo72xscopsxuvi",
@@ -277,7 +296,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T18:12:01.815757+00:00"
+    "updated_at": "2026-09-15T18:12:01.815757+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "0kjjlj8zbjs7c0xrufg01",
@@ -295,7 +315,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T18:12:04.248474+00:00"
+    "updated_at": "2026-09-15T18:12:04.248474+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -305,7 +326,8 @@
     "function": "redeem",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 67899
+    "gas_estimate": 67899,
+    "source": "benchmark"
   },
   {
     "execution_id": "apeif2n7h8ykghxojd56k",
@@ -323,7 +345,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T18:12:30.785037+00:00"
+    "updated_at": "2026-09-15T18:12:30.785037+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -333,7 +356,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "192v2jx8eu99va7ytfy6y",
@@ -351,7 +375,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T18:26:53.817965+00:00"
+    "updated_at": "2026-09-15T18:26:53.817965+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "j1wk3dxv4cl1ipa8ox6t0",
@@ -369,7 +394,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T18:26:55.852358+00:00"
+    "updated_at": "2026-09-15T18:26:55.852358+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -386,32 +412,8 @@
       "target_value": "5000000",
       "operator": "gte"
     },
-    "error": null
-  },
-  {
-    "execution_id": "dixwqqavpw77vpqsftrt7",
-    "recorded_at": "2026-09-15T18:27:22.629015+00:00",
-    "chain_id": 84532,
-    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
-    "function": "redeem",
-    "tx_hash": "0x11217e295995d289ea18be2491fc34a04646655cf109d1487dcc19495b9fedae",
-    "status": "completed",
-    "idempotency_key": "303df63eedf511e3ed7a2f74f8870d16cc104ca2ed5b0e1a4f34b0e500c87378",
-    "idempotent_replay": false,
-    "guarded": true,
-    "condition": {
-      "met": true,
-      "observed_value": "5000000",
-      "target_value": "5000000",
-      "operator": "gte"
-    },
-    "transaction_link": "https://sepolia.basescan.org/tx/0x11217e295995d289ea18be2491fc34a04646655cf109d1487dcc19495b9fedae",
-    "verified": true,
-    "receipt_status": [
-      "success"
-    ],
-    "sponsored": true,
-    "updated_at": "2026-09-15T19:36:54.784328+00:00"
+    "error": null,
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -428,7 +430,8 @@
       "target_value": "5000000",
       "operator": "gte"
     },
-    "error": "guard not met: vault balance 0 gte 5000000 is false; nothing broadcast"
+    "error": "guard not met: vault balance 0 gte 5000000 is false; nothing broadcast",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -438,7 +441,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "mgaek215ox6e9jclsc6yz",
@@ -456,7 +460,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T19:36:41.586528+00:00"
+    "updated_at": "2026-09-15T19:36:41.586528+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "qpiqh98mn589bwn81p4t0",
@@ -474,7 +479,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T19:36:41.915563+00:00"
+    "updated_at": "2026-09-15T19:36:41.915563+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "dixwqqavpw77vpqsftrt7",
@@ -499,7 +505,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T19:36:54.784339+00:00"
+    "updated_at": "2026-09-15T19:36:54.784339+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "aosg8v3car9365nxplk07",
@@ -524,7 +531,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T19:39:41.458796+00:00"
+    "updated_at": "2026-09-15T19:39:41.458796+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -534,7 +542,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "qgx4xtrzbk3vor7ofoh5n",
@@ -552,7 +561,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T20:18:15.891617+00:00"
+    "updated_at": "2026-09-15T20:18:15.891617+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "ll7c9ce8t427z39fv7u54",
@@ -570,7 +580,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T20:18:16.174864+00:00"
+    "updated_at": "2026-09-15T20:18:16.174864+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "8q6azz7iy224ef6jh8x5w",
@@ -595,7 +606,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-15T20:18:33.063674+00:00"
+    "updated_at": "2026-09-15T20:18:33.063674+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -605,7 +617,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "n387eji3b8yqxoy1v9xpu",
@@ -623,7 +636,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-16T04:52:11.655034+00:00"
+    "updated_at": "2026-09-16T04:52:11.655034+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "vhruxvzhimruddr0qhfop",
@@ -641,7 +655,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-16T04:52:11.786346+00:00"
+    "updated_at": "2026-09-16T04:52:11.786346+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "vcxexqt2oh6xkigrjt1ja",
@@ -666,7 +681,105 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-16T04:52:23.231893+00:00"
+    "updated_at": "2026-09-16T04:52:23.231893+00:00",
+    "source": "benchmark"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-16T10:52:52.689005+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "success": true,
+    "would_revert": false,
+    "gas_estimate": 38704,
+    "source": "benchmark"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-16T10:53:42.345958+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "success": true,
+    "would_revert": false,
+    "gas_estimate": 38704,
+    "source": "benchmark"
+  },
+  {
+    "execution_id": "yqi8n6zatlsjzdl56mz8g",
+    "recorded_at": "2026-09-16T10:53:50.641736+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0xc60da4c5f7c0c3fe9a24ad672af9173a674709715ed44bea81406d66d6130422",
+    "transaction_link": "https://sepolia.basescan.org/tx/0xc60da4c5f7c0c3fe9a24ad672af9173a674709715ed44bea81406d66d6130422",
+    "status": "completed",
+    "idempotency_key": "33c1e39cb83dccf3b9cb8b2981670d8298d54b1732f325fc7c333d0a32c47edd",
+    "idempotent_replay": false,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-16T10:54:06.969860+00:00",
+    "source": "benchmark"
+  },
+  {
+    "execution_id": "rsvhlpb6xagsb8z1ujvb9",
+    "recorded_at": "2026-09-16T10:53:58.826265+00:00",
+    "chain_id": 84532,
+    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+    "function": "deposit",
+    "tx_hash": "0x4e9f865946e3fb1b56b93774c5f57b6b1c92bbf446b034af9602457829f638e5",
+    "transaction_link": "https://sepolia.basescan.org/tx/0x4e9f865946e3fb1b56b93774c5f57b6b1c92bbf446b034af9602457829f638e5",
+    "status": "completed",
+    "idempotency_key": "3fd1437e3b36d6c040a33be940e2a4a08878fa723aa9f84b6d66159d5e1393b4",
+    "idempotent_replay": false,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-16T10:54:08.530073+00:00",
+    "source": "benchmark"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-16T10:54:21.494902+00:00",
+    "chain_id": 84532,
+    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+    "function": "redeem",
+    "success": false,
+    "would_revert": false,
+    "guarded": true,
+    "condition": {
+      "met": false,
+      "observed_value": "5000000",
+      "target_value": "5000001",
+      "operator": "gte"
+    },
+    "error": "guard not met: vault balance 5000000 gte 5000001 is false; nothing broadcast",
+    "source": "benchmark"
+  },
+  {
+    "execution_id": "hc9526ibc149q3b5mqxcs",
+    "recorded_at": "2026-09-16T10:54:54.647051+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
+    "transaction_link": "https://sepolia.basescan.org/tx/0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
+    "status": "completed",
+    "idempotency_key": "d03cf9482530371a9cfcb1d2c3d0cc56d7ec245792c2182c207d9eac0e51704f",
+    "idempotent_replay": true,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-16T10:54:56.476618+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "odttc6wxsq7wmswp0r50p",
@@ -691,7 +804,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-16T11:38:02.720802+00:00"
+    "updated_at": "2026-09-16T11:38:02.720802+00:00",
+    "source": "benchmark"
   },
   {
     "type": "simulation",
@@ -701,7 +815,8 @@
     "function": "approve",
     "success": true,
     "would_revert": false,
-    "gas_estimate": 38704
+    "gas_estimate": 38704,
+    "source": "benchmark"
   },
   {
     "execution_id": "yl9fk0u9o1w0c7lwn1ews",
@@ -719,7 +834,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-16T11:38:32.902605+00:00"
+    "updated_at": "2026-09-16T11:38:32.902605+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "206e9nqersuy08mduga3g",
@@ -737,7 +853,8 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-16T11:38:33.050555+00:00"
+    "updated_at": "2026-09-16T11:38:33.050555+00:00",
+    "source": "benchmark"
   },
   {
     "execution_id": "so0vlbj5n9yz9qzn5s7sq",
@@ -762,6 +879,7 @@
       "success"
     ],
     "sponsored": true,
-    "updated_at": "2026-09-16T11:38:45.272485+00:00"
+    "updated_at": "2026-09-16T11:38:45.272485+00:00",
+    "source": "benchmark"
   }
 ]

@@ -163,8 +163,10 @@ def _pretty(label: str, output: str, code: int) -> str:
             pending_exec = None
         elif m := _KV.match(ln.strip()):
             kv[m.group(1)] = m.group(2).strip()
-        elif "refused" in ln.lower() or "error" in ln.lower():
-            lines.append(_h(ln.strip()))
+        elif "iteration_summary" in ln or "[info" in ln:
+            continue  # Almanak's structured log line, not a reply
+        elif re.search(r"refused|!!!|error(?!=None)", ln, re.IGNORECASE):
+            lines.append(_h(ln.strip()[:300]))
     if pending_exec:
         executions.append(pending_exec)
     if kv:

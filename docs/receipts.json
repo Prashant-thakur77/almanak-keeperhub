@@ -48,5 +48,18 @@
     "selector": "0xdeadbeef",
     "broadcast": false,
     "refused_by": "submitter (this KeeperHub takes no raw calldata)"
+  },
+  {
+    "kind": "stale_exit_not_executed",
+    "shares_requested": 5000001,
+    "shares_observed_by_keeperhub": "5000000",
+    "broadcast": false
+  },
+  {
+    "kind": "duplicate_blocked",
+    "idempotency_key": "d03cf9482530371a9cfcb1d2c3d0cc56d7ec245792c2182c207d9eac0e51704f",
+    "execution_id": "hc9526ibc149q3b5mqxcs",
+    "tx_hash": "0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
+    "second_attempt_replayed": true
   }
 ]
