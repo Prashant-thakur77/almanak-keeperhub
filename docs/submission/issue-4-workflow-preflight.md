@@ -9,10 +9,10 @@ which suisuss scoped out of that issue; the mechanism is already in #2452."
 
 ### Before filing
 
-- [x] I searched open and closed issues. #2427 (accepted, PR #2452) is the direct-execution half of this and
-  its triage narrowed scope to `contract-call`, leaving the workflow engine open. `docs/agent/mcp-test-workflow.md`
+- [x] I searched open and closed issues. #2427 (accepted, PR #2452, merged into `staging` on 15 Sep) is the
+  direct-execution half of this and its triage narrowed scope to `contract-call`, leaving the workflow engine open. `docs/agent/mcp-test-workflow.md`
   lists workflow dry-run under "Roadmap". Nothing open covers the preflight simulator.
-- [x] I checked the behaviour on `staging` at `5194c9864` and reproduced it on app.keeperhub.com on 15 Sep 2026.
+- [x] I checked the behaviour on `staging` at `f2c9cb8cf` (16 Sep) and reproduced it on app.keeperhub.com on 15 Sep 2026.
 - [x] This is one change: one function, one new input to it, no route or response shape altered.
 
 ### Reason: what you cannot do today
@@ -44,10 +44,11 @@ is." The limitation is documented in the code and hedged in the message. Two thi
    stored and uses `reachableNodeIds` only as a filter, so `hasEarlierReachableWrite` is true or false by
    where a node sits in the JSON, not by what runs before it.
 
-The mechanism that fixes the direct-execution version of this is already written: #2452 adds
-`simulateCallSequence` (`eth_simulateV1`, with `debug_traceCall` state diffs replayed as `eth_call`
-overrides where a node lacks it), which simulates N calls each against the state the previous one produced.
-suisuss scoped the workflow engine out of #2427 so it could ship; this is that follow-up.
+The mechanism that fixes the direct-execution version of this is already on `staging`: #2452 (merged) adds
+`simulateCallSequence` in `lib/execute/simulate-sequence.ts` (`eth_simulateV1`, with `debug_traceCall` state
+diffs replayed as `eth_call` overrides where a node lacks it), which simulates N calls each against the state
+the previous one produced. suisuss scoped the workflow engine out of #2427 so it could ship; this is that
+follow-up, and it adds no new mechanism.
 
 ### Reason: what the workaround costs
 
@@ -91,7 +92,9 @@ One change: a workflow with no chainable run is simulated exactly as today.
   (`validate-workflow-seed-workflows.test.ts`) unchanged.
 - Docs: `docs/agent/mcp-test-workflow.md` roadmap line replaced with what is supported; the simulate route's
   section in `docs/api/direct-execution.md` gains a paragraph; `specs/api-coverage.json` regenerated.
-- Depends on #2452 for `simulateCallSequence`; the PR will be opened stacked on it and say so.
+- Builds on `simulateCallSequence` from #2452, already on `staging`, so the PR sits directly on `staging`. It is
+  written and passing (33 tests in `workflow-run-simulation.test.ts`, lint, type-check, `check:api-docs`); I will
+  open it as soon as this is accepted.
 
 ### Plan: alternatives you considered
 
