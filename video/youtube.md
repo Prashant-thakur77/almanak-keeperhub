@@ -54,13 +54,15 @@ until judging).
     Licensed under Creative Commons: By Attribution 4.0
     https://creativecommons.org/licenses/by/4.0/
 
-**Chapters** (paste into the description once the final runtime is confirmed)
+**Chapters** (final runtime 4:13)
 
     0:00 Almanak decides, KeeperHub lands it
     0:05 Where agent frameworks break
-    0:21 The seam: Signer, Submitter, Simulator
+    0:22 The seam: Signer, Submitter, Simulator
     0:38 What the strategy inherits
     0:49 Live on Base Sepolia
-    1:15 Judged on what goes wrong
-    1:40 Receipts
-    1:56 Close
+    1:18 From the operator's phone
+    2:42 The guarded exit
+    3:16 Judged on what goes wrong
+    3:40 The numbers
+    4:08 Close
