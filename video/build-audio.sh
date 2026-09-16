@@ -8,7 +8,8 @@ lfo(){ echo "volume='$1*(0.78+0.22*sin(2*PI*$2*t+$3))':eval=frame"; }
 
 # MUSIC=<file> uses a real track (trimmed, faded, levelled); unset synthesises the pad.
 if [ -n "${MUSIC:-}" ]; then
-  ffmpeg -hide_banner -loglevel error -y -i "$MUSIC" -t "$D" -af "\
+  # -stream_loop: a track shorter than the video repeats (the crossfade is the track's own fade-out into its intro)
+  ffmpeg -hide_banner -loglevel error -y -stream_loop -1 -i "$MUSIC" -t "$D" -af "\
     afade=t=in:st=0:d=1.5,afade=t=out:st=$FO:d=4,loudnorm=I=-20:TP=-2:LRA=9" \
     -ar 48000 -ac 2 -c:a pcm_s16le music.wav
 else

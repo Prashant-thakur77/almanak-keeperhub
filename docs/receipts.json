@@ -61,5 +61,17 @@
     "execution_id": "hc9526ibc149q3b5mqxcs",
     "tx_hash": "0xc2be907d4c467d003be4f845b8ec4df1b9342790e2fda0b8cc9731a4b57bed42",
     "second_attempt_replayed": true
+  },
+  {
+    "kind": "stale_exit_not_executed",
+    "shares_requested": 1,
+    "shares_observed_by_keeperhub": "0",
+    "broadcast": false
+  },
+  {
+    "kind": "stale_exit_not_executed",
+    "shares_requested": 1,
+    "shares_observed_by_keeperhub": "0",
+    "broadcast": false
   }
 ]

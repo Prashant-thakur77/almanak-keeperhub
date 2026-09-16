@@ -178,7 +178,7 @@ scene.add(field);
 const $ = (id) => document.getElementById(id);
 const layers = {
   title: $("L_title"), problem: $("L_problem"), seam: $("L_seam"), buys: $("L_buys"),
-  demo: $("L_demo"), fail: $("L_fail"), proof: $("L_proof"), close: $("L_close"),
+  demo: $("L_demo"), phone: $("L_phone"), fail: $("L_fail"), proof: $("L_proof"), close: $("L_close"),
 };
 const cap = $("cap"), capScrim = $("capscrim");
 
@@ -246,6 +246,7 @@ $("proof_stats").innerHTML = [
 const SCENE_OF = {
   s1a: "title", s2a: "problem", s2b: "problem", s3a: "seam", s3b: "seam",
   s3c: "buys", s4a: "demo", s4b: "demo", s4c: "demo", s4d: "demo",
+  p1: "phone", p2: "phone", p3: "phone", p4: "phone", p5: "phone", p6: "phone", p7: "phone", p8: "phone", p9: "phone", p10: "phone",
   s5a: "fail", s5b: "fail", s5c: "fail",
   s6a: "proof", s6b: "proof", s7a: "close",
 };
@@ -296,7 +297,7 @@ window.__renderAt = function (t) {
 
   const title = sceneWin("title", t), problem = sceneWin("problem", t),
         seam = sceneWin("seam", t), buys = sceneWin("buys", t),
-        demo = sceneWin("demo", t), fail = sceneWin("fail", t),
+        demo = sceneWin("demo", t), phone = sceneWin("phone", t), fail = sceneWin("fail", t),
         proof = sceneWin("proof", t), close = sceneWin("close", t);
 
   field.material.opacity = .18 + .32 * Math.max(title.v, close.v);
@@ -404,6 +405,24 @@ window.__renderAt = function (t) {
         el.style.transform = `translateY(${((1 - sv) * 26).toFixed(1)}px)`;
       }
     }
+  }
+
+  if (phone.v > .01) {
+    const g = groups.grid; g.visible = true;
+    g.userData.grid.material.opacity = .22; g.userData.grid.material.transparent = true;
+    cam = { x: -2, y: 1.2, z: 31, lx: -1, ly: .8 };
+    // the step list lights up as the narration reaches each step
+    const steps = ["status", "executions", "verify", "simulate", "real tick", "alerts", "stale exit", "duplicate", "guarded exit"];
+    const ids = ["p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10"];
+    const box = $("ph_steps");
+    if (!box.childElementCount) box.innerHTML = steps.map((x, i) => `<div class="mono" id="phs${i}" style="width:300px;font-size:26px;line-height:1.6;color:var(--dim);opacity:.45">/${x}</div>`).join("");
+    ids.forEach((id, i) => {
+      const l = T.lines.find((q) => q.id === id); const el = $("phs" + i); if (!el) return;
+      if (!l) { el.style.display = "none"; return; }
+      const on = win(t, l.start - .2, T.scenes.phone.b, .35, .6);
+      el.style.opacity = (.45 + .55 * on).toFixed(3);
+      el.style.color = on > .5 ? "var(--kh)" : "var(--dim)";
+    });
   }
 
   if (buys.v > .01 || fail.v > .01 || proof.v > .01) {

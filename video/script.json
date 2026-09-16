@@ -49,12 +49,57 @@
     {
       "id": "s4d",
       "scene": "demo",
-      "text": "The same run is visible in the local console, in the KeeperHub dashboard, and from a Telegram bot on my phone."
+      "text": "The same run is visible in the local console, in the KeeperHub dashboard, and from a Telegram bot on my phone. Let me show you the phone."
+    },
+    {
+      "id": "p1",
+      "scene": "phone",
+      "text": "The same backend, from a phone. The Telegram bot is the operator's view: the same receipts and the same commands, and nothing it can do that the command line cannot."
+    },
+    {
+      "id": "p2",
+      "scene": "phone",
+      "text": "Status. The chain, the organisation wallet, and the counts. The key is in KeeperHub's enclave. There is no key on the phone, and none on the laptop either."
+    },
+    {
+      "id": "p3",
+      "scene": "phone",
+      "text": "Every execution, with its KeeperHub id and a link to the explorer."
+    },
+    {
+      "id": "p4",
+      "scene": "phone",
+      "text": "Verify asks KeeperHub for its verdict on one hash, then reads the receipt. The transaction sender is the sponsor's paymaster. The events name the organisation wallet as the one that acted."
+    },
+    {
+      "id": "p5",
+      "scene": "phone",
+      "text": "A dry run. Almanak plans the tick, KeeperHub simulates it. Nothing is signed."
+    },
+    {
+      "id": "p6",
+      "scene": "phone",
+      "text": "A real tick needs a confirmation. Almanak plans, KeeperHub dry-runs, then signs inside its enclave and broadcasts."
+    },
+    {
+      "id": "p7",
+      "scene": "phone",
+      "text": "The alerts arrive as it happens. Approve broadcast, deposit broadcast, both settled, both verified."
+    },
+    {
+      "id": "p8",
+      "scene": "phone",
+      "text": "Then a stale exit: a decision to redeem more than the wallet holds. KeeperHub reads the balance itself before acting, and refuses. Nothing is broadcast."
+    },
+    {
+      "id": "p9",
+      "scene": "phone",
+      "text": "And the duplicate. The same intent sent twice. KeeperHub replays the first execution instead of sending again. One transaction on chain."
     },
     {
       "id": "s5a",
       "scene": "failure",
-      "text": "But an execution backend is judged on what it does when things go wrong. So I built six failure modes and recorded every one."
+      "text": "But an execution backend is judged on what it does when things go wrong. So I built seven failure modes on purpose and recorded every one."
     },
     {
       "id": "s5b",
@@ -69,12 +114,12 @@
     {
       "id": "s6a",
       "scene": "proof",
-      "text": "Twenty out of twenty unsafe calls refused. Ten out of ten dry runs caught. Five out of five transactions landed, median six point nine seconds."
+      "text": "Fifty out of fifty impossible deposits refused before broadcast. Two hundred out of two hundred executions landed and verified, median seven point eight seconds. Fifty out of fifty retries replayed, zero double broadcasts. Ten out of ten crashed processes resumed."
     },
     {
       "id": "s6b",
       "scene": "proof",
-      "text": "A hundred and thirty unit tests. And three issues I filed against KeeperHub itself, all three accepted by the maintainers, all three now open as pull requests."
+      "text": "Five hundred and sixty tests, eleven of them run against production every six hours by a workflow that also runs a real tick and republishes the proof. And three issues filed against KeeperHub itself, all three accepted, two already merged."
     },
     {
       "id": "s7a",

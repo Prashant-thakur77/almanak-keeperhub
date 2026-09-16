@@ -188,7 +188,10 @@ def _pretty(label: str, output: str, code: int) -> str:
         if kv.get("seconds"):
             lines.append(f"{_h(kv['seconds'])}s end to end")
     head = f"<b>{_h(label)}</b>: {'done' if code == 0 else 'exit ' + str(code)}"
-    body = "\n".join(lines + executions) or _h(_summarise(output))
+    if "nothing to redeem" in output:
+        return head + "\nThe vault holds no shares for this wallet, so there is nothing to redeem. Run a tick first."
+    clean = [ln for ln in output.splitlines() if ln.strip() and "collision" not in ln and "[info" not in ln]
+    body = "\n".join(lines + executions) or _h("\n".join(clean[-12:]))
     return head + "\n" + body
 
 
