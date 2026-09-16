@@ -46,7 +46,27 @@ Almanak decides. KeeperHub lands it. This chat is the operator's view.
 /exit  redeem the vault position; KeeperHub re-reads the balance before it acts
 
 <b>Break it on purpose</b>
-/demo &lt;revert|cap|duplicate|crash|selector|rpc|stale&gt;"""
+/demo &lt;revert|cap|duplicate|crash|selector|rpc|stale&gt;
+
+/cancel drops a pending tick or exit. Buttons under each reply do the same as typing."""
+COMMAND_MENU = [
+    ("status", "Wallet, chain, counts, keeper"),
+    ("executions", "Latest executions with links"),
+    ("dryruns", "Latest KeeperHub dry runs"),
+    ("keeper", "The scheduled compounder KeeperHub runs"),
+    ("verify", "KeeperHub's verdict on a hash or execution id"),
+    ("simulate", "Dry-run one strategy tick, nothing broadcast"),
+    ("tick", "One real strategy tick through KeeperHub"),
+    ("exit", "Guarded exit: KeeperHub re-checks, then redeems"),
+    ("demo", "Run a failure-mode demo"),
+    ("cancel", "Drop a pending tick or exit"),
+    ("help", "The command list"),
+]
+MAIN_KEYBOARD = [
+    [("Status", "/status"), ("Executions", "/executions 3"), ("Dry runs", "/dryruns")],
+    [("Simulate a tick", "/simulate"), ("Real tick", "/tick"), ("Guarded exit", "/exit")],
+]
+CONFIRM_KEYBOARD = [[("Confirm", "/confirm"), ("Cancel", "/cancel")]]
 DEMOS = {
     "revert": "revert_caught_by_dry_run",
     "cap": "cap_refused",
@@ -229,6 +249,7 @@ class OperatorBot:
             "/tick": self._tick,
             "/exit": self._exit,
             "/confirm": self._confirm,
+            "/cancel": self._cancel,
             "/demo": self._demo,
         }.get(command)
         if handler is None:
@@ -402,6 +423,12 @@ class OperatorBot:
             "itself right before the write and refuses if the position is gone. Send /confirm within 60 seconds."
         )
 
+    async def _cancel(self, _args: list[str]) -> str:
+        if not self._pending:
+            return "Nothing pending."
+        action, self._pending = self._pending[0], None
+        return f"Cancelled the pending {action}. Nothing was sent."
+
     async def _confirm(self, _args: list[str]) -> str:
         if not self._pending or time.time() - self._pending[1] > 60:
             self._pending = None
@@ -440,22 +467,49 @@ class OperatorBot:
 
     # -- Telegram transport ----------------------------------------------------------
 
-    async def send(self, chat_id: str, text: str) -> None:
+    async def send(self, chat_id: str, text: str, keyboard: list[list[tuple[str, str]]] | None = None) -> None:
+        chunks = [text[i : i + 3800] for i in range(0, max(len(text), 1), 3800)]
         async with httpx.AsyncClient(timeout=20.0) as http:
-            for chunk in [text[i : i + 3800] for i in range(0, max(len(text), 1), 3800)]:
-                response = await http.post(
-                    f"https://api.telegram.org/bot{self._token}/sendMessage",
-                    json={"chat_id": chat_id, "text": chunk, "parse_mode": "HTML", "disable_web_page_preview": True},
-                )
+            for index, chunk in enumerate(chunks):
+                body: dict[str, Any] = {
+                    "chat_id": chat_id,
+                    "text": chunk,
+                    "parse_mode": "HTML",
+                    "disable_web_page_preview": True,
+                }
+                if keyboard and index == len(chunks) - 1:
+                    body["reply_markup"] = {
+                        "inline_keyboard": [[{"text": t, "callback_data": d} for t, d in row] for row in keyboard]
+                    }
+                response = await http.post(f"https://api.telegram.org/bot{self._token}/sendMessage", json=body)
                 if response.status_code == 400:  # markup Telegram would not take: send it plain rather than lose it
-                    await http.post(
-                        f"https://api.telegram.org/bot{self._token}/sendMessage",
-                        json={
-                            "chat_id": chat_id,
-                            "text": re.sub(r"<[^>]+>", "", chunk),
-                            "disable_web_page_preview": True,
-                        },
-                    )
+                    body.pop("parse_mode")
+                    body["text"] = re.sub(r"<[^>]+>", "", chunk)
+                    await http.post(f"https://api.telegram.org/bot{self._token}/sendMessage", json=body)
+
+    async def _typing(self, chat_id: str) -> None:
+        async with httpx.AsyncClient(timeout=10.0) as http:
+            await http.post(
+                f"https://api.telegram.org/bot{self._token}/sendChatAction",
+                json={"chat_id": chat_id, "action": "typing"},
+            )
+
+    async def _install_menu(self) -> None:
+        """The slash menu Telegram shows when the user types /."""
+        async with httpx.AsyncClient(timeout=10.0) as http:
+            await http.post(
+                f"https://api.telegram.org/bot{self._token}/setMyCommands",
+                json={"commands": [{"command": c, "description": d} for c, d in COMMAND_MENU]},
+            )
+
+    @staticmethod
+    def keyboard_for(command: str, reply: str) -> list[list[tuple[str, str]]] | None:
+        """Buttons under a reply: confirm/cancel after an armed action, the main menu after the rest."""
+        if command in ("/tick", "/exit") and "/confirm" in reply:
+            return CONFIRM_KEYBOARD
+        if command in ("/help", "/start", "/status", "/confirm", "/cancel", "/simulate", "/executions"):
+            return MAIN_KEYBOARD
+        return None
 
     async def run_forever(self) -> None:
         if self.owner_chat_id is None:
@@ -463,12 +517,20 @@ class OperatorBot:
         logger.info(
             "operator bot polling (owner=%s, strategy=%s)", self.owner_chat_id or "unclaimed", self._strategy_dir
         )
+        try:
+            await self._install_menu()
+        except Exception as exc:  # noqa: BLE001 - the menu is a nicety
+            logger.warning("could not install the command menu: %s", exc)
         async with httpx.AsyncClient(timeout=60.0) as http:
             while True:
                 try:
                     r = await http.get(
                         f"https://api.telegram.org/bot{self._token}/getUpdates",
-                        params={"timeout": 50, "offset": self._offset, "allowed_updates": '["message"]'},
+                        params={
+                            "timeout": 50,
+                            "offset": self._offset,
+                            "allowed_updates": '["message","callback_query"]',
+                        },
                     )
                     payload = r.json() if r.content else {}
                     if not payload.get("ok"):
@@ -480,26 +542,47 @@ class OperatorBot:
                         continue
                     for update in payload.get("result", []):
                         self._offset = int(update["update_id"]) + 1
-                        message = update.get("message") or {}
-                        chat_id = str((message.get("chat") or {}).get("id", ""))
-                        text = message.get("text") or ""
+                        chat_id, text, sent_at = self.parse_update(update)
                         if not chat_id or not text:
                             continue
-                        asyncio.create_task(self._answer(chat_id, text, float(message.get("date") or time.time())))
+                        if update.get("callback_query"):
+                            asyncio.create_task(self._ack_callback(http, update["callback_query"]["id"]))
+                        asyncio.create_task(self._answer(chat_id, text, sent_at))
                 except SystemExit:
                     raise
                 except Exception as exc:  # noqa: BLE001 - keep polling
                     logger.warning("telegram polling error: %s", exc)
                     await asyncio.sleep(5)
 
+    @staticmethod
+    def parse_update(update: dict[str, Any]) -> tuple[str, str, float]:
+        """A typed message or a tapped button, as (chat id, command text, sent-at)."""
+        if query := update.get("callback_query"):
+            chat = (query.get("message") or {}).get("chat") or {}
+            return str(chat.get("id", "")), str(query.get("data") or ""), time.time()
+        message = update.get("message") or {}
+        chat_id = str((message.get("chat") or {}).get("id", ""))
+        return chat_id, message.get("text") or "", float(message.get("date") or time.time())
+
+    async def _ack_callback(self, http: httpx.AsyncClient, callback_id: str) -> None:
+        try:
+            await http.post(
+                f"https://api.telegram.org/bot{self._token}/answerCallbackQuery",
+                json={"callback_query_id": callback_id},
+            )
+        except Exception:  # noqa: BLE001 - only stops the button spinner
+            pass
+
     async def _answer(self, chat_id: str, text: str, sent_at: float) -> None:
         if time.time() - sent_at > STALE_AFTER_SECONDS:
             return
-        if text.split()[0].lower() in ("/simulate", "/confirm", "/demo", "/exit"):
-            await self.send(chat_id, "working, this goes through KeeperHub…")
+        command = text.split()[0].lower() if text.split() else ""
+        if command in ("/simulate", "/confirm", "/demo", "/verify"):
+            await self.send(chat_id, "Working. This goes through KeeperHub; a real tick takes about half a minute.")
+            await self._typing(chat_id)
         reply = await self.handle(chat_id=chat_id, text=text, sent_at=sent_at)
         if reply:
-            await self.send(chat_id, reply)
+            await self.send(chat_id, reply, self.keyboard_for(command, reply))
 
 
 def bot_from_env(strategy_dir: Path, chain: str, runner: Runner | None = None) -> OperatorBot:

@@ -111,3 +111,25 @@ async def test_stale_queued_messages_are_ignored(strategy_dir: Path) -> None:
 async def test_verify_rejects_bad_references_before_any_request(strategy_dir: Path) -> None:
     reply = await make_bot(strategy_dir).handle(chat_id="42", text="/verify ../../user/wallet?x=")
     assert "not a transaction hash or execution id" in reply
+
+
+def test_a_tapped_button_is_the_same_as_typing_the_command() -> None:
+    chat, text, _ = OperatorBot.parse_update(
+        {"update_id": 1, "callback_query": {"id": "cb1", "data": "/status", "message": {"chat": {"id": 42}}}}
+    )
+    assert (chat, text) == ("42", "/status")
+    chat, text, sent = OperatorBot.parse_update(
+        {"update_id": 2, "message": {"chat": {"id": 42}, "text": "/help", "date": 5}}
+    )
+    assert (chat, text, sent) == ("42", "/help", 5.0)
+
+
+async def test_confirm_prompts_carry_confirm_and_cancel_buttons_and_cancel_drops_the_action(strategy_dir: Path) -> None:
+    calls: list[list[str]] = []
+    bot = make_bot(strategy_dir, runner=lambda args: (calls.append(args) or "", 0))
+    reply = await bot.handle(chat_id="42", text="/tick")
+    assert OperatorBot.keyboard_for("/tick", reply) == [[("Confirm", "/confirm"), ("Cancel", "/cancel")]]
+    assert "cancelled" in (await bot.handle(chat_id="42", text="/cancel")).lower()
+    assert "nothing pending" in (await bot.handle(chat_id="42", text="/confirm")).lower()
+    assert calls == []
+    assert OperatorBot.keyboard_for("/status", "anything") is not None
