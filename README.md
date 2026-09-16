@@ -43,6 +43,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Reproducible API findings, re-verified every six hours | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
 | Who can act through which gate, and what a stolen key cannot do | [`SECURITY.md`](SECURITY.md) |
 | Reproduce it with no KeeperHub account: an Anvil fork plus a stand-in that speaks the merged API | `tests/e2e/rehearsal.sh --testnet` |
+| The package | [PyPI `almanak-keeperhub` 1.0.0](https://pypi.org/project/almanak-keeperhub/) |
 
 Verify any row yourself: `almanak-keeperhub verify <hash or execution id>` asks KeeperHub for its verdict and
 decodes the receipt to name who acted, or open the execution in the KeeperHub app under Runs.
@@ -78,8 +79,11 @@ With KeeperHub in the loop the retry carries the same idempotency key, so Keeper
 
 ## Run it in five minutes
 
+On PyPI as [`almanak-keeperhub`](https://pypi.org/project/almanak-keeperhub/): `pip install 'almanak-keeperhub[mcp]'`
+gives you every command below and the MCP server. For the demos, tests and scripts, clone the repo:
+
 ```bash
-git clone <this repo> && cd almanak-keeperhub
+git clone https://github.com/Prashant-thakur77/almanak-keeperhub && cd almanak-keeperhub
 uv venv --python 3.12 && source .venv/bin/activate
 uv pip install -e ".[dev]"
 cp .env.example .env            # KEEPERHUB_API_KEY (mcp:write), Base RPC URL
