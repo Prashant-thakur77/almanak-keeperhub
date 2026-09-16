@@ -54,7 +54,7 @@ until judging).
     Licensed under Creative Commons: By Attribution 4.0
     https://creativecommons.org/licenses/by/4.0/
 
-**Chapters** (final runtime 4:13)
+**Chapters** (final runtime 4:20)
 
     0:00 Almanak decides, KeeperHub lands it
     0:05 Where agent frameworks break
@@ -62,7 +62,8 @@ until judging).
     0:38 What the strategy inherits
     0:49 Live on Base Sepolia
     1:18 From the operator's phone
-    2:42 The guarded exit
-    3:16 Judged on what goes wrong
-    3:40 The numbers
-    4:08 Close
+    2:43 A stale exit, refused
+    2:59 The guarded exit
+    3:23 Judged on what goes wrong
+    3:47 The numbers
+    4:15 Close

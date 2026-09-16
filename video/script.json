@@ -87,14 +87,14 @@
       "text": "The alerts arrive as it happens. Approve broadcast, deposit broadcast, both settled, both verified."
     },
     {
+      "id": "p8",
+      "scene": "phone",
+      "text": "Then a stale decision: redeem one share more than the wallet holds. KeeperHub reads the balance itself before acting, five million, not enough, and refuses. Nothing is broadcast."
+    },
+    {
       "id": "p10",
       "scene": "phone",
       "text": "And the exit. Almanak decides to redeem; the order goes out as KeeperHub's check-and-execute. KeeperHub reads the vault balance itself right before the write, sees the five million shares, and only then redeems. The test USDC comes back."
-    },
-    {
-      "id": "p8",
-      "scene": "phone",
-      "text": "Then the same decision again, after the position is gone. KeeperHub reads the balance, finds nothing, and refuses. Nothing is broadcast."
     },
     {
       "id": "p9",
