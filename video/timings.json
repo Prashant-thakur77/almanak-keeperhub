@@ -1,6 +1,6 @@
 {
   "sr": 24000,
-  "total": 237.53,
+  "total": 252.363,
   "lines": [
     {
       "id": "s1a",
@@ -95,7 +95,7 @@
       "scene": "phone",
       "text": "Status. The chain, the organisation wallet, and the counts. The key is in KeeperHub's enclave. There is no key on the phone, and none on the laptop either.",
       "file": "vo/p2.wav",
-      "start": 86.26,
+      "start": 84.36,
       "dur": 9.0
     },
     {
@@ -103,7 +103,7 @@
       "scene": "phone",
       "text": "Every execution, with its KeeperHub id and a link to the explorer.",
       "file": "vo/p3.wav",
-      "start": 95.76,
+      "start": 87.86,
       "dur": 3.96
     },
     {
@@ -111,7 +111,7 @@
       "scene": "phone",
       "text": "Verify asks KeeperHub for its verdict on one hash, then reads the receipt. The transaction sender is the sponsor's paymaster. The events name the organisation wallet as the one that acted.",
       "file": "vo/p4.wav",
-      "start": 100.36,
+      "start": 99.86,
       "dur": 10.36
     },
     {
@@ -119,7 +119,7 @@
       "scene": "phone",
       "text": "A dry run. Almanak plans the tick, KeeperHub simulates it. Nothing is signed.",
       "file": "vo/p5.wav",
-      "start": 114.66,
+      "start": 118.86,
       "dur": 4.64
     },
     {
@@ -127,7 +127,7 @@
       "scene": "phone",
       "text": "A real tick needs a confirmation. Almanak plans, KeeperHub dry-runs, then signs inside its enclave and broadcasts.",
       "file": "vo/p6.wav",
-      "start": 124.66,
+      "start": 128.86,
       "dur": 7.24
     },
     {
@@ -135,23 +135,31 @@
       "scene": "phone",
       "text": "The alerts arrive as it happens. Approve broadcast, deposit broadcast, both settled, both verified.",
       "file": "vo/p7.wav",
-      "start": 133.86,
+      "start": 137.36,
       "dur": 5.8
+    },
+    {
+      "id": "p10",
+      "scene": "phone",
+      "text": "And the exit. Almanak decides to redeem; the order goes out as KeeperHub's check-and-execute. KeeperHub reads the vault balance itself right before the write, sees the five million shares, and only then redeems. The test USDC comes back.",
+      "file": "vo/p10.wav",
+      "start": 162.36,
+      "dur": 12.92
     },
     {
       "id": "p8",
       "scene": "phone",
-      "text": "Then a stale exit: a decision to redeem more than the wallet holds. KeeperHub reads the balance itself before acting, and refuses. Nothing is broadcast.",
+      "text": "Then the same decision again, after the position is gone. KeeperHub reads the balance, finds nothing, and refuses. Nothing is broadcast.",
       "file": "vo/p8.wav",
-      "start": 145.36,
-      "dur": 8.48
+      "start": 176.36,
+      "dur": 8.08
     },
     {
       "id": "p9",
       "scene": "phone",
       "text": "And the duplicate. The same intent sent twice. KeeperHub replays the first execution instead of sending again. One transaction on chain.",
       "file": "vo/p9.wav",
-      "start": 167.36,
+      "start": 185.86,
       "dur": 7.72
     },
     {
@@ -159,7 +167,7 @@
       "scene": "failure",
       "text": "But an execution backend is judged on what it does when things go wrong. So I built seven failure modes on purpose and recorded every one.",
       "file": "vo/s5a.wav",
-      "start": 181.36,
+      "start": 196.193,
       "dur": 6.44
     },
     {
@@ -167,7 +175,7 @@
       "scene": "failure",
       "text": "An unknown selector is refused before anything is signed. A call that would revert is caught by the dry run. A duplicate is blocked by an idempotency key bound to the intent, not to the attempt.",
       "file": "vo/s5b.wav",
-      "start": 188.25,
+      "start": 203.083,
       "dur": 9.8
     },
     {
@@ -175,7 +183,7 @@
       "scene": "failure",
       "text": "And when the process is killed in the middle of a bundle, it resumes from the receipts log, and never broadcasts the same transaction twice.",
       "file": "vo/s5c.wav",
-      "start": 198.5,
+      "start": 213.333,
       "dur": 6.64
     },
     {
@@ -183,7 +191,7 @@
       "scene": "proof",
       "text": "Fifty out of fifty impossible deposits refused before broadcast. Two hundred out of two hundred executions landed and verified, median seven point eight seconds. Fifty out of fifty retries replayed, zero double broadcasts. Ten out of ten crashed processes resumed.",
       "file": "vo/s6a.wav",
-      "start": 205.59,
+      "start": 220.423,
       "dur": 14.24
     },
     {
@@ -191,7 +199,7 @@
       "scene": "proof",
       "text": "Five hundred and sixty tests, eleven of them run against production every six hours by a workflow that also runs a real tick and republishes the proof. And three issues filed against KeeperHub itself, all three accepted, two already merged.",
       "file": "vo/s6b.wav",
-      "start": 220.28,
+      "start": 235.113,
       "dur": 12.36
     },
     {
@@ -199,13 +207,13 @@
       "scene": "close",
       "text": "Almanak strategies, executed by KeeperHub. No strategy code changes.",
       "file": "vo/s7a.wav",
-      "start": 233.09,
+      "start": 247.923,
       "dur": 4.44
     }
   ],
   "phone": {
     "start": 77.86,
-    "length": 102.7,
+    "length": 117.533,
     "clip": "phone.mp4"
   }
 }

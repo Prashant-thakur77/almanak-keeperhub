@@ -86,5 +86,11 @@
     "execution_id": "7x2mmkfw87ashp8zmz1i0",
     "tx_hash": "0xf161134803fd3a28c8b1b55e5958701d9d4fb361c8d4bbd6111ec08c7ac6dae6",
     "second_attempt_replayed": true
+  },
+  {
+    "kind": "stale_exit_not_executed",
+    "shares_requested": 1,
+    "shares_observed_by_keeperhub": "0",
+    "broadcast": false
   }
 ]

@@ -412,8 +412,8 @@ window.__renderAt = function (t) {
     g.userData.grid.material.opacity = .22; g.userData.grid.material.transparent = true;
     cam = { x: -2, y: 1.2, z: 31, lx: -1, ly: .8 };
     // the step list lights up as the narration reaches each step
-    const steps = ["status", "executions", "verify", "simulate", "real tick", "alerts", "stale exit", "duplicate", "guarded exit"];
-    const ids = ["p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10"];
+    const steps = ["status", "executions", "verify", "simulate", "real tick", "alerts", "guarded exit", "stale exit", "duplicate"];
+    const ids = ["p2", "p3", "p4", "p5", "p6", "p7", "p10", "p8", "p9"];
     const box = $("ph_steps");
     if (!box.childElementCount) box.innerHTML = steps.map((x, i) => `<div class="mono" id="phs${i}" style="width:300px;font-size:26px;line-height:1.6;color:var(--dim);opacity:.45">/${x}</div>`).join("");
     ids.forEach((id, i) => {

@@ -39,6 +39,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Upstream: raw calldata on `contract-call` | [issue #2426](https://github.com/KeeperHub/keeperhub/issues/2426) → [PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449), **merged** |
 | Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), in review |
 | Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), **merged** |
+| Upstream to Almanak: a pluggable execution backend for the gateway, with a diff that applies to their `main` | [almanak-co/sdk#3](https://github.com/almanak-co/sdk/issues/3) |
 | Every execution hash, verdict and link | [`docs/console-data/state.json`](docs/console-data/state.json), [`docs/receipts.json`](docs/receipts.json), [`docs/benchmark.json`](docs/benchmark.json) |
 | Reproducible API findings, re-verified every six hours | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
 | Who can act through which gate, and what a stolen key cannot do | [`SECURITY.md`](SECURITY.md) |
@@ -511,7 +512,7 @@ default 28-digit precision, so amounts past 10^28 wei rounded. Fixed with intege
 - The idempotency key protects a retry of the same Almanak intent. A strategy that crashes before persisting its state and then decides again compiles a new intent, which is new work by construction; KeeperHub cannot tell those apart, and neither can this package.
 - Sponsored KeeperHub transactions show the relayer as sender on the explorer; the vault's `Deposit` event `owner` and the `receipts[].verified` flag identify the org wallet.
 - Tuple arguments are rendered as objects keyed by component name, the shape KeeperHub's own argument reshaping expects (read from its source); exercised by the Uniswap v3 swap on the fork. The hosted run used approve and deposit (no tuples).
-- Almanak's GitHub repository is a one-way mirror of a private monorepo with no pull requests, so the upstream change (a pluggable `almanak.execution_backends` entry-point group, `patches/`) is offered as an issue carrying a diff that applies to their `main`, not a merged PR. This package already declares the entry point, so it needs no change when the group lands.
+- Almanak's GitHub repository is a one-way mirror of a private monorepo with no pull requests, so the upstream change (a pluggable `almanak.execution_backends` entry-point group, `patches/`) is offered as [almanak-co/sdk#3](https://github.com/almanak-co/sdk/issues/3), an issue carrying a diff that applies to their `main`, not a merged PR. This package already declares the entry point, so it needs no change when the group lands.
 
 ## Feedback to KeeperHub and Almanak
 
