@@ -30,18 +30,23 @@ logger = logging.getLogger(__name__)
 
 Runner = Callable[[list[str]], tuple[str, int]]
 STALE_AFTER_SECONDS = 180
-HELP = """almanak-keeperhub operator bot
+HELP = """<b>almanak-keeperhub operator bot</b>
+Almanak decides. KeeperHub lands it. This chat is the operator's view.
 
-/status     org wallet, chain, counts, keeper
-/executions [n]   latest executions with links (default 5)
-/dryruns    latest KeeperHub dry runs
-/keeper     the scheduled compounder and its executions
-/verify <tx hash or execution id>   KeeperHub verdict and who acted on chain
-/simulate   dry-run one strategy tick through KeeperHub (nothing broadcast)
-/tick       run one real strategy tick (asks for /confirm)
-/exit       redeem the vault position, guarded: KeeperHub re-reads the balance first (asks for /confirm)
-/demo <revert|cap|duplicate|crash|selector|rpc|stale>   run a failure-mode demo
-/help       this list"""
+<b>Read</b>
+/status  wallet, chain, counts, keeper
+/executions [n]  latest executions with links
+/dryruns  latest KeeperHub dry runs
+/keeper  the scheduled compounder KeeperHub runs
+/verify &lt;tx hash or execution id&gt;  KeeperHub's verdict and who acted on chain
+
+<b>Act</b> (each asks for /confirm)
+/simulate  dry-run one strategy tick through KeeperHub, nothing broadcast
+/tick  one real strategy tick: Almanak plans, KeeperHub dry-runs, signs and broadcasts
+/exit  redeem the vault position; KeeperHub re-reads the balance before it acts
+
+<b>Break it on purpose</b>
+/demo &lt;revert|cap|duplicate|crash|selector|rpc|stale&gt;"""
 DEMOS = {
     "revert": "revert_caught_by_dry_run",
     "cap": "cap_refused",
@@ -89,6 +94,80 @@ _ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}")
 def _short_addresses(text: str) -> str:
     """Phone-sized: 0xe7dbacbd…36ac9 instead of the full 40 hex characters."""
     return _ADDRESS.sub(lambda m: m.group(0)[:10] + "…" + m.group(0)[-5:], text)
+
+
+def _h(text: object) -> str:
+    """Escape for Telegram HTML parse mode."""
+    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+_TX_LINE = re.compile(r"^\s+tx (0x[0-9a-fA-F]{64})\s+(https?://\S+)")
+_EXEC_LINE = re.compile(r"^\s+(\w+) -> (0x[0-9a-fA-F]{40})\s+execution=(\S+)\s+status=(\S+)\s+verified=(\w+)(.*)$")
+_SIM_OK = re.compile(r"KeeperHub simulate ok: (0x[0-9a-fA-F]{40})\.(\w+) gas=(\S+)")
+_STATUS = re.compile(r"Status: (\w+) \| Intent: (\w+)")
+_KV = re.compile(
+    r"^(executed|guard|observed|execution_id|tx_hash|status|idempotent_replay|seconds|explorer|note)\s*:\s*(.*)$"
+)
+
+
+def _pretty(label: str, output: str, code: int) -> str:
+    """Turn the CLI's summary lines into a phone-sized, formatted report."""
+    lines: list[str] = []
+    executions: list[str] = []
+    pending_exec: str | None = None
+    kv: dict[str, str] = {}
+    for raw in output.splitlines():
+        ln = raw.rstrip()
+        if m := _SIM_OK.search(ln):
+            lines.append(
+                f"Dry run: <b>{_h(m.group(2))}</b> on <code>{_h(_short_addresses(m.group(1)))}</code> would succeed, gas {_h(m.group(3))}"
+            )
+        elif m := _STATUS.search(ln):
+            lines.append(f"Almanak: <b>{_h(m.group(1))}</b>, intent {_h(m.group(2))}")
+        elif "dry runs this run" in ln:
+            lines.append(_h(ln.strip()))
+        elif "executions this run" in ln:
+            lines.append(
+                _h(ln.split("(")[0].strip() + ("(" + ln.split("(", 1)[1].split(")")[0] + ")" if "(" in ln else ""))
+            )
+        elif m := _EXEC_LINE.match(ln):
+            fn, to, exec_id, status, verified, rest = m.groups()
+            flags = ("verified" if verified == "True" else "not verified") + (
+                ", sponsored gas" if "sponsored" in rest else ""
+            )
+            pending_exec = f"<b>{_h(fn)}</b> -> <code>{_h(_short_addresses(to))}</code>: {_h(status)}, {flags}\n  exec <code>{_h(exec_id)}</code>"
+        elif (m := _TX_LINE.match(ln)) and pending_exec:
+            executions.append(
+                pending_exec + f'\n  tx <a href="{_h(m.group(2))}">{_h(m.group(1)[:12])}…{_h(m.group(1)[-6:])}</a>'
+            )
+            pending_exec = None
+        elif m := _KV.match(ln.strip()):
+            kv[m.group(1)] = m.group(2).strip()
+        elif "refused" in ln.lower() or "error" in ln.lower():
+            lines.append(_h(ln.strip()))
+    if pending_exec:
+        executions.append(pending_exec)
+    if kv:
+        if kv.get("executed") == "True":
+            lines.append(
+                f"KeeperHub read the vault balance first: <b>{_h(kv.get('observed'))}</b> shares held, guard <code>{_h(kv.get('guard'))}</code> holds"
+            )
+            lines.append(f"Redeemed: <b>{_h(kv.get('status'))}</b>, exec <code>{_h(kv.get('execution_id'))}</code>")
+            if kv.get("explorer"):
+                lines.append(
+                    f'tx <a href="{_h(kv["explorer"])}">{_h(kv.get("tx_hash", "")[:12])}…{_h(kv.get("tx_hash", "")[-6:])}</a>'
+                )
+            if kv.get("note"):
+                lines.append(_h(kv["note"]))
+        elif "executed" in kv:
+            lines.append(
+                f"Not executed. KeeperHub observed <b>{_h(kv.get('observed'))}</b> shares; guard <code>{_h(kv.get('guard'))}</code> does not hold. Nothing was broadcast."
+            )
+        if kv.get("seconds"):
+            lines.append(f"{_h(kv['seconds'])}s end to end")
+    head = f"<b>{_h(label)}</b>: {'done' if code == 0 else 'exit ' + str(code)}"
+    body = "\n".join(lines + executions) or _h(_summarise(output))
+    return head + "\n" + body
 
 
 def _summarise(output: str, limit: int = 30) -> str:
@@ -193,9 +272,14 @@ class OperatorBot:
             else "keeper: not deployed"
         )
         return (
-            f"chain {self._chain}\norg wallet {state['org_wallet'] or 'unknown'}\nKeeperHub {self._base_url}\n"
-            f"executions {s['executions']} (verified {s['verified']}, replays {s['replays']}, sponsored {s['sponsored']}, in flight {s['in_flight']}, failed {s['failed']})\n"
-            f"dry runs {s['dry_runs']} ({s['dry_run_refusals']} would revert)\n{keeper_line}"
+            f"<b>Strategy status</b>\n"
+            f"chain <code>{_h(self._chain)}</code>\n"
+            f"org wallet <code>{_h(_short_addresses(state['org_wallet'] or 'unknown'))}</code> (key in KeeperHub's enclave, none here)\n"
+            f"KeeperHub {_h(self._base_url)}\n\n"
+            f"executions <b>{s['executions']}</b>: {s['verified']} verified, {s['sponsored']} gas sponsored, "
+            f"{s['replays']} replays, {s['in_flight']} in flight, {s['failed']} failed\n"
+            f"dry runs <b>{s['dry_runs']}</b>: {s['dry_run_refusals']} refused before broadcast\n"
+            f"{_h(keeper_line)}"
         )
 
     async def _executions(self, args: list[str]) -> str:
@@ -214,17 +298,29 @@ class OperatorBot:
                 )
                 if on
             )
+            link = e.get("explorer")
+            tx = str(e.get("tx_hash") or "")
+            tx_text = f"{tx[:12]}…{tx[-6:]}" if len(tx) > 20 else tx
+            tx_html = f'<a href="{_h(link)}">{_h(tx_text)}</a>' if link else f"<code>{_h(tx_text)}</code>"
+            when = str(e.get("recorded_at") or "")[:16].replace("T", " ")
+            guarded = " guarded" if e.get("guarded") else ""
             lines.append(
-                f"{e.get('function')} -> {str(e.get('to'))[:10]}… {e.get('status')} {flags}\n  exec {e.get('execution_id')}\n  {e.get('explorer') or e.get('tx_hash')}"
+                f"<b>{_h(e.get('function'))}</b> -> <code>{_h(_short_addresses(str(e.get('to'))))}</code>  {_h(e.get('status'))}{guarded}\n"
+                f"  {_h(flags)}  {_h(when)} UTC\n  exec <code>{_h(e.get('execution_id'))}</code>  tx {tx_html}"
             )
-        return "\n".join(lines)
+        return f"<b>Latest {len(rows)} executions</b>\n" + "\n\n".join(lines)
 
     async def _dryruns(self, _args: list[str]) -> str:
         rows = self._state()["simulations"][:8]
         if not rows:
             return "No dry runs recorded yet."
-        return "\n".join(
-            f"{x.get('function')} -> {str(x.get('to'))[:10]}…: {'would succeed, gas ' + str(x.get('gas_estimate')) if x.get('success') else 'would revert: ' + str(x.get('error'))[:120]}"
+        return "<b>Latest dry runs</b> (KeeperHub simulate, nothing broadcast)\n" + "\n".join(
+            f"<b>{_h(x.get('function'))}</b> -> <code>{_h(_short_addresses(str(x.get('to'))))}</code>: "
+            + (
+                f"would succeed, gas {_h(x.get('gas_estimate'))}"
+                if x.get("success")
+                else f"refused: {_h(str(x.get('error'))[:140])}"
+            )
             for x in rows
         )
 
@@ -233,7 +329,12 @@ class OperatorBot:
         k = await keeper_state(Path(state["sources"]["receipts"]))
         if not k.get("deployed"):
             return "No keeper deployed. Run: almanak-keeperhub keeper deploy"
-        head = f"keeper workflow {k.get('workflow_id')} {'enabled' if k.get('enabled') else 'disabled'}\ncron {k.get('cron')} UTC, window {k.get('min')}..{k.get('max')}\nvalidation valid={(k.get('validation') or {}).get('valid')}"
+        head = (
+            f"<b>Keeper</b>: a KeeperHub workflow generated from the strategy config, run by KeeperHub's scheduler with no Almanak process\n"
+            f"workflow <code>{_h(k.get('workflow_id'))}</code>, {'enabled' if k.get('enabled') else 'disabled'}\n"
+            f"cron <code>{_h(k.get('cron'))}</code> UTC, deposits idle USDC between {_h(k.get('min'))} and {_h(k.get('max'))}\n"
+            f"validated by KeeperHub: {(k.get('validation') or {}).get('valid')}"
+        )
         if k.get("error"):
             return head + f"\nexecutions: {k['error']}"
         runs = k.get("executions") or []
@@ -243,7 +344,8 @@ class OperatorBot:
             head
             + "\n"
             + "\n".join(
-                f"{r.get('createdAt') or r.get('startedAt') or ''} {r.get('id')} {r.get('status')}" for r in runs[:10]
+                f"{_h(str(r.get('createdAt') or r.get('startedAt') or '')[:16])} <code>{_h(r.get('id'))}</code> {_h(r.get('status'))}"
+                for r in runs[:10]
             )
         )
 
@@ -259,20 +361,26 @@ class OperatorBot:
         if result.get("error"):
             return f"verify: {result['error']}"
         lines = [
-            f"execution {result['execution_id']}: {result['status']}"
-            + (", sponsored gas" if result.get("sponsored") else "")
+            "<b>KeeperHub's verdict</b>",
+            f"execution <code>{_h(result['execution_id'])}</code>: <b>{_h(result['status'])}</b>"
+            + (", gas sponsored" if result.get("sponsored") else ""),
         ]
         for r in result.get("receipts", []):
-            lines.append(f"receipt {str(r['hash'])[:12]}… verified={r['verified']} {r['receipt_status']}")
+            lines.append(
+                f"receipt <code>{_h(str(r['hash'])[:12])}…</code> {'verified by KeeperHub' if r['verified'] else 'not verified'}, {_h(r['receipt_status'])}"
+            )
         if result.get("onchain_error"):
-            lines.append(f"on chain: {result['onchain_error']}")
+            lines.append(f"on chain: {_h(result['onchain_error'])}")
         on = result.get("onchain")
         if on:
-            who = "the org wallet" if on["sender_is_org_wallet"] else "KeeperHub's relayer (sponsored gas)"
-            lines.append(f"on chain: {on['status']} in block {on['block']}, sender is {who}")
-        lines += [_short_addresses(line) for line in result.get("events", [])]
+            who = "the org wallet" if on["sender_is_org_wallet"] else "the sponsor's paymaster, not the org wallet"
+            lines.append(f"\n<b>On chain</b>: {_h(on['status'])} in block {on['block']}; transaction sender is {who}")
+        events = result.get("events", [])
+        if events:
+            lines.append("<b>Who acted</b>, from the receipt's events:")
+            lines += ["  " + _h(_short_addresses(line)) for line in events]
         if result.get("transaction_link"):
-            lines.append(result["transaction_link"])
+            lines.append(f'<a href="{_h(result["transaction_link"])}">open on the explorer</a>')
         return "\n".join(lines)
 
     async def _simulate(self, _args: list[str]) -> str:
@@ -282,19 +390,22 @@ class OperatorBot:
 
     async def _tick(self, _args: list[str]) -> str:
         self._pending = ("tick", time.time())
-        return "This runs one REAL strategy tick through KeeperHub (value may move). Send /confirm within 60 seconds."
+        return (
+            "<b>Real tick</b>: Almanak plans the intent, KeeperHub dry-runs it, then signs in its enclave and broadcasts. "
+            "Test USDC moves. Send /confirm within 60 seconds."
+        )
 
     async def _exit(self, _args: list[str]) -> str:
         self._pending = ("exit", time.time())
         return (
-            "This redeems the whole vault position through KeeperHub's check-and-execute: KeeperHub re-reads "
-            "the balance right before the redeem and refuses if it no longer covers it. Send /confirm within 60 seconds."
+            "<b>Guarded exit</b>: the redeem goes out as KeeperHub check-and-execute. KeeperHub reads the vault balance "
+            "itself right before the write and refuses if the position is gone. Send /confirm within 60 seconds."
         )
 
     async def _confirm(self, _args: list[str]) -> str:
         if not self._pending or time.time() - self._pending[1] > 60:
             self._pending = None
-            return "Nothing pending (or it expired). Send /tick or /exit first."
+            return "Nothing pending, or it expired. Send /tick or /exit first, then /confirm within 60 seconds."
         action, self._pending = self._pending[0], None
         if action == "exit":
             return await self._run_cli(["exit", "-d", str(self._strategy_dir), "--chain", self._chain], "guarded exit")
@@ -321,21 +432,30 @@ class OperatorBot:
             return (proc.stdout + proc.stderr, proc.returncode)
 
         output, code = await asyncio.to_thread(run_demo, [])
-        return f"{name}: {'ok' if code == 0 else 'exit ' + str(code)}\n{_summarise(output)}"
+        return f"<b>demo {_h(name)}</b>: {'ok' if code == 0 else 'exit ' + str(code)}\n{_h(_summarise(output))}"
 
     async def _run_cli(self, args: list[str], label: str) -> str:
         output, code = await asyncio.to_thread(self._runner, args)
-        return f"{label}: {'done' if code == 0 else 'exit ' + str(code)}\n{_summarise(output)}"
+        return _pretty(label, output, code)
 
     # -- Telegram transport ----------------------------------------------------------
 
     async def send(self, chat_id: str, text: str) -> None:
         async with httpx.AsyncClient(timeout=20.0) as http:
             for chunk in [text[i : i + 3800] for i in range(0, max(len(text), 1), 3800)]:
-                await http.post(
+                response = await http.post(
                     f"https://api.telegram.org/bot{self._token}/sendMessage",
-                    json={"chat_id": chat_id, "text": chunk, "disable_web_page_preview": True},
+                    json={"chat_id": chat_id, "text": chunk, "parse_mode": "HTML", "disable_web_page_preview": True},
                 )
+                if response.status_code == 400:  # markup Telegram would not take: send it plain rather than lose it
+                    await http.post(
+                        f"https://api.telegram.org/bot{self._token}/sendMessage",
+                        json={
+                            "chat_id": chat_id,
+                            "text": re.sub(r"<[^>]+>", "", chunk),
+                            "disable_web_page_preview": True,
+                        },
+                    )
 
     async def run_forever(self) -> None:
         if self.owner_chat_id is None:
@@ -376,7 +496,7 @@ class OperatorBot:
         if time.time() - sent_at > STALE_AFTER_SECONDS:
             return
         if text.split()[0].lower() in ("/simulate", "/confirm", "/demo", "/exit"):
-            await self.send(chat_id, "working…")
+            await self.send(chat_id, "working, this goes through KeeperHub…")
         reply = await self.handle(chat_id=chat_id, text=text, sent_at=sent_at)
         if reply:
             await self.send(chat_id, reply)

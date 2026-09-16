@@ -67,7 +67,7 @@ async def test_simulate_and_tick_go_through_the_cli_runner(strategy_dir: Path) -
 
     bot = make_bot(strategy_dir, runner=runner)
     reply = await bot.handle(chat_id="42", text="/simulate")
-    assert "--simulate-only" in " ".join(calls[0]) and "Status: SUCCESS" in reply
+    assert "--simulate-only" in " ".join(calls[0]) and "SUCCESS" in reply and "dry run" in reply
 
     reply = await bot.handle(chat_id="42", text="/tick")
     assert "/confirm" in reply and len(calls) == 1  # a real tick needs confirmation
