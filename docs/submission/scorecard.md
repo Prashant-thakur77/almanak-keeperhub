@@ -1,26 +1,26 @@
 # Scorecard against the rubric and the previous winners
 
-Written 2026-09-12, before the hosted run. Scores are my own estimate on the judges'
-five criteria, with the evidence a judge would find at repository level. The comparison
-column is what the money winners of the previous edition (Agents Onchain, Aug 2026) and
-of ETHGlobal OpenAgents (May 2026) did on the same criterion.
+Rewritten 16 Sep 2026, two days before the deadline. Scores are my own estimate on the judges'
+five criteria, with the evidence a judge finds at repository level. The comparison column is what
+the money winners of the previous edition (Meld, ChronicleAI, n8n-nodes-keeperhub) did on the same
+criterion, and the last column is what this build took from them and what it added.
 
-| Criterion | This build | Evidence | What winners did | Adopted |
+| Criterion | This build | Evidence | What the winners did | Taken, and added |
 |---|---|---|---|---|
-| Integration depth | 9 | KeeperHub sits inside Almanak's own execution interfaces (`Signer`, `Submitter`, `Simulator`) and gateway plugin points; unmodified strategies, the full deposit-to-redeem lifecycle, and Almanak's agent CLI (`ax`) all execute through it; a KeeperHub-scheduled keeper generated from the strategy config runs alongside | n8n (3rd) shipped a node inside a live product with users and got it verified by n8n; three public Almanak entries integrate one level up (intent translators) | Same shape as n8n: inside the partner's own extension mechanism, not beside it |
-| Execution through KeeperHub | 9 | Every write is `POST /api/execute/contract-call` with simulate then `Idempotency-Key`; receipts verified by KeeperHub; every execution recorded with id, hash, link | Meld (1st): "400 on-chain executions, 1,092 transactions", all hashes in `docs/receipts.json`; ChronicleAI (2nd): "3,000+ verified transactions" | `keeperhub-receipts.json` written automatically per run, `scripts/benchmark.py` produces counts and hashes at volume |
-| Reliability and observability | 9 | Five deliberate failure modes; same-key retries on transport and 5xx; resilient polling; bundle truncation visible; KeeperHub verdict outranks the chain receipt; independent review with eight findings fixed | n8n: "11/11 affordable transfers landed, 20/20 impossible transfers refused before submission, p50 19.2s"; Interlock (6th) found a double-broadcast bug that got a same-day fix | Benchmark table with refused/landed counts and p50/p95 latency; two Almanak bugs found with stack traces |
-| Usefulness and originality | 8 | Almanak's own repo documents the duplicate-mint incident this prevents; Almanak's private-relay submitter is a stub; nobody else touches the execution layer or the agent CLI | Winners solved a pain of the partner's users rather than a generic wrapper | Incident quoted from Almanak's source; `ax` mode ties the theme (agent decides, KeeperHub executes) to a live product's own agent |
-| Developer experience and code quality | 8 | One command per mode, `doctor`, 84 unit tests, lint, CI, MIT, README with known gaps, upstream patch, wheel builds | Every money winner had a merged upstream PR to KeeperHub; LIFELINE filed 7 issues; the sponsor praised entries that "documented their own limitations, occasionally retracting a claim" | Bounty PR ready; three KeeperHub issue drafts; a "What we got wrong first" section |
+| Integration depth | 9 | KeeperHub sits inside Almanak's own execution interfaces (`Signer`, `Submitter`, `Simulator`) and gateway plugin points; the strategy file is byte-identical except its chain list; the full lifecycle (deposit, keeper, guarded exit) and Almanak's agent CLI run through it; a pluggable-backend proposal is filed on Almanak's own tracker (almanak-co/sdk#3) with a diff that applies to their `main` | n8n shipped inside a live product's own extension mechanism | Same shape as n8n, one level deeper: the execution layer, not an intent translator. Added: the live project's tracker shows the seam |
+| Execution through KeeperHub | 10 | 460+ executions on Base Sepolia through app.keeperhub.com, every one with KeeperHub's verdict frozen next to it on a public console; direct execution, check-and-execute, a scheduled workflow run by KeeperHub's engine; the client already uses the two features it got merged upstream and falls back until production deploys them | Meld: 400 executions, hashes in a file; ChronicleAI: 3,000+ transactions and a live app | Volume with a purpose, plus surfaces none of them used (check-and-execute, a proof that regenerates itself every six hours by a GitHub runner) |
+| Reliability and observability | 10 | 50/50 impossible calls refused before broadcast; 200/200 landed and verified; 50/50 retries replayed with zero double broadcasts; 10/10 crashed processes resumed from a fresh process; seven deliberate failure modes; 11 conformance tests against production every six hours; three real Claude sessions over MCP recorded unedited; a rehearsal on a fork against both API generations | n8n: 11/11 landed, 20/20 refused, p50 19.2s; Interlock found a double-broadcast bug | The same table at ten times the scale, and the failure modes are the point of the video, not a footnote. Added: the proof keeps itself current |
+| Usefulness and originality | 9 | Almanak's own repository documents the duplicate-mint incident this prevents; its private-relay submitter is a stub; nobody else touched the execution layer. Three KeeperHub gaps found, filed, accepted, built to spec, two merged, and then used by the integration itself | Winners solved a pain of the partner's users rather than wrapping an API | Added: the loop closed, from finding a gap to shipping it upstream to consuming it |
+| Developer experience and code quality | 9 | `pip install almanak-keeperhub`; one command per mode; 563 unit and property tests (every indexed signature fuzzed), mypy strict, CI green, SECURITY.md with the threat model, MIT; a README that leads with the result and a "what we got wrong first" section with four entries, three of them caught by machines | Every money winner had a merged upstream PR; the sponsor praised entries that documented their own limitations | Two merged PRs, a third with conditional approval, a fourth ready. Added: the mistakes are in the README with what caught them |
 
-What I did not adopt, on purpose:
+What I did not do, on purpose:
 
-- Marketplace listing and x402 or MPP payments (ChronicleAI, LIFELINE). This integration executes a framework's own transactions; selling them per call is not what Almanak users need. Listed honestly in the surfaces table.
-- Volume for its own sake (Meld). Each benchmark execution is a real approval and costs gas; the benchmark is sized so the numbers are meaningful without burning the wallet.
-- A browser extension on KeeperHub's pages (Meld) or a hosted web app (ChronicleAI). Instead: `almanak-keeperhub console`, a local proof page that updates live beside the terminal, in the same proof-first style (status strip, audit timeline, verdict segments), with no build step and no hosting to break during the finalist call.
+- Mainnet. The code path is identical to the testnet one; withholding real money was a choice, and the runner proves the path four times a day instead.
+- Marketplace listing, x402 or MPP. This executes a framework's own transactions; nothing is sold per call.
+- A hosted web application. The console is a static export of the local page, published by the runner, with nothing behind it to fall over during judging.
 
-Where the previous winners were stronger than this build, still:
+Where the previous winners are still stronger:
 
-- Proof at volume: done on 12 Sep on Base Sepolia through the hosted app: strategy approve and deposit, 5 benchmark approvals, the demo transactions, all verified, all sponsored; the keeper workflow created and validated by KeeperHub. Fewer transactions than Meld or ChronicleAI, each one with a purpose.
-- A merged upstream PR: the bounty PR is ready but gated on KeeperHub accepting the issue. File it on day 1.
-- Surfaces breadth: REST direct execution, agent-authored workflows (the keeper), and the audit trail. No x402 or MPP, deliberately, stated as such.
+- ChronicleAI ran on Base mainnet with real value; this ran on Base Sepolia only.
+- Meld's test count (902) is higher in absolute terms; this build's 563 include 404 property cases over one module.
+- n8n's node was verified by the partner's own team; Almanak has not yet answered issue #3.
