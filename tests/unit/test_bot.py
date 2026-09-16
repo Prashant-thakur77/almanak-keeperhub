@@ -72,7 +72,7 @@ async def test_simulate_and_tick_go_through_the_cli_runner(strategy_dir: Path) -
     reply = await bot.handle(chat_id="42", text="/tick")
     assert "/confirm" in reply and len(calls) == 1  # a real tick needs confirmation
     reply = await bot.handle(chat_id="42", text="/confirm")
-    assert len(calls) == 2 and "--simulate-only" not in " ".join(calls[1])
+    assert len(calls) == 2 and "--simulate-only" not in " ".join(calls[1]) and "--fresh" in calls[1]
 
     reply = await bot.handle(chat_id="42", text="/exit")
     assert "/confirm" in reply and len(calls) == 2  # the guarded exit needs confirmation too

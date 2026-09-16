@@ -441,7 +441,9 @@ class OperatorBot:
         action, self._pending = self._pending[0], None
         if action == "exit":
             return await self._run_cli(["exit", "-d", str(self._strategy_dir), "--chain", self._chain], "guarded exit")
-        return await self._run_cli(["run", "-d", str(self._strategy_dir), "--once"], "real tick")
+        # --fresh: the position may have been exited outside Almanak (a guarded exit through KeeperHub),
+        # and a tick against that stale state answers HOLD instead of acting.
+        return await self._run_cli(["run", "-d", str(self._strategy_dir), "--once", "--fresh"], "real tick")
 
     async def _demo(self, args: list[str]) -> str:
         name = DEMOS.get((args[0] if args else "").lower())

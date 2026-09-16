@@ -917,5 +917,53 @@
     },
     "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
     "source": "benchmark"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-16T12:11:46.724494+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "success": true,
+    "would_revert": false,
+    "gas_estimate": 38704,
+    "source": "benchmark"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-16T12:13:03.930647+00:00",
+    "chain_id": 84532,
+    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+    "function": "redeem",
+    "success": false,
+    "would_revert": false,
+    "guarded": true,
+    "condition": {
+      "met": false,
+      "observed_value": "0",
+      "target_value": "1",
+      "operator": "gte"
+    },
+    "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
+    "source": "benchmark"
+  },
+  {
+    "execution_id": "7x2mmkfw87ashp8zmz1i0",
+    "recorded_at": "2026-09-16T12:13:32.141973+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0xf161134803fd3a28c8b1b55e5958701d9d4fb361c8d4bbd6111ec08c7ac6dae6",
+    "transaction_link": "https://sepolia.basescan.org/tx/0xf161134803fd3a28c8b1b55e5958701d9d4fb361c8d4bbd6111ec08c7ac6dae6",
+    "status": "completed",
+    "idempotency_key": "68acdc4fb5dddfb74eb8625669a17982606a2f04c4a7e284027a781d874d997c",
+    "idempotent_replay": true,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": true,
+    "updated_at": "2026-09-16T12:13:34.123051+00:00",
+    "source": "benchmark"
   }
 ]
