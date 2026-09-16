@@ -52,10 +52,25 @@ Do not rush - the pauses are what make it readable.
    from your phone. Takes 20-40 seconds. Keep recording the whole time. The reply lists
    the transaction hashes and "verified". Hold 6 seconds on it. This is the money shot.
 
-7. (optional) `/demo duplicate`
-   The idempotency demo: same intent sent twice, second one blocked. Hold 4 seconds.
+7. `/exit`
+   It asks for /confirm and says KeeperHub re-reads the balance first. Hold 2 seconds.
+
+8. `/confirm`
+   The GUARDED exit: KeeperHub checks the position, redeems it, the USDC comes back.
+   Takes 10-20 seconds. The reply shows executed: True, observed 5000000, the hash.
+   Hold 6 seconds. Money shot number two.
+
+9. `/demo stale`
+   The same exit decided again with the position gone: KeeperHub answers executed: false,
+   observed 0, nothing broadcast. Hold 5 seconds.
+
+10. (optional) `/demo duplicate`
+   The idempotency demo: same intent sent twice, second one replayed, not resent. Hold 4 seconds.
 
 Stop recording.
+
+Timing: the proof workflow runs a tick of its own at 00:17, 06:17, 12:17 and 18:17 UTC. Do not
+record within five minutes of those or the runner's executions interleave with yours.
 
 ## What NOT to do
 
@@ -66,5 +81,5 @@ Stop recording.
 
 ## Then
 
-Send me the file and tell me which step the /confirm reply lands at (roughly, in seconds).
+Send me the file and tell me roughly at what second the two /confirm replies land (the tick and the exit).
 I will do the rest: phone frame, splice, re-time the narration around it, re-mix.
