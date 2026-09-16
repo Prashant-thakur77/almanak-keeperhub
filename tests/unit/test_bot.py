@@ -133,3 +133,29 @@ async def test_confirm_prompts_carry_confirm_and_cancel_buttons_and_cancel_drops
     assert "nothing pending" in (await bot.handle(chat_id="42", text="/confirm")).lower()
     assert calls == []
     assert OperatorBot.keyboard_for("/status", "anything") is not None
+
+
+async def test_a_repeated_tap_does_not_stack_prompts_and_a_running_action_blocks_another(strategy_dir: Path) -> None:
+    import asyncio
+    import threading
+
+    loop = asyncio.get_running_loop()
+    started = asyncio.Event()
+    release = threading.Event()
+
+    def slow_runner(args: list[str]) -> tuple[str, int]:  # runs in a worker thread
+        loop.call_soon_threadsafe(started.set)
+        release.wait(5)
+        return ("Status: SUCCESS", 0)
+
+    bot = make_bot(strategy_dir, runner=slow_runner)
+    first = await bot.handle(chat_id="42", text="/exit")
+    again = await bot.handle(chat_id="42", text="/exit")
+    assert "/confirm" in first and "already armed" in again
+
+    task = asyncio.create_task(bot.handle(chat_id="42", text="/confirm"))
+    await asyncio.wait_for(started.wait(), 5)
+    assert "still working" in (await bot.handle(chat_id="42", text="/confirm")).lower()
+    assert "still working" in (await bot.handle(chat_id="42", text="/tick")).lower()
+    release.set()
+    assert "done" in await task

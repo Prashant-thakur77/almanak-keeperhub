@@ -101,10 +101,10 @@ async def test_run_tick_is_refused_unless_the_server_allows_broadcast(strategy_d
 
     confirmed = await on.run_tick(confirm=True)
     assert confirmed["ok"] is True
-    assert seen == [["run", "-d", str(strategy_dir), "--once"]]
+    assert seen == [["run", "-d", str(strategy_dir), "--once", "--fresh"]]  # fresh by default
 
-    await on.run_tick(confirm=True, fresh=True)
-    assert seen[-1] == ["run", "-d", str(strategy_dir), "--once", "--fresh"]
+    await on.run_tick(confirm=True, fresh=False)
+    assert seen[-1] == ["run", "-d", str(strategy_dir), "--once"]
 
     off_exit = await make_tools(strategy_dir, runner=runner).exit_position(confirm=True)
     assert off_exit["ok"] is False and "--write" in off_exit["error"]

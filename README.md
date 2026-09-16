@@ -333,7 +333,7 @@ cd demos/metamorpho_base_sepolia && almanak-keeperhub mcp --chain base_sepolia -
 | `benchmark`, `failure_modes`, `keeper` | the recorded benchmark, the six failure-mode verdicts, the compounder workflow | no |
 | `simulate_tick` | one strategy tick, dry-run through KeeperHub | dry run only |
 | `run_failure_demo <revert\|cap\|duplicate\|crash\|selector\|rpc\|stale>` | replay one failure mode | dry run, or a refused broadcast |
-| `run_tick` (`--write` only) | one real tick: sign and broadcast through KeeperHub; needs `confirm=true`; `fresh=true` after an exit outside Almanak | broadcasts |
+| `run_tick` (`--write` only) | one real tick: sign and broadcast through KeeperHub; needs `confirm=true`; starts from a fresh strategy state (`fresh=false` to continue Almanak's saved state) | broadcasts |
 | `exit_position` (`--write` only) | the guarded exit: KeeperHub re-reads the balance, redeems only if it still covers it; needs `confirm=true` | broadcasts, or refuses |
 
 Resource `almanak-keeperhub://receipts` is the raw receipts log. Claude Desktop / Cursor config:
@@ -353,9 +353,9 @@ so the phone, the console and the agent can never disagree about what happened.
 [`docs/agent-session.md`](docs/agent-session.md) is three real Claude sessions over this server, captured
 headless by `scripts/agent_session.py` and rendered without editing. Given the read-only server and told to
 run a real tick, the agent reports `broadcast_enabled: false`, finds no `run_tick` tool, and stops. Given the
-`--write` server, its first tick comes back `HOLD` (the strategy still remembered a position that had been
-redeemed through KeeperHub outside Almanak) and the agent says so instead of claiming a deposit. Started fresh,
-it lands approve `389lzsqaq40606gy396hr` and deposit `mgwqs6texgo4xpzvu3j4j`, both sponsored and verified, then
+`--write` server, its first tick came back `HOLD` (the strategy still remembered a position that had been
+redeemed through KeeperHub outside Almanak; `run_tick` now starts fresh by default for that reason) and the
+agent said so instead of claiming a deposit. Started fresh, it lands approve `389lzsqaq40606gy396hr` and deposit `mgwqs6texgo4xpzvu3j4j`, both sponsored and verified, then
 calls `verify` and reads off the receipt that the transaction sender is the sponsor's relayer while every
 Transfer, mint and Deposit event names the org wallet: the agent decided, KeeperHub executed, and the agent
 could prove who acted. Its first recording also found a bug in this package (`list_dry_runs` answered with an

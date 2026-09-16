@@ -137,7 +137,7 @@ class StrategyTools:
         """One strategy tick, dry-run through KeeperHub; nothing is signed or broadcast."""
         return await self._cli(["run", "-d", str(self.strategy_dir), "--once", "--fresh", "--simulate-only"])
 
-    async def run_tick(self, confirm: bool = False, fresh: bool = False) -> dict[str, Any]:
+    async def run_tick(self, confirm: bool = False, fresh: bool = True) -> dict[str, Any]:
         if not self.allow_broadcast:
             return {
                 "ok": False,
@@ -255,11 +255,12 @@ def build_server(tools: StrategyTools):
             return await tools.exit_position(confirm)
 
         @server.tool()
-        async def run_tick(confirm: bool = False, fresh: bool = False) -> dict[str, Any]:
+        async def run_tick(confirm: bool = False, fresh: bool = True) -> dict[str, Any]:
             """Run one REAL strategy tick: sign and broadcast through KeeperHub. Requires confirm=true.
 
-            fresh=true starts from a clean strategy state, for when the position was exited
-            outside Almanak (a redeem through KeeperHub) and the strategy would otherwise HOLD.
+            Starts from a clean strategy state by default, because positions here are exited through
+            KeeperHub's guarded redeem, outside Almanak's own bookkeeping, and a tick against that stale
+            state answers HOLD. fresh=false continues Almanak's saved state instead.
             """
             return await tools.run_tick(confirm, fresh)
 

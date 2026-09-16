@@ -222,6 +222,7 @@ class OperatorBot:
         self._base_url = base_url
         self._runner = runner or _default_runner
         self._pending: tuple[str, float] | None = None
+        self._busy: str | None = None  # the action running right now; a second one must wait
         self._offset = 0
         # With no configured owner, only someone who can read this process's output may claim the bot.
         self.start_secret = secrets.token_urlsafe(8)
@@ -410,19 +411,32 @@ class OperatorBot:
         return "\n".join(lines)
 
     async def _simulate(self, _args: list[str]) -> str:
+        if self._busy:
+            return f"Still working on the {self._busy}. Wait for its reply."
         return await self._run_cli(
             ["run", "-d", str(self._strategy_dir), "--once", "--fresh", "--simulate-only"], "dry run"
         )
 
+    def _arm(self, action: str) -> str | None:
+        """Arm an action for /confirm; a repeat tap while it is armed or running is answered, not stacked."""
+        if self._busy:
+            return f"Still working on the {self._busy}. Wait for its reply before starting another action."
+        if self._pending and self._pending[0] == action and time.time() - self._pending[1] < 60:
+            return f"The {action} is already armed. Tap Confirm to run it, or Cancel."
+        self._pending = (action, time.time())
+        return None
+
     async def _tick(self, _args: list[str]) -> str:
-        self._pending = ("tick", time.time())
+        if already := self._arm("tick"):
+            return already
         return (
             "<b>Real tick</b>: Almanak plans the intent, KeeperHub dry-runs it, then signs in its enclave and broadcasts. "
             "Test USDC moves. Send /confirm within 60 seconds."
         )
 
     async def _exit(self, _args: list[str]) -> str:
-        self._pending = ("exit", time.time())
+        if already := self._arm("exit"):
+            return already
         return (
             "<b>Guarded exit</b>: the redeem goes out as KeeperHub check-and-execute. KeeperHub reads the vault balance "
             "itself right before the write and refuses if the position is gone. Send /confirm within 60 seconds."
@@ -435,15 +449,23 @@ class OperatorBot:
         return f"Cancelled the pending {action}. Nothing was sent."
 
     async def _confirm(self, _args: list[str]) -> str:
+        if self._busy:
+            return f"Still working on the {self._busy}. Wait for its reply."
         if not self._pending or time.time() - self._pending[1] > 60:
             self._pending = None
             return "Nothing pending, or it expired. Send /tick or /exit first, then /confirm within 60 seconds."
         action, self._pending = self._pending[0], None
-        if action == "exit":
-            return await self._run_cli(["exit", "-d", str(self._strategy_dir), "--chain", self._chain], "guarded exit")
-        # --fresh: the position may have been exited outside Almanak (a guarded exit through KeeperHub),
-        # and a tick against that stale state answers HOLD instead of acting.
-        return await self._run_cli(["run", "-d", str(self._strategy_dir), "--once", "--fresh"], "real tick")
+        self._busy = "guarded exit" if action == "exit" else "real tick"
+        try:
+            if action == "exit":
+                return await self._run_cli(
+                    ["exit", "-d", str(self._strategy_dir), "--chain", self._chain], "guarded exit"
+                )
+            # --fresh: the position may have been exited outside Almanak (a guarded exit through KeeperHub),
+            # and a tick against that stale state answers HOLD instead of acting.
+            return await self._run_cli(["run", "-d", str(self._strategy_dir), "--once", "--fresh"], "real tick")
+        finally:
+            self._busy = None
 
     async def _demo(self, args: list[str]) -> str:
         name = DEMOS.get((args[0] if args else "").lower())
