@@ -41,11 +41,16 @@ until judging).
     over the project's MCP server are recorded unedited.
       Console: https://prashant-thakur77.github.io/almanak-keeperhub/
 
-    Three issues filed against KeeperHub itself, all accepted by the maintainers; two of the
-    three pull requests are already merged:
+    Four issues filed against KeeperHub itself, all accepted by the maintainers, plus three of
+    their own accepted issues taken from the backlog. Seven pull requests, two merged and live
+    on production:
       #2426 raw calldata on POST /api/execute/contract-call   -> PR #2449, merged
       #2427 simulating a sequence against carried state       -> PR #2452, merged
-      #2428 the acting wallet on sponsored executions         -> PR #2450, in review
+      #2428 the acting wallet on sponsored executions         -> PR #2450, approved
+      #2519 workflow preflight against carried state          -> PR #2531, in review
+      #2367 approve hint without a redundancy claim           -> PR #2533, in review
+      #2497 the EVM chain runbook and a seed guard            -> PR #2532, in review
+      #2496 fixed-point aggregation in the math plugin        -> PR #2534, in review
 
     Repo: https://github.com/Prashant-thakur77/almanak-keeperhub
     Built for the KeeperHub Agent Economy Hackathon.
