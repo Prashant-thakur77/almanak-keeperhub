@@ -1,5 +1,5 @@
 {
- "ran_at": "2026-09-18T04:48:27+00:00",
+ "ran_at": "2026-09-18T11:20:16+00:00",
  "base_url": "https://app.keeperhub.com",
  "chain_id": 84532,
  "passed": 11,
@@ -27,49 +27,49 @@
    "test": "test_an_impossible_write_is_refused_before_broadcast_with_a_reason",
    "doc": "Dry-Run Simulation / Response - would-revert",
    "outcome": "passed",
-   "duration_s": 0.1
+   "duration_s": 0.12
   },
   {
    "test": "test_the_same_key_replays_the_first_execution_instead_of_sending_again",
    "doc": "Idempotency / Recognising a replay",
    "outcome": "passed",
-   "duration_s": 7.97
+   "duration_s": 16.8
   },
   {
    "test": "test_the_same_key_with_a_different_body_is_a_conflict",
    "doc": "Idempotency / When to reuse a key, and when to rotate it",
    "outcome": "passed",
-   "duration_s": 16.71
+   "duration_s": 15.98
   },
   {
    "test": "test_status_reaches_a_terminal_state_with_a_verified_receipt",
    "doc": "Get Execution Status",
    "outcome": "passed",
-   "duration_s": 16.08
+   "duration_s": 7.89
   },
   {
    "test": "test_a_base_sepolia_write_completes_sponsored_or_paid_from_the_wallet",
    "doc": "Sponsored Executions",
    "outcome": "passed",
-   "duration_s": 15.77
+   "duration_s": 8.74
   },
   {
    "test": "test_raw_calldata_is_either_accepted_or_refused_the_old_way",
    "doc": "Call Smart Contract / Raw calldata",
    "outcome": "passed",
-   "duration_s": 0.16
+   "duration_s": 0.19
   },
   {
    "test": "test_a_call_sequence_is_either_simulated_in_order_or_refused_the_old_way",
    "doc": "Dry-Run Simulation / A sequence of calls",
    "outcome": "passed",
-   "duration_s": 0.48
+   "duration_s": 0.25
   },
   {
    "test": "test_status_responses_carry_a_poll_interval_hint",
    "doc": "Rate Limits",
    "outcome": "passed",
-   "duration_s": 7.81
+   "duration_s": 12.29
   }
  ]
 }
