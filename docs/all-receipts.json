@@ -13302,5 +13302,93 @@
   "sponsored": true,
   "updated_at": "2026-09-19T15:55:21.410906+00:00",
   "source": "strategy"
+ },
+ {
+  "type": "simulation",
+  "recorded_at": "2026-09-19T20:43:18.766784+00:00",
+  "chain_id": 84532,
+  "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "function": "approve",
+  "success": true,
+  "would_revert": false,
+  "gas_estimate": 38337,
+  "mechanism": "eth_simulateV1",
+  "source": "strategy"
+ },
+ {
+  "type": "simulation",
+  "recorded_at": "2026-09-19T20:43:18.768778+00:00",
+  "chain_id": 84532,
+  "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+  "function": "deposit",
+  "success": true,
+  "would_revert": false,
+  "gas_estimate": 121604,
+  "mechanism": "eth_simulateV1",
+  "source": "strategy"
+ },
+ {
+  "execution_id": "5vq71d32we3p7kobby5sw",
+  "recorded_at": "2026-09-19T20:43:31.609303+00:00",
+  "chain_id": 84532,
+  "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "function": "approve",
+  "tx_hash": "0xc6170908f4dd042a7ef0522fc1337e492f4d328b2b64e4aeb115713437d13d1c",
+  "transaction_link": "https://sepolia.basescan.org/tx/0xc6170908f4dd042a7ef0522fc1337e492f4d328b2b64e4aeb115713437d13d1c",
+  "status": "completed",
+  "idempotency_key": "fa8173a15b485e9142994888f11396cc28a6dab09122c10478adc2f50c0cd943",
+  "idempotent_replay": false,
+  "verified": true,
+  "receipt_status": [
+   "success"
+  ],
+  "sponsored": false,
+  "updated_at": "2026-09-19T20:43:45.517853+00:00",
+  "source": "strategy"
+ },
+ {
+  "execution_id": "6sjcitdlezipau6v5taol",
+  "recorded_at": "2026-09-19T20:43:39.378027+00:00",
+  "chain_id": 84532,
+  "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+  "function": "deposit",
+  "tx_hash": "0x850e188351145b531b714f9ee44a008e5720516142851e137034b29fa161b2b3",
+  "transaction_link": "https://sepolia.basescan.org/tx/0x850e188351145b531b714f9ee44a008e5720516142851e137034b29fa161b2b3",
+  "status": "completed",
+  "idempotency_key": "22c76b1d99698a155284a870ce073669e194a382ecc3798efeedc8e543c439eb",
+  "idempotent_replay": false,
+  "verified": true,
+  "receipt_status": [
+   "success"
+  ],
+  "sponsored": false,
+  "updated_at": "2026-09-19T20:43:45.717643+00:00",
+  "source": "strategy"
+ },
+ {
+  "execution_id": "8up1st9qgmh1ychxa9eiq",
+  "recorded_at": "2026-09-19T20:43:58.240259+00:00",
+  "chain_id": 84532,
+  "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+  "function": "redeem",
+  "tx_hash": "0x37fc7ab93e54acc9070cb591ce4b8346514e02f664441f548057e7019e8da7f1",
+  "status": "completed",
+  "idempotency_key": "197425c8706dd892d5cb8bf90b3250c53138dc9177c93e7e95e0ee291c725789",
+  "idempotent_replay": false,
+  "guarded": true,
+  "condition": {
+   "met": true,
+   "observed_value": "5000000",
+   "target_value": "5000000",
+   "operator": "gte"
+  },
+  "transaction_link": "https://sepolia.basescan.org/tx/0x37fc7ab93e54acc9070cb591ce4b8346514e02f664441f548057e7019e8da7f1",
+  "verified": true,
+  "receipt_status": [
+   "success"
+  ],
+  "sponsored": true,
+  "updated_at": "2026-09-19T20:43:58.335639+00:00",
+  "source": "strategy"
  }
 ]
