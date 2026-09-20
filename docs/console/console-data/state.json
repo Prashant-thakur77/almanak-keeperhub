@@ -1,20 +1,90 @@
 {
- "generated_at": "2026-09-20T16:11:23.869912+00:00",
+ "generated_at": "2026-09-20T20:53:47.267050+00:00",
  "org_wallet": "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9",
  "base_url": "https://app.keeperhub.com",
  "chain": "base_sepolia",
  "summary": {
-  "executions": 514,
-  "verified": 514,
+  "executions": 517,
+  "verified": 517,
   "replays": 6,
-  "sponsored": 480,
+  "sponsored": 481,
   "in_flight": 0,
   "failed": 0,
   "refused_before_broadcast": 4,
-  "dry_runs": 330,
+  "dry_runs": 332,
   "dry_run_refusals": 151
  },
  "executions": [
+  {
+   "execution_id": "k885nwioorzqgf3nduwxe",
+   "recorded_at": "2026-09-20T20:52:23.273598+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "redeem",
+   "tx_hash": "0x897a72646e7d77a46ae40010c811b227c7f7b285b6a758770d4fa7bae21f5c8f",
+   "status": "completed",
+   "idempotency_key": "4a8e736fab92b5877eaaae7960187b6238aa573353105fa8bdb0470ebae3af10",
+   "idempotent_replay": false,
+   "guarded": true,
+   "condition": {
+    "met": true,
+    "observed_value": "5000000",
+    "target_value": "5000000",
+    "operator": "gte"
+   },
+   "transaction_link": "https://sepolia.basescan.org/tx/0x897a72646e7d77a46ae40010c811b227c7f7b285b6a758770d4fa7bae21f5c8f",
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": true,
+   "updated_at": "2026-09-20T20:52:23.373023+00:00",
+   "source": "strategy",
+   "explorer": "https://sepolia.basescan.org/tx/0x897a72646e7d77a46ae40010c811b227c7f7b285b6a758770d4fa7bae21f5c8f",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "ckfx13z9qvxonqrm3vrxo",
+   "recorded_at": "2026-09-20T20:52:03.536027+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "deposit",
+   "tx_hash": "0x71bb0a06a4287684d715912f8837917e3890c9b0387800ff2bf266ef1768b9af",
+   "transaction_link": "https://sepolia.basescan.org/tx/0x71bb0a06a4287684d715912f8837917e3890c9b0387800ff2bf266ef1768b9af",
+   "status": "completed",
+   "idempotency_key": "c6933c67a295e42911139977c6f8c953adef2b09617eb4207d8abc7b6c138905",
+   "idempotent_replay": false,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": false,
+   "updated_at": "2026-09-20T20:52:10.197790+00:00",
+   "source": "strategy",
+   "explorer": "https://sepolia.basescan.org/tx/0x71bb0a06a4287684d715912f8837917e3890c9b0387800ff2bf266ef1768b9af",
+   "outcome": "ok"
+  },
+  {
+   "execution_id": "pnc0iajfkzn7gicqvdh6h",
+   "recorded_at": "2026-09-20T20:51:54.871466+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "tx_hash": "0x0412c0d5b7780d711b5a7603b75c41b3e64851771c9603b3c7ced17b4aa80efc",
+   "transaction_link": "https://sepolia.basescan.org/tx/0x0412c0d5b7780d711b5a7603b75c41b3e64851771c9603b3c7ced17b4aa80efc",
+   "status": "completed",
+   "idempotency_key": "ba9413a1fae0f0489da55a50d937ed63289925b56888e9061f41cc57bc0e85a0",
+   "idempotent_replay": false,
+   "verified": true,
+   "receipt_status": [
+    "success"
+   ],
+   "sponsored": false,
+   "updated_at": "2026-09-20T20:52:09.928189+00:00",
+   "source": "strategy",
+   "explorer": "https://sepolia.basescan.org/tx/0x0412c0d5b7780d711b5a7603b75c41b3e64851771c9603b3c7ced17b4aa80efc",
+   "outcome": "ok"
+  },
   {
    "execution_id": "pxqhwppyycse215iz8nqh",
    "recorded_at": "2026-09-20T16:10:16.788484+00:00",
@@ -10981,6 +11051,30 @@
  "simulations": [
   {
    "type": "simulation",
+   "recorded_at": "2026-09-20T20:51:33.844630+00:00",
+   "chain_id": 84532,
+   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+   "function": "deposit",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 121604,
+   "mechanism": "eth_simulateV1",
+   "source": "strategy"
+  },
+  {
+   "type": "simulation",
+   "recorded_at": "2026-09-20T20:51:33.842639+00:00",
+   "chain_id": 84532,
+   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+   "function": "approve",
+   "success": true,
+   "would_revert": false,
+   "gas_estimate": 38337,
+   "mechanism": "eth_simulateV1",
+   "source": "strategy"
+  },
+  {
+   "type": "simulation",
    "recorded_at": "2026-09-20T16:09:26.967934+00:00",
    "chain_id": 84532,
    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
@@ -11577,35 +11671,6 @@
    "would_revert": false,
    "gas_estimate": 38704,
    "source": "strategy"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T19:36:19.581923+00:00",
-   "chain_id": 84532,
-   "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-   "function": "approve",
-   "success": true,
-   "would_revert": false,
-   "gas_estimate": 38704,
-   "source": "strategy"
-  },
-  {
-   "type": "simulation",
-   "recorded_at": "2026-09-15T18:28:58.977592+00:00",
-   "chain_id": 84532,
-   "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
-   "function": "redeem",
-   "success": false,
-   "would_revert": false,
-   "guarded": true,
-   "condition": {
-    "met": false,
-    "observed_value": "0",
-    "target_value": "1",
-    "operator": "gte"
-   },
-   "error": "guard not met: vault balance 0 gte 1 is false; nothing broadcast",
-   "source": "failure-modes"
   }
  ],
  "failure_modes": [
@@ -11977,14 +12042,14 @@
   "finished_at": "2026-09-15T18:48:48.901099+00:00"
  },
  "api_features": {
-  "probed_at": "2026-09-20T16:11:21+00:00",
+  "probed_at": "2026-09-20T20:53:44+00:00",
   "base_url": "https://app.keeperhub.com",
   "chain_id": 84532,
   "raw_calldata": true,
   "call_sequence": true
  },
  "conformance": {
-  "ran_at": "2026-09-20T16:11:18+00:00",
+  "ran_at": "2026-09-20T20:53:41+00:00",
   "base_url": "https://app.keeperhub.com",
   "chain_id": 84532,
   "passed": 11,
@@ -12000,61 +12065,61 @@
     "test": "test_a_bad_key_is_refused_with_401",
     "doc": "Authentication",
     "outcome": "passed",
-    "duration_s": 0.13
+    "duration_s": 0.18
    },
    {
     "test": "test_a_valid_write_dry_runs_with_a_gas_estimate_from_the_org_wallet",
     "doc": "Dry-Run Simulation",
     "outcome": "passed",
-    "duration_s": 0.3
+    "duration_s": 0.21
    },
    {
     "test": "test_an_impossible_write_is_refused_before_broadcast_with_a_reason",
     "doc": "Dry-Run Simulation / Response - would-revert",
     "outcome": "passed",
-    "duration_s": 0.15
+    "duration_s": 0.16
    },
    {
     "test": "test_the_same_key_replays_the_first_execution_instead_of_sending_again",
     "doc": "Idempotency / Recognising a replay",
     "outcome": "passed",
-    "duration_s": 16.57
+    "duration_s": 12.98
    },
    {
     "test": "test_the_same_key_with_a_different_body_is_a_conflict",
     "doc": "Idempotency / When to reuse a key, and when to rotate it",
     "outcome": "passed",
-    "duration_s": 8.58
+    "duration_s": 16.71
    },
    {
     "test": "test_status_reaches_a_terminal_state_with_a_verified_receipt",
     "doc": "Get Execution Status",
     "outcome": "passed",
-    "duration_s": 17.77
+    "duration_s": 16.98
    },
    {
     "test": "test_a_base_sepolia_write_completes_sponsored_or_paid_from_the_wallet",
     "doc": "Sponsored Executions",
     "outcome": "passed",
-    "duration_s": 7.81
+    "duration_s": 16.66
    },
    {
     "test": "test_raw_calldata_is_either_accepted_or_refused_the_old_way",
     "doc": "Call Smart Contract / Raw calldata",
     "outcome": "passed",
-    "duration_s": 0.3
+    "duration_s": 0.21
    },
    {
     "test": "test_a_call_sequence_is_either_simulated_in_order_or_refused_the_old_way",
     "doc": "Dry-Run Simulation / A sequence of calls",
     "outcome": "passed",
-    "duration_s": 0.28
+    "duration_s": 0.19
    },
    {
     "test": "test_status_responses_carry_a_poll_interval_hint",
     "doc": "Rate Limits",
     "outcome": "passed",
-    "duration_s": 8.0
+    "duration_s": 12.41
    }
   ]
  },
@@ -12063,5 +12128,5 @@
   "demo_receipts": "receipts.json",
   "benchmark": "benchmark.json"
  },
- "snapshot_at": "2026-09-20 16:11 UTC"
+ "snapshot_at": "2026-09-20 20:53 UTC"
 }
