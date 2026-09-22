@@ -4,16 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>almanak-keeperhub · execution console</title>
+<link rel="icon" type="image/png" href="../img/buidl-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F0EDEA; --frame: #FAFAF9; --ink: #262626; --muted: #4E4E4D; --line: #D0CDCB; --sunken: #E0DDDA;
-    --ok: #07A240; --ok-ink: #033F1B; --ok-bg: #CDECD9;
-    --warn: #EEA02B; --warn-ink: #5F4011; --warn-bg: #FCECD5;
-    --bad: #C92121; --bad-ink: #4E0D0D; --bad-bg: #F6D3D3;
-    --info: #3BBFF7; --info-ink: #184C63; --info-bg: #D8F2FD;
+    --bg: #F5F4EF; --frame: #FFFFFF; --ink: #0B0F19; --muted: #4A4C52; --line: #D8D7D0; --sunken: #EAE9E2;
+    --ok: #1E8F5B; --ok-ink: #0B4A2C; --ok-bg: #DDF3E6;
+    --warn: #F5A524; --warn-ink: #5A3606; --warn-bg: #FFF1D6;
+    --bad: #D63B3B; --bad-ink: #6E1414; --bad-bg: #FBE1E1;
+    --info: #4C8DFF; --info-ink: #173B8A; --info-bg: #E1EBFF;
     --sans: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   }
@@ -24,7 +25,7 @@
   .wrap { max-width: 1280px; margin: 0 auto; padding: 24px clamp(20px, 4vw, 64px) 80px; }
   .topnav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 28px; }
   .topnav .wordmark { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; letter-spacing: -.03em; text-decoration: none; }
-  .topnav .wordmark svg { width: 40px; height: 26px; }
+  .topnav .wordmark img { width: 36px; height: 36px; border-radius: 9px; }
   .topnav .back { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--ink); font-weight: 500; font-size: 14px; text-decoration: none; }
   .topnav .back:hover { background: var(--ink); color: var(--bg); }
   header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; margin-bottom: 22px; }
@@ -114,7 +115,7 @@
 <body>
 <div class="wrap">
   <div class="topnav">
-    <a class="wordmark" href="../"><svg viewBox="0 0 44 28" fill="none" aria-hidden="true"><path d="M4 22 C4 8, 14 8, 14 14 S 24 20, 24 14 S 34 8, 34 14" stroke="#3BBFF7" stroke-width="4" stroke-linecap="round"/><circle cx="4" cy="22" r="4" fill="#EEA02B"/><circle cx="40" cy="14" r="4" fill="#07A240"/></svg><span>almanak-keeperhub</span></a>
+    <a class="wordmark" href="../"><img src="../img/buidl-logo.png" alt="" width="36" height="36" style="border-radius:9px;display:block"><span>almanak-keeperhub</span></a>
     <a class="back" href="../">Back to the site</a>
   </div>
   <header>
