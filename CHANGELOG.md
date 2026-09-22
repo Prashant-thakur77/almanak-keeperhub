@@ -7,9 +7,13 @@ independently of releases, by the runner, every six hours.
 
 - MCP: `guard_exit`, `guard_stale` and `guard_status`, the workflow guard for agents with the same confirm and
   `--write` split as the bot's `/guard` and `/guard stale`.
-- The front page redesigned: a dark hero with the animated pipeline and live counters, the problem in three
-  cards with the incident quote, the Condition gate animated, every proof section restyled; the same data
-  bindings, one file, no build step. Reveal and motion respect `prefers-reduced-motion`.
+- The front page redesigned in a Swiss-Bauhaus language: IBM Plex, a stone canvas with charcoal and sky-blue
+  bands, numbered section kickers, a connector spine that draws down the page, zero-padded figures, a marquee
+  of the newest executions, the three problems as a sticky stack of full-height two-tone panels, a numbered
+  list with outlined markers for the six steps, the Condition gate animated, a full-screen menu behind a
+  round button, a theme toggle, and a solid-dot cursor that inverts against the surface under it. Every
+  entrance is positional or masked; nothing fades. The same data bindings, one file, no build step. The
+  console page takes the same tokens.
 - `docs/roadmap.md`: what comes next, in order, and why.
 
 ## 1.1.0 — 2026-09-23

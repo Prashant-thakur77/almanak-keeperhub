@@ -13,452 +13,573 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f7f7f4; --frame: #ffffff; --ink: #0d1117; --muted: #5f6670; --line: #e4e6e3; --soft: #f0f1ee;
-    --ok: #1a8f5a; --ok-ink: #135f3c; --ok-bg: #e6f6ec; --ok-line: #bfe6cf;
-    --warn: #c98a0a; --warn-ink: #6b4a00; --warn-bg: #fff6df; --warn-line: #f1dc9c;
-    --bad: #d63b3b; --bad-ink: #7a1414; --bad-bg: #fff1f1; --bad-line: #f3b4b4;
-    --info: #2f6fed; --info-ink: #163a80; --info-bg: #eef3ff; --info-line: #c7d6fa;
-    --alm: #f5a524; --kh: #2bd4bd; --accent: #0f8a6f;
-    --hero: #0b0f14; --hero-2: #111820; --hero-ink: #f3f5f7; --hero-muted: #9aa4af; --hero-line: rgba(255,255,255,.09);
-    --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    --mono: "JetBrains Mono", "SFMono-Regular", Consolas, ui-monospace, monospace;
-    --radius: 14px; --shadow: 0 1px 2px rgba(13,17,23,.04), 0 8px 24px -12px rgba(13,17,23,.12);
+  /* ---- tokens: one family, three weights, two surfaces, no shadows ---- */
+  :root{
+    --stone:#F0EDEA; --stone-50:#FAFAF9; --stone-200:#E0DDDA; --stone-300:#D0CDCB; --stone-400:#AFADAB; --stone-500:#8B8A88; --stone-600:#6B6A69; --stone-700:#4E4E4D; --stone-800:#363636; --stone-900:#262626; --stone-950:#171717;
+    --sky:#3BBFF7; --blue-100:#D8F2FD; --blue-200:#B1E5FC; --blue-300:#89D9FA; --blue-800:#206988; --blue-900:#184C63;
+    --yellow:#EEA02B; --yellow-100:#FCECD5; --yellow-800:#835818; --yellow-900:#5F4011;
+    --green:#07A240; --green-100:#CDECD9; --green-700:#05712D; --green-900:#033F1B;
+    --red:#C92121; --red-100:#F6D3D3; --red-300:#E58A8A; --red-900:#4E0D0D;
+
+    --canvas:var(--stone); --card:var(--stone-50); --sunken:var(--stone-200);
+    --ink:var(--stone-900); --heading:var(--stone-900); --muted:var(--stone-700); --faint:var(--stone-600);
+    --link:var(--blue-800); --link-hover:var(--blue-900);
+    --hairline:var(--stone-300); --strong:var(--stone-900);
+    --good-c:var(--green-100); --good-on:var(--green-900); --warn-c:var(--yellow-100); --warn-on:var(--yellow-900);
+    --bad-c:var(--red-100); --bad-on:var(--red-900); --info-c:var(--blue-100); --info-on:var(--blue-900);
+    --n-blue:var(--blue-800); --n-yellow:var(--yellow-800); --n-green:var(--green-700); --n-red:var(--red);
+
+    --sans:"IBM Plex Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --display-xl:clamp(52px,7.4vw,118px); --display:clamp(44px,5.5vw,80px); --h1:clamp(36px,4vw,64px); --h2:clamp(28px,3vw,48px); --h3:clamp(22px,2vw,32px);
+    --body-lg:clamp(18px,1.2vw,22px); --body:16px; --label:13px; --micro:11px;
+    --margin:clamp(20px,4vw,64px); --gutter:clamp(16px,1.7vw,24px); --band:clamp(72px,9vw,128px);
+    --r-card:16px; --r-card-lg:24px; --r-pill:999px;
+    --ease:cubic-bezier(.2,0,0,1); --ease-decel:cubic-bezier(.05,.7,.1,1); --ease-accel:cubic-bezier(.3,0,.8,.15);
+    --d-fast:150ms; --d-medium:250ms; --d-cover:560ms; --d-path:1200ms; --d-line:480ms; --stagger:90ms;
   }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
-  a { color: inherit; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
-
-  /* nav */
-  .topbar { position: sticky; top: 0; z-index: 20; background: rgba(11,15,20,.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--hero-ink); border-bottom: 1px solid var(--hero-line); }
-  .topbar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding: 12px 20px; font-size: 13px; }
-  .topbar b { font-size: 15px; letter-spacing: -.02em; }
-  .topbar .tag { color: var(--hero-muted); }
-  .topbar .links { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px 14px; }
-  .topbar a { text-decoration: none; color: var(--hero-muted); transition: color .15s; }
-  .topbar a:hover { color: #fff; }
-  #progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: linear-gradient(90deg, var(--kh), var(--alm)); transition: width .1s linear; }
-
-  /* hero */
-  .hero { background: radial-gradient(1200px 500px at 15% -10%, rgba(43,212,189,.16), transparent 60%), radial-gradient(900px 420px at 95% 0%, rgba(245,165,36,.12), transparent 55%), linear-gradient(180deg, var(--hero), var(--hero-2)); color: var(--hero-ink); padding: 56px 0 40px; position: relative; overflow: hidden; }
-  .hero::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(var(--hero-line) 1px, transparent 1px), linear-gradient(90deg, var(--hero-line) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(800px 400px at 50% 0%, #000 30%, transparent 75%); opacity: .5; pointer-events: none; }
-  .hero .wrap { position: relative; z-index: 1; }
-  .hero-grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 32px; align-items: end; }
-  @media (max-width: 880px) { .hero-grid { grid-template-columns: 1fr; } }
-  .kicker { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
-  .hero .kicker { color: var(--kh); }
-  .hero h1 { font-size: clamp(36px, 5.4vw, 64px); line-height: 1.02; letter-spacing: -.04em; margin: 0 0 18px; font-weight: 800; }
-  .hero h1 em { font-style: normal; color: var(--kh); }
-  .hero p.pitch { font-size: 17.5px; color: var(--hero-muted); margin: 0 0 22px; max-width: 640px; }
-  .cta { display: flex; flex-wrap: wrap; gap: 10px; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 600; font-size: 14px; padding: 11px 18px; border-radius: 11px; border: 1px solid transparent; transition: transform .15s, box-shadow .15s, background .15s; }
-  .btn:hover { transform: translateY(-1px); }
-  .btn.primary { background: var(--kh); color: #062b26; box-shadow: 0 8px 24px -10px rgba(43,212,189,.6); }
-  .btn.ghost { background: rgba(255,255,255,.06); color: var(--hero-ink); border-color: var(--hero-line); }
-  .btn.ghost:hover { background: rgba(255,255,255,.1); }
-  .btn.dark { background: var(--ink); color: #fff; }
-  .btn.light { background: var(--frame); color: var(--ink); border-color: var(--line); }
-
-  .livecard { background: rgba(255,255,255,.05); border: 1px solid var(--hero-line); border-radius: 18px; padding: 20px 22px; font-size: 13.5px; color: var(--hero-muted); backdrop-filter: blur(6px); }
-  .livecard b { color: var(--hero-ink); }
-  .livecard .big { font-size: 56px; font-weight: 800; letter-spacing: -.04em; color: var(--hero-ink); line-height: 1; margin: 6px 0 8px; font-variant-numeric: tabular-nums; }
-  .livecard .live { display: inline-flex; align-items: center; gap: 8px; }
-  .livecard .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--kh); box-shadow: 0 0 0 0 rgba(43,212,189,.6); animation: ping 2s ease-out infinite; }
-  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(43,212,189,.55); } 70% { box-shadow: 0 0 0 10px rgba(43,212,189,0); } 100% { box-shadow: 0 0 0 0 rgba(43,212,189,0); } }
-  .livecard .row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--hero-line); }
-  .livecard .row span:last-child { color: var(--hero-ink); font-family: var(--mono); font-size: 12.5px; text-align: right; }
-
-  /* pipeline animation */
-  .track { margin-top: 38px; background: rgba(255,255,255,.04); border: 1px solid var(--hero-line); border-radius: 18px; padding: 18px 16px 10px; }
-  .track .caption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 12.5px; color: var(--hero-muted); padding: 0 6px 6px; }
-  .track .caption b { color: var(--hero-ink); }
-  .track svg { width: 100%; height: auto; display: block; }
-  .track text { font-family: var(--sans); fill: var(--hero-ink); }
-  .track .lbl { font-size: 13px; font-weight: 600; }
-  .track .sub { font-size: 11px; fill: var(--hero-muted); }
-  .track .cnt { font-family: var(--mono); font-size: 11.5px; fill: var(--kh); }
-  .track .no { font-size: 11px; fill: #ff8a8a; }
-  @media (max-width: 700px) { .track { display: none; } }
-
-  /* body */
-  main { padding: 8px 0 70px; }
-  section { margin: 56px 0 0; }
-  h2 { font-size: clamp(22px, 2.6vw, 30px); letter-spacing: -.03em; margin: 0 0 8px; line-height: 1.15; font-weight: 800; }
-  .lede { margin: 0 0 18px; color: var(--muted); max-width: 780px; font-size: 16px; }
-  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: -30px; position: relative; z-index: 2; }
-  .cell { background: var(--frame); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
-  .cell p { margin: 0; }
-  .cell .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  .cell .value { font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1.15; margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .cell .sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
-  .cell.ok .value { color: var(--ok-ink); } .cell.warn .value { color: var(--warn-ink); } .cell.info .value { color: var(--info-ink); }
-
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  @media (max-width: 860px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
-  .card { background: var(--frame); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); transition: transform .18s, box-shadow .18s; }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(13,17,23,.05), 0 16px 32px -14px rgba(13,17,23,.18); }
-  .card h3 { margin: 0 0 6px; font-size: 16px; letter-spacing: -.01em; }
-  .card p { margin: 0; color: var(--muted); font-size: 14px; }
-  .card .mono { font: 12.5px var(--mono); color: var(--ink); word-break: break-all; }
-  .card .fix { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 13.5px; color: var(--ink); }
-  .card .fix b { color: var(--ok-ink); }
-  .glyph { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 12px; background: var(--soft); }
-  .glyph svg { width: 22px; height: 22px; }
-  .pill { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid transparent; vertical-align: middle; }
-  .pill.ok { background: var(--ok-bg); color: var(--ok-ink); border-color: var(--ok-line); }
-  .pill.warn { background: var(--warn-bg); color: var(--warn-ink); border-color: var(--warn-line); }
-  .pill.bad { background: var(--bad-bg); color: var(--bad-ink); border-color: var(--bad-line); }
-  .pill.info { background: var(--info-bg); color: var(--info-ink); border-color: var(--info-line); }
-
-  blockquote { margin: 18px 0 0; padding: 16px 20px; border-left: 3px solid var(--alm); background: var(--frame); border-radius: 0 var(--radius) var(--radius) 0; color: var(--muted); font-size: 14.5px; }
-  blockquote cite { display: block; margin-top: 8px; font-style: normal; font: 12px var(--mono); color: var(--ink); }
-
-  .pipeline { display: grid; grid-template-columns: repeat(6, 1fr); background: var(--frame); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
-  .stage { padding: 16px 14px; border-right: 1px solid var(--line); min-width: 0; position: relative; }
-  .stage:last-child { border-right: 0; }
-  .stage .n { font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
-  .stage .t { font-weight: 700; margin-top: 4px; }
-  .stage .d { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
-  .stage .c { font: 600 12px var(--mono); color: var(--ok-ink); margin-top: 8px; }
-  .stage.gate::before { content: "gate"; position: absolute; top: 10px; right: 10px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--warn-ink); background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 999px; padding: 1px 7px; }
-  @media (max-width: 820px) { .pipeline { grid-template-columns: repeat(2, 1fr); } .stage { border-bottom: 1px solid var(--line); } }
-
-  .gate-wrap { background: var(--frame); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
-  .gate-wrap svg { width: 100%; height: auto; display: block; }
-  .gate-wrap text { font-family: var(--sans); font-size: 13px; fill: var(--ink); }
-  .gate-wrap .sub { font-size: 11px; fill: var(--muted); }
-  .gate-wrap .mono { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
-
-  table { width: 100%; border-collapse: collapse; background: var(--frame); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--soft); }
-  tr:last-child td { border-bottom: 0; }
-  td b { font-size: 16px; }
-  .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
-  code { font: 12.5px var(--mono); background: var(--frame); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
-  pre { background: #0f1116; color: #e8eaf0; border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font: 13px/1.6 var(--mono); margin: 0; }
-  pre code { background: transparent; border: 0; padding: 0; color: inherit; font: inherit; }
-
-  .lifecycle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  @media (max-width: 860px) { .lifecycle { grid-template-columns: 1fr; } }
-  .lifecycle .card a { color: var(--info-ink); text-decoration: none; border-bottom: 1px dotted var(--info); }
-  .video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #0f1116; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); }
-  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .video .placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #cfd3dc; font-size: 15px; text-align: center; padding: 20px; }
-
-  .diagram { background: var(--frame); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; box-shadow: var(--shadow); }
-  .diagram svg { width: 100%; height: auto; display: block; }
-  footer { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding: 16px 0 0; margin-top: 56px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
-  footer a { color: inherit; }
-
-  /* motion */
-  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
-  .js .reveal.in { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    .js .reveal { opacity: 1; transform: none; transition: none; }
-    .livecard .live i { animation: none; }
-    .card, .btn { transition: none; }
+  [data-theme="dark"]{
+    --canvas:var(--stone-900); --card:var(--stone-800); --sunken:var(--stone-950);
+    --ink:var(--stone); --heading:var(--stone); --muted:var(--stone-400); --faint:var(--stone-500);
+    --link:var(--blue-300); --link-hover:var(--blue-200); --hairline:var(--stone-700); --strong:var(--stone);
+    --good-c:var(--green-900); --good-on:var(--green-100); --warn-c:var(--yellow-900); --warn-on:var(--yellow-100);
+    --bad-c:var(--red-900); --bad-on:var(--red-100); --info-c:var(--blue-900); --info-on:var(--blue-100);
+    --n-blue:var(--sky); --n-yellow:var(--yellow); --n-green:var(--green); --n-red:var(--red-300);
   }
+  /* a charcoal band carries the inverse polarity whatever the page theme */
+  [data-band="dark"]{
+    --canvas:var(--stone-900); --card:var(--stone-800); --sunken:var(--stone-950);
+    --ink:var(--stone); --heading:var(--stone); --muted:var(--stone-400); --faint:var(--stone-500);
+    --link:var(--blue-300); --link-hover:var(--blue-200); --hairline:var(--stone-700); --strong:var(--stone);
+    --good-c:var(--green-900); --good-on:var(--green-100); --warn-c:var(--yellow-900); --warn-on:var(--yellow-100);
+    --bad-c:var(--red-900); --bad-on:var(--red-100); --info-c:var(--blue-900); --info-on:var(--blue-100);
+    --n-blue:var(--sky); --n-yellow:var(--yellow); --n-green:var(--green); --n-red:var(--red-300);
+  }
+  [data-band="blue"]{
+    --canvas:var(--sky); --card:var(--stone-50); --sunken:var(--blue-200);
+    --ink:var(--stone-900); --heading:var(--stone-900); --muted:rgba(38,38,38,.9); --faint:rgba(38,38,38,.7);
+    --link:var(--stone-900); --link-hover:var(--stone-950); --hairline:rgba(38,38,38,.28); --strong:var(--stone-900);
+  }
+  @media (prefers-reduced-motion:reduce){ :root{ --d-fast:0ms; --d-medium:0ms; --d-cover:0ms; --d-path:0ms; --d-line:0ms; --stagger:0ms; } html{scroll-behavior:auto} }
+
+  *,*::before,*::after{box-sizing:border-box;box-shadow:none}
+  html{background:var(--canvas);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--sans);font-size:var(--body);line-height:1.45;letter-spacing:-.011em;font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;transition:background-color var(--d-medium) var(--ease),color var(--d-medium) var(--ease)}
+  h1,h2,h3,h4{margin:0;color:var(--heading);font-weight:500;letter-spacing:-.032em;line-height:.96;text-wrap:balance}
+  h2{font-size:var(--h2)} h3{font-size:var(--h3)}
+  p{margin:0;max-width:66ch;text-wrap:pretty}
+  a{color:var(--link);text-decoration:none;transition:color var(--d-fast) var(--ease)}
+  a:hover{color:var(--link-hover)}
+  :focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:4px}
+  ::selection{background:var(--blue-200);color:var(--stone-900)}
+  code,.mono{font-family:var(--mono);font-variant-ligatures:none;font-variant-numeric:tabular-nums;font-feature-settings:"zero" 1;letter-spacing:0}
+  code{font-size:.875em;padding:2px 6px;border-radius:4px;background:var(--sunken);color:var(--ink)}
+  mark{background:var(--yellow);color:var(--stone-900);padding:0 .06em}
+
+  .display-xl{font-size:var(--display-xl);line-height:.92;letter-spacing:-.035em;font-weight:600}
+  .display{font-size:var(--display);line-height:.92;letter-spacing:-.035em;font-weight:600}
+  .figure{font-size:var(--display);line-height:.92;letter-spacing:-.035em;font-weight:600;font-variant-numeric:tabular-nums;font-feature-settings:"zero" 1}
+  .body-lg{font-size:var(--body-lg);line-height:1.5;max-width:66ch}
+  .statement{font-size:clamp(24px,2.9vw,42px);line-height:1.28;letter-spacing:-.032em;font-weight:500;max-width:30ch;color:var(--heading)}
+  .eyebrow{font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .chip{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:var(--r-pill);font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;background:var(--sunken);color:var(--muted);vertical-align:middle}
+  .chip.good{background:var(--good-c);color:var(--good-on)} .chip.warn{background:var(--warn-c);color:var(--warn-on)} .chip.bad{background:var(--bad-c);color:var(--bad-on)} .chip.info{background:var(--info-c);color:var(--info-on)}
+  .mono-label{font-family:var(--mono);font-size:var(--micro);font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .mono-ui{font-family:var(--mono);font-size:12px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}
+  .rule{height:4px;width:72px;background:var(--yellow);border-radius:2px;margin-bottom:16px}
+
+  /* ---- layout: full bleed, the page margin is the only inset ---- */
+  .wrap{padding-inline:var(--margin)}
+  .g{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gutter)}
+  .rail{grid-column:1/span 3} .main{grid-column:5/span 8} .wide{grid-column:1/-1} .half{grid-column:span 6} .third{grid-column:span 4} .quarter{grid-column:span 3} .fine{grid-column:9/span 4}
+  @media (max-width:1024px){ .g{grid-template-columns:repeat(8,minmax(0,1fr))} .rail,.main,.half,.fine{grid-column:1/-1} .third,.quarter{grid-column:span 4} }
+  @media (max-width:640px){ .g{grid-template-columns:repeat(4,minmax(0,1fr))} .third,.quarter{grid-column:1/-1} }
+  section{position:relative;padding-block:var(--band)}
+  [data-band]{background:var(--canvas);color:var(--ink)}
+  .above{position:relative;z-index:2}
+
+  /* ---- header: transparent, follows the polarity of the band beneath it ---- */
+  header.top{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px var(--margin);color:var(--stone-900);pointer-events:none;transition:color var(--d-medium) var(--ease)}
+  header.top[data-on="dark"],header.top[data-on="menu"]{color:var(--stone)}
+  header.top>*{pointer-events:auto}
+  .wordmark{display:inline-flex;align-items:center;gap:10px;color:inherit;font-weight:600;font-size:22px;letter-spacing:-.03em;transition:transform var(--d-cover) var(--ease)}
+  body[data-scrolled="true"]:not([data-menu="open"]) header.top .wordmark{transform:translateY(-320%)}
+  .wordmark svg{width:44px;height:28px}
+  .menu-btn{width:48px;height:48px;border-radius:var(--r-pill);border:2px solid currentColor;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;padding:0;transition:background-color var(--d-fast) var(--ease),color var(--d-fast) var(--ease);}
+  .menu-btn:hover{background:currentColor}
+  .menu-btn:hover svg{color:var(--canvas)}
+  .menu-btn svg{width:20px;height:20px;color:inherit;transition:color var(--d-fast) var(--ease)}
+  .menu-btn .dot{display:none} .menu-btn[aria-expanded="true"] .dot{display:block} .menu-btn[aria-expanded="true"] .bars{display:none}
+  .menu-btn:active{transform:scale(.98)}
+
+  /* ---- the menu: a charcoal sheet that covers the page from above ---- */
+  .menu{position:fixed;inset:0;z-index:40;background:var(--stone-900);color:var(--stone);transform:translateY(-100%);transition:transform var(--d-cover) var(--ease);display:grid;grid-template-rows:1fr auto;overflow:auto}
+  .menu[data-open="true"]{transform:translateY(0)}
+  .menu-cols{display:grid;grid-template-columns:54% 46%;min-height:0}
+  .menu-list{list-style:none;margin:0;padding:calc(72px + 3vh) var(--margin) 40px;display:flex;flex-direction:column;justify-content:center;gap:clamp(4px,1vh,12px)}
+  .menu-list li{display:grid;grid-template-columns:40px 1fr;align-items:end;gap:12px}
+  .menu-list .n{font-family:var(--mono);font-size:12px;font-weight:600;padding-bottom:.55em}
+  .menu-list a{color:var(--stone);font-size:clamp(36px,4.6vw,64px);font-weight:600;letter-spacing:-.035em;line-height:1;display:inline-block;transition:transform var(--d-medium) var(--ease),color var(--d-fast) var(--ease)}
+  .menu-list a:hover{color:var(--sky);transform:translateX(12px)}
+  .menu-field{background:var(--stone-800)}
+  .menu-foot{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:var(--gutter);align-items:end;padding:32px var(--margin) 40px;border-top:1px solid var(--stone-700)}
+  .menu-foot .mono-label{color:var(--stone-400);margin-bottom:8px}
+  .menu-foot a{color:var(--stone);font-size:15px}
+  .theme-btn{width:48px;height:48px;border-radius:var(--r-pill);border:2px solid var(--stone);background:transparent;color:var(--stone);display:grid;place-items:center;cursor:pointer;padding:0}
+  .theme-btn svg{width:18px;height:18px}
+  .theme-btn:hover{background:var(--stone);color:var(--stone-900)}
+  @media (max-width:1024px){ .menu-cols{grid-template-columns:1fr} .menu-field{display:none} .menu-foot{grid-template-columns:1fr 1fr;gap:20px} }
+  body[data-menu="open"]{overflow:hidden}
+
+  /* ---- buttons: pills, charcoal on light, stone on dark ---- */
+  .btn{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 26px;border-radius:var(--r-pill);border:2px solid var(--strong);background:var(--strong);color:var(--canvas);font-weight:500;font-size:16px;letter-spacing:-.011em;text-decoration:none;cursor:pointer;transition:background-color var(--d-fast) var(--ease),color var(--d-fast) var(--ease),border-color var(--d-fast) var(--ease);white-space:nowrap}
+  .btn:hover{background:var(--sky);border-color:var(--sky);color:var(--stone-900)}
+  .btn:active{transform:scale(.98)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--strong);color:var(--canvas);border-color:var(--strong)}
+  .btn svg{width:18px;height:18px}
+  .btn.sm{height:40px;padding:0 18px;font-size:14px}
+
+  /* ---- cards: one surface step, no resting border, no shadow ---- */
+  .card{background:var(--card);border:2px solid transparent;border-radius:var(--r-card);padding:24px;transition:border-color var(--d-fast) var(--ease)}
+  .card.tap:hover{border-color:var(--strong)}
+  .card h3{font-size:20px;letter-spacing:-.02em;line-height:1.15;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:15px}
+  .card .fix{margin-top:14px;padding-top:12px;border-top:1px solid var(--hairline);font-size:14.5px;color:var(--ink)}
+  .card .fix b{color:var(--n-green)}
+  .card.node{position:relative}
+  .card.node::after{content:"";position:absolute;right:56px;bottom:-10px;width:32px;height:10px;background:var(--sky);border-radius:0 0 3px 3px}
+
+  /* ---- figures ---- */
+  .figures{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--gutter)}
+  @media (max-width:1024px){ .figures{grid-template-columns:repeat(3,1fr)} } @media (max-width:640px){ .figures{grid-template-columns:repeat(2,1fr)} }
+  .fig{background:var(--card);border-radius:var(--r-card);padding:28px 24px 22px}
+  .fig .figure{font-size:clamp(34px,4.6vw,72px)}
+  @media (max-width:640px){ .fig .figure{font-size:clamp(28px,8.4vw,36px)} }
+  .fig .mono-label{margin-top:10px}
+  .fig .sub{font-size:13px;color:var(--faint);margin-top:4px}
+  .fig.good .figure{color:var(--n-green)} .fig.warn .figure{color:var(--n-yellow)} .fig.blue .figure{color:var(--n-blue)}
+
+  /* ---- marquee: the newest executions moving past, positional and pausable ---- */
+  .ticker{overflow:hidden;margin-top:var(--gutter);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+  .ticker .row{display:flex;gap:var(--gutter);width:max-content;animation:slide 60s linear infinite;padding-block:calc(var(--gutter)/2)}
+  .ticker .row.rev{animation-direction:reverse;animation-duration:75s}
+  .ticker:hover .row{animation-play-state:paused}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .tk{flex:0 0 auto;min-width:260px;background:var(--card);border-radius:var(--r-card);padding:16px 18px;display:grid;gap:6px}
+  .tk .fn{font-weight:500;font-size:16px;letter-spacing:-.02em;display:flex;justify-content:space-between;gap:10px;align-items:center}
+  @media (prefers-reduced-motion:reduce){ .ticker .row{animation:none} }
+
+  /* ---- the numbered list: outlined circles, one color per list ---- */
+  .ol{list-style:none;margin:0;padding:0;display:grid;gap:12px;position:relative;color:var(--n-blue)}
+  .ol li{display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;background:var(--card);border-radius:var(--r-card);padding:22px 24px}
+  .ol .m{width:48px;height:48px;border:2px solid currentColor;border-radius:var(--r-pill);display:grid;place-items:center;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;transform:scale(0);transform-box:fill-box}
+  .in .ol .m{animation:land var(--d-fast) var(--ease-decel) both}
+  .ol li:nth-child(1) .m{animation-delay:calc(var(--stagger)*1)} .ol li:nth-child(2) .m{animation-delay:calc(var(--stagger)*2)} .ol li:nth-child(3) .m{animation-delay:calc(var(--stagger)*3)} .ol li:nth-child(4) .m{animation-delay:calc(var(--stagger)*4)} .ol li:nth-child(5) .m{animation-delay:calc(var(--stagger)*5)} .ol li:nth-child(6) .m{animation-delay:calc(var(--stagger)*6)}
+  .ol .t{color:var(--heading);font-weight:500;font-size:22px;letter-spacing:-.025em;line-height:1.1}
+  .ol .d{color:var(--muted);font-size:15px;margin-top:4px}
+  .ol .c{font-family:var(--mono);font-size:12.5px;color:var(--n-green);margin-top:8px}
+  .ol .gate{margin-left:10px}
+  .steps{position:relative}
+  .steps .line{position:absolute;left:47px;top:22px;bottom:22px;width:4px;background:var(--sky);border-radius:2px;transform:scaleY(0);transform-origin:top;z-index:0}
+  .in .steps .line{animation:grow var(--d-path) var(--ease) both}
+  .steps .ol{position:relative;z-index:1}
+  .steps .ol li{background:transparent;padding-left:0}
+  .steps .ol li .m{background:var(--canvas)}
+  .steps .ol li .body{background:var(--card);border-radius:var(--r-card);padding:20px 22px}
+  @keyframes land{from{transform:scale(0)}to{transform:scale(1)}}
+  @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+  /* ---- motion: every entrance is positional or a mask; opacity is never animated ---- */
+  .rv .ln{display:block;overflow:hidden;padding-block:.22em;margin-block:-.22em}
+  .js .rv .ln>span{display:block;transform:translateY(105%)}
+  .js .rv.in .ln>span{animation:rise var(--d-line) var(--ease-decel) both}
+  .rv.in .ln:nth-child(1)>span{animation-delay:0ms} .rv.in .ln:nth-child(2)>span{animation-delay:calc(var(--stagger)*1)} .rv.in .ln:nth-child(3)>span{animation-delay:calc(var(--stagger)*2)} .rv.in .ln:nth-child(4)>span{animation-delay:calc(var(--stagger)*3)} .rv.in .ln:nth-child(5)>span{animation-delay:calc(var(--stagger)*4)} .rv.in .ln:nth-child(6)>span{animation-delay:calc(var(--stagger)*5)}
+  @keyframes rise{from{transform:translateY(105%)}to{transform:translateY(0)}}
+  .mask{overflow:hidden;border-radius:var(--r-card)}
+  .js .mask>.up{transform:translateY(102%)}
+  .js .mask.in>.up{animation:cover-up var(--d-cover) var(--ease) both;animation-delay:calc(var(--stagger)*var(--i,0))}
+  @keyframes cover-up{from{transform:translateY(102%)}to{transform:translateY(0)}}
+  .draw path,.draw circle{stroke-dasharray:var(--len,3000);stroke-dashoffset:var(--len,3000)}
+  .draw.in path,.draw.in circle{animation:draw var(--d-path) var(--ease) both}
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  /* ---- hero ---- */
+  .hero{min-height:100vh;display:grid;align-content:end;padding-top:120px;padding-bottom:48px;position:relative}
+  .hero .g{align-items:end}
+  .hero h1{max-width:none}
+  .hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
+  .hero .lede{margin-top:28px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
+  .pin{grid-column:10/span 3;justify-self:center;align-self:start;width:min(200px,18vw);margin-top:-40px}
+  .pin svg{width:100%;height:auto;display:block;overflow:visible}
+  .cue{position:absolute;right:var(--margin);bottom:40px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:transform var(--d-medium) var(--ease)}
+  .cue svg{width:14px;height:14px;animation:nudge 1.6s var(--ease) infinite}
+  @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  body[data-scrolled="true"] .cue{transform:translateY(120px)}
+  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} }
+
+  /* ---- the connector spine crossing between sections ---- */
+  .spine-v{position:absolute;width:28px;border-radius:14px;background:var(--sky);z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 14px);transform:scaleY(0);transform-origin:top}
+  .spine-v.left{left:calc(var(--margin) + (100% - 2 * var(--margin)) * .315 - 14px)}
+  .js .spine-v.in{animation:grow var(--d-path) var(--ease) both}
+  @media (max-width:1024px){ .spine-v{display:none} }
+
+  /* ---- the problem: statement plus a sticky stack of full-height panels ---- */
+  .problem-head{display:grid;grid-template-columns:7fr 5fr;gap:var(--gutter);align-items:end}
+  .problem-head .side{max-width:44ch;color:var(--muted);font-size:15.5px;line-height:1.55}
+  @media (max-width:1024px){ .problem-head{grid-template-columns:1fr} }
+  .stack{position:relative;height:300vh;margin-top:var(--band)}
+  .panel{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border-radius:var(--r-card-lg) var(--r-card-lg) 0 0}
+  .panel .copy{padding:clamp(28px,4vw,56px);display:flex;flex-direction:column;justify-content:flex-start;gap:16px}
+  .panel .copy .eyebrow{color:inherit;opacity:.85}
+  .panel .copy h3{font-size:clamp(34px,4.2vw,72px);line-height:.96;letter-spacing:-.035em;font-weight:600;color:inherit;max-width:12ch}
+  .panel .copy p{color:inherit;font-size:var(--body-lg);max-width:46ch;line-height:1.45}
+  .panel .copy .fix{margin-top:auto;padding-top:20px;border-top:2px solid currentColor;font-size:16px;max-width:52ch}
+  .panel .num{position:relative;container-type:size;overflow:hidden}
+  .panel .num span{position:absolute;right:-.04em;top:-.06em;font-size:118cqh;line-height:1;font-weight:600;letter-spacing:-.05em;color:var(--stone)}
+  .panel[data-tone="blue"]{background:var(--sky)} .panel[data-tone="blue"] .copy{background:var(--blue-800);color:var(--stone-50)}
+  .panel[data-tone="yellow"]{background:var(--yellow)} .panel[data-tone="yellow"] .copy{background:var(--yellow-800);color:var(--stone-50)}
+  .panel[data-tone="green"]{background:var(--green)} .panel[data-tone="green"] .copy{background:var(--green-700);color:var(--stone-50)}
+  @media (max-width:640px){ .panel{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)} .panel .num span{font-size:94cqh} .stack{height:260vh} }
+
+  /* ---- tables ---- */
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--r-card);overflow:hidden}
+  th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--hairline);vertical-align:top}
+  th{font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--sunken)}
+  tr:last-child td{border-bottom:0}
+  td b{font-weight:600;font-size:18px;letter-spacing:-.02em}
+  .table-wrap{overflow-x:auto;border-radius:var(--r-card)}
+  pre{background:var(--stone-950);color:var(--stone);border-radius:var(--r-card);padding:20px 22px;overflow-x:auto;font:13px/1.6 var(--mono);margin:0;font-variant-ligatures:none}
+  pre code{background:transparent;padding:0;color:inherit;font:inherit}
+  .video{position:relative;width:100%;aspect-ratio:16/9;background:var(--stone-950);border-radius:var(--r-card-lg);overflow:hidden}
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .video .placeholder{position:absolute;inset:0;display:grid;place-items:center;color:var(--stone-400);font-size:15px;text-align:center;padding:20px}
+  .gate-wrap{background:var(--card);border-radius:var(--r-card);padding:16px}
+  .gate-wrap svg{width:100%;height:auto;display:block}
+  .gate-wrap text{font-family:var(--sans);font-size:13px;fill:var(--ink)}
+  .gate-wrap .sub{font-size:11px;fill:var(--muted)} .gate-wrap .mono{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+  .diagram{background:var(--card);border-radius:var(--r-card);padding:16px}
+  .diagram svg{width:100%;height:auto;display:block}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gutter)}
+  #failures-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
+  @media (max-width:860px){ .grid3,.grid2{grid-template-columns:1fr} }
+  .sec-head{margin-bottom:40px;max-width:20ch}
+  .sec-head .eyebrow{margin-bottom:20px}
+  .lede{color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:60ch;margin-top:20px}
+
+  /* ---- cta + footer ---- */
+  .cta-band .display-xl{max-width:12ch;margin-bottom:40px}
+  footer.site{padding:var(--band) var(--margin) 40px}
+  footer.site .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:var(--gutter)}
+  footer.site .cols a{display:block;color:var(--stone);font-size:15px;padding:4px 0}
+  footer.site .cols a:hover{color:var(--sky)}
+  footer.site .meta{margin-top:56px;padding-top:24px;border-top:1px solid var(--stone-700);display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;color:var(--stone-400);font-size:13px}
+  footer.site .meta code{background:var(--stone-800);color:var(--stone)}
+  .totop{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stone);background:transparent;border:2px solid var(--stone-700);border-radius:var(--r-pill);height:44px;padding:0 18px;cursor:pointer}
+  .totop:hover{border-color:var(--stone)}
+  @media (max-width:860px){ footer.site .cols{grid-template-columns:1fr 1fr} }
+
+  /* ---- the cursor: a solid dot, the inverse of whatever it sits on ---- */
+  .dot{position:fixed;left:0;top:0;width:18px;height:18px;border-radius:999px;background:var(--stone-900);pointer-events:none;z-index:2147483647;transform:translate3d(-100px,-100px,0);will-change:transform;opacity:0;transition:opacity 120ms linear,background-color 120ms linear,width 140ms ease,height 140ms ease}
+  html[data-cursor="on"],html[data-cursor="on"] *{cursor:none!important}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="wrap">
-    <b>almanak-keeperhub</b>
-    <span class="tag">Almanak decides. KeeperHub lands it.</span>
-    <div class="links">
-      <a href="#problem">Problem</a>
-      <a href="#proof">Proof</a>
-      <a href="#guard">Guard</a>
-      <a href="#video">Video</a>
-      <a href="#failures">Failure modes</a>
-      <a href="#upstream">Upstream</a>
-      <a href="console/">Console</a>
-      <a href="https://github.com/Prashant-thakur77/almanak-keeperhub">GitHub</a>
-      <a href="https://pypi.org/project/almanak-keeperhub/">PyPI</a>
-      <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest">Release</a>
-      <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a>
-    </div>
-  </div>
-  <div id="progress"></div>
-</div>
+<div class="dot" id="dot" aria-hidden="true"></div>
 
-<header class="hero">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <div class="kicker">KeeperHub as the execution backend of a live DeFi strategy framework</div>
-        <h1>Almanak decides.<br><em>KeeperHub lands it.</em><br>No strategy code changes.</h1>
-        <p class="pitch">Almanak's execution layer is three abstract classes: sign, simulate, submit. This package implements all
-          three against KeeperHub, so every Almanak strategy, unmodified, dry-runs through KeeperHub, is signed in its
-          enclave, broadcasts with one idempotency key per intent, and gets a verified receipt back. No private key on
-          the machine. Everything on this page is read from files a real run wrote.</p>
+<header class="top" id="top-bar" data-on="light">
+  <a class="wordmark" href="#top" aria-label="almanak-keeperhub, home">
+    <svg viewBox="0 0 44 28" fill="none" aria-hidden="true"><path d="M4 22 C4 8, 14 8, 14 14 S 24 20, 24 14 S 34 8, 34 14" stroke="#3BBFF7" stroke-width="4" stroke-linecap="round"/><circle cx="4" cy="22" r="4" fill="#EEA02B"/><circle cx="40" cy="14" r="4" fill="#07A240"/></svg>
+    <span>almanak-keeperhub</span>
+  </a>
+  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Menu">
+    <svg class="bars" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg>
+    <svg class="dot" viewBox="0 0 20 20" fill="currentColor" style="position:static;opacity:1;transform:none;width:20px;height:20px;background:transparent"><circle cx="10" cy="10" r="6"/></svg>
+  </button>
+</header>
+
+<nav class="menu" id="menu" data-open="false" aria-label="Site menu">
+  <div class="menu-cols">
+    <ul class="menu-list">
+      <li><span class="n" style="color:var(--sky)">01</span><a href="#top">Home</a></li>
+      <li><span class="n" style="color:var(--yellow)">02</span><a href="#problem">The problem</a></li>
+      <li><span class="n" style="color:var(--green)">03</span><a href="#how">How it works</a></li>
+      <li><span class="n" style="color:var(--red-300)">04</span><a href="#guard">The guard</a></li>
+      <li><span class="n" style="color:var(--sky)">05</span><a href="#proof">Proof</a></li>
+      <li><span class="n" style="color:var(--yellow)">06</span><a href="#upstream">Upstream</a></li>
+      <li><span class="n" style="color:var(--green)">07</span><a href="console/">Console</a></li>
+      <li><span class="n" style="color:var(--red-300)">08</span><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a></li>
+    </ul>
+    <div class="menu-field" aria-hidden="true"></div>
+  </div>
+  <div class="menu-foot">
+    <div><div class="mono-label">GitHub</div><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">Prashant-thakur77/almanak-keeperhub</a></div>
+    <div><div class="mono-label">Package</div><a href="https://pypi.org/project/almanak-keeperhub/">pypi.org/project/almanak-keeperhub</a></div>
+    <div><div class="mono-label">Video</div><a href="https://youtu.be/wdZJTSivzRI">youtu.be/wdZJTSivzRI</a></div>
+    <button class="theme-btn" id="theme-btn" aria-label="Switch theme" title="Switch theme">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 14.9A8 8 0 0 1 14.5 2.5z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main id="top">
+  <!-- 01 / HERO -->
+  <section class="hero wrap" data-band="light">
+    <div class="g">
+      <div class="wide" style="grid-column:1/span 9">
+        <div class="eyebrow" style="margin-bottom:28px">01 / Hero</div>
+        <h1 class="display-xl rv"><span class="ln"><span>Almanak decides.</span></span><span class="ln"><span>KeeperHub <mark>lands it</mark>.</span></span><span class="ln"><span>No strategy</span></span><span class="ln"><span>code changes.</span></span></h1>
+        <p class="lede rv"><span class="ln"><span>Almanak's execution layer is three abstract classes: sign, simulate, submit. This package implements all three against KeeperHub, so every Almanak strategy, unmodified, dry-runs through KeeperHub, is signed in its enclave, broadcasts with one idempotency key per intent, and gets a verified receipt back. No private key on the machine.</span></span></p>
         <div class="cta">
-          <a class="btn primary" href="console/">Open the console</a>
+          <a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           <a class="btn ghost" href="#video">Watch the demo</a>
           <a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub">Read the code</a>
         </div>
       </div>
-      <div class="livecard">
-        <div class="live"><i></i> <span id="fresh">loading the latest run…</span></div>
-        <div class="big" id="big-count">…</div>
-        <div><b>executions through KeeperHub</b>, every one verified, on Base Sepolia, by this project alone.</div>
-        <div class="row" style="margin-top:12px"><span>verified by KeeperHub</span><span id="lc-verified">…</span></div>
-        <div class="row"><span>refused before broadcast</span><span id="lc-refused">…</span></div>
-        <div class="row"><span>live conformance</span><span id="lc-conf">…</span></div>
-        <div style="margin-top:12px" id="next-run"></div>
+      <div class="pin draw" id="pin">
+        <svg viewBox="0 0 200 560" fill="none" aria-hidden="true">
+          <circle cx="100" cy="100" r="80" stroke="#3BBFF7" stroke-width="28"/>
+          <path d="M100 194 V540" stroke="#3BBFF7" stroke-width="28" stroke-linecap="round"/>
+        </svg>
       </div>
     </div>
-
-    <div class="track" aria-label="How one tick moves through Almanak and KeeperHub">
-      <div class="caption"><span><b>One tick, animated.</b> The pulse is a compiled transaction; the two gates refuse before anything is signed.</span><span id="track-note">counts from the latest run</span></div>
-      <svg viewBox="0 0 1120 170" xmlns="http://www.w3.org/2000/svg" id="track-svg">
-        <defs>
-          <linearGradient id="g-line" x1="0" x2="1"><stop offset="0" stop-color="#f5a524"/><stop offset="1" stop-color="#2bd4bd"/></linearGradient>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <path id="track-path" d="M90 70 H1030"/>
-        </defs>
-        <path d="M90 70 H1030" stroke="url(#g-line)" stroke-width="2" opacity=".55"/>
-        <!-- gates: refusal branches -->
-        <path d="M372 70 V125" stroke="#ff8a8a" stroke-width="1.5" stroke-dasharray="4 3" opacity=".8"/>
-        <path d="M748 70 V125" stroke="#ff8a8a" stroke-width="1.5" stroke-dasharray="4 3" opacity=".8"/>
-        <text x="372" y="145" text-anchor="middle" class="no">would revert: nothing signed</text>
-        <text x="748" y="145" text-anchor="middle" class="no">over the cap: nothing signed</text>
-        <!-- stations -->
-        <g id="stations">
-          <g transform="translate(90 70)"><circle r="14" fill="#0b0f14" stroke="#f5a524" stroke-width="2"/><text y="4" text-anchor="middle" class="lbl" style="font-size:11px">1</text><text y="-26" text-anchor="middle" class="lbl">Almanak decides</text><text y="34" text-anchor="middle" class="sub">strategy or agent compiles it</text></g>
-          <g transform="translate(278 70)"><circle r="14" fill="#0b0f14" stroke="#2bd4bd" stroke-width="2"/><text y="4" text-anchor="middle" class="lbl" style="font-size:11px">2</text><text y="-26" text-anchor="middle" class="lbl">Simulate</text><text y="34" text-anchor="middle" class="sub">KeeperHub dry run, no chain touch</text><text y="50" text-anchor="middle" class="cnt" id="t-dry">…</text></g>
-          <g transform="translate(466 70)"><circle r="14" fill="#0b0f14" stroke="#2bd4bd" stroke-width="2"/><text y="4" text-anchor="middle" class="lbl" style="font-size:11px">3</text><text y="-26" text-anchor="middle" class="lbl">Sign</text><text y="34" text-anchor="middle" class="sub">no local key; Turnkey enclave</text></g>
-          <g transform="translate(654 70)"><circle r="14" fill="#0b0f14" stroke="#2bd4bd" stroke-width="2"/><text y="4" text-anchor="middle" class="lbl" style="font-size:11px">4</text><text y="-26" text-anchor="middle" class="lbl">Submit</text><text y="34" text-anchor="middle" class="sub">one idempotency key per intent</text><text y="50" text-anchor="middle" class="cnt" id="t-sent">…</text></g>
-          <g transform="translate(842 70)"><circle r="14" fill="#0b0f14" stroke="#2bd4bd" stroke-width="2"/><text y="4" text-anchor="middle" class="lbl" style="font-size:11px">5</text><text y="-26" text-anchor="middle" class="lbl">Verify</text><text y="34" text-anchor="middle" class="sub">KeeperHub checks the receipt</text><text y="50" text-anchor="middle" class="cnt" id="t-verified">…</text></g>
-          <g transform="translate(1030 70)"><circle r="14" fill="#0b0f14" stroke="#2bd4bd" stroke-width="2"/><text y="4" text-anchor="middle" class="lbl" style="font-size:11px">6</text><text y="-26" text-anchor="middle" class="lbl">Prove</text><text y="34" text-anchor="middle" class="sub">receipts file, explorer, this site</text></g>
-        </g>
-        <!-- the pulse: dwells at each station -->
-        <circle r="7" fill="#2bd4bd" filter="url(#glow)">
-          <animateMotion dur="9s" repeatCount="indefinite" calcMode="linear"
-            keyPoints="0;0.2;0.2;0.4;0.4;0.6;0.6;0.8;0.8;1;1"
-            keyTimes="0;0.12;0.2;0.32;0.4;0.52;0.6;0.72;0.8;0.92;1">
-            <mpath href="#track-path"/>
-          </animateMotion>
-        </circle>
-        <!-- refusals peel off at the gates -->
-        <circle r="5" fill="#ff6b6b" opacity="0">
-          <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.26;0.27;0.36;0.4;1" dur="9s" repeatCount="indefinite"/>
-          <animateMotion dur="9s" repeatCount="indefinite" path="M372 70 V122" keyPoints="0;0;1;1" keyTimes="0;0.26;0.36;1" calcMode="linear"/>
-        </circle>
-        <circle r="5" fill="#ff6b6b" opacity="0">
-          <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.66;0.67;0.76;0.8;1" dur="9s" repeatCount="indefinite"/>
-          <animateMotion dur="9s" repeatCount="indefinite" path="M748 70 V122" keyPoints="0;0;1;1" keyTimes="0;0.66;0.76;1" calcMode="linear"/>
-        </circle>
-      </svg>
-    </div>
-  </div>
-</header>
-
-<main class="wrap">
-  <div class="strip" id="strip"></div>
-
-  <section id="problem" class="reveal">
-    <div class="kicker">The problem</div>
-    <h2>A strategy framework with a clean execution layer, and one way to execute</h2>
-    <p class="lede">Almanak is an open-source DeFi strategy framework: 46 protocol connectors, an AI agent, and an execution layer built as three abstract classes so other backends could plug in. None ever did. What ships is this:</p>
-    <div class="grid3">
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="#d63b3b" stroke-width="1.8"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M12 15v3"/></svg></div>
-        <h3>The private key lives on the strategy machine</h3>
-        <p>The signer is a local key. Whoever reaches the box, or its environment, can sign anything the strategy could.</p>
-        <div class="fix"><b>With KeeperHub:</b> no key anywhere on the machine. The org wallet signs in Turnkey's enclave, behind KeeperHub's caps and policies, and the package holds only an API key with a scope.</div>
-      </div>
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="#c98a0a" stroke-width="1.8"><path d="M3 12h18M3 6h18M3 18h12"/></svg></div>
-        <h3>The public mempool is the only submitter</h3>
-        <p>The private-relay submitter is a stub that rejects every transaction, and the simulator is off on live networks. Nothing dry-runs the exact bundle before it goes out.</p>
-        <div class="fix"><b>With KeeperHub:</b> the exact compiled calldata is dry-run first (a revert stops the tick before anything is signed), then broadcast through KeeperHub's RPC pool with sponsored gas.</div>
-      </div>
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="#2f6fed" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></div>
-        <h3>No idempotency: a retry can pay twice</h3>
-        <p>Almanak assigns a fresh nonce per attempt and retries on a nonce error. Their own repository records the result.</p>
-        <div class="fix"><b>With KeeperHub:</b> one idempotency key per intent. A retry of landed work replays the first execution; 50 of 50 retries replayed, 10 of 10 crashed processes resumed, zero double broadcasts.</div>
-      </div>
-    </div>
-    <blockquote>Arbitrum mainnet 2026-05-18, lp_triple strategy. LP_OPEN C's mint at nonce 1635 actually landed on-chain, but the framework raised NONCE_ERROR on a follow-up read, retried, minted a duplicate dust position, and teardown closed only the tracked positions. NFT 5495063 became a zombie position the framework didn't track. Manual recovery via direct cast calls.
-      <cite>almanak/framework/execution/nonce_recovery.py, in Almanak's repository</cite></blockquote>
-    <p class="lede" style="margin-top:16px">One more: the gateway's wallet-registry plugin can name a wallet but not say how it signs, so a signer that holds no local key had no supported way in. That is filed upstream as <a href="https://github.com/almanak-co/sdk/issues/3">almanak-co/sdk#3</a>, a pluggable execution backend with a diff that applies to their <code>main</code>; this package already declares the entry point.</p>
+    <a class="cue" href="#live" data-scroll-cue><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg> Scroll</a>
   </section>
 
-  <section class="reveal">
-    <div class="kicker">How a tick runs</div>
-    <h2>Six steps, two gates the strategy does not control</h2>
-    <p class="lede">Almanak's policy refuses before anything is compiled; KeeperHub's dry run and spending caps refuse before anything is signed. The counts are live.</p>
-    <div class="pipeline" id="pipeline"></div>
+  <!-- 02 / LIVE PROOF -->
+  <section class="wrap" id="live" data-band="light">
+    <div class="g" style="align-items:start;margin-bottom:40px">
+      <div class="rail"><div class="eyebrow">02 / Live proof</div></div>
+      <div class="main">
+        <p class="statement rv"><span class="ln"><span>Every number on this page is read from a file a real run wrote,</span></span><span class="ln"><span>and a runner rewrites those files every six hours.</span></span></p>
+        <p class="mono-ui" style="margin-top:18px;color:var(--muted)"><span id="fresh">loading the latest run…</span> · <span id="next-run"></span></p>
+      </div>
+    </div>
+    <div class="figures above" id="strip"></div>
+    <div class="ticker above" id="ticker" aria-label="The newest executions"></div>
+    <div class="spine-v" style="top:-340px;bottom:-96px" aria-hidden="true"></div>
   </section>
 
-  <section id="guard" class="reveal">
-    <div class="kicker">The guard</div>
-    <h2>An exit decision can be stale by the time it executes. The check runs next to the write.</h2>
-    <p class="lede">Almanak decides to leave a vault on a snapshot. Between the decision and the broadcast the position can change: the keeper compounded, another process redeemed, a retry replays an exit that landed. So the redeem is never a bare write. Two shapes, both KeeperHub's:</p>
-    <div class="grid2">
-      <div>
-        <div class="card" style="margin-bottom:14px"><h3>check-and-execute <span class="pill ok">direct execution</span></h3><p>KeeperHub reads <span class="mono">balanceOf(wallet)</span> itself right before the write and runs <span class="mono">redeem(shares)</span> only if the balance still covers the decision. A stale decision comes back <span class="mono">executed: false</span> with the observed balance; nothing is broadcast. <span class="mono">almanak-keeperhub exit</span>, <span class="mono">/exit</span> on the phone.</p></div>
-        <div class="card"><h3>a workflow with a Condition node <span class="pill ok">KeeperHub's engine</span></h3><p>The same decision in KeeperHub's own builder: a Manual trigger carries the shares, a balance node reads the vault, a Condition compares, and the Morpho redeem sits behind the true branch. A stale decision stops after three of four nodes. <span class="mono">almanak-keeperhub exit-guard</span>, <span class="mono">/guard</span> on the phone; workflow <span class="mono">zhanaalz8k47rrjspihct</span>.</p></div>
+  <!-- 03 / THE PROBLEM -->
+  <section id="problem" data-band="dark" style="padding-bottom:0">
+    <div class="wrap above">
+      <div class="eyebrow" style="margin-bottom:56px">03 / The problem</div>
+      <div class="problem-head">
+        <h2 class="display rv"><span class="ln"><span>A clean execution layer,</span></span><span class="ln"><span>and one way to execute.</span></span></h2>
+        <div class="side rv"><span class="ln"><span><div class="rule"></div>Almanak is an open-source DeFi strategy framework: 46 protocol connectors, an AI agent, and an execution layer built as three abstract classes so other backends could plug in. None ever did. What ships is a local key, the public mempool, and a retry that can pay twice. Their own repository records the result: on Arbitrum, a mint that had landed was retried after a nonce error and minted a duplicate position nobody tracked.</span></span></div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="panel" data-tone="blue">
+        <div class="copy">
+          <div class="eyebrow">03 / The problem · 1 of 3</div>
+          <h3>The private key lives on the strategy machine</h3>
+          <p>The signer is a local key. Whoever reaches the box, or its environment, can sign anything the strategy could.</p>
+          <div class="fix"><b>With KeeperHub:</b> no key anywhere on the machine. The org wallet signs in Turnkey's enclave, behind KeeperHub's caps and policies; the package holds an API key with a scope.</div>
+        </div>
+        <div class="num" aria-hidden="true"><span>1</span></div>
+      </div>
+      <div class="panel" data-tone="yellow">
+        <div class="copy">
+          <div class="eyebrow">03 / The problem · 2 of 3</div>
+          <h3>The public mempool is the only submitter</h3>
+          <p>The private-relay submitter is a stub that rejects every transaction, and the simulator is off on live networks. Nothing dry-runs the exact bundle before it goes out.</p>
+          <div class="fix"><b>With KeeperHub:</b> the exact compiled calldata is dry-run first, so a revert stops the tick before anything is signed; then it is broadcast through KeeperHub's RPC pool with sponsored gas.</div>
+        </div>
+        <div class="num" aria-hidden="true"><span>2</span></div>
+      </div>
+      <div class="panel" data-tone="green">
+        <div class="copy">
+          <div class="eyebrow">03 / The problem · 3 of 3</div>
+          <h3>No idempotency: a retry can pay twice</h3>
+          <p>Almanak assigns a fresh nonce per attempt and retries on a nonce error. That is the duplicate mint in <code style="background:rgba(255,255,255,.15);color:inherit">nonce_recovery.py</code>.</p>
+          <div class="fix"><b>With KeeperHub:</b> one idempotency key per intent. A retry of landed work replays the first execution: 50 of 50 retries replayed, 10 of 10 crashed processes resumed, zero double broadcasts.</div>
+        </div>
+        <div class="num" aria-hidden="true"><span>3</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 / HOW A TICK RUNS -->
+  <section class="wrap" id="how" data-band="light">
+    <div class="spine-v left" style="top:-140px;bottom:-24px" aria-hidden="true"></div>
+    <div class="g">
+      <div class="rail"><div class="eyebrow">04 / How a tick runs</div></div>
+      <div class="main">
+        <h2 class="display rv" style="max-width:14ch"><span class="ln"><span>Six steps, two gates</span></span><span class="ln"><span>the strategy does not control.</span></span></h2>
+        <p class="lede">Almanak's policy refuses before anything is compiled; KeeperHub's dry run and spending caps refuse before anything is signed. The counts are live.</p>
+        <div class="steps rv" style="margin-top:40px"><div class="line"></div><ol class="ol" id="pipeline"></ol></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 / THE GUARD -->
+  <section class="wrap" id="guard" data-band="light" style="padding-top:0">
+    <div class="g">
+      <div class="rail"><div class="eyebrow">05 / The guard</div></div>
+      <div class="main">
+        <h2 class="display rv" style="max-width:16ch"><span class="ln"><span>An exit decision can be stale</span></span><span class="ln"><span>by the time it executes.</span></span></h2>
+        <p class="lede">Almanak decides to leave a vault on a snapshot. Between the decision and the broadcast the position can change: the keeper compounded, another process redeemed, a retry replays an exit that landed. So the redeem is never a bare write. Two shapes, both KeeperHub's.</p>
+      </div>
+    </div>
+    <div class="grid2 above" style="margin-top:40px">
+      <div style="display:grid;gap:var(--gutter);align-content:start">
+        <div class="mask rv" style="--i:0"><div class="up card tap"><h3>check-and-execute <span class="chip good">direct execution</span></h3><p>KeeperHub reads <span class="mono">balanceOf(wallet)</span> itself right before the write and runs <span class="mono">redeem(shares)</span> only if the balance still covers the decision. A stale decision comes back <span class="mono">executed: false</span> with the observed balance; nothing is broadcast. <span class="mono">almanak-keeperhub exit</span>, <span class="mono">/exit</span> on the phone.</p></div></div>
+        <div class="mask rv" style="--i:1"><div class="up card tap"><h3>a workflow with a Condition node <span class="chip good">KeeperHub's engine</span></h3><p>The same decision in KeeperHub's own builder: a Manual trigger carries the shares, a balance node reads the vault, a Condition compares, and the Morpho redeem sits behind the true branch. A stale decision stops after three of four nodes. <span class="mono">almanak-keeperhub exit-guard</span>, <span class="mono">/guard</span> on the phone; workflow <span class="mono">zhanaalz8k47rrjspihct</span>.</p></div></div>
+        <div class="mask rv" style="--i:2"><div class="up card"><p>Both ran on production on 22 September 2026: the stale decision (5,000,001 against 5,000,000 held) stopped at the Condition in 3.7 s with nothing broadcast; the live one redeemed and verified in 8.4 s. The first scheduled exit taught the other lesson: a key made of (vault, wallet, shares) replayed an older redeem, so the key now carries the decision id, and the guard is what prevents a double redeem.</p></div></div>
       </div>
       <div class="gate-wrap" aria-label="The Condition gate, animated: a live decision redeems, a stale one stops">
         <svg viewBox="0 0 520 362" xmlns="http://www.w3.org/2000/svg" id="gate-svg">
           <defs>
-            <path id="p-in" d="M60 60 V150 H190"/>
-            <path id="p-ok" d="M300 150 H420 V235"/>
-            <path id="p-no" d="M245 200 V275"/>
-            <marker id="ga" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9aa4af"/></marker>
+            <path id="p-in" d="M60 60 V150 H190"/><path id="p-ok" d="M300 150 H420 V235"/><path id="p-no" d="M245 200 V275"/>
+            <marker id="ga" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8B8A88"/></marker>
           </defs>
-          <rect x="10" y="20" width="150" height="40" rx="10" fill="#fff5e0" stroke="#f5a524"/>
+          <rect x="10" y="20" width="150" height="40" rx="20" fill="#FCECD5" stroke="#EEA02B" stroke-width="2"/>
           <text x="85" y="45" text-anchor="middle" style="font-weight:600">exit decision</text>
           <text x="180" y="45" class="mono">shares = <tspan id="g-decided">5000000</tspan></text>
-          <path d="M60 60 V150 H190" fill="none" stroke="#c9cdd2" stroke-width="1.5" marker-end="url(#ga)"/>
-          <rect x="10" y="110" width="150" height="34" rx="9" fill="#fff" stroke="#e4e6e3"/>
+          <path d="M60 60 V150 H190" fill="none" stroke="#D0CDCB" stroke-width="2" marker-end="url(#ga)"/>
+          <rect x="10" y="110" width="150" height="34" rx="17" fill="#E0DDDA"/>
           <text x="85" y="132" text-anchor="middle" class="sub">KeeperHub reads balanceOf</text>
-          <path d="M245 100 L300 150 L245 200 L190 150 Z" fill="#fff6df" stroke="#c98a0a" stroke-width="1.5"/>
-          <text x="245" y="146" text-anchor="middle" style="font-weight:600;font-size:12px">held ≥ decided</text>
-          <text x="245" y="164" text-anchor="middle" class="mono">observed <tspan id="g-held">5000000</tspan></text>
-          <path d="M300 150 H420 V235" fill="none" stroke="#c9cdd2" stroke-width="1.5" marker-end="url(#ga)"/>
-          <path d="M245 200 V275" fill="none" stroke="#c9cdd2" stroke-width="1.5" marker-end="url(#ga)"/>
-          <text x="330" y="142" class="sub">true</text>
-          <text x="254" y="240" class="sub">false</text>
-          <rect x="330" y="240" width="180" height="60" rx="10" fill="#e6f6ec" stroke="#1a8f5a" id="g-ok-box"/>
-          <text x="420" y="264" text-anchor="middle" style="font-weight:600">redeem, verified</text>
-          <text x="420" y="284" text-anchor="middle" class="mono">90eswt00kn44cw2szpl80</text>
-          <rect x="150" y="280" width="190" height="42" rx="10" fill="#fff1f1" stroke="#d63b3b" id="g-no-box"/>
-          <text x="245" y="298" text-anchor="middle" style="font-weight:600;font-size:12px">stopped, nothing broadcast</text>
-          <text x="245" y="314" text-anchor="middle" class="mono">qez8b9fhipm7c4zcqa6sg</text>
-          <!-- the decision travels in; then either the green or the red path, alternating -->
-          <circle r="6" fill="#f5a524">
-            <animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.25;1"><mpath href="#p-in"/></animateMotion>
-            <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.25;0.3;1" dur="10s" repeatCount="indefinite"/>
-          </circle>
-          <circle r="6" fill="#1a8f5a" opacity="0">
-            <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.3;0.31;0.45;0.5;1" dur="10s" repeatCount="indefinite"/>
-            <animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.3;0.45;1"><mpath href="#p-ok"/></animateMotion>
-          </circle>
-          <circle r="6" fill="#d63b3b" opacity="0">
-            <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.8;0.81;0.93;0.97;1" dur="10s" repeatCount="indefinite"/>
-            <animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.8;0.93;1"><mpath href="#p-no"/></animateMotion>
-          </circle>
-          <circle r="6" fill="#f5a524" opacity="0">
-            <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.55;0.56;0.79;0.8;1" dur="10s" repeatCount="indefinite"/>
-            <animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.55;0.79;1"><mpath href="#p-in"/></animateMotion>
-          </circle>
+          <path d="M245 100 L300 150 L245 200 L190 150 Z" fill="#EEA02B"/>
+          <text x="245" y="146" text-anchor="middle" style="font-weight:600;font-size:12px;fill:#262626">held ≥ decided</text>
+          <text x="245" y="164" text-anchor="middle" class="mono" style="fill:#262626">observed <tspan id="g-held">5000000</tspan></text>
+          <path d="M300 150 H420 V235" fill="none" stroke="#D0CDCB" stroke-width="2" marker-end="url(#ga)"/>
+          <path d="M245 200 V275" fill="none" stroke="#D0CDCB" stroke-width="2" marker-end="url(#ga)"/>
+          <text x="330" y="142" class="sub">true</text><text x="254" y="240" class="sub">false</text>
+          <rect x="330" y="240" width="180" height="60" rx="16" fill="#07A240"/>
+          <text x="420" y="264" text-anchor="middle" style="font-weight:600;fill:#FAFAF9">redeem, verified</text>
+          <text x="420" y="284" text-anchor="middle" class="mono" style="fill:#FAFAF9">90eswt00kn44cw2szpl80</text>
+          <rect x="150" y="280" width="190" height="42" rx="16" fill="#C92121"/>
+          <text x="245" y="298" text-anchor="middle" style="font-weight:600;font-size:12px;fill:#FAFAF9">stopped, nothing broadcast</text>
+          <text x="245" y="314" text-anchor="middle" class="mono" style="fill:#FAFAF9">qez8b9fhipm7c4zcqa6sg</text>
+          <circle r="7" fill="#262626"><animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.25;1"><mpath href="#p-in"/></animateMotion><animateTransform attributeName="transform" type="scale" additive="sum" values="1;1;0;0" keyTimes="0;0.25;0.29;1" dur="10s" repeatCount="indefinite"/></circle>
+          <circle r="7" fill="#07A240"><animateTransform attributeName="transform" type="scale" additive="sum" values="0;0;1;1;0;0" keyTimes="0;0.29;0.31;0.45;0.49;1" dur="10s" repeatCount="indefinite"/><animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.3;0.45;1"><mpath href="#p-ok"/></animateMotion></circle>
+          <circle r="7" fill="#262626"><animateTransform attributeName="transform" type="scale" additive="sum" values="0;0;1;1;0;0" keyTimes="0;0.55;0.56;0.79;0.81;1" dur="10s" repeatCount="indefinite"/><animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.55;0.79;1"><mpath href="#p-in"/></animateMotion></circle>
+          <circle r="7" fill="#C92121"><animateTransform attributeName="transform" type="scale" additive="sum" values="0;0;1;1;0;0" keyTimes="0;0.8;0.81;0.93;0.97;1" dur="10s" repeatCount="indefinite"/><animateMotion dur="10s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.8;0.93;1"><mpath href="#p-no"/></animateMotion></circle>
           <text x="260" y="350" text-anchor="middle" class="sub" id="g-case">live decision: the balance covers it, redeem runs</text>
         </svg>
       </div>
     </div>
-    <p class="lede" style="margin-top:14px">Both ran on production on 22 September 2026: the stale decision (5,000,001 against 5,000,000 held) stopped at the Condition in 3.7 s with nothing broadcast; the live one redeemed and verified in 8.4 s. The first scheduled exit taught the other lesson: a key made of (vault, wallet, shares) replayed an older redeem, so the key now carries the decision id, and the guard is what prevents a double redeem.</p>
   </section>
 
-  <section id="proof" class="reveal">
-    <div class="kicker">Proof</div>
-    <h2>The result</h2>
-    <p class="lede">Every figure comes from a KeeperHub execution record or a receipt on Base Sepolia. <code>scripts/benchmark.py</code> reproduces the table; the raw output is <a href="console/console-data/state.json">state.json</a>.</p>
-    <div class="table-wrap"><table id="results"><thead><tr><th>Measure</th><th>Result</th></tr></thead><tbody></tbody></table></div>
+  <!-- 06 / PROOF -->
+  <section id="proof" data-band="dark">
+    <div class="wrap above">
+      <div class="g" style="margin-bottom:48px">
+        <div class="rail"><div class="eyebrow">06 / Proof</div></div>
+        <div class="main"><h2 class="display rv"><span class="ln"><span>The result.</span></span></h2><p class="lede">Every figure comes from a KeeperHub execution record or a receipt on Base Sepolia. <code>scripts/benchmark.py</code> reproduces the table; the raw output is <a href="console/console-data/state.json">state.json</a>.</p></div>
+      </div>
+      <div class="table-wrap"><table id="results"><thead><tr><th>Measure</th><th>Result</th></tr></thead><tbody></tbody></table></div>
+      <div class="g" style="margin-top:var(--band)">
+        <div class="rail"><div class="eyebrow">Live</div></div>
+        <div class="main"><h2 class="rv"><span class="ln"><span>The latest lifecycle, run by a GitHub runner</span></span><span class="ln"><span>with nobody present.</span></span></h2><p class="lede">Every six hours a workflow runs the strategy for one tick through KeeperHub (approve, deposit), exits through KeeperHub's guarded redeem, checks eleven documented API behaviours against production, and republishes this site. These are its newest rows; each opens on the console with KeeperHub's verdict.</p></div>
+      </div>
+      <div class="grid3" id="lifecycle" style="margin-top:40px"></div>
+    </div>
   </section>
 
-  <section class="reveal">
-    <div class="kicker">Live</div>
-    <h2>The latest lifecycle, run by a GitHub runner with nobody present</h2>
-    <p class="lede">Every six hours a workflow runs the strategy for one tick through KeeperHub (approve, deposit), exits through KeeperHub's guarded redeem, checks eleven documented API behaviours against production, and republishes this site. These are its newest rows; each opens on the console with KeeperHub's verdict.</p>
-    <div class="lifecycle" id="lifecycle"></div>
+  <!-- 07 / DEMO -->
+  <section class="wrap" id="video" data-band="light">
+    <div class="g" style="margin-bottom:40px">
+      <div class="rail"><div class="eyebrow">07 / Demo</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln"><span>Four minutes, from a strategy tick</span></span><span class="ln"><span>to the operator's phone.</span></span></h2></div>
+    </div>
+    <div class="video above" id="video-box"><div class="placeholder">The demo video is being uploaded. In the meantime, the console has every execution it shows.</div></div>
   </section>
 
-  <section id="video" class="reveal">
-    <div class="kicker">Demo</div>
-    <h2>Four minutes, from a strategy tick to the operator's phone</h2>
-    <div class="video" id="video-box"><div class="placeholder">The demo video is being uploaded. In the meantime, the console has every execution it shows.</div></div>
+  <!-- 08 / FAILURE MODES -->
+  <section class="wrap" id="failures" data-band="light" style="padding-top:0">
+    <div class="g" style="margin-bottom:40px">
+      <div class="rail"><div class="eyebrow">08 / Judged on what goes wrong</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln"><span>Seven failure modes,</span></span><span class="ln"><span>on purpose.</span></span></h2><p class="lede">Each one is a script anyone can run against KeeperHub; the verdicts are what they recorded.</p></div>
+    </div>
+    <div class="grid3 above" id="failures-grid"></div>
   </section>
 
-  <section id="failures" class="reveal">
-    <div class="kicker">Judged on what goes wrong</div>
-    <h2>Seven failure modes, on purpose</h2>
-    <p class="lede">Each one is a script anyone can run against KeeperHub; the verdicts below are what they recorded.</p>
-    <div class="grid3" id="failures-grid"></div>
-  </section>
-
-  <section class="reveal">
-    <div class="kicker">Authority</div>
-    <h2>Who can act, and through which gate</h2>
-    <div class="diagram">
-      <svg viewBox="0 0 1120 250" xmlns="http://www.w3.org/2000/svg" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="14">
-        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6b6b66"/></marker></defs>
-        <g>
-          <rect x="10" y="80" width="190" height="72" rx="12" fill="#fff5e0" stroke="#f5a524"/>
-          <text x="105" y="110" text-anchor="middle" font-weight="700">Almanak strategy</text>
-          <text x="105" y="130" text-anchor="middle" fill="#6b6b66" font-size="12">or its AI agent: proposes</text>
-          <path d="M200 116 H245" stroke="#6b6b66" stroke-width="1.5" marker-end="url(#arr)"/>
-          <rect x="250" y="80" width="170" height="72" rx="12" fill="#fff" stroke="#e3e3de"/>
-          <text x="335" y="110" text-anchor="middle" font-weight="700">Almanak policy</text>
-          <text x="335" y="130" text-anchor="middle" fill="#6b6b66" font-size="12">limits, allowlists</text>
-          <path d="M335 80 V30" stroke="#d63b3b" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)"/>
-          <text x="335" y="20" text-anchor="middle" fill="#7a1414" font-size="12">refused: nothing compiled</text>
-          <path d="M420 116 H465" stroke="#6b6b66" stroke-width="1.5" marker-end="url(#arr)"/>
-          <rect x="470" y="80" width="170" height="72" rx="12" fill="#fff" stroke="#e3e3de"/>
-          <text x="555" y="110" text-anchor="middle" font-weight="700">KeeperHub dry run</text>
-          <text x="555" y="130" text-anchor="middle" fill="#6b6b66" font-size="12">simulate: true</text>
-          <path d="M555 152 V202" stroke="#d63b3b" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)"/>
-          <text x="555" y="222" text-anchor="middle" fill="#7a1414" font-size="12">would revert: nothing signed</text>
-          <path d="M640 116 H685" stroke="#6b6b66" stroke-width="1.5" marker-end="url(#arr)"/>
-          <rect x="690" y="80" width="170" height="72" rx="12" fill="#fff" stroke="#e3e3de"/>
-          <text x="775" y="110" text-anchor="middle" font-weight="700">KeeperHub caps</text>
-          <text x="775" y="130" text-anchor="middle" fill="#6b6b66" font-size="12">daily native, 100 USD stablecoin</text>
-          <path d="M775 80 V30" stroke="#d63b3b" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)"/>
-          <text x="775" y="20" text-anchor="middle" fill="#7a1414" font-size="12">over cap: nothing signed</text>
-          <path d="M860 116 H905" stroke="#6b6b66" stroke-width="1.5" marker-end="url(#arr)"/>
-          <rect x="910" y="80" width="200" height="72" rx="12" fill="#e6f8f5" stroke="#2bd4bd"/>
-          <text x="1010" y="110" text-anchor="middle" font-weight="700">Turnkey enclave signs</text>
-          <text x="1010" y="130" text-anchor="middle" fill="#6b6b66" font-size="12">one idempotency key per intent</text>
-        </g>
+  <!-- 09 / AUTHORITY -->
+  <section class="wrap" data-band="light" style="padding-top:0">
+    <div class="g" style="margin-bottom:40px">
+      <div class="rail"><div class="eyebrow">09 / Authority</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln"><span>Who can act,</span></span><span class="ln"><span>and through which gate.</span></span></h2></div>
+    </div>
+    <div class="diagram above">
+      <svg viewBox="0 0 1120 250" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, ui-sans-serif, system-ui, sans-serif" font-size="14">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8B8A88"/></marker></defs>
+        <rect x="10" y="80" width="190" height="72" rx="20" fill="#EEA02B"/>
+        <text x="105" y="110" text-anchor="middle" font-weight="600" fill="#262626">Almanak strategy</text>
+        <text x="105" y="130" text-anchor="middle" fill="#262626" font-size="12">or its AI agent: proposes</text>
+        <path d="M200 116 H245" stroke="#8B8A88" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="250" y="80" width="170" height="72" rx="20" fill="#E0DDDA"/>
+        <text x="335" y="110" text-anchor="middle" font-weight="600" fill="#262626">Almanak policy</text>
+        <text x="335" y="130" text-anchor="middle" fill="#4E4E4D" font-size="12">limits, allowlists</text>
+        <path d="M335 80 V30" stroke="#C92121" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <text x="335" y="20" text-anchor="middle" fill="#C92121" font-size="12">refused: nothing compiled</text>
+        <path d="M420 116 H465" stroke="#8B8A88" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="470" y="80" width="170" height="72" rx="20" fill="#E0DDDA"/>
+        <text x="555" y="110" text-anchor="middle" font-weight="600" fill="#262626">KeeperHub dry run</text>
+        <text x="555" y="130" text-anchor="middle" fill="#4E4E4D" font-size="12">simulate: true</text>
+        <path d="M555 152 V202" stroke="#C92121" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <text x="555" y="222" text-anchor="middle" fill="#C92121" font-size="12">would revert: nothing signed</text>
+        <path d="M640 116 H685" stroke="#8B8A88" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="690" y="80" width="170" height="72" rx="20" fill="#E0DDDA"/>
+        <text x="775" y="110" text-anchor="middle" font-weight="600" fill="#262626">KeeperHub caps</text>
+        <text x="775" y="130" text-anchor="middle" fill="#4E4E4D" font-size="12">daily native, 100 USD stablecoin</text>
+        <path d="M775 80 V30" stroke="#C92121" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <text x="775" y="20" text-anchor="middle" fill="#C92121" font-size="12">over cap: nothing signed</text>
+        <path d="M860 116 H905" stroke="#8B8A88" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="910" y="80" width="200" height="72" rx="20" fill="#3BBFF7"/>
+        <text x="1010" y="110" text-anchor="middle" font-weight="600" fill="#262626">Turnkey enclave signs</text>
+        <text x="1010" y="130" text-anchor="middle" fill="#262626" font-size="12">one idempotency key per intent</text>
       </svg>
     </div>
-    <p class="lede" style="margin-top:12px">A retry of landed work carries the same key, so KeeperHub replays the first execution instead of sending again: 50 of 50 retries replayed, 10 of 10 processes killed after broadcast resumed, zero double broadcasts. The full model, including what a stolen API key cannot do, is in <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/SECURITY.md">SECURITY.md</a>.</p>
+    <p class="lede">A retry of landed work carries the same key, so KeeperHub replays the first execution instead of sending again: 50 of 50 retries replayed, 10 of 10 processes killed after broadcast resumed, zero double broadcasts. The full model, including what a stolen API key cannot do, is in <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/SECURITY.md">SECURITY.md</a>.</p>
   </section>
 
-  <section class="reveal">
-    <div class="kicker">Surfaces</div>
-    <h2>Three ways to use it, one truth</h2>
-    <div class="grid3">
-      <div class="card"><h3>CLI</h3><p>For the strategy operator. <span class="mono">almanak-keeperhub run --once</span> runs any Almanak strategy through KeeperHub; <span class="mono">exit</span> is the guarded redeem as check-and-execute, <span class="mono">exit-guard</span> the same guard as a KeeperHub workflow with a Condition node; <span class="mono">verify</span> asks KeeperHub for its verdict on any hash.</p></div>
-      <div class="card"><h3>MCP server</h3><p>For any agent: Claude, Cursor, an n8n AI Agent. Read and dry-run by default; <span class="mono">--write</span> adds the real tick and both exits, the same split as KeeperHub's own <span class="mono">mcp:read</span> and <span class="mono">mcp:write</span> keys. <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/agent-session.md">Three real Claude sessions</a>, recorded unedited.</p></div>
-      <div class="card"><h3>Telegram bot</h3><p>For the operator's phone: status, executions, verify, a dry run, a confirmed real tick, both guarded exits, and every failure-mode demo. It is what the demo video shows.</p></div>
+  <!-- 10 / SURFACES -->
+  <section class="wrap" data-band="light" style="padding-top:0">
+    <div class="g" style="margin-bottom:40px">
+      <div class="rail"><div class="eyebrow">10 / Surfaces</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln"><span>Three ways to use it,</span></span><span class="ln"><span>one truth.</span></span></h2></div>
     </div>
-    <p class="lede" style="margin-top:12px">All three read the same receipts file and drive the same code, so they cannot disagree about what happened. Two of the surfaces are KeeperHub's own: the compounder and the guarded exit are workflows this package generates from the strategy config and creates in KeeperHub's builder, where its engine runs them with no Almanak process at all (workflows <code>7cloybpqfrjvjv756dd2r</code> and <code>zhanaalz8k47rrjspihct</code>).</p>
+    <div class="grid3 above">
+      <div class="mask rv" style="--i:0"><div class="up card tap"><h3>CLI</h3><p>For the strategy operator. <span class="mono">almanak-keeperhub run --once</span> runs any Almanak strategy through KeeperHub; <span class="mono">exit</span> is the guarded redeem as check-and-execute, <span class="mono">exit-guard</span> the same guard as a KeeperHub workflow; <span class="mono">verify</span> asks KeeperHub for its verdict on any hash.</p></div></div>
+      <div class="mask rv" style="--i:1"><div class="up card tap"><h3>MCP server</h3><p>For any agent: Claude, Cursor, an n8n AI Agent. Read and dry-run by default; <span class="mono">--write</span> adds the real tick and both exits, the same split as KeeperHub's own <span class="mono">mcp:read</span> and <span class="mono">mcp:write</span> keys. <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/agent-session.md">Three real Claude sessions</a>, recorded unedited.</p></div></div>
+      <div class="mask rv" style="--i:2"><div class="up card tap"><h3>Telegram bot</h3><p>For the operator's phone: status, executions, verify, a dry run, a confirmed real tick, both guarded exits, and every failure-mode demo. It is what the demo video shows.</p></div></div>
+    </div>
+    <p class="lede">All three read the same receipts file and drive the same code, so they cannot disagree about what happened. Two of the surfaces are KeeperHub's own: the compounder and the guarded exit are workflows this package generates from the strategy config and creates in KeeperHub's builder, where its engine runs them with no Almanak process at all (workflows <code>7cloybpqfrjvjv756dd2r</code> and <code>zhanaalz8k47rrjspihct</code>).</p>
   </section>
 
-  <section id="upstream" class="reveal">
-    <div class="kicker">Upstream</div>
-    <h2>What this project fixed in KeeperHub, it now uses</h2>
-    <p class="lede">Four gaps met while building, each filed, accepted, built to the maintainers' spec; then three of the maintainers' own accepted issues taken from their backlog. The client speaks the merged shapes and latches to the old ones from the API's own answer; the first two merged changes went live on production on 16 September, the third followed on 22 September, and the runner's next tick used them without a change here. The footer shows the latest probe.</p>
-    <div class="table-wrap"><table><thead><tr><th>Change</th><th>Issue</th><th>Pull request</th><th>State</th></tr></thead><tbody>
-      <tr><td>Raw calldata on <code>POST /api/execute/contract-call</code>: send the bytes a framework compiled, KeeperHub decodes them losslessly</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2426">#2426</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2449">#2449</a></td><td><span class="pill ok">merged</span></td></tr>
-      <tr><td>Simulate a sequence of calls against the state the earlier ones produce (<code>eth_simulateV1</code>, with a state-override fallback)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2427">#2427</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2452">#2452</a></td><td><span class="pill ok">merged</span></td></tr>
-      <tr><td>The acting wallet on sponsored executions (<code>executedCall.from</code>)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2428">#2428</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2450">#2450</a></td><td><span class="pill ok">merged</span></td></tr>
-      <tr><td>Workflow preflight simulates consecutive write nodes against the state the earlier ones produced</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2519">#2519</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2531">#2531</a></td><td><span class="pill info">in review</span></td></tr>
-      <tr><td>An approve with no upstream allowance check gets a hint that does not claim redundancy (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2367">#2367</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2533">#2533</a></td><td><span class="pill info">in review</span></td></tr>
-      <tr><td>The EVM chain runbook, and a seed that fails instead of warning on a chain with no explorer (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2497">#2497</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2532">#2532</a></td><td><span class="pill info">in review</span></td></tr>
-      <tr><td><code>math/aggregate</code> no longer truncates a fraction next to a wei amount; fixed point through the post-operation (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2496">#2496</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2534">#2534</a></td><td><span class="pill info">in review</span></td></tr>
-      <tr><td>Almanak: a pluggable execution backend for the gateway, with a diff that applies to their <code>main</code></td><td><a href="https://github.com/almanak-co/sdk/issues/3">almanak-co/sdk#3</a></td><td>diff in the issue</td><td><span class="pill info">open</span></td></tr>
-    </tbody></table></div>
-    <p class="lede" style="margin-top:12px">Three defects in the state-override fallback of the merged sequence simulator were found by other contributors within two days of it landing (<a href="https://github.com/KeeperHub/keeperhub/issues/2517">#2517</a>, <a href="https://github.com/KeeperHub/keeperhub/issues/2541">#2541</a>, <a href="https://github.com/KeeperHub/keeperhub/issues/2542">#2542</a>), all accepted and under fix by them. The <code>eth_simulateV1</code> path, which is what Base Sepolia and this runner use, is not affected.</p>
+  <!-- 11 / UPSTREAM -->
+  <section id="upstream" data-band="dark">
+    <div class="wrap above">
+      <div class="g" style="margin-bottom:48px">
+        <div class="rail"><div class="eyebrow">11 / Upstream</div></div>
+        <div class="main"><h2 class="display rv"><span class="ln"><span>What this project fixed</span></span><span class="ln"><span>in KeeperHub, it now uses.</span></span></h2><p class="lede">Four gaps met while building, each filed, accepted, built to the maintainers' spec; then three of the maintainers' own accepted issues taken from their backlog. The client speaks the merged shapes and latches to the old ones from the API's own answer; the first two merged changes went live on production on 16 September, the third followed on 22 September, and the runner's next tick used them without a change here.</p></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Change</th><th>Issue</th><th>Pull request</th><th>State</th></tr></thead><tbody>
+        <tr><td>Raw calldata on <code>POST /api/execute/contract-call</code>: send the bytes a framework compiled, KeeperHub decodes them losslessly</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2426">#2426</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2449">#2449</a></td><td><span class="chip good">merged</span></td></tr>
+        <tr><td>Simulate a sequence of calls against the state the earlier ones produce (<code>eth_simulateV1</code>, with a state-override fallback)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2427">#2427</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2452">#2452</a></td><td><span class="chip good">merged</span></td></tr>
+        <tr><td>The acting wallet on sponsored executions (<code>executedCall.from</code>)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2428">#2428</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2450">#2450</a></td><td><span class="chip good">merged</span></td></tr>
+        <tr><td>Workflow preflight simulates consecutive write nodes against the state the earlier ones produced</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2519">#2519</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2531">#2531</a></td><td><span class="chip info">in review</span></td></tr>
+        <tr><td>An approve with no upstream allowance check gets a hint that does not claim redundancy (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2367">#2367</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2533">#2533</a></td><td><span class="chip info">in review</span></td></tr>
+        <tr><td>The EVM chain runbook, and a seed that fails instead of warning on a chain with no explorer (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2497">#2497</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2532">#2532</a></td><td><span class="chip info">in review</span></td></tr>
+        <tr><td><code>math/aggregate</code> no longer truncates a fraction next to a wei amount; fixed point through the post-operation (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2496">#2496</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2534">#2534</a></td><td><span class="chip info">in review</span></td></tr>
+        <tr><td>Almanak: a pluggable execution backend for the gateway, with a diff that applies to their <code>main</code></td><td><a href="https://github.com/almanak-co/sdk/issues/3">almanak-co/sdk#3</a></td><td>diff in the issue</td><td><span class="chip info">open</span></td></tr>
+      </tbody></table></div>
+      <p class="lede">Three defects in the state-override fallback of the merged sequence simulator were found by other contributors within two days of it landing (<a href="https://github.com/KeeperHub/keeperhub/issues/2517">#2517</a>, <a href="https://github.com/KeeperHub/keeperhub/issues/2541">#2541</a>, <a href="https://github.com/KeeperHub/keeperhub/issues/2542">#2542</a>), all accepted and under fix by them. The <code>eth_simulateV1</code> path, which is what Base Sepolia and this runner use, is not affected.</p>
+    </div>
   </section>
 
-  <section class="reveal">
-    <div class="kicker">Verify it yourself</div>
-    <h2>Nothing here asks to be believed</h2>
-    <div class="grid2">
-      <div>
-        <pre><code>pip install 'almanak-keeperhub[mcp]'
+  <!-- 12 / VERIFY -->
+  <section class="wrap" data-band="light">
+    <div class="g" style="margin-bottom:40px">
+      <div class="rail"><div class="eyebrow">12 / Verify it yourself</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln"><span>Nothing here asks</span></span><span class="ln"><span>to be believed.</span></span></h2></div>
+    </div>
+    <div class="grid2 above">
+      <pre><code>pip install 'almanak-keeperhub[mcp]'
 export KEEPERHUB_API_KEY=kh_...        # your own KeeperHub key
 
 almanak-keeperhub verify &lt;hash or execution id&gt;
@@ -466,17 +587,34 @@ almanak-keeperhub verify &lt;hash or execution id&gt;
 
 almanak-keeperhub api-features --chain base_sepolia
 # which of the two merged upstream features production has today</code></pre>
-      </div>
-      <div class="card">
-        <h3>Or without an account</h3>
-        <p><span class="mono">tests/e2e/rehearsal.sh --testnet</span> runs the whole lifecycle on an Anvil fork against a stand-in that speaks the merged KeeperHub API, and again with <span class="mono">KEEPERHUB_FAKE_API=legacy</span> to rehearse the fallbacks. Every row on the console links to the explorer; every execution id resolves in the KeeperHub app under Runs.</p>
-        <p style="margin-top:10px">Source, tests, the proof workflow and the <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">roadmap</a>: <a href="https://github.com/Prashant-thakur77/almanak-keeperhub">github.com/Prashant-thakur77/almanak-keeperhub</a>.</p>
-      </div>
+      <div class="card"><h3>Or without an account</h3><p><span class="mono">tests/e2e/rehearsal.sh --testnet</span> runs the whole lifecycle on an Anvil fork against a stand-in that speaks the merged KeeperHub API, and again with <span class="mono">KEEPERHUB_FAKE_API=legacy</span> to rehearse the fallbacks. Every row on the console links to the explorer; every execution id resolves in the KeeperHub app under Runs.</p><p style="margin-top:12px">Source, tests, the proof workflow and the <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">roadmap</a>: <a href="https://github.com/Prashant-thakur77/almanak-keeperhub">github.com/Prashant-thakur77/almanak-keeperhub</a>.</p></div>
     </div>
   </section>
 
-  <footer id="footer"></footer>
+  <!-- 13 / CTA -->
+  <section class="wrap cta-band" data-band="blue">
+    <div class="eyebrow" style="margin-bottom:40px;color:var(--stone-900)">13 / Start here</div>
+    <h2 class="display-xl rv"><span class="ln"><span>Open the console.</span></span><span class="ln"><span>Every row is a receipt.</span></span></h2>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest">Release v1.1.0</a>
+      <a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/panel/deck.pdf">The deck</a>
+    </div>
+  </section>
 </main>
+
+<footer class="site" data-band="dark">
+  <div class="cols">
+    <div>
+      <a class="wordmark" href="#top" style="color:var(--stone)"><svg viewBox="0 0 44 28" fill="none" aria-hidden="true"><path d="M4 22 C4 8, 14 8, 14 14 S 24 20, 24 14 S 34 8, 34 14" stroke="#3BBFF7" stroke-width="4" stroke-linecap="round"/><circle cx="4" cy="22" r="4" fill="#EEA02B"/><circle cx="40" cy="14" r="4" fill="#07A240"/></svg><span>almanak-keeperhub</span></a>
+      <p style="margin-top:16px;color:var(--stone-400);font-size:14px;max-width:44ch">KeeperHub as the execution backend for Almanak strategies. Built for the KeeperHub Agent Economy Hackathon, 2026.</p>
+    </div>
+    <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Site</div><a href="#problem">The problem</a><a href="#how">How it works</a><a href="#guard">The guard</a><a href="#proof">Proof</a><a href="#upstream">Upstream</a></div>
+    <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Project</div><a href="console/">Console</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">GitHub</a><a href="https://pypi.org/project/almanak-keeperhub/">PyPI</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest">Release</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a></div>
+    <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Proof</div><a href="https://youtu.be/wdZJTSivzRI">Demo video</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/panel/deck.pdf">Finalist deck</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml">Proof workflow</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/SECURITY.md">Security model</a></div>
+  </div>
+  <div class="meta"><div id="footer"></div><button class="totop" id="totop">Back to top <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4M6 10l6-6 6 6"/></svg></button></div>
+</footer>
 
 <script>
   document.documentElement.classList.add("js");
@@ -484,70 +622,114 @@ almanak-keeperhub api-features --chain base_sepolia
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const short = (h) => (h && h.length > 20 ? h.slice(0, 10) + "…" + h.slice(-6) : h || "");
   const when = (iso) => { try { const d = new Date(iso); return d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch { return ""; } };
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const fmt = (n) => Number(n).toLocaleString("en-US");
+  const pad = (n, w = 3) => String(n).padStart(w, "0");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // count-ups: numbers rise into place once, when they enter the viewport
-  function countUp(el, to, ms = 1100) {
-    const target = Number(to);
-    if (!Number.isFinite(target) || reduced) { el.textContent = fmt(to); return; }
-    const start = performance.now();
-    const step = (now) => {
-      const p = Math.min(1, (now - start) / ms), eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = fmt(Math.round(target * eased));
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
+  /* theme: remembered per viewer; charcoal bands keep their own polarity either way */
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("ak-theme"); if (t === "dark" || t === "light") root.setAttribute("data-theme", t); } catch {}
+  $("theme-btn").addEventListener("click", () => {
+    const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("ak-theme", next); } catch {}
+    polarity();
+  });
+
+  /* menu: a sheet covering the page from above; Escape or any link closes it */
+  const menu = $("menu"), menuBtn = $("menu-btn");
+  const setMenu = (open) => { menu.dataset.open = String(open); menuBtn.setAttribute("aria-expanded", String(open)); document.body.dataset.menu = open ? "open" : "closed"; $("top-bar").dataset.on = open ? "menu" : bandUnderHeader(); };
+  menuBtn.addEventListener("click", () => setMenu(menu.dataset.open !== "true"));
+  menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+  addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+
+  /* header polarity follows the band under it */
+  const bands = () => [...document.querySelectorAll("[data-band]")];
+  function bandUnderHeader() {
+    const y = scrollY + 44;
+    let on = "light";
+    for (const b of bands()) { const top = b.offsetTop, bottom = top + b.offsetHeight; if (y >= top && y < bottom) { on = b.dataset.band === "dark" ? "dark" : "light"; } }
+    if (on === "light" && root.getAttribute("data-theme") === "dark") on = "dark";
+    return on;
   }
-  const revealAll = () => document.querySelectorAll(".reveal").forEach((el) => { el.classList.add("in"); el.querySelectorAll("[data-count]").forEach((c) => { c.textContent = fmt(c.dataset.count); }); });
-  if (!("IntersectionObserver" in window)) revealAll();
-  const revealer = new IntersectionObserver((entries) => {
+  function polarity() { if (menu.dataset.open !== "true") $("top-bar").dataset.on = bandUnderHeader(); document.body.dataset.scrolled = scrollY > 80 ? "true" : "false"; }
+  addEventListener("scroll", polarity, { passive: true }); addEventListener("resize", polarity); polarity();
+  $("totop").addEventListener("click", () => scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }));
+
+  /* entrances: text rises through its mask, cards cover up, lines draw, nodes land */
+  const prepDraw = (svg) => svg.querySelectorAll("path, circle").forEach((el) => { try { const len = Math.ceil(el.getTotalLength()) + 2; el.style.setProperty("--len", len); } catch {} });
+  const io = new IntersectionObserver((entries) => {
     for (const en of entries) {
       if (!en.isIntersecting) continue;
-      en.target.classList.add("in");
-      en.target.querySelectorAll("[data-count]").forEach((el) => { if (!el.dataset.done) { el.dataset.done = "1"; countUp(el, el.dataset.count); } });
-      revealer.unobserve(en.target);
+      const el = en.target;
+      if (el.classList.contains("draw")) { const svg = el.tagName === "svg" ? el : el.querySelector("svg"); if (svg) prepDraw(svg); }
+      el.classList.add("in"); io.unobserve(el);
     }
-  }, { threshold: 0.12 });
-  if ("IntersectionObserver" in window) document.querySelectorAll(".reveal").forEach((el) => revealer.observe(el));
+  }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+  const watch = (scope) => (scope || document).querySelectorAll(".rv, .mask, .draw, .steps, .spine-v").forEach((el) => io.observe(el));
+  if (!("IntersectionObserver" in window)) document.querySelectorAll(".rv, .mask, .draw, .steps, .spine-v").forEach((el) => el.classList.add("in"));
+  else watch();
   if (reduced) document.querySelectorAll("svg").forEach((s) => { try { s.pauseAnimations(); } catch {} });
-  addEventListener("scroll", () => {
-    const h = document.documentElement, p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
-    $("progress").style.width = (p * 100).toFixed(2) + "%";
-  }, { passive: true });
 
-  function cells(s, state) {
-    const c = state.conformance, f = state.api_features;
+  /* the cursor: a solid dot painted the inverse of the surface under it (pointer devices only) */
+  (function cursor() {
+    if (!matchMedia("(pointer: fine)").matches) return;
+    const dot = $("dot"), SIZE = 18, CHAR = "#262626", STONE = "#F0EDEA";
+    root.setAttribute("data-cursor", "on");
+    const lum = (r, g, b) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+    const colorAt = (stack) => {
+      for (const el of stack) {
+        if (el === root) break;
+        const s = getComputedStyle(el); if (s.visibility === "hidden" || s.opacity === "0") continue;
+        const r = el.getBoundingClientRect(); if (r.width < SIZE || r.height < SIZE) continue;
+        const m = (s.backgroundColor || "").match(/rgba?\(([^)]+)\)/);
+        if (m) { const p = m[1].split(",").map(parseFloat); const a = p.length > 3 ? p[3] : 1; if (a > 0.5) return lum(p[0], p[1], p[2]) > 0.4 ? CHAR : STONE; }
+      }
+      const b = getComputedStyle(document.body).backgroundColor.match(/rgba?\(([^)]+)\)/);
+      if (b) { const q = b[1].split(",").map(parseFloat); return lum(q[0], q[1], q[2]) > 0.4 ? CHAR : STONE; }
+      return CHAR;
+    };
+    let x = 0, y = 0, queued = false, shown = false;
+    const frame = () => { queued = false; dot.style.transform = `translate3d(${x - SIZE / 2}px,${y - SIZE / 2}px,0)`; const c = colorAt(document.elementsFromPoint(x, y)); if (dot.dataset.fill !== c) { dot.dataset.fill = c; dot.style.backgroundColor = c; } };
+    document.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; x = e.clientX; y = e.clientY; if (!shown) { shown = true; dot.style.opacity = "1"; } if (!queued) { queued = true; requestAnimationFrame(frame); } }, { passive: true });
+    document.addEventListener("pointerdown", () => { dot.style.width = dot.style.height = SIZE * 0.7 + "px"; }, { passive: true });
+    document.addEventListener("pointerup", () => { dot.style.width = dot.style.height = SIZE + "px"; }, { passive: true });
+    document.addEventListener("mouseleave", () => { shown = false; dot.style.opacity = "0"; });
+    addEventListener("blur", () => { shown = false; dot.style.opacity = "0"; });
+    addEventListener("scroll", () => { if (shown && !queued) { queued = true; requestAnimationFrame(frame); } }, { passive: true });
+  })();
+
+  /* ---- data ---- */
+  function figures(s, state) {
+    const c = state.conformance;
     const items = [
-      ["Executions", s.executions, `${fmt(s.verified)} verified by KeeperHub`, "ok"],
-      ["Refused before broadcast", s.refused_before_broadcast + s.dry_run_refusals, "dry runs that would revert, and caps", "warn"],
-      ["Replays, no resend", s.replays, "same key, same execution", "info"],
-      ["Gas sponsored", s.sponsored, "no native balance in the org wallet", ""],
-      ["Live conformance", c ? `${c.passed}/${c.passed + c.failed}` : "—", c ? "documented API behaviours, on production" : "not run yet", c && !c.failed ? "ok" : "warn"],
-      ["Upstream features live", f ? [f.raw_calldata, f.call_sequence].filter(Boolean).length + "/2" : "—", "raw calldata, sequence dry run; client falls back until then", ""],
+      ["Executions", pad(s.executions), `${s.verified} verified by KeeperHub`, "good"],
+      ["Verified receipts", pad(s.verified), "KeeperHub's verdict on every one", "good"],
+      ["Refused before broadcast", pad(s.refused_before_broadcast + s.dry_run_refusals), "dry runs that would revert, and caps", "warn"],
+      ["Replays, no resend", pad(s.replays), "same key, same execution", "blue"],
+      ["Live conformance", c ? `${pad(c.passed)}/${pad(c.passed + c.failed)}` : "—", "documented API behaviours, on production", c && !c.failed ? "good" : "warn"],
+      ["PRs merged upstream", "003", "of 7 opened; four in review", "blue"],
     ];
-    $("strip").innerHTML = items.map(([l, v, sub, k]) => {
-      const numeric = typeof v === "number";
-      return `<div class="cell ${k} reveal"><p class="label">${esc(l)}</p><p class="value" ${numeric ? `data-count="${v}"` : ""}>${numeric ? "0" : esc(v)}</p><p class="sub">${esc(sub)}</p></div>`;
-    }).join("");
-    document.querySelectorAll("#strip .reveal").forEach((el) => revealer.observe(el));
+    $("strip").innerHTML = items.map(([l, v, sub, k], i) => `<div class="mask rv" style="--i:${i}"><div class="up fig ${k}"><div class="figure">${esc(v)}</div><div class="mono-label">${esc(l)}</div><div class="sub">${esc(sub)}</div></div></div>`).join("");
+    watch($("strip"));
   }
-
+  function ticker(ex) {
+    const rows = ex.slice(0, 24);
+    if (!rows.length) return;
+    const card = (e) => `<div class="tk"><div class="fn">${esc(e.function)} <span class="chip ${e.status === "completed" ? "good" : "warn"}">${esc(e.status)}</span></div><div class="mono-ui">exec ${esc(e.execution_id)}</div><div class="mono-ui">${e.tx_hash ? "tx " + esc(short(e.tx_hash)) : "no broadcast"} · ${esc(when(e.recorded_at))} UTC</div></div>`;
+    const a = rows.slice(0, 12).map(card).join(""), b = rows.slice(12, 24).map(card).join("") || a;
+    $("ticker").innerHTML = `<div class="row">${a}${a}</div><div class="row rev">${b}${b}</div>`;
+  }
   function pipeline(s) {
     const st = [
-      ["1", "Almanak decides", "strategy or agent compiles the intent", "", ""],
-      ["2", "Simulate", "KeeperHub dry run, no chain touch", `${fmt(s.dry_runs)} dry runs · ${fmt(s.dry_run_refusals)} refused`, "gate"],
-      ["3", "Sign", "no local key; org wallet in Turnkey", "", ""],
-      ["4", "Submit", "one idempotency key per intent", `${fmt(s.executions)} sent · ${fmt(s.replays)} replayed`, "gate"],
-      ["5", "Verify", "KeeperHub receipt verification", `${fmt(s.verified)} verified`, ""],
-      ["6", "Prove", "receipts file, explorer, this site", "", ""],
+      ["Almanak decides", "strategy or agent compiles the intent", "", ""],
+      ["Simulate", "KeeperHub dry run, no chain touch", `${s.dry_runs} dry runs · ${s.dry_run_refusals} refused`, "gate"],
+      ["Sign", "no local key; org wallet in Turnkey", "", ""],
+      ["Submit", "one idempotency key per intent", `${s.executions} sent · ${s.replays} replayed`, "gate"],
+      ["Verify", "KeeperHub receipt verification", `${s.verified} verified`, ""],
+      ["Prove", "receipts file, explorer, this site", "", ""],
     ];
-    $("pipeline").innerHTML = st.map(([n, t, d, c, k]) => `<div class="stage ${k}"><div class="n">Step ${n}</div><div class="t">${t}</div><div class="d">${d}</div>${c ? `<div class="c">${esc(c)}</div>` : ""}</div>`).join("");
-    $("t-dry").textContent = `${fmt(s.dry_runs)} dry runs · ${fmt(s.dry_run_refusals)} refused`;
-    $("t-sent").textContent = `${fmt(s.executions)} sent · ${fmt(s.replays)} replayed`;
-    $("t-verified").textContent = `${fmt(s.verified)} verified`;
+    $("pipeline").innerHTML = st.map(([t, d, c, k], i) => `<li><span class="m">${i + 1}</span><div class="body"><div class="t">${t}${k ? ' <span class="chip warn gate">gate</span>' : ""}</div><div class="d">${d}</div>${c ? `<div class="c">${esc(c)}</div>` : ""}</div></li>`).join("");
   }
-
   function results(b, s) {
     const rows = [];
     if (b) {
@@ -559,27 +741,25 @@ almanak-keeperhub api-features --chain base_sepolia
       if (rt.attempted) rows.push(["Retries of already-landed work", `<b>${rt.replayed_same_hash}/${rt.attempted} replayed</b> by idempotency key, ${rt.double_broadcasts} double broadcasts (p50 ${rt.latency_p50_s}s)`]);
       if (cr.attempted) rows.push(["Process killed right after broadcast", `<b>${cr.resumed_and_verified_by_a_fresh_process}/${cr.attempted}</b> settled by a fresh process, ${cr.resent_after_resume} resent`]);
     }
-    rows.push(["Executions on this site, all verified", `<b>${fmt(s.executions)}</b> (${fmt(s.verified)} verified, ${s.failed} failed)`]);
+    rows.push(["Executions on this site, all verified", `<b>${s.executions}</b> (${s.verified} verified, ${s.failed} failed)`]);
     rows.push(["Private keys on the machine", "0"]);
     rows.push(["Strategy code changed", "1 line (the chain list)"]);
     rows.push(["Tests", "576 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations"]);
     rows.push(["Features contributed upstream to KeeperHub", "4 issues filed, 4 accepted; 7 pull requests, <b>3 merged and live on production</b>, 4 in review, 3 of them on maintainer-filed issues"]);
     $("results").querySelector("tbody").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
   }
-
   function lifecycle(ex) {
-    // the newest approve, deposit and redeem: one lifecycle
     const pick = (fn) => ex.find((e) => e.function === fn);
     const trio = [["approve", "Almanak's approve, dry-run then signed by KeeperHub"], ["deposit", "the deposit into the vault"], ["redeem", "the guarded exit: KeeperHub re-read the balance, then redeemed"]];
-    $("lifecycle").innerHTML = trio.map(([fn, d]) => {
+    $("lifecycle").innerHTML = trio.map(([fn, d], i) => {
       const e = pick(fn); if (!e) return `<div class="card"><h3>${fn}</h3><p>not yet</p></div>`;
       const flags = [e.verified ? "verified" : "", e.sponsored ? "sponsored gas" : "", e.guarded ? "guarded" : "", e.idempotent_replay ? "replay" : ""].filter(Boolean).join(" · ");
-      return `<div class="card"><h3>${fn} <span class="pill ${e.status === "completed" ? "ok" : "warn"}">${esc(e.status)}</span></h3><p>${d}</p>
-        <p style="margin-top:8px" class="mono">exec <a href="console/#${encodeURIComponent(e.execution_id)}">${esc(e.execution_id)}</a><br>tx ${e.explorer ? `<a href="${esc(e.explorer)}">${esc(short(e.tx_hash))}</a>` : esc(short(e.tx_hash))}</p>
-        <p style="margin-top:6px">${esc(flags)} · ${esc(when(e.recorded_at))} UTC</p></div>`;
+      return `<div class="mask rv" style="--i:${i}"><div class="up card node tap"><h3>${fn} <span class="chip ${e.status === "completed" ? "good" : "warn"}">${esc(e.status)}</span></h3><p>${d}</p>
+        <p class="mono-ui" style="margin-top:12px">exec <a href="console/#${encodeURIComponent(e.execution_id)}">${esc(e.execution_id)}</a><br>tx ${e.explorer ? `<a href="${esc(e.explorer)}">${esc(short(e.tx_hash))}</a>` : esc(short(e.tx_hash))}</p>
+        <p style="margin-top:8px;font-size:13px">${esc(flags)} · ${esc(when(e.recorded_at))} UTC</p></div></div>`;
     }).join("");
+    watch($("lifecycle"));
   }
-
   function failures(list) {
     const meta = {
       unknown_selector_refused: ["Unknown selector", "Calldata nothing can decode is handed to KeeperHub as raw bytes to decode against the verified ABI, or refused before signing. Never guessed."],
@@ -593,62 +773,50 @@ almanak-keeperhub api-features --chain base_sepolia
     };
     const seen = new Map();
     for (const f of list) if (!seen.has(f.kind)) seen.set(f.kind, f);
-    $("failures-grid").innerHTML = [...seen.values()].map((f) => {
+    $("failures-grid").innerHTML = [...seen.values()].map((f, i) => {
       const [title, text] = meta[f.kind] || [f.kind, ""];
       const proof = f.tx_hash ? `tx ${esc(short(f.tx_hash))}` : f.execution_id ? `exec ${esc(f.execution_id)}` : "no broadcast";
       const verdict = f.broadcast === false ? "refused before broadcast" : f.resumed ? "resumed, not resent" : f.second_attempt_replayed || f.replay === true ? "replayed, not resent" : "landed as intended";
-      return `<div class="card"><h3>${esc(title)} <span class="pill ok">${esc(verdict)}</span></h3><p>${esc(text)}</p><p style="margin-top:6px" class="mono">${proof}</p></div>`;
+      return `<div class="mask rv" style="--i:${i % 3}"><div class="up card tap"><div class="mono-label" style="margin-bottom:10px">${pad(i + 1, 2)} / ${esc(title)}</div><h3>${esc(title)}</h3><p>${esc(text)}</p><p style="margin-top:12px"><span class="chip good">${esc(verdict)}</span></p><p class="mono-ui" style="margin-top:8px">${proof}</p></div></div>`;
     }).join("");
+    watch($("failures-grid"));
   }
-
   function video(cfg) {
     const url = (cfg && cfg.video_url) || "";
     const m = url.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{6,})/);
     if (!m) return;
     $("video-box").innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${m[1]}" title="almanak-keeperhub demo" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
   }
-
   function nextRun(snapshot) {
-    // the workflow's cron is 17 */6 * * * UTC; the line keeps counting while the page is open
     const paint = () => {
       const now = new Date();
       const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), Math.floor(now.getUTCHours() / 6) * 6, 17));
       if (next <= now) next.setUTCHours(next.getUTCHours() + 6);
       const mins = Math.max(0, Math.round((next - now) / 60000));
-      $("next-run").innerHTML = `Last published <b>${esc(snapshot || "")}</b>. Next runner tick in about <b>${mins} min</b> (${next.toISOString().slice(11, 16)} UTC).`;
+      $("next-run").textContent = `next runner tick in about ${mins} min (${next.toISOString().slice(11, 16)} UTC)`;
     };
     paint(); setInterval(paint, 30000);
   }
-
   function gateCase() {
-    // the gate animation alternates: seconds 0-5 the live decision, 5-10 the stale one
     if (reduced) return;
-    const paint = () => {
-      const t = (performance.now() / 1000) % 10, stale = t >= 5;
-      $("g-decided").textContent = stale ? "5000001" : "5000000";
-      $("g-case").textContent = stale ? "stale decision: one share more than held, stopped at the Condition" : "live decision: the balance covers it, redeem runs";
-    };
+    const paint = () => { const t = (performance.now() / 1000) % 10, stale = t >= 5; $("g-decided").textContent = stale ? "5000001" : "5000000"; $("g-case").textContent = stale ? "stale decision: one share more than held, stopped at the Condition" : "live decision: the balance covers it, redeem runs"; };
     paint(); setInterval(paint, 500);
   }
-
   async function main() {
     let state = null, cfg = null;
     try { state = await (await fetch("console/console-data/state.json")).json(); } catch (e) { $("fresh").textContent = "proof data unavailable"; return; }
     try { cfg = await (await fetch("site.json")).json(); } catch (e) { cfg = null; }
     const s = state.summary, c = state.conformance, f = state.api_features;
     $("fresh").textContent = "proof as of " + (state.snapshot_at || state.generated_at || "");
-    countUp($("big-count"), s.executions, 1400);
-    $("lc-verified").textContent = `${fmt(s.verified)} of ${fmt(s.executions)}`;
-    $("lc-refused").textContent = fmt(s.refused_before_broadcast + s.dry_run_refusals);
-    $("lc-conf").textContent = c ? `${c.passed} of ${c.passed + c.failed} passed` : "not run yet";
-    cells(s, state); pipeline(s); results(state.benchmark, s); lifecycle(state.executions || []); failures(state.failure_modes || []); video(cfg); nextRun(state.snapshot_at); gateCase();
+    figures(s, state); ticker(state.executions || []); pipeline(s); results(state.benchmark, s); lifecycle(state.executions || []); failures(state.failure_modes || []); video(cfg); nextRun(state.snapshot_at); gateCase();
     $("footer").innerHTML = [
-      `Published by the <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml">proof workflow</a> on ${esc(state.snapshot_at || "")}`,
-      f ? `production accepts raw calldata: ${f.raw_calldata ? "yes" : "not yet"}, sequence dry runs: ${f.call_sequence ? "yes" : "not yet"} (probed ${esc(f.probed_at || "")})` : "",
-      c ? `live conformance ${c.passed}/${c.passed + c.failed} at ${esc(c.ran_at || "")}` : "",
+      `Published by the <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml" style="color:var(--stone)">proof workflow</a> on ${esc(state.snapshot_at || "")}`,
+      f ? `raw calldata: ${f.raw_calldata ? "yes" : "not yet"}, sequence dry runs: ${f.call_sequence ? "yes" : "not yet"}` : "",
+      c ? `live conformance ${c.passed}/${c.passed + c.failed}` : "",
       `org wallet <code>${esc(state.org_wallet || "")}</code> on ${esc(state.chain)}`,
-      `<a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/LICENSE">MIT</a> · built for the KeeperHub Agent Economy Hackathon`,
+      `<a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/LICENSE" style="color:var(--stone)">MIT</a>`,
     ].filter(Boolean).join(" · ");
+    polarity();
   }
   main();
 </script>
