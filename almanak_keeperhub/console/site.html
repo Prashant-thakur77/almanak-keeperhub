@@ -83,6 +83,11 @@
   .display{font-size:var(--display);line-height:.94;letter-spacing:-.035em;font-weight:700}
   .figure{font-size:var(--display);line-height:.92;letter-spacing:-.035em;font-weight:700;font-variant-numeric:tabular-nums}
   .body-lg{font-size:var(--body-lg);line-height:1.5;max-width:66ch}
+  .tick{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;margin-top:24px}
+  .tick svg{width:44px;height:44px;transform:rotate(-90deg)}
+  .tick .bg{fill:none;stroke:var(--sunken);stroke-width:4}
+  .tick .fg{fill:none;stroke:var(--mint);stroke-width:4;stroke-linecap:round;stroke-dasharray:113.1;stroke-dashoffset:113.1;transition:stroke-dashoffset 900ms var(--ease)}
+  .tick .mono-ui{color:var(--ink)}
   .statement{font-size:clamp(24px,2.9vw,42px);line-height:1.22;letter-spacing:-.032em;font-weight:500;max-width:none;color:var(--heading)}
   .eyebrow{font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .chip{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:var(--r-pill);font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;background:var(--sunken);color:var(--muted);vertical-align:middle}
@@ -184,7 +189,8 @@
   /* ---- the numbered list: outlined circles, one color per list ---- */
   .ol{list-style:none;margin:0;padding:0;display:grid;gap:12px;position:relative;color:var(--n-green)}
   .ol li{display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;background:var(--card);border-radius:var(--r-card);padding:22px 24px}
-  .ol .m{width:48px;height:48px;border:2px solid currentColor;border-radius:var(--r-pill);display:grid;place-items:center;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;transform:scale(0);transform-box:fill-box}
+  .ol .m{width:48px;height:48px;border:2px solid currentColor;border-radius:var(--r-pill);display:grid;place-items:center;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;transform:scale(0);transform-box:fill-box;transition:background-color 300ms var(--ease),color 300ms var(--ease)}
+  .ol .m.on{background:var(--n-green);color:#fff}
   .in .ol .m,.steps.in .ol .m{animation:land var(--d-fast) var(--ease-decel) both}
   .ol li:nth-child(1) .m{animation-delay:calc(var(--stagger)*1)} .ol li:nth-child(2) .m{animation-delay:calc(var(--stagger)*2)} .ol li:nth-child(3) .m{animation-delay:calc(var(--stagger)*3)} .ol li:nth-child(4) .m{animation-delay:calc(var(--stagger)*4)} .ol li:nth-child(5) .m{animation-delay:calc(var(--stagger)*5)} .ol li:nth-child(6) .m{animation-delay:calc(var(--stagger)*6)}
   .ol .t{color:var(--heading);font-weight:500;font-size:22px;letter-spacing:-.025em;line-height:1.1}
@@ -257,6 +263,11 @@
   @media (max-width:640px){ .panel{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)} .panel .num span{font-size:94cqh} .stack{height:260vh} }
 
   /* ---- tables ---- */
+  .segbar{display:flex;gap:6px;margin-bottom:12px}
+  .seg{height:12px;flex:1;border-radius:999px;background:var(--sunken)}
+  .seg.merged,.seglegend i.merged{background:var(--mint)} .seg.review,.seglegend i.review{background:var(--blue-300)} .seg.proposed,.seglegend i.proposed{background:var(--yellow)}
+  .seglegend{display:flex;flex-wrap:wrap;gap:8px 24px;font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+  .seglegend i{display:inline-block;width:10px;height:10px;border-radius:999px;margin-right:8px;vertical-align:middle}
   table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--r-card);overflow:hidden}
   th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--hairline);vertical-align:top}
   th{font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--sunken)}
@@ -288,6 +299,10 @@
   .diagram{background:var(--card);border-radius:var(--r-card);padding:16px}
   .diagram svg{width:100%;height:auto;display:block}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gutter)}
+  .route{position:relative}
+  .route::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:4px;margin-top:-2px;background:var(--mint);border-radius:2px}
+  .route>.mask{position:relative;z-index:1}
+  @media (max-width:860px){ .route::before{left:50%;right:auto;top:4%;bottom:4%;height:auto;width:4px;margin:0 0 0 -2px} }
   #failures-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
   @media (max-width:860px){ .grid3,.grid2{grid-template-columns:1fr} }
   .sec-head{margin-bottom:40px;max-width:20ch}
@@ -377,7 +392,7 @@
       <div class="rail"><div class="eyebrow">02 / Live proof</div></div>
       <div class="main">
         <p class="statement rv"><span class="ln"><span>Every number on this page</span></span><span class="ln"><span>is read from a file a real run wrote,</span></span><span class="ln"><span>and a runner rewrites those files</span></span><span class="ln"><span>every six hours.</span></span></p>
-        <p class="mono-ui" style="margin-top:18px;color:var(--muted)"><span id="fresh">loading the latest run…</span> · <span id="next-run"></span></p>
+        <div class="tick"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="bg" cx="22" cy="22" r="18"/><circle class="fg" id="tick-arc" cx="22" cy="22" r="18"/></svg><div><div class="mono-label">Next runner tick</div><div class="mono-ui" id="next-run">…</div></div><div><div class="mono-label">Proof as of</div><div class="mono-ui" id="fresh">loading the latest run…</div></div></div>
       </div>
     </div>
     <div class="figures above" id="strip"></div>
@@ -512,7 +527,7 @@
         <div class="rail"><div class="eyebrow">Live</div></div>
         <div class="main"><h2 class="rv"><span class="ln"><span>The latest lifecycle, run by a GitHub runner</span></span><span class="ln"><span>with nobody present.</span></span></h2><p class="lede">Every six hours a runner ticks the strategy through KeeperHub, exits through the guarded redeem, checks eleven API behaviours against production, and republishes this site.</p></div>
       </div>
-      <div class="grid3" id="lifecycle" style="margin-top:40px"></div>
+      <div class="grid3 route" id="lifecycle" style="margin-top:40px"></div>
     </div>
   </section>
 
@@ -540,34 +555,29 @@
       <div class="rail"><div class="eyebrow">09 / Authority</div></div>
       <div class="main"><h2 class="display rv"><span class="ln"><span>Who can act,</span></span><span class="ln"><span>and through which gate.</span></span></h2></div>
     </div>
-    <div class="diagram above">
-      <svg viewBox="0 0 1120 250" xmlns="http://www.w3.org/2000/svg" font-family="Manrope, ui-sans-serif, system-ui, sans-serif" font-size="14">
-        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8A8982"/></marker></defs>
-        <rect x="10" y="80" width="190" height="72" rx="20" fill="#F5A524"/>
-        <text x="105" y="110" text-anchor="middle" font-weight="600" fill="#0B0F19">Almanak strategy</text>
-        <text x="105" y="130" text-anchor="middle" fill="#0B0F19" font-size="12">or its AI agent: proposes</text>
-        <path d="M200 116 H245" stroke="#8A8982" stroke-width="2" marker-end="url(#arr)"/>
-        <rect x="250" y="80" width="170" height="72" rx="20" fill="#EAE9E2"/>
-        <text x="335" y="110" text-anchor="middle" font-weight="600" fill="#0B0F19">Almanak policy</text>
-        <text x="335" y="130" text-anchor="middle" fill="#4A4C52" font-size="12">limits, allowlists</text>
-        <path d="M335 80 V30" stroke="#D63B3B" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr)"/>
-        <text x="335" y="20" text-anchor="middle" fill="#D63B3B" font-size="12">refused: nothing compiled</text>
-        <path d="M420 116 H465" stroke="#8A8982" stroke-width="2" marker-end="url(#arr)"/>
-        <rect x="470" y="80" width="170" height="72" rx="20" fill="#EAE9E2"/>
-        <text x="555" y="110" text-anchor="middle" font-weight="600" fill="#0B0F19">KeeperHub dry run</text>
-        <text x="555" y="130" text-anchor="middle" fill="#4A4C52" font-size="12">simulate: true</text>
-        <path d="M555 152 V202" stroke="#D63B3B" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr)"/>
-        <text x="555" y="222" text-anchor="middle" fill="#D63B3B" font-size="12">would revert: nothing signed</text>
-        <path d="M640 116 H685" stroke="#8A8982" stroke-width="2" marker-end="url(#arr)"/>
-        <rect x="690" y="80" width="170" height="72" rx="20" fill="#EAE9E2"/>
-        <text x="775" y="110" text-anchor="middle" font-weight="600" fill="#0B0F19">KeeperHub caps</text>
-        <text x="775" y="130" text-anchor="middle" fill="#4A4C52" font-size="12">daily native, 100 USD stablecoin</text>
-        <path d="M775 80 V30" stroke="#D63B3B" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr)"/>
-        <text x="775" y="20" text-anchor="middle" fill="#D63B3B" font-size="12">over cap: nothing signed</text>
-        <path d="M860 116 H905" stroke="#8A8982" stroke-width="2" marker-end="url(#arr)"/>
-        <rect x="910" y="80" width="200" height="72" rx="20" fill="#5CC48E"/>
-        <text x="1010" y="110" text-anchor="middle" font-weight="600" fill="#0B0F19">Turnkey enclave signs</text>
-        <text x="1010" y="130" text-anchor="middle" fill="#0B0F19" font-size="12">one idempotency key per intent</text>
+    <div class="gate-wrap above" aria-label="Who can act: the strategy proposes, two policy layers refuse, the enclave signs">
+      <svg viewBox="0 0 1120 300" xmlns="http://www.w3.org/2000/svg">
+        <defs><path id="a-path" d="M90 120 H1030"/></defs>
+        <path d="M110 120 H310" class="g-line"/><path d="M350 120 H550" class="g-line"/><path d="M590 120 H790" class="g-line"/><path d="M830 120 H1010" class="g-line ok"/>
+        <path d="M330 142 V220" class="g-line no"/><path d="M570 142 V220" class="g-line no"/><path d="M810 142 V220" class="g-line no"/>
+        <circle cx="90" cy="120" r="20" class="g-node amber"/><text x="90" y="125" text-anchor="middle" class="g-glyph">1</text>
+        <circle cx="330" cy="120" r="20" class="g-node ink"/><text x="330" y="125" text-anchor="middle" class="g-glyph">2</text>
+        <circle cx="570" cy="120" r="20" class="g-node ink"/><text x="570" y="125" text-anchor="middle" class="g-glyph">3</text>
+        <circle cx="810" cy="120" r="20" class="g-node ink"/><text x="810" y="125" text-anchor="middle" class="g-glyph">4</text>
+        <circle cx="1030" cy="120" r="20" class="g-term ok"/><path d="M1021 120 l6 6 l12 -12" class="g-mark"/>
+        <circle cx="330" cy="240" r="16" class="g-term no"/><path d="M324 234 l12 12 M336 234 l-12 12" class="g-mark"/>
+        <circle cx="570" cy="240" r="16" class="g-term no"/><path d="M564 234 l12 12 M576 234 l-12 12" class="g-mark"/>
+        <circle cx="810" cy="240" r="16" class="g-term no"/><path d="M804 234 l12 12 M816 234 l-12 12" class="g-mark"/>
+        <text x="90" y="62" text-anchor="middle" class="g-t">Almanak strategy</text><text x="90" y="82" text-anchor="middle" class="g-mono">or its agent: proposes</text>
+        <text x="330" y="62" text-anchor="middle" class="g-t">Almanak policy</text><text x="330" y="82" text-anchor="middle" class="g-mono">limits, allowlists</text>
+        <text x="570" y="62" text-anchor="middle" class="g-t">KeeperHub dry run</text><text x="570" y="82" text-anchor="middle" class="g-mono">simulate: true</text>
+        <text x="810" y="62" text-anchor="middle" class="g-t">KeeperHub caps</text><text x="810" y="82" text-anchor="middle" class="g-mono">daily native, 100 USD stablecoin</text>
+        <text x="1030" y="62" text-anchor="middle" class="g-t">Turnkey enclave signs</text><text x="1030" y="82" text-anchor="middle" class="g-mono">one idempotency key per intent</text>
+        <text x="330" y="282" text-anchor="middle" class="g-mono">refused: nothing compiled</text>
+        <text x="570" y="282" text-anchor="middle" class="g-mono">would revert: nothing signed</text>
+        <text x="810" y="282" text-anchor="middle" class="g-mono">over the cap: nothing signed</text>
+        <text x="920" y="108" text-anchor="middle" class="g-lbl ok">allowed</text>
+        <circle r="7" class="g-dot"><animateMotion dur="8s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0.25;0.25;0.5;0.5;0.75;0.75;1;1" keyTimes="0;0.16;0.24;0.4;0.48;0.64;0.72;0.9;1"><mpath href="#a-path"/></animateMotion></circle>
       </svg>
     </div>
     <p class="lede">What a stolen API key can and cannot do: <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/SECURITY.md">SECURITY.md</a>.</p>
@@ -594,6 +604,8 @@
         <div class="rail"><div class="eyebrow">11 / Upstream</div></div>
         <div class="main"><h2 class="display rv"><span class="ln"><span>What this project fixed</span></span><span class="ln"><span>in KeeperHub, it now uses.</span></span></h2><p class="lede">Four gaps met while building, each filed, accepted and built to the maintainers' spec; then three of their own backlog issues. Three are merged and live on production; the runner's next tick used them without a change here.</p></div>
       </div>
+      <div class="segbar" aria-label="Eight changes: three merged, four in review, one proposed"><span class="seg merged"></span><span class="seg merged"></span><span class="seg merged"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg proposed"></span></div>
+      <div class="seglegend"><span><i class="merged"></i>3 merged, live on production</span><span><i class="review"></i>4 in review</span><span><i class="proposed"></i>1 proposed to Almanak</span></div>
       <div class="table-wrap"><table><thead><tr><th>Change</th><th>Issue</th><th>Pull request</th><th>State</th></tr></thead><tbody>
         <tr><td>Raw calldata on <code>POST /api/execute/contract-call</code>: send the bytes a framework compiled, KeeperHub decodes them losslessly</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2426">#2426</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2449">#2449</a></td><td><span class="chip good">merged</span></td></tr>
         <tr><td>Simulate a sequence of calls against the state the earlier ones produce (<code>eth_simulateV1</code>, with a state-override fallback)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2427">#2427</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2452">#2452</a></td><td><span class="chip good">merged</span></td></tr>
@@ -711,6 +723,7 @@ almanak-keeperhub api-features --chain base_sepolia
       // a clip rather than a scale, so the rounded tip keeps its shape; the CSS transition eases each new target
       el.style.clipPath = `inset(0 0 ${((1 - p) * 100).toFixed(2)}% 0 round ${el.classList.contains("line") ? 2 : 14}px)`;
     }
+    for (const m of document.querySelectorAll("#pipeline .m")) { const r = m.getBoundingClientRect(); m.classList.toggle("on", !reduced ? r.top + scrollY + r.height / 2 < tip : true); }
   }
   const queueLines = () => { if (!lineTick) { lineTick = true; requestAnimationFrame(drawLines); } };
   addEventListener("scroll", queueLines, { passive: true }); addEventListener("resize", queueLines); addEventListener("load", queueLines); drawLines();
@@ -856,7 +869,8 @@ almanak-keeperhub api-features --chain base_sepolia
       const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), Math.floor(now.getUTCHours() / 6) * 6, 17));
       if (next <= now) next.setUTCHours(next.getUTCHours() + 6);
       const mins = Math.max(0, Math.round((next - now) / 60000));
-      $("next-run").textContent = `next runner tick in about ${mins} min (${next.toISOString().slice(11, 16)} UTC)`;
+      $("next-run").textContent = `in ${Math.floor(mins / 60)} h ${String(mins % 60).padStart(2, "0")} min · ${next.toISOString().slice(11, 16)} UTC`;
+      const arc = $("tick-arc"); if (arc) arc.style.strokeDashoffset = String((113.1 * (mins / 360)).toFixed(1));
     };
     paint(); setInterval(paint, 30000);
   }
@@ -870,7 +884,7 @@ almanak-keeperhub api-features --chain base_sepolia
     try { state = await (await fetch("console/console-data/state.json")).json(); } catch (e) { $("fresh").textContent = "proof data unavailable"; return; }
     try { cfg = await (await fetch("site.json")).json(); } catch (e) { cfg = null; }
     const s = state.summary, c = state.conformance, f = state.api_features;
-    $("fresh").textContent = "proof as of " + (state.snapshot_at || state.generated_at || "");
+    $("fresh").textContent = state.snapshot_at || state.generated_at || "";
     figures(s, state); ticker(state.executions || []); pipeline(s); results(state.benchmark, s); lifecycle(state.executions || []); failures(state.failure_modes || []); video(cfg); nextRun(state.snapshot_at); gateCase(); queueLines(); setTimeout(queueLines, 1200);
     $("footer").innerHTML = [
       `Published by the <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml" style="color:var(--stone)">proof workflow</a> on ${esc(state.snapshot_at || "")}`,
