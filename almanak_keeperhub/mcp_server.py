@@ -162,6 +162,40 @@ class StrategyTools:
             }
         return await self._cli(["exit", "-d", str(self.strategy_dir), "--chain", self.chain])
 
+    async def guard_exit(self, confirm: bool = False) -> dict[str, Any]:
+        """The exit as a KeeperHub workflow: KeeperHub's engine reads the shares, a Condition node compares
+        them with the decision, and the Morpho redeem runs only on the true branch."""
+        if not self.allow_broadcast:
+            return {"ok": False, "error": "broadcast is disabled on this server; start it with --write to allow exits"}
+        if not confirm:
+            return {
+                "ok": False,
+                "error": "a live decision redeems through KeeperHub's engine; call again with confirm=true",
+            }
+        return await self._cli(["exit-guard", "run", "-d", str(self.strategy_dir), "--chain", self.chain])
+
+    async def guard_stale(self) -> dict[str, Any]:
+        """Send the workflow a decision one share above the position. The Condition stops it and nothing
+        is broadcast, so this runs on the read-only server too."""
+        return await self._cli(["exit-guard", "run", "-d", str(self.strategy_dir), "--chain", self.chain, "--stale"])
+
+    def guard_status(self) -> dict[str, Any]:
+        """The remembered exit-guard workflow and its last runs, from the state file next to the strategy."""
+        from almanak_keeperhub.exit_workflow import state_path
+
+        path = state_path(self.strategy_dir)
+        try:
+            state = json.loads(path.read_text())
+        except (OSError, ValueError):
+            return {"deployed": False, "path": str(path)}
+        return {
+            "deployed": True,
+            "workflow_id": state.get("workflow_id"),
+            "vault": state.get("vault"),
+            "validation": state.get("validation"),
+            "manual_runs": (state.get("manual_runs") or [])[-10:],
+        }
+
     async def run_failure_demo(self, name: str) -> dict[str, Any]:
         script = DEMOS.get(name)
         if script is None:
@@ -246,6 +280,17 @@ def build_server(tools: StrategyTools):
         """Run one recorded failure mode: revert, cap, duplicate, crash, selector or rpc."""
         return await tools.run_failure_demo(name)
 
+    @server.tool()
+    async def guard_stale() -> dict[str, Any]:
+        """Run the guarded-exit WORKFLOW with a stale decision (one share more than the position holds):
+        KeeperHub's engine reads the shares, the Condition node stops it, nothing is broadcast."""
+        return await tools.guard_stale()
+
+    @server.tool()
+    def guard_status() -> dict[str, Any]:
+        """The guarded-exit workflow KeeperHub runs for this strategy and its last manual runs."""
+        return tools.guard_status()
+
     if tools.allow_broadcast:
 
         @server.tool()
@@ -253,6 +298,13 @@ def build_server(tools: StrategyTools):
             """Redeem the whole vault position, guarded: KeeperHub re-reads the balance right before the
             redeem and answers executed=false if it no longer covers it. Requires confirm=true."""
             return await tools.exit_position(confirm)
+
+        @server.tool()
+        async def guard_exit(confirm: bool = False) -> dict[str, Any]:
+            """Redeem the whole vault position through the guarded-exit WORKFLOW: the decision goes in as
+            input, a Condition node compares it with the shares KeeperHub read, the redeem runs only on the
+            true branch. Requires confirm=true."""
+            return await tools.guard_exit(confirm)
 
         @server.tool()
         async def run_tick(confirm: bool = False, fresh: bool = True) -> dict[str, Any]:

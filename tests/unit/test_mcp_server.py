@@ -151,3 +151,42 @@ async def test_server_registers_run_tick_only_with_write(strategy_dir: Path) -> 
 
     writable = build_server(make_tools(strategy_dir, allow_broadcast=True))
     assert "run_tick" in {t.name for t in await writable.list_tools()}
+
+
+async def test_guard_tools_mirror_the_bot(strategy_dir: Path, monkeypatch) -> None:
+    """The workflow guard over MCP: a live decision needs --write and confirm, the stale one runs anywhere
+    because nothing can be broadcast, and the status comes from the state file next to the strategy."""
+    monkeypatch.delenv("ALMANAK_KEEPERHUB_EXIT_GUARD_STATE", raising=False)
+    seen: list[list[str]] = []
+
+    def runner(args: list[str]) -> tuple[str, int]:
+        seen.append(args)
+        return ("executed          : False\nnote              : stopped at the Condition\n", 0)
+
+    off = make_tools(strategy_dir, runner=runner)
+    on = make_tools(strategy_dir, runner=runner, allow_broadcast=True)
+    refused = await off.guard_exit(confirm=True)
+    assert refused["ok"] is False and "--write" in refused["error"] and seen == []
+    assert (await on.guard_exit(confirm=False))["ok"] is False and seen == []
+    assert (await on.guard_exit(confirm=True))["ok"] is True
+    assert seen[-1] == ["exit-guard", "run", "-d", str(strategy_dir), "--chain", "base_sepolia"]
+    assert (await off.guard_stale())["ok"] is True
+    assert seen[-1] == ["exit-guard", "run", "-d", str(strategy_dir), "--chain", "base_sepolia", "--stale"]
+
+    assert off.guard_status()["deployed"] is False
+    (strategy_dir / "keeperhub-exit-guard.json").write_text(
+        json.dumps(
+            {
+                "workflow_id": "zhanaalz8k47rrjspihct",
+                "vault": "0x" + "d3" * 20,
+                "manual_runs": [{"execution_id": "qez8b9fhipm7c4zcqa6sg", "stopped_at_gate": True, "executed": False}],
+            }
+        )
+    )
+    status = off.guard_status()
+    assert status["deployed"] is True and status["workflow_id"] == "zhanaalz8k47rrjspihct"
+    assert status["manual_runs"][-1]["stopped_at_gate"] is True
+
+    names = {t.name for t in await build_server(on).list_tools()}
+    assert {"guard_exit", "guard_stale", "guard_status"} <= names
+    assert "guard_exit" not in {t.name for t in await build_server(off).list_tools()}

@@ -20,7 +20,7 @@ MCP server, and two KeeperHub workflows generated from the strategy config and r
 [![proof refreshed](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Frefreshed.json)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml)
 [![upstream](https://img.shields.io/badge/KeeperHub%20PRs-3%20merged%20%C2%B7%204%20in%20review-1a7f4b)](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses)
 [![chain](https://img.shields.io/badge/chain-Base%20Sepolia%20%2884532%29-0052ff)](https://sepolia.basescan.org/address/0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9)
-[![tests](https://img.shields.io/badge/tests-575%20unit%20%2B%2011%20live-blue)](#tests)
+[![tests](https://img.shields.io/badge/tests-576%20unit%20%2B%2011%20live-blue)](#tests)
 
 [![site](https://img.shields.io/badge/site-live%20counters%20and%20lifecycle-111)](https://prashant-thakur77.github.io/almanak-keeperhub/)
 [![console](https://img.shields.io/badge/console-every%20execution%2C%20every%20verdict-111)](https://prashant-thakur77.github.io/almanak-keeperhub/console/)
@@ -40,7 +40,7 @@ they say what the console says.
 [Policy](#two-policy-layers-both-refusing) · [Where it plugs in](#where-it-plugs-in) ·
 [Upstream](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses) · [MCP](#mcp-server-the-strategy-as-tools-for-any-agent) ·
 [Telegram bot](#telegram-operator-bot-optional) · [Failure modes](#failure-modes-on-purpose) · [Proof](#proof) ·
-[Tests](#tests) · [Known gaps](#what-still-breaks-or-is-unfinished) · [Changelog](CHANGELOG.md)
+[Tests](#tests) · [Known gaps](#what-still-breaks-or-is-unfinished) · [Roadmap](docs/roadmap.md) · [Changelog](CHANGELOG.md)
 
 ## The result
 
@@ -59,7 +59,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Executions through KeeperHub on production | 543 as of 22 Sep 2026, every one verified, 0 failed; the badge above is the live count |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Tests | 575 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
+| Tests | 576 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
 | Features contributed upstream to KeeperHub | 4 issues filed, 4 accepted; 7 pull requests, **3 merged and live on production**, 4 in review (3 of them on maintainer-filed issues) |
 
 ## Judge links
@@ -88,6 +88,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Who can act through which gate, and what a stolen key cannot do | [`SECURITY.md`](SECURITY.md) |
 | Reproduce it with no KeeperHub account: an Anvil fork plus a stand-in that speaks the merged API | `tests/e2e/rehearsal.sh --testnet` |
 | The finalist panel deck: problem, architecture, the guard, upstream, what comes next | [`docs/panel/deck.pdf`](docs/panel/deck.pdf) |
+| What comes next, in order, and why | [`docs/roadmap.md`](docs/roadmap.md) |
 | The package | [PyPI `almanak-keeperhub`](https://pypi.org/project/almanak-keeperhub/) · [release v1.1.0](https://github.com/Prashant-thakur77/almanak-keeperhub/releases/tag/v1.1.0) with the wheel, the sdist and the deck · [changelog](CHANGELOG.md) |
 
 Verify any row yourself: `almanak-keeperhub verify <hash or execution id>` asks KeeperHub for its verdict and
@@ -431,6 +432,8 @@ cd demos/metamorpho_base_sepolia && almanak-keeperhub mcp --chain base_sepolia -
 | `run_failure_demo <revert\|cap\|duplicate\|crash\|selector\|rpc\|stale>` | replay one failure mode | dry run, or a refused broadcast |
 | `run_tick` (`--write` only) | one real tick: sign and broadcast through KeeperHub; needs `confirm=true`; starts from a fresh strategy state (`fresh=false` to continue Almanak's saved state) | broadcasts |
 | `exit_position` (`--write` only) | the guarded exit: KeeperHub re-reads the balance, redeems only if it still covers it; needs `confirm=true` | broadcasts, or refuses |
+| `guard_status`, `guard_stale` | the guarded-exit workflow's state and last runs; the stale decision sent to that workflow, which the Condition stops | reads; a workflow run that broadcasts nothing |
+| `guard_exit` (`--write` only) | the guarded exit as the KeeperHub workflow: the decision goes in as input, a Condition node compares it with the shares KeeperHub read, the redeem runs on the true branch; needs `confirm=true` | broadcasts, or stops at the Condition |
 
 Resource `almanak-keeperhub://receipts` is the raw receipts log. Claude Desktop / Cursor config:
 
@@ -581,7 +584,7 @@ Filed upstream on 12 Sep 2026 and since merged: [KeeperHub/keeperhub#2426](https
 ## Tests
 
 ```bash
-pytest -q                      # 575 unit and property tests; the live suite skips unless opted in
+pytest -q                      # 576 unit and property tests; the live suite skips unless opted in
 ALMANAK_KEEPERHUB_LIVE=1 pytest -q tests/live   # 11 documented API behaviours, checked against app.keeperhub.com
 ruff check almanak_keeperhub tests scripts && mypy almanak_keeperhub --ignore-missing-imports
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
@@ -592,7 +595,7 @@ Four layers, each answering a different question:
 
 | Layer | What it checks | Count |
 |---|---|---|
-| Unit | API shapes from KeeperHub's docs (respx), the decoder, the adapters against Almanak's real `Signer`/`Submitter`/`Simulator` interfaces, the console, the MCP server, the bot, the exit-guard workflow, the version, the static console | 171 |
+| Unit | API shapes from KeeperHub's docs (respx), the decoder, the adapters against Almanak's real `Signer`/`Submitter`/`Simulator` interfaces, the console, the MCP server, the bot, the exit-guard workflow, the version, the static console, the MCP guard tools | 172 |
 | Property (hypothesis) | every one of the 339 signatures in the selector index decodes losslessly under random arguments; trailing bytes and unknown selectors are always refused; the idempotency key identifies work, never the attempt; ether strings are exact at any magnitude | 404 |
 | Live conformance | one test per sentence of the Direct Execution docs, against production: replay by key, conflict on a changed body, verified receipt, sponsorship, the poll hint, and whether the two upstream features have deployed yet. Run by the proof workflow every six hours; the result is on the console footer and in `docs/conformance.json` | 11 |
 | Rehearsal | the whole lifecycle on an Anvil fork, mainnet and Sepolia | 2 scripts |

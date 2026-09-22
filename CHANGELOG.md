@@ -3,6 +3,15 @@
 All notable changes to `almanak-keeperhub`. Versions follow semver; the proof on the site is regenerated
 independently of releases, by the runner, every six hours.
 
+## Unreleased
+
+- MCP: `guard_exit`, `guard_stale` and `guard_status`, the workflow guard for agents with the same confirm and
+  `--write` split as the bot's `/guard` and `/guard stale`.
+- The front page redesigned: a dark hero with the animated pipeline and live counters, the problem in three
+  cards with the incident quote, the Condition gate animated, every proof section restyled; the same data
+  bindings, one file, no build step. Reveal and motion respect `prefers-reduced-motion`.
+- `docs/roadmap.md`: what comes next, in order, and why.
+
 ## 1.1.0 — 2026-09-23
 
 The guarded exit as a KeeperHub workflow, and the operator surfaces around it.
