@@ -242,3 +242,15 @@ async def test_export_reuses_frozen_verdicts_and_reasks_the_unsettled(strategy_d
     assert status.call_count == 1  # only the pending one
     assert json.loads((verify_dir / "az13.json").read_text())["frozen"] is True
     assert json.loads((verify_dir / "au5z.json").read_text())["status"] == "completed"
+
+
+def test_snapshot_inspect_asks_for_the_file_the_export_writes() -> None:
+    """The export freezes evidence as verify/<execution id>.json (the tx hash only when there is no id);
+    the page must ask for the same name, or Inspect on the published site answers a 404."""
+    from pathlib import Path
+
+    html = (Path(__file__).parents[2] / "almanak_keeperhub/console/index.html").read_text()
+    export = (Path(__file__).parents[2] / "almanak_keeperhub/console/export.py").read_text()
+    assert 'execution.get("execution_id") or execution.get("tx_hash")' in export
+    assert 'data-ref="${esc(e.execution_id || e.tx_hash || key)}"' in html
+    assert "e.tx_hash || key" not in html.replace("e.execution_id || e.tx_hash || key", "")

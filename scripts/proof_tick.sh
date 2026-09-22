@@ -21,6 +21,9 @@ export ALMANAK_KEEPERHUB_CHAIN=base_sepolia
 export ALMANAK_BASE_SEPOLIA_RPC_URL="${ALMANAK_BASE_SEPOLIA_RPC_URL:-https://sepolia.base.org}"
 export RPC_URL_BASE="${RPC_URL_BASE:-$ALMANAK_BASE_SEPOLIA_RPC_URL}"
 STRATEGY="$ROOT/demos/metamorpho_base_sepolia"
+# the console export reads both workflow state files from here, whatever --receipts points at
+export ALMANAK_KEEPERHUB_KEEPER_STATE="$STRATEGY/keeperhub-keeper.json"
+export ALMANAK_KEEPERHUB_EXIT_GUARD_STATE="$STRATEGY/keeperhub-exit-guard.json"
 
 step() { echo; echo "================ $1"; echo; }
 
@@ -54,3 +57,6 @@ almanak-keeperhub merge-receipts "${LOGS[@]}" --into "$ROOT/docs/all-receipts.js
 step "export the console over all of it (verdicts already frozen are kept)"
 almanak-keeperhub console --export "$ROOT/docs" --receipts "$ROOT/docs/all-receipts.json" --docs "$ROOT/docs" \
   --chain base_sepolia --no-open
+
+step "badges for the README, from the same state the console shows"
+python "$ROOT/scripts/badges.py" "$ROOT/docs/console/console-data/state.json" "$ROOT/docs/badges"

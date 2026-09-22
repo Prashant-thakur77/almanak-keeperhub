@@ -1,8 +1,46 @@
 # almanak-keeperhub
 
-[![ci](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/ci.yml/badge.svg)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/ci.yml)
+**Almanak decides. KeeperHub lands it. No strategy code changes.**
 
-Almanak decides. KeeperHub lands it. No strategy code changes.
+Any [Almanak](https://github.com/almanak-co/sdk) strategy, unmodified, dry-runs, signs and broadcasts through
+[KeeperHub](https://keeperhub.com), with one idempotency key per intent and a verified receipt back in Almanak's
+own parsers. No private key on the machine. Around it: a CLI, a Telegram operator bot, an execution console, an
+MCP server, and two KeeperHub workflows generated from the strategy config and run by KeeperHub's engine.
+
+[![ci](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/ci.yml/badge.svg)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/ci.yml)
+[![proof tick every six hours](https://img.shields.io/github/actions/workflow/status/Prashant-thakur77/almanak-keeperhub/proof.yml?branch=main&label=proof%20tick%20every%206h)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml)
+[![release](https://img.shields.io/github/v/release/Prashant-thakur77/almanak-keeperhub?label=release&color=1a7f4b)](https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest)
+[![PyPI](https://img.shields.io/pypi/v/almanak-keeperhub?label=PyPI)](https://pypi.org/project/almanak-keeperhub/)
+[![Python](https://img.shields.io/pypi/pyversions/almanak-keeperhub)](https://pypi.org/project/almanak-keeperhub/)
+[![license](https://img.shields.io/github/license/Prashant-thakur77/almanak-keeperhub)](LICENSE)
+
+[![executions on production](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Fexecutions.json)](https://prashant-thakur77.github.io/almanak-keeperhub/console/)
+[![verified by KeeperHub](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Fverified.json)](https://prashant-thakur77.github.io/almanak-keeperhub/console/)
+[![live conformance](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Fconformance.json)](docs/conformance.json)
+[![proof refreshed](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Frefreshed.json)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml)
+[![upstream](https://img.shields.io/badge/KeeperHub%20PRs-3%20merged%20%C2%B7%204%20in%20review-1a7f4b)](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses)
+[![chain](https://img.shields.io/badge/chain-Base%20Sepolia%20%2884532%29-0052ff)](https://sepolia.basescan.org/address/0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9)
+[![tests](https://img.shields.io/badge/tests-575%20unit%20%2B%2011%20live-blue)](#tests)
+
+[![site](https://img.shields.io/badge/site-live%20counters%20and%20lifecycle-111)](https://prashant-thakur77.github.io/almanak-keeperhub/)
+[![console](https://img.shields.io/badge/console-every%20execution%2C%20every%20verdict-111)](https://prashant-thakur77.github.io/almanak-keeperhub/console/)
+[![video](https://img.shields.io/badge/video-demo-red?logo=youtube&logoColor=white)](https://youtu.be/wdZJTSivzRI)
+[![deck](https://img.shields.io/badge/deck-finalist%20panel-5b6673)](docs/panel/deck.pdf)
+[![telegram](https://img.shields.io/badge/Telegram-operator%20bot-26A5E4?logo=telegram&logoColor=white)](#telegram-operator-bot-optional)
+[![MCP](https://img.shields.io/badge/MCP-server-000)](#mcp-server-the-strategy-as-tools-for-any-agent)
+
+The badges in the second row are read from the published console state and refreshed by the proof runner, so
+they say what the console says.
+
+[![The site: live counters and the latest runner lifecycle](docs/img/site.png)](https://prashant-thakur77.github.io/almanak-keeperhub/)
+
+**Contents:** [The result](#the-result) · [Judge links](#judge-links) · [How it works](#how-it-works) ·
+[Run it](#run-it-in-five-minutes) · [The free path](#the-free-path-base-sepolia) · [Console](#execution-console) ·
+[The guarded exit](#the-exit-that-keeperhub-double-checks) · [The keeper](#the-keeper-a-scheduled-keeperhub-workflow-generated-from-the-strategy) ·
+[Policy](#two-policy-layers-both-refusing) · [Where it plugs in](#where-it-plugs-in) ·
+[Upstream](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses) · [MCP](#mcp-server-the-strategy-as-tools-for-any-agent) ·
+[Telegram bot](#telegram-operator-bot-optional) · [Failure modes](#failure-modes-on-purpose) · [Proof](#proof) ·
+[Tests](#tests) · [Known gaps](#what-still-breaks-or-is-unfinished) · [Changelog](CHANGELOG.md)
 
 ## The result
 
@@ -18,9 +56,10 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Retries of already-landed work | **50/50 replayed** by idempotency key, 0 double broadcasts (p50 1.27s) |
 | Process killed right after broadcast | **10/10** settled by a fresh process from the receipts log, 0 resent |
 | Failure modes recorded, on purpose | 7 of 7, none reached the chain except the ones meant to |
+| Executions through KeeperHub on production | 543 as of 22 Sep 2026, every one verified, 0 failed; the badge above is the live count |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Tests | 573 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
+| Tests | 575 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
 | Features contributed upstream to KeeperHub | 4 issues filed, 4 accepted; 7 pull requests, **3 merged and live on production**, 4 in review (3 of them on maintainer-filed issues) |
 
 ## Judge links
@@ -48,7 +87,8 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Reproducible API findings, re-verified every six hours | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
 | Who can act through which gate, and what a stolen key cannot do | [`SECURITY.md`](SECURITY.md) |
 | Reproduce it with no KeeperHub account: an Anvil fork plus a stand-in that speaks the merged API | `tests/e2e/rehearsal.sh --testnet` |
-| The package | [PyPI `almanak-keeperhub` 1.0.0](https://pypi.org/project/almanak-keeperhub/) |
+| The finalist panel deck: problem, architecture, the guard, upstream, what comes next | [`docs/panel/deck.pdf`](docs/panel/deck.pdf) |
+| The package | [PyPI `almanak-keeperhub`](https://pypi.org/project/almanak-keeperhub/) · [release v1.1.0](https://github.com/Prashant-thakur77/almanak-keeperhub/releases/tag/v1.1.0) with the wheel, the sdist and the deck · [changelog](CHANGELOG.md) |
 
 Verify any row yourself: `almanak-keeperhub verify <hash or execution id>` asks KeeperHub for its verdict and
 decodes the receipt to name who acted, or open the execution in the KeeperHub app under Runs.
@@ -61,11 +101,19 @@ decodes the receipt to name who acted, or open the execution in the KeeperHub ap
 | MCP server | any agent: Claude, Cursor, an n8n AI Agent | `almanak-keeperhub mcp` (read + dry run; `--write` to broadcast) |
 | Telegram bot | the operator's phone | `almanak-keeperhub bot` |
 
-All three read the same receipts and drive the same CLI, so they cannot disagree about what happened.
+All three read the same receipts and drive the same CLI, so they cannot disagree about what happened. A fourth
+surface is KeeperHub's own builder: `almanak-keeperhub keeper` and `exit-guard` generate workflows from the
+strategy config that KeeperHub's engine runs with no Almanak process.
+
+## How it works
+
+![Architecture: the Almanak strategy compiles the transaction, the gateway hands it to almanak-keeperhub, KeeperHub dry-runs, signs in Turnkey's enclave and broadcasts on Base Sepolia; the bot, the console, the MCP server and the two KeeperHub workflows sit around it](docs/img/architecture.png)
 
 **In sixty seconds.** [Almanak](https://github.com/almanak-co/sdk) is a live DeFi strategy framework whose execution layer is three abstract classes: sign, simulate, submit. This package implements all three against KeeperHub, so every Almanak strategy, unmodified, dry-runs through KeeperHub, broadcasts with one idempotency key per intent, and gets a verified receipt back into Almanak's own parsers, with no private key on the machine. Verified on the hosted app on Base Sepolia on 12 Sep 2026: the packaged demo strategy's [deposit](https://sepolia.basescan.org/tx/0x70b453be43f4b8c4d40837baa7bd6f16fa3cc909038a590978b831b6605a7a87), a KeeperHub-scheduled keeper generated from the strategy config and [run by KeeperHub's own engine](https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16), the [redeem](https://sepolia.basescan.org/tx/0x91777e39d4fc1748f632a4e73d16e2b6475781097d9682011583635fde17f0a4), seven deliberate failure modes, and a benchmark (50 of 50 impossible deposits refused before broadcast, 200 of 200 approvals landed and verified at a median of 7.8 s, 50 of 50 retries replayed and 10 of 10 crashed processes resumed without a second broadcast). Everything cost nothing: gas sponsored by KeeperHub, faucet USDC. Proof table below; live console and Telegram operator bot included.
 
 [Almanak](https://github.com/almanak-co/sdk) is an open-source DeFi strategy framework (PyPI `almanak`, Apache-2.0, 46 protocol connectors). Its execution layer is built around three abstract classes, `Signer`, `Submitter` and `Simulator`, so that "multiple signing backends and submission methods" can be plugged in (`almanak/framework/execution/interfaces.py`). Today the only submitter that ships is the public mempool, and the private-relay submitter is a stub that rejects every transaction.
+
+![Almanak's execution layer today: a local key in the signer, the public mempool as the only submitter, no idempotency key, and a gateway that refuses any wallet kind a plugin adds](docs/img/problem.png)
 
 This package implements all three against [KeeperHub](https://keeperhub.com)'s Direct Execution API. Every Almanak strategy, unchanged, then runs like this:
 
@@ -126,11 +174,16 @@ Cost of the free path: zero. Faucet ETH for the single vault deploy, faucet USDC
 
 `almanak-keeperhub console` serves a local page over the proof files and keeps it live while the terminal runs: every execution with KeeperHub's status and verified flag, every dry run (including `--simulate-only` ticks), the failure-mode verdicts, and the benchmark. Inspect asks KeeperHub for its verdict and decodes the receipt events to show who acted, even when the relayer paid the gas. Nothing on the page is typed in by hand; every row is read from a file the run wrote.
 
-![execution console](docs/img/console.png)
+![The execution console: every execution with KeeperHub's status, verified and sponsored flags, searchable by id, hash, contract or function](docs/img/console.png)
 
 ```bash
 almanak-keeperhub console            # http://127.0.0.1:8642, opens a browser; --no-open for headless
 ```
+
+Inspect on any row asks KeeperHub for its verdict and decodes the receipt: the transaction sender is the
+sponsor's relayer, the Transfer, Approval and Deposit events name the org wallet.
+
+![Inspect on one execution: KeeperHub's verdict, the on-chain sender, and the decoded events naming the org wallet](docs/img/console-inspect.png)
 
 No framework and no build step: one HTML file served by the standard library's HTTP server, with the package's own client behind the Inspect endpoint. Open it beside the terminal for the demo.
 
@@ -216,6 +269,8 @@ vault shares, a Condition compares them, and a Morpho `vault-redeem` sits behind
 the position no longer covers stops at the Condition: the execution completes, the redeem node is never
 reached, nothing is broadcast.
 
+![The exit-guard workflow: Manual trigger with the decision, check-token-balance, Condition held ≥ decided, Morpho vault-redeem on the true branch; the false branch stops with nothing broadcast](docs/img/exit-guard-workflow.png)
+
 ```
 $ almanak-keeperhub exit-guard deploy                       # creates the workflow, KeeperHub validates it: valid=True, 0 warnings
 $ almanak-keeperhub exit-guard run --expect-shares 5000001  # stale decision, wallet holds 5000000:
@@ -228,7 +283,11 @@ $ almanak-keeperhub exit-guard run                          # current decision: 
 That is a real sequence on 22 Sep 2026: workflow `zhanaalz8k47rrjspihct`, executions `qez8b9fhipm7c4zcqa6sg`
 (stopped at the gate, 3.7 s) and `90eswt00kn44cw2szpl80` (redeemed, 8.4 s). Direct execution and workflow are
 the two ways KeeperHub offers to act with a guard; the integration generates both from the same strategy, and
-the workflow one is what a team already living in the builder would reach for.
+the workflow one is what a team already living in the builder would reach for. `exit-guard run --stale` sends
+a decision one share above the position on purpose, and `/guard stale` does the same from the phone. The
+console's keeper card lists both workflows and every manual run:
+
+![The console's keeper card: the compounder workflow and the guarded-exit workflow, with each manual run's decision, what KeeperHub observed, the verdict and the transaction](docs/img/console-keeper.png)
 
 ## The keeper: a scheduled KeeperHub workflow generated from the strategy
 
@@ -303,8 +362,12 @@ Files:
 | `almanak_keeperhub/simulator.py` | `Simulator`: KeeperHub dry run of the first transaction, compiler gas for dependent ones (same rule as Almanak's own simulator) |
 | `almanak_keeperhub/wallets.py` | Almanak `almanak.wallets` registry plugin resolving every chain to the KeeperHub org wallet |
 | `almanak_keeperhub/gateway.py` | Subclass of Almanak's execution servicer that swaps the three interfaces; `install()` |
-| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `verify`, `console`, `keeper`, `bot` and `doctor` |
-| `almanak_keeperhub/keeper.py` | Generates, deploys, enables and reads the scheduled compounder workflow |
+| `almanak_keeperhub/cli.py` | `almanak-keeperhub run`, `ax`, `exit`, `exit-guard`, `keeper`, `verify`, `console`, `bot`, `mcp`, `doctor`, `api-features`, `merge-receipts` |
+| `almanak_keeperhub/backend.py` | The execution backend for the proposed `almanak.execution_backends` entry point: signer, submitter, simulator for wallet kind `keeperhub` |
+| `almanak_keeperhub/guarded_exit.py` | The exit as `check-and-execute`: KeeperHub reads the balance right before the redeem and refuses a stale decision |
+| `almanak_keeperhub/exit_workflow.py` | The exit as a KeeperHub workflow: builds the four-node graph, turns a run's node statuses into a trace |
+| `almanak_keeperhub/keeper.py` | Generates, deploys, enables, runs and reads the scheduled compounder workflow; `run_now` fires any workflow with input |
+| `almanak_keeperhub/errors.py` | Typed errors with the wording the CLI, the bot and the agent show |
 | `almanak_keeperhub/notify.py` | Optional Telegram alerts on broadcast, settlement and refusals |
 | `almanak_keeperhub/bot.py` | The Telegram operator bot: status, executions, keeper, verify, simulate, tick, demos |
 | `almanak_keeperhub/mcp_server.py` | The same tools over MCP for Claude, Cursor or an n8n agent; broadcast only with `--write` |
@@ -496,16 +559,18 @@ Measured against the hosted app (`docs/benchmark.md`):
 
 | Measure | Result |
 |---|---|
-| Impossible deposits refused before broadcast | 20/20 |
-| Valid approve dry runs succeeded | 10/10 (median gas estimate 38680) |
-| Real approvals landed and verified | 5/5 |
-| Broadcast + verified receipt latency | p50 6.88s, p95 9.59s |
-| Simulate latency | p50 0.36s, p95 0.41s |
-| Retry of already-landed work replayed, not resent | True (0.3s) |
+| Impossible deposits refused before broadcast | 50/50 |
+| Valid approve dry runs succeeded | 50/50 (median gas estimate 35874) |
+| Real approvals landed and verified | 200/200 |
+| Broadcast + verified receipt latency | p50 7.82s, p95 11.99s |
+| Simulate latency | p50 1.18s, p95 1.73s |
+| Retry of already-landed work replayed, not resent | True (2.26s) |
+| Retries of landed work replayed by idempotency key | 50/50, 0 double broadcasts (p50 1.27s) |
+| Process killed after broadcast, settled by a fresh process | 10/10, 0 resent |
 
-Findings reproduced against the hosted API in one command (`docs/api-notes-verified.md`): no raw-calldata write (HTTP 400, `functionName` required), the brief's MCP docs link redirects (308), `network` outranks `chainId` on contract-call.
+Findings reproduced against the hosted API in one command (`docs/api-notes-verified.md`), re-run by the proof runner every six hours: the two this project fixed upstream, the raw-calldata write and the sequence dry run, now read `FIXED UPSTREAM BY THIS PROJECT, LIVE ON PRODUCTION`; the brief's MCP docs link still redirects (308) and `network` still outranks `chainId` on contract-call.
 
-Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/KeeperHub/keeperhub/issues/2426) accept raw calldata on contract-call (the PR with tests is on [`feat/raw-calldata-contract-call`](https://github.com/Prashant-thakur77/keeperhub/tree/feat/raw-calldata-contract-call)), [#2427](https://github.com/KeeperHub/keeperhub/issues/2427) chained simulation for bundles, [#2428](https://github.com/KeeperHub/keeperhub/issues/2428) the acting wallet on sponsored executions.
+Filed upstream on 12 Sep 2026 and since merged: [KeeperHub/keeperhub#2426](https://github.com/KeeperHub/keeperhub/issues/2426) raw calldata on contract-call ([PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449)), [#2427](https://github.com/KeeperHub/keeperhub/issues/2427) chained simulation for bundles ([PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452)), [#2428](https://github.com/KeeperHub/keeperhub/issues/2428) the acting wallet on sponsored executions ([PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450)). The fourth, [#2519](https://github.com/KeeperHub/keeperhub/issues/2519) workflow preflight against carried state, is [PR #2531](https://github.com/KeeperHub/keeperhub/pull/2531), in review.
 
 `docs/rehearsal-fork.md` is the log of the same pipeline on an Anvil fork of Base against a local stand-in for KeeperHub (`tests/e2e/fake_keeperhub.py`, which mirrors the documented API shapes). It proves the wiring; it is not execution through KeeperHub.
 
@@ -516,7 +581,7 @@ Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/Kee
 ## Tests
 
 ```bash
-pytest -q                      # 573 unit and property tests; the live suite skips unless opted in
+pytest -q                      # 575 unit and property tests; the live suite skips unless opted in
 ALMANAK_KEEPERHUB_LIVE=1 pytest -q tests/live   # 11 documented API behaviours, checked against app.keeperhub.com
 ruff check almanak_keeperhub tests scripts && mypy almanak_keeperhub --ignore-missing-imports
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark
@@ -527,7 +592,7 @@ Four layers, each answering a different question:
 
 | Layer | What it checks | Count |
 |---|---|---|
-| Unit | API shapes from KeeperHub's docs (respx), the decoder, the adapters against Almanak's real `Signer`/`Submitter`/`Simulator` interfaces, the console, the MCP server, the bot | 159 |
+| Unit | API shapes from KeeperHub's docs (respx), the decoder, the adapters against Almanak's real `Signer`/`Submitter`/`Simulator` interfaces, the console, the MCP server, the bot, the exit-guard workflow, the version, the static console | 171 |
 | Property (hypothesis) | every one of the 339 signatures in the selector index decodes losslessly under random arguments; trailing bytes and unknown selectors are always refused; the idempotency key identifies work, never the attempt; ether strings are exact at any magnitude | 404 |
 | Live conformance | one test per sentence of the Direct Execution docs, against production: replay by key, conflict on a changed body, verified receipt, sponsorship, the poll hint, and whether the two upstream features have deployed yet. Run by the proof workflow every six hours; the result is on the console footer and in `docs/conformance.json` | 11 |
 | Rehearsal | the whole lifecycle on an Anvil fork, mainnet and Sepolia | 2 scripts |

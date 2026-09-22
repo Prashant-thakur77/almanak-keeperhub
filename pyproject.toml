@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "almanak-keeperhub"
-version = "1.0.0"
+version = "1.1.0"
 description = "KeeperHub as the execution backend for Almanak strategies: dry run, idempotent broadcast, verified receipts."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -20,6 +20,12 @@ dependencies = [
 [project.optional-dependencies]
 mcp = ["mcp>=2.0"]
 dev = ["pytest>=8", "pytest-asyncio>=0.24", "respx>=0.21", "hypothesis>=6", "ruff>=0.6", "mypy>=1.11", "mcp>=2.0"]
+
+[project.urls]
+Homepage = "https://prashant-thakur77.github.io/almanak-keeperhub/"
+Repository = "https://github.com/Prashant-thakur77/almanak-keeperhub"
+Console = "https://prashant-thakur77.github.io/almanak-keeperhub/console/"
+Changelog = "https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/CHANGELOG.md"
 
 [project.scripts]
 almanak-keeperhub = "almanak_keeperhub.cli:main"

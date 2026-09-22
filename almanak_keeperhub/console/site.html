@@ -117,6 +117,7 @@
       <a href="console/">Console</a>
       <a href="https://github.com/Prashant-thakur77/almanak-keeperhub">GitHub</a>
       <a href="https://pypi.org/project/almanak-keeperhub/">PyPI</a>
+      <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest">Release</a>
     </div>
   </nav>
 
@@ -314,7 +315,7 @@ almanak-keeperhub api-features --chain base_sepolia
     rows.push(["Executions on this site, all verified", `<b>${s.executions}</b> (${s.verified} verified, ${s.failed} failed)`]);
     rows.push(["Private keys on the machine", "0"]);
     rows.push(["Strategy code changed", "1 line (the chain list)"]);
-    rows.push(["Tests", "573 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations"]);
+    rows.push(["Tests", "575 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations"]);
     rows.push(["Features contributed upstream to KeeperHub", "4 issues filed, 4 accepted; 7 pull requests, <b>3 merged and live on production</b>, 4 in review, 3 of them on maintainer-filed issues"]);
     $("results").querySelector("tbody").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
   }

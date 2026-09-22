@@ -226,7 +226,7 @@
           <span class="flags">${pill(e)} ${flags}</span>
           <span class="ids"><span class="hash">tx ${link}</span><span class="hash">exec ${esc(e.execution_id)}</span></span>
           <span class="when">${when(e.recorded_at)}</span>
-          <button class="inspect" data-ref="${esc(e.tx_hash || key)}" data-id="${esc(key)}">${open.has(key) ? "Hide" : "Inspect"}</button>
+          <button class="inspect" data-ref="${esc(e.execution_id || e.tx_hash || key)}" data-id="${esc(key)}">${open.has(key) ? "Hide" : "Inspect"}</button>
         </div>
         ${open.has(key) ? renderEvidence(ev) : ""}
       </div>`;
@@ -264,14 +264,17 @@
     const key = `${e.execution_id}@${e.recorded_at}`;
     if (open.has(key)) return;
     targetKey = key; sourceFilter = "all"; searchText = ""; $("search").value = "";
-    await openExecution(key, e.tx_hash || key);
+    await openExecution(key, e.execution_id || e.tx_hash || key);
     const el = document.getElementById("x-" + e.execution_id);
     if (el) el.scrollIntoView({ block: "center" });
   }
   async function loadEvidence(id, ref) {
     if (!evidence[id]) {
       try {
+        // The export freezes evidence under the execution id (the tx hash only when there is none), so the
+        // ref is the execution id whenever there is one; the live server takes either.
         const r = await fetch(SNAPSHOT ? `console-data/verify/${encodeURIComponent(ref)}.json` : `/api/verify?ref=${encodeURIComponent(ref)}`);
+        if (!r.ok) throw new Error(`no evidence for ${ref} (HTTP ${r.status})`);
         evidence[id] = await r.json();
       } catch (e) { evidence[id] = { error: String(e) }; }
       render(lastState);
