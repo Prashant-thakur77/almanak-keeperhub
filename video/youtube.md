@@ -28,7 +28,7 @@ until judging).
     Measured, not claimed: 50/50 impossible deposits refused before broadcast, 200/200
     executions landed and verified with a p50 of 7.8s to a verified receipt, 50/50 retries
     of landed work replayed by idempotency key with zero double broadcasts, 10/10 processes
-    killed after broadcast and settled by a fresh process, 563 unit and property tests, and
+    killed after broadcast and settled by a fresh process, 573 unit and property tests, and
     11 documented API behaviours checked against production every six hours.
 
     Seven failure modes are recorded in the repo: unknown selector, would-revert, over the

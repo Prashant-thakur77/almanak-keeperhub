@@ -20,7 +20,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Failure modes recorded, on purpose | 7 of 7, none reached the chain except the ones meant to |
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
-| Tests | 563 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
+| Tests | 573 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
 | Features contributed upstream to KeeperHub | 4 issues filed, 4 accepted; 7 pull requests, **3 merged and live on production**, 4 in review (3 of them on maintainer-filed issues) |
 
 ## Judge links
@@ -408,7 +408,9 @@ empty list), fixed the same hour.
 | `/simulate` | one strategy tick dry-run through KeeperHub, nothing broadcast |
 | `/tick` then `/confirm` | one real strategy tick; the confirmation expires after 60 seconds |
 | `/exit` then `/confirm` | the guarded exit: KeeperHub re-reads the position and redeems only if it still holds |
-| `/demo revert\|cap\|duplicate\|crash\|selector\|rpc` | run a failure-mode demo and post its verdict |
+| `/guard` then `/confirm` | the same exit as a KeeperHub workflow: a Condition node compares the shares KeeperHub read with the decision, the Morpho redeem sits behind its true branch |
+| `/guard stale` | a decision the position no longer covers, sent to that workflow: it stops at the Condition and broadcasts nothing, so no confirmation is asked |
+| `/demo revert\|cap\|duplicate\|crash\|selector\|rpc\|stale` | run a failure-mode demo and post its verdict |
 
 Long polling over the Bot API with no webhook and no public endpoint. Set `ALMANAK_KEEPERHUB_TELEGRAM_BOT_TOKEN` (from @BotFather); the alerts below use the same token.
 
@@ -514,7 +516,7 @@ Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/Kee
 ## Tests
 
 ```bash
-pytest -q                      # 563 unit and property tests; the live suite skips unless opted in
+pytest -q                      # 573 unit and property tests; the live suite skips unless opted in
 ALMANAK_KEEPERHUB_LIVE=1 pytest -q tests/live   # 11 documented API behaviours, checked against app.keeperhub.com
 ruff check almanak_keeperhub tests scripts && mypy almanak_keeperhub --ignore-missing-imports
 tests/e2e/rehearsal.sh         # Base mainnet fork + stand-in: full lifecycle, agent swap, keeper, benchmark

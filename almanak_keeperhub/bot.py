@@ -654,7 +654,10 @@ class OperatorBot:
         command = text.split()[0].lower() if text.split() else ""
         if command in ("/simulate", "/confirm", "/demo", "/verify") or text.lower().startswith("/guard stale"):
             try:
-                await self.send(chat_id, "Working. This goes through KeeperHub; a real tick takes about half a minute.")
+                await self.send(
+                    chat_id,
+                    "Working. This goes through KeeperHub; a real tick takes about a minute and a half (Almanak's gateway boots first), the workflow guard a few seconds.",
+                )
                 await self._typing(chat_id)
             except Exception as exc:  # noqa: BLE001 - the notice is optional; the command still runs
                 logger.warning("could not send the working notice: %s", exc)
