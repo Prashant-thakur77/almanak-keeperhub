@@ -203,7 +203,25 @@ async def keeper_state(receipts: Path) -> dict[str, Any]:
         result["error"] = str(exc)
     finally:
         await client.aclose()
+    result["exit_guard"] = exit_guard_state(receipts)
     return result
+
+
+def exit_guard_state(receipts: Path) -> dict[str, Any]:
+    """The remembered guarded-exit workflow next to the receipts file, with its manual runs.
+
+    Read from the state file alone: every run is recorded there by `exit-guard run`, with
+    the shares decided, the shares KeeperHub observed, and whether the Condition released
+    the redeem.
+    """
+    from almanak_keeperhub.exit_workflow import state_path
+
+    path = state_path(receipts.parent)
+    try:
+        state = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return {"deployed": False, "path": str(path)}
+    return {"deployed": True, "path": str(path), **state}
 
 
 class _Handler(BaseHTTPRequestHandler):

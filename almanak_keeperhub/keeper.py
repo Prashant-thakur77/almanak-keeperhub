@@ -211,13 +211,18 @@ async def run_now(
     *,
     timeout_seconds: float = 300.0,
     sleep: Any = None,
+    input: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Trigger the workflow manually (POST /api/workflows/{id}/execute) and follow it to a terminal state."""
+    """Trigger the workflow manually (POST /api/workflows/{id}/execute) and follow it to a terminal state.
+
+    ``input`` reaches the Manual trigger's output, so a downstream node reads it as
+    ``{{@trigger:Label.field}}``.
+    """
     import asyncio
     import time
 
     sleep = sleep or asyncio.sleep
-    response = await client._http.post(f"/api/workflows/{workflow_id}/execute", json={"input": {}})
+    response = await client._http.post(f"/api/workflows/{workflow_id}/execute", json={"input": input or {}})
     payload = response.json() if response.content else {}
     if response.status_code >= 400:
         raise RuntimeError(f"execute failed (HTTP {response.status_code}): {json.dumps(payload)[:400]}")
@@ -235,12 +240,17 @@ async def run_now(
         await sleep(float(hint) if hint and float(hint) > 0 else 5.0)
     # The status route nests failure details under errorContext (app/api/workflows/executions/.../status).
     context = status.get("errorContext") or {}
+    # The status route reports per-node outcomes under nodeStatuses (unordered) and a
+    # step counter under progress; a node that was never reached has no entry.
+    node_statuses = [n for n in (status.get("nodeStatuses") or []) if isinstance(n, dict)]
     return {
         "execution_id": execution_id,
         "status": status.get("status"),
         "error": context.get("error") or status.get("error"),
         "transaction_hashes": status.get("transactionHashes") or [],
         "trace": context.get("executionTrace") or status.get("executionTrace") or [],
+        "node_statuses": node_statuses,
+        "progress": status.get("progress") or {},
         "started_at": status.get("startedAt"),
         "completed_at": status.get("completedAt"),
     }

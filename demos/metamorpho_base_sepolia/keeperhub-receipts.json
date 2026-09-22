@@ -1431,5 +1431,63 @@
     ],
     "sponsored": true,
     "updated_at": "2026-09-22T17:16:53.325220+00:00"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-22T17:28:19.040504+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "success": true,
+    "would_revert": false,
+    "gas_estimate": 38337,
+    "mechanism": "eth_simulateV1"
+  },
+  {
+    "type": "simulation",
+    "recorded_at": "2026-09-22T17:28:19.043621+00:00",
+    "chain_id": 84532,
+    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+    "function": "deposit",
+    "success": true,
+    "would_revert": false,
+    "gas_estimate": 121604,
+    "mechanism": "eth_simulateV1"
+  },
+  {
+    "execution_id": "li0nudbcitjybpcf09vyu",
+    "recorded_at": "2026-09-22T17:28:43.430171+00:00",
+    "chain_id": 84532,
+    "to": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "function": "approve",
+    "tx_hash": "0xb538e988b379edc0b4b6bdd7a727bf93163b7e1f368911c482421523c6c69919",
+    "transaction_link": "https://sepolia.basescan.org/tx/0xb538e988b379edc0b4b6bdd7a727bf93163b7e1f368911c482421523c6c69919",
+    "status": "completed",
+    "idempotency_key": "83ff6dd10dbf3affce380223d71a6e9737576422ccdd086558865e104a7cedcb",
+    "idempotent_replay": false,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": false,
+    "updated_at": "2026-09-22T17:29:31.102603+00:00"
+  },
+  {
+    "execution_id": "7vnvkej4r7wom89c5q1t4",
+    "recorded_at": "2026-09-22T17:29:04.711035+00:00",
+    "chain_id": 84532,
+    "to": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+    "function": "deposit",
+    "tx_hash": "0x1ab516b654cfca351b4a346b48b95b53a31065093325a3369d8be03bfc13137f",
+    "transaction_link": "https://sepolia.basescan.org/tx/0x1ab516b654cfca351b4a346b48b95b53a31065093325a3369d8be03bfc13137f",
+    "status": "completed",
+    "idempotency_key": "8364b459f50baf9cf7498fcae85f63c02d5c264a1925a10a40dba551ba076e7e",
+    "idempotent_replay": false,
+    "verified": true,
+    "receipt_status": [
+      "success"
+    ],
+    "sponsored": false,
+    "updated_at": "2026-09-22T17:29:33.914335+00:00"
   }
 ]

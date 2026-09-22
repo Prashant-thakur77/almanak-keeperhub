@@ -42,6 +42,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), **merged** |
 | Upstream: workflow preflight against carried state | [issue #2519](https://github.com/KeeperHub/keeperhub/issues/2519) → [PR #2531](https://github.com/KeeperHub/keeperhub/pull/2531), in review |
 | Upstream, from the maintainers' backlog: approve hint [#2367](https://github.com/KeeperHub/keeperhub/issues/2367), EVM chain runbook [#2497](https://github.com/KeeperHub/keeperhub/issues/2497), aggregate precision [#2496](https://github.com/KeeperHub/keeperhub/issues/2496) | [PR #2533](https://github.com/KeeperHub/keeperhub/pull/2533), [PR #2532](https://github.com/KeeperHub/keeperhub/pull/2532), [PR #2534](https://github.com/KeeperHub/keeperhub/pull/2534), in review |
+| The guarded exit as a KeeperHub workflow: Condition node as the guard, run by KeeperHub's engine | workflow `zhanaalz8k47rrjspihct` · stale decision stopped at the gate `qez8b9fhipm7c4zcqa6sg` · redeem [0xc18e3c7f…2479d](https://sepolia.basescan.org/tx/0xc18e3c7fb2c9be914115d835e29042bc6593b5408e8c0f77ac64965d3282479d) `90eswt00kn44cw2szpl80` |
 | Upstream to Almanak: a pluggable execution backend for the gateway, with a diff that applies to their `main` | [almanak-co/sdk#3](https://github.com/almanak-co/sdk/issues/3) |
 | Every execution hash, verdict and link | [`docs/console/console-data/state.json`](docs/console/console-data/state.json), [`docs/receipts.json`](docs/receipts.json), [`docs/benchmark.json`](docs/benchmark.json) |
 | Reproducible API findings, re-verified every six hours | [`docs/api-notes-verified.md`](docs/api-notes-verified.md) |
@@ -205,6 +206,29 @@ observed          : 0
 
 Those three are a real sequence on Base Sepolia on 15 Sep 2026; the proof tick runs the guarded exit every
 six hours, and `exit_position` exposes it to an agent over MCP.
+
+### The same guard as a KeeperHub workflow
+
+`almanak-keeperhub exit-guard` expresses the same decision in KeeperHub's own builder, so the guard is a
+Condition node anyone can read and the run is a workflow execution by KeeperHub's engine, with no Almanak
+process involved: a Manual trigger carries the decision (how many shares), a balance node reads the wallet's
+vault shares, a Condition compares them, and a Morpho `vault-redeem` sits behind the true branch. A decision
+the position no longer covers stops at the Condition: the execution completes, the redeem node is never
+reached, nothing is broadcast.
+
+```
+$ almanak-keeperhub exit-guard deploy                       # creates the workflow, KeeperHub validates it: valid=True, 0 warnings
+$ almanak-keeperhub exit-guard run --expect-shares 5000001  # stale decision, wallet holds 5000000:
+executed          : False
+observed          : 5000000
+note              : stopped at the Condition; the redeem node was never reached and nothing was broadcast
+$ almanak-keeperhub exit-guard run                          # current decision: executed True, tx 0xc18e3c7f..., verified
+```
+
+That is a real sequence on 22 Sep 2026: workflow `zhanaalz8k47rrjspihct`, executions `qez8b9fhipm7c4zcqa6sg`
+(stopped at the gate, 3.7 s) and `90eswt00kn44cw2szpl80` (redeemed, 8.4 s). Direct execution and workflow are
+the two ways KeeperHub offers to act with a guard; the integration generates both from the same strategy, and
+the workflow one is what a team already living in the builder would reach for.
 
 ## The keeper: a scheduled KeeperHub workflow generated from the strategy
 

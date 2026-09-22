@@ -1,0 +1,47 @@
+{
+  "workflow_id": "zhanaalz8k47rrjspihct",
+  "name": "almanak-keeperhub guarded exit (0xd36E...cb04)",
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [],
+    "nodeCount": 4
+  },
+  "vault": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+  "wallet": "0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9",
+  "chain": "base_sepolia",
+  "chain_id": 84532,
+  "created_at": "2026-09-22T17:30:14.561028+00:00",
+  "manual_runs": [
+    {
+      "execution_id": "qez8b9fhipm7c4zcqa6sg",
+      "at": "2026-09-22T17:30:20.300207+00:00",
+      "shares": 5000001,
+      "held": 5000000,
+      "executed": false,
+      "stopped_at_gate": true,
+      "status": "success",
+      "trace": [],
+      "transactions": [],
+      "error": null
+    },
+    {
+      "execution_id": "90eswt00kn44cw2szpl80",
+      "at": "2026-09-22T17:30:36.938630+00:00",
+      "shares": 5000000,
+      "held": 5000000,
+      "executed": true,
+      "stopped_at_gate": false,
+      "status": "success",
+      "trace": [],
+      "transactions": [
+        {
+          "node": "redeem",
+          "hash": "0xc18e3c7fb2c9be914115d835e29042bc6593b5408e8c0f77ac64965d3282479d",
+          "verified": true
+        }
+      ],
+      "error": null
+    }
+  ]
+}

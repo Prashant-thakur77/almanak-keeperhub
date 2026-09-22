@@ -20,6 +20,7 @@ import sys
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import click
 import httpx
@@ -1043,6 +1044,235 @@ def _chain_from_config(working_dir: Path, config_file: str | None) -> str | None
     except (OSError, ValueError):
         return None
     return str(chain) if chain else None
+
+
+@main.group("exit-guard")
+def exit_guard() -> None:
+    """The guarded exit as a KeeperHub workflow: KeeperHub's engine reads the position, a
+    Condition node is the guard, and the redeem sits behind it.
+
+    The same decision `almanak-keeperhub exit` sends as check-and-execute, expressed in
+    KeeperHub's own builder. Run it with a share count; a decision the position no longer
+    covers stops at the Condition and broadcasts nothing.
+    """
+
+
+def _exit_guard_targets(working_dir: str, chain_name: str | None, vault: str | None) -> tuple[Any, str]:
+    from almanak_keeperhub.demo_targets import demo_targets
+
+    chain = chain_name or _chain_from_config(Path(working_dir), None) or "base"
+    os.environ["ALMANAK_KEEPERHUB_CHAIN"] = chain
+    targets = demo_targets()
+    return targets, (vault or targets.vault)
+
+
+def _exit_guard_workflow(working_dir: str, chain_name: str | None, vault: str | None) -> tuple[dict, Any, str, str]:
+    from almanak_keeperhub.exit_workflow import build_exit_guard_workflow
+
+    targets, vault_address = _exit_guard_targets(working_dir, chain_name, vault)
+    wallet = os.environ.get("KEEPERHUB_WALLET_ADDRESS") or asyncio.run(
+        _resolve_wallet(os.environ.get("KEEPERHUB_API_KEY", ""))
+    )
+    workflow = build_exit_guard_workflow(vault=vault_address, chain_id=int(targets.chain_id), wallet=wallet)
+    return workflow, targets, vault_address, wallet
+
+
+def _read_exit_guard_state(working_dir: Path) -> dict:
+    from almanak_keeperhub.exit_workflow import state_path
+
+    path = state_path(working_dir)
+    try:
+        return json.loads(path.read_text())
+    except (OSError, ValueError) as exc:
+        raise click.ClickException(
+            f"no exit-guard workflow deployed yet ({path}); run `almanak-keeperhub exit-guard deploy`"
+        ) from exc
+
+
+EXIT_GUARD_OPTIONS = [
+    click.option("--working-dir", "-d", default=".", help="Strategy directory (config.json, receipts)."),
+    click.option("--chain", "chain_name", default=None, help="Chain name; defaults to config.json 'chain'."),
+    click.option("--vault", default=None, help="ERC-4626 vault address (default: the demo vault for the chain)."),
+]
+
+
+def _with_exit_guard_options(fn):
+    for option in reversed(EXIT_GUARD_OPTIONS):
+        fn = option(fn)
+    return fn
+
+
+@exit_guard.command("show")
+@_with_exit_guard_options
+def exit_guard_show(working_dir: str, chain_name: str | None, vault: str | None) -> None:
+    """Print the workflow JSON that would be deployed."""
+    workflow, _targets, _vault, _wallet = _exit_guard_workflow(working_dir, chain_name, vault)
+    click.echo(json.dumps(workflow, indent=2))
+
+
+@exit_guard.command("deploy")
+@_with_exit_guard_options
+def exit_guard_deploy(working_dir: str, chain_name: str | None, vault: str | None) -> None:
+    """Create the guarded-exit workflow in KeeperHub and remember its id.
+
+    It is a Manual workflow: nothing runs until `exit-guard run` triggers it with a decision.
+    """
+    from almanak_keeperhub.exit_workflow import state_path
+    from almanak_keeperhub.keeper import deploy, validate_remote
+
+    workflow, targets, vault_address, wallet = _exit_guard_workflow(working_dir, chain_name, vault)
+
+    async def go() -> dict:
+        client = _keeper_client()
+        try:
+            created = await deploy(client, workflow)
+            workflow_id = str(
+                created.get("id") or created.get("workflowId") or created.get("workflow", {}).get("id", "")
+            )
+            if not workflow_id:
+                raise click.ClickException(f"KeeperHub returned no workflow id: {json.dumps(created)[:300]}")
+            state_path(Path(working_dir)).write_text(
+                json.dumps({"workflow_id": workflow_id, "name": workflow["name"]}, indent=2) + "\n"
+            )
+            verdict = await validate_remote(client, workflow_id)
+            return {"workflow_id": workflow_id, "name": workflow["name"], "validation": verdict}
+        finally:
+            await client.aclose()
+
+    result = asyncio.run(go())
+    state = state_path(Path(working_dir))
+    state.write_text(
+        json.dumps(
+            {
+                **result,
+                "vault": vault_address,
+                "wallet": wallet,
+                "chain": targets.chain,
+                "chain_id": int(targets.chain_id),
+                "created_at": datetime.now(UTC).isoformat(),
+                "manual_runs": [],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+    validation = result.get("validation") or {}
+    click.echo(f"exit-guard workflow {result['workflow_id']} created; remembered in {state}")
+    click.echo(
+        f"KeeperHub validation: valid={validation.get('valid')} errors={len(validation.get('errors') or [])} warnings={len(validation.get('warnings') or [])}"
+    )
+    for warning in validation.get("warnings") or []:
+        click.echo(f"  warning: {warning.get('code')}: {str(warning.get('message'))[:160]}")
+    click.echo(f"open it: {os.environ.get('KEEPERHUB_BASE_URL', DEFAULT_BASE_URL)}/workflows/{result['workflow_id']}")
+
+
+@exit_guard.command("run")
+@_with_exit_guard_options
+@click.option(
+    "--expect-shares",
+    type=int,
+    default=None,
+    help="Redeem this many shares instead of the current balance; the Condition then decides whether they still hold.",
+)
+def exit_guard_run(working_dir: str, chain_name: str | None, vault: str | None, expect_shares: int | None) -> None:
+    """Trigger the workflow with an exit decision and follow it: KeeperHub reads the shares, the
+    Condition compares, the redeem runs only if the position still covers the decision."""
+    import time
+
+    from almanak_keeperhub.exit_workflow import guard_outcome, state_path
+    from almanak_keeperhub.guarded_exit import current_shares
+    from almanak_keeperhub.keeper import run_now
+
+    state = _read_exit_guard_state(Path(working_dir))
+    targets, vault_address = _exit_guard_targets(working_dir, chain_name, vault or state.get("vault"))
+    wallet = str(state.get("wallet") or os.environ.get("KEEPERHUB_WALLET_ADDRESS") or "")
+
+    async def go() -> dict:
+        client = _keeper_client()
+        try:
+            held = await current_shares(targets.rpc, vault_address, wallet)
+            shares = held if expect_shares is None else expect_shares
+            click.echo(f"vault {vault_address} on {targets.chain}: {held} shares held by {wallet}; asking for {shares}")
+            if shares <= 0:
+                click.echo("nothing to redeem")
+                return {"skipped": True}
+            started = time.perf_counter()
+            result = await run_now(client, state["workflow_id"], input={"shares": str(shares)})
+            outcome = guard_outcome(result)
+            outcome["seconds"] = round(time.perf_counter() - started, 2)
+            outcome["held"] = held
+            outcome["shares"] = shares
+            outcome["execution_id"] = result["execution_id"]
+            return outcome
+        finally:
+            await client.aclose()
+
+    outcome = asyncio.run(go())
+    if outcome.get("skipped"):
+        return
+    click.echo(f"{'executed':<18}: {outcome['executed']}")
+    click.echo(f"{'guard':<18}: vault shares held gte {outcome['shares']}  (Condition node, KeeperHub's engine)")
+    click.echo(f"{'observed':<18}: {outcome['held']}")
+    click.echo(f"{'execution_id':<18}: {outcome['execution_id']}")
+    click.echo(f"{'status':<18}: {outcome['status']}")
+    click.echo(f"{'nodes':<18}: {' -> '.join(outcome['trace'])}  ({outcome['steps']} steps)")
+    for tx in outcome["transactions"]:
+        click.echo(f"{'tx_hash':<18}: {tx.get('hash')}  verified={tx.get('verified')}")
+        click.echo(f"{'explorer':<18}: {targets.explorer}{tx.get('hash')}")
+    if outcome["stopped_at_gate"]:
+        click.echo(
+            f"{'note':<18}: stopped at the Condition; the redeem node was never reached and nothing was broadcast"
+        )
+    if outcome.get("error"):
+        click.echo(f"{'error':<18}: {outcome['error']}")
+    click.echo(f"{'seconds':<18}: {outcome['seconds']}")
+    runs = state.setdefault("manual_runs", [])
+    runs.append(
+        {
+            "execution_id": outcome["execution_id"],
+            "at": datetime.now(UTC).isoformat(),
+            "shares": outcome["shares"],
+            "held": outcome["held"],
+            "executed": outcome["executed"],
+            "stopped_at_gate": outcome["stopped_at_gate"],
+            "status": outcome["status"],
+            "trace": outcome["trace"],
+            "transactions": [
+                {"node": tx.get("nodeId"), "hash": tx.get("hash"), "verified": tx.get("verified")}
+                for tx in outcome["transactions"]
+            ],
+            "error": outcome.get("error"),
+        }
+    )
+    state_path(Path(working_dir)).write_text(json.dumps(state, indent=2) + "\n")
+    sys.exit(0 if outcome["executed"] or outcome["stopped_at_gate"] else 3)
+
+
+@exit_guard.command("status")
+@click.option("--working-dir", "-d", default=".")
+def exit_guard_status(working_dir: str) -> None:
+    """Show the remembered guarded-exit workflow and its KeeperHub executions."""
+    from almanak_keeperhub.keeper import executions
+
+    state = _read_exit_guard_state(Path(working_dir))
+
+    async def go() -> list[dict]:
+        client = _keeper_client()
+        try:
+            return await executions(client, state["workflow_id"])
+        finally:
+            await client.aclose()
+
+    rows = asyncio.run(go())
+    click.echo(f"exit-guard workflow {state['workflow_id']}  vault={state.get('vault')}  wallet={state.get('wallet')}")
+    click.echo(f"open it: {os.environ.get('KEEPERHUB_BASE_URL', DEFAULT_BASE_URL)}/workflows/{state['workflow_id']}")
+    if not rows:
+        click.echo("executions: none yet; `almanak-keeperhub exit-guard run` triggers one")
+        return
+    for row in rows[:20]:
+        click.echo(
+            f"  {row.get('createdAt') or row.get('startedAt') or ''}  {row.get('id')}  status={row.get('status')}"
+        )
 
 
 if __name__ == "__main__":  # pragma: no cover

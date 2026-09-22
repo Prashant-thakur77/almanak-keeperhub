@@ -220,11 +220,11 @@
     <div class="kicker">Surfaces</div>
     <h2>Three ways to use it, one truth</h2>
     <div class="grid3">
-      <div class="card"><h3>CLI</h3><p>For the strategy operator. <span class="mono">almanak-keeperhub run --once</span> runs any Almanak strategy through KeeperHub; <span class="mono">exit</span> is the guarded redeem; <span class="mono">verify</span> asks KeeperHub for its verdict on any hash.</p></div>
+      <div class="card"><h3>CLI</h3><p>For the strategy operator. <span class="mono">almanak-keeperhub run --once</span> runs any Almanak strategy through KeeperHub; <span class="mono">exit</span> is the guarded redeem as check-and-execute, <span class="mono">exit-guard</span> the same guard as a KeeperHub workflow with a Condition node; <span class="mono">verify</span> asks KeeperHub for its verdict on any hash.</p></div>
       <div class="card"><h3>MCP server</h3><p>For any agent: Claude, Cursor, an n8n AI Agent. Read and dry-run by default; <span class="mono">--write</span> adds the real tick and the exit, the same split as KeeperHub's own <span class="mono">mcp:read</span> and <span class="mono">mcp:write</span> keys. <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/agent-session.md">Three real Claude sessions</a>, recorded unedited.</p></div>
       <div class="card"><h3>Telegram bot</h3><p>For the operator's phone: status, executions, verify, a dry run, a confirmed real tick, the guarded exit, and every failure-mode demo. It is what the demo video shows.</p></div>
     </div>
-    <p class="lede" style="margin-top:12px">All three read the same receipts file and drive the same code, so they cannot disagree about what happened.</p>
+    <p class="lede" style="margin-top:12px">All three read the same receipts file and drive the same code, so they cannot disagree about what happened. Two of the surfaces are KeeperHub's own: the compounder and the guarded exit are workflows this package generates from the strategy config and creates in KeeperHub's builder, where its engine runs them with no Almanak process at all (workflows <span class="mono">7cloybpqfrjvjv756dd2r</span> and <span class="mono">zhanaalz8k47rrjspihct</span>).</p>
   </section>
 
   <section id="upstream">
