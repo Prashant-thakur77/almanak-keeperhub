@@ -33,7 +33,7 @@
     --sans:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
     --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
     --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
-    --display-xl:clamp(52px,7.4vw,118px); --display:clamp(44px,5.5vw,80px); --h1:clamp(36px,4vw,64px); --h2:clamp(28px,3vw,48px); --h3:clamp(22px,2vw,32px);
+    --display-xl:clamp(48px,min(7.4vw,11.2vh),118px); --display:clamp(44px,5.5vw,80px); --h1:clamp(36px,4vw,64px); --h2:clamp(28px,3vw,48px); --h3:clamp(22px,2vw,32px);
     --body-lg:clamp(18px,1.2vw,22px); --body:16px; --label:13px; --micro:11px;
     --margin:clamp(20px,4vw,64px); --gutter:clamp(16px,1.7vw,24px); --band:clamp(72px,9vw,128px);
     --r-card:16px; --r-card-lg:24px; --r-pill:999px;
@@ -215,12 +215,12 @@
   @keyframes draw{to{stroke-dashoffset:0}}
 
   /* ---- hero ---- */
-  .hero{min-height:100vh;display:grid;align-content:end;padding-top:120px;padding-bottom:48px;position:relative}
+  .hero{min-height:100vh;display:grid;align-content:end;padding-top:104px;padding-bottom:44px;position:relative}
   .hero .g{align-items:end}
   .hero h1{max-width:none}
-  .hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
-  .hero .lede{margin-top:28px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
-  .pin{grid-column:10/span 3;justify-self:center;align-self:start;width:min(200px,18vw);margin-top:-40px}
+  .hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+  .hero .lede{margin-top:22px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
+  .pin{grid-column:10/span 3;justify-self:center;align-self:start;width:min(200px,18vw,26vh);margin-top:-40px}
   .pin svg{width:100%;height:auto;display:block;overflow:visible}
   .cue{position:absolute;right:var(--margin);bottom:40px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:transform var(--d-medium) var(--ease)}
   .cue svg{width:14px;height:14px;animation:nudge 1.6s var(--ease) infinite}
