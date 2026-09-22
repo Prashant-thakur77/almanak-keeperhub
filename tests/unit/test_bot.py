@@ -159,3 +159,38 @@ async def test_a_repeated_tap_does_not_stack_prompts_and_a_running_action_blocks
     assert "still working" in (await bot.handle(chat_id="42", text="/tick")).lower()
     release.set()
     assert "done" in await task
+
+
+async def test_guard_runs_the_workflow_exit_after_confirm_and_stale_runs_at_once(strategy_dir: Path) -> None:
+    calls: list[list[str]] = []
+
+    def runner(args: list[str]) -> tuple[str, int]:
+        calls.append(args)
+        if "--stale" in args:
+            return (
+                "executed          : False\nguard             : vault shares held gte 5000001  (Condition node)\n"
+                "observed          : 5000000\nexecution_id      : qez8b9fhipm7c4zcqa6sg\nstatus            : completed\n"
+                "nodes             : trigger:completed -> shares:completed -> gate:completed  (3 of 4 steps)\n"
+                "note              : stopped at the Condition; the redeem node was never reached\nseconds           : 3.7\n",
+                0,
+            )
+        return (
+            "executed          : True\nguard             : vault shares held gte 5000000  (Condition node)\n"
+            "observed          : 5000000\nexecution_id      : 90eswt00kn44cw2szpl80\nstatus            : completed\n"
+            "nodes             : trigger:completed -> shares:completed -> gate:completed -> redeem:completed  (4 of 4 steps)\n"
+            "tx_hash           : 0x" + "c1" * 32 + "  verified=True\n"
+            "explorer          : https://sepolia.basescan.org/tx/0x" + "c1" * 32 + "\nseconds           : 8.4\n",
+            0,
+        )
+
+    bot = make_bot(strategy_dir, runner=runner)
+    reply = await bot.handle(chat_id="42", text="/guard")
+    assert "/confirm" in reply and calls == []  # the live decision redeems, so it is armed, not run
+    assert OperatorBot.keyboard_for("/guard", reply) == [[("Confirm", "/confirm"), ("Cancel", "/cancel")]]
+    reply = await bot.handle(chat_id="42", text="/confirm")
+    assert calls[0][:5] == ["exit-guard", "run", "-d", str(strategy_dir), "--chain"] and "--stale" not in calls[0]
+    assert "Redeemed" in reply and "redeem:completed" in reply and "sepolia.basescan.org" in reply
+
+    reply = await bot.handle(chat_id="42", text="/guard stale")
+    assert calls[1][-1] == "--stale" and len(calls) == 2  # nothing can be broadcast, so no confirm step
+    assert "Not executed" in reply and "3 of 4 steps" in reply and "Nothing was broadcast" in reply

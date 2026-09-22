@@ -144,3 +144,53 @@ def test_run_now_forwards_the_trigger_input() -> None:
 
 async def _no_sleep(_seconds: float) -> None:
     return None
+
+
+def test_run_stale_asks_for_one_share_more_than_held_and_reports_the_stop(tmp_path, monkeypatch) -> None:
+    """`exit-guard run --stale` sends a decision the position cannot cover; the trace shows the
+    Condition stopping the workflow and the exit code says the guard did its job."""
+    import json
+
+    from click.testing import CliRunner
+
+    from almanak_keeperhub import cli, guarded_exit, keeper
+
+    vault = "0x" + "d3" * 20
+    wallet = "0x" + "e7" * 20
+    (tmp_path / "keeperhub-exit-guard.json").write_text(
+        json.dumps({"workflow_id": "zhanaalz8k47rrjspihct", "vault": vault, "wallet": wallet, "chain": "base_sepolia"})
+    )
+    monkeypatch.setenv("KEEPERHUB_API_KEY", "kh_test")
+    monkeypatch.delenv("ALMANAK_KEEPERHUB_EXIT_GUARD_STATE", raising=False)
+    asked: dict = {}
+
+    async def fake_shares(rpc: str, vault_address: str, owner: str) -> int:
+        return 5_000_000
+
+    async def fake_run_now(client, workflow_id, *, input=None, **kwargs):
+        asked.update({"workflow_id": workflow_id, "input": input})
+        return {
+            "execution_id": "qez8b9fhipm7c4zcqa6sg",
+            "status": "completed",
+            "transaction_hashes": [],
+            "node_statuses": [
+                {"nodeId": "gate", "status": "completed"},
+                {"nodeId": "shares", "status": "completed"},
+                {"nodeId": "trigger", "status": "completed"},
+            ],
+            "progress": {"totalSteps": 4, "completedSteps": 3},
+            "error": None,
+        }
+
+    monkeypatch.setattr(guarded_exit, "current_shares", fake_shares)
+    monkeypatch.setattr(keeper, "run_now", fake_run_now)
+    result = CliRunner().invoke(
+        cli.main, ["exit-guard", "run", "-d", str(tmp_path), "--chain", "base_sepolia", "--stale"]
+    )
+    assert result.exit_code == 0, result.output
+    assert asked == {"workflow_id": "zhanaalz8k47rrjspihct", "input": {"shares": "5000001"}}
+    assert "executed          : False" in result.output
+    assert "trigger:completed -> shares:completed -> gate:completed  (3 of 4 steps)" in result.output
+    assert "stopped at the Condition" in result.output
+    state = json.loads((tmp_path / "keeperhub-exit-guard.json").read_text())
+    assert state["manual_runs"][-1]["stopped_at_gate"] is True and state["manual_runs"][-1]["shares"] == 5_000_001

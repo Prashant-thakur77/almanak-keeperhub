@@ -44,11 +44,13 @@ Almanak decides. KeeperHub lands it. This chat is the operator's view.
 /simulate  dry-run one strategy tick through KeeperHub, nothing broadcast
 /tick  one real strategy tick: Almanak plans, KeeperHub dry-runs, signs and broadcasts
 /exit  redeem the vault position; KeeperHub re-reads the balance before it acts
+/guard  the same exit as a KeeperHub workflow: a Condition node re-reads the shares, then Morpho redeem
 
 <b>Break it on purpose</b>
 /demo &lt;revert|cap|duplicate|crash|selector|rpc|stale&gt;
+/guard stale  a decision the position no longer covers, sent to the workflow: the Condition stops it
 
-/cancel drops a pending tick or exit. Buttons under each reply do the same as typing."""
+/cancel drops a pending tick, exit or guard. Buttons under each reply do the same as typing."""
 COMMAND_MENU = [
     ("status", "Wallet, chain, counts, keeper"),
     ("executions", "Latest executions with links"),
@@ -58,13 +60,15 @@ COMMAND_MENU = [
     ("simulate", "Dry-run one strategy tick, nothing broadcast"),
     ("tick", "One real strategy tick through KeeperHub"),
     ("exit", "Guarded exit: KeeperHub re-checks, then redeems"),
+    ("guard", "The exit as a KeeperHub workflow: Condition, then redeem"),
     ("demo", "Run a failure-mode demo"),
-    ("cancel", "Drop a pending tick or exit"),
+    ("cancel", "Drop a pending tick, exit or guard"),
     ("help", "The command list"),
 ]
 MAIN_KEYBOARD = [
     [("Status", "/status"), ("Executions", "/executions 3"), ("Dry runs", "/dryruns")],
     [("Simulate a tick", "/simulate"), ("Real tick", "/tick"), ("Guarded exit", "/exit")],
+    [("Workflow guard", "/guard"), ("Stale decision", "/guard stale"), ("Keeper", "/keeper")],
 ]
 CONFIRM_KEYBOARD = [[("Confirm", "/confirm"), ("Cancel", "/cancel")]]
 DEMOS = {
@@ -126,7 +130,7 @@ _EXEC_LINE = re.compile(r"^\s+(\w+) -> (0x[0-9a-fA-F]{40})\s+execution=(\S+)\s+s
 _SIM_OK = re.compile(r"KeeperHub simulate ok: (0x[0-9a-fA-F]{40})\.(\w+) gas=(\S+)")
 _STATUS = re.compile(r"Status: (\w+) \| Intent: (\w+)")
 _KV = re.compile(
-    r"^(executed|guard|observed|execution_id|tx_hash|status|idempotent_replay|seconds|explorer|note)\s*:\s*(.*)$"
+    r"^(executed|guard|observed|execution_id|tx_hash|status|idempotent_replay|seconds|explorer|note|nodes|error)\s*:\s*(.*)$"
 )
 
 
@@ -185,6 +189,10 @@ def _pretty(label: str, output: str, code: int) -> str:
             lines.append(
                 f"Not executed. KeeperHub observed <b>{_h(kv.get('observed'))}</b> shares; guard <code>{_h(kv.get('guard'))}</code> does not hold. Nothing was broadcast."
             )
+        if kv.get("nodes"):
+            lines.append(f"Workflow nodes: <code>{_h(kv['nodes'])}</code>")
+        if kv.get("error"):
+            lines.append(_h(kv["error"][:300]))
         if kv.get("seconds"):
             lines.append(f"{_h(kv['seconds'])}s end to end")
     head = f"<b>{_h(label)}</b>: {'done' if code == 0 else 'exit ' + str(code)}"
@@ -254,6 +262,7 @@ class OperatorBot:
             "/simulate": self._simulate,
             "/tick": self._tick,
             "/exit": self._exit,
+            "/guard": self._guard,
             "/confirm": self._confirm,
             "/cancel": self._cancel,
             "/demo": self._demo,
@@ -442,6 +451,28 @@ class OperatorBot:
             "itself right before the write and refuses if the position is gone. Send /confirm within 60 seconds."
         )
 
+    async def _guard(self, args: list[str]) -> str:
+        """The guarded exit as a KeeperHub workflow (exit-guard run). `stale` asks for one share more
+        than the position holds, so the Condition node stops it and nothing is broadcast: no confirm."""
+        if args and args[0].lower() == "stale":
+            if self._busy:
+                return f"Still working on the {self._busy}. Wait for its reply."
+            self._busy = "stale decision"
+            try:
+                return await self._run_cli(
+                    ["exit-guard", "run", "-d", str(self._strategy_dir), "--chain", self._chain, "--stale"],
+                    "workflow guard, stale decision",
+                )
+            finally:
+                self._busy = None
+        if already := self._arm("guard"):
+            return already
+        return (
+            "<b>Workflow guard</b>: the exit decision triggers the KeeperHub workflow. Its nodes read the vault shares, "
+            "a Condition compares them with the decision, and the Morpho redeem runs only on the true branch. "
+            "Send /confirm within 60 seconds."
+        )
+
     async def _cancel(self, _args: list[str]) -> str:
         if not self._pending:
             return "Nothing pending."
@@ -453,10 +484,14 @@ class OperatorBot:
             return f"Still working on the {self._busy}. Wait for its reply."
         if not self._pending or time.time() - self._pending[1] > 60:
             self._pending = None
-            return "Nothing pending, or it expired. Send /tick or /exit first, then /confirm within 60 seconds."
+            return "Nothing pending, or it expired. Send /tick, /exit or /guard first, then /confirm within 60 seconds."
         action, self._pending = self._pending[0], None
-        self._busy = "guarded exit" if action == "exit" else "real tick"
+        self._busy = {"exit": "guarded exit", "guard": "workflow guard"}.get(action, "real tick")
         try:
+            if action == "guard":
+                return await self._run_cli(
+                    ["exit-guard", "run", "-d", str(self._strategy_dir), "--chain", self._chain], "workflow guard"
+                )
             if action == "exit":
                 return await self._run_cli(
                     ["exit", "-d", str(self._strategy_dir), "--chain", self._chain], "guarded exit"
@@ -545,7 +580,7 @@ class OperatorBot:
     @staticmethod
     def keyboard_for(command: str, reply: str) -> list[list[tuple[str, str]]] | None:
         """Buttons under a reply: confirm/cancel after an armed action, the main menu after the rest."""
-        if command in ("/tick", "/exit") and "/confirm" in reply:
+        if command in ("/tick", "/exit", "/guard") and "/confirm" in reply:
             return CONFIRM_KEYBOARD
         if command in ("/help", "/start", "/status", "/confirm", "/cancel", "/simulate", "/executions"):
             return MAIN_KEYBOARD
@@ -617,7 +652,7 @@ class OperatorBot:
         if time.time() - sent_at > STALE_AFTER_SECONDS:
             return
         command = text.split()[0].lower() if text.split() else ""
-        if command in ("/simulate", "/confirm", "/demo", "/verify"):
+        if command in ("/simulate", "/confirm", "/demo", "/verify") or text.lower().startswith("/guard stale"):
             try:
                 await self.send(chat_id, "Working. This goes through KeeperHub; a real tick takes about half a minute.")
                 await self._typing(chat_id)

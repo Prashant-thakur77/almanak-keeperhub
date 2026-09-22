@@ -42,6 +42,22 @@
         }
       ],
       "error": null
+    },
+    {
+      "execution_id": "d4uhb7ny5bp7zwwreb2m2",
+      "at": "2026-09-22T17:51:47.124081+00:00",
+      "shares": 1,
+      "held": 0,
+      "executed": false,
+      "stopped_at_gate": true,
+      "status": "success",
+      "trace": [
+        "trigger:success",
+        "shares:success",
+        "gate:success"
+      ],
+      "transactions": [],
+      "error": null
     }
   ]
 }

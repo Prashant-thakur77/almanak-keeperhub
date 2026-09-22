@@ -1174,7 +1174,15 @@ def exit_guard_deploy(working_dir: str, chain_name: str | None, vault: str | Non
     default=None,
     help="Redeem this many shares instead of the current balance; the Condition then decides whether they still hold.",
 )
-def exit_guard_run(working_dir: str, chain_name: str | None, vault: str | None, expect_shares: int | None) -> None:
+@click.option(
+    "--stale",
+    is_flag=True,
+    help="Ask for one share more than the position holds: a decision the position no longer covers, so the "
+    "Condition stops the workflow and nothing is broadcast.",
+)
+def exit_guard_run(
+    working_dir: str, chain_name: str | None, vault: str | None, expect_shares: int | None, stale: bool
+) -> None:
     """Trigger the workflow with an exit decision and follow it: KeeperHub reads the shares, the
     Condition compares, the redeem runs only if the position still covers the decision."""
     import time
@@ -1191,7 +1199,7 @@ def exit_guard_run(working_dir: str, chain_name: str | None, vault: str | None, 
         client = _keeper_client()
         try:
             held = await current_shares(targets.rpc, vault_address, wallet)
-            shares = held if expect_shares is None else expect_shares
+            shares = held + 1 if stale else held if expect_shares is None else expect_shares
             click.echo(f"vault {vault_address} on {targets.chain}: {held} shares held by {wallet}; asking for {shares}")
             if shares <= 0:
                 click.echo("nothing to redeem")
