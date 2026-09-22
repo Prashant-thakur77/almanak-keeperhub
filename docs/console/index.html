@@ -320,8 +320,31 @@
       if (k.error) runs = `<div class="seg bad">${esc(k.error)}</div>`;
       else if (!k.executions.length) runs = `<div class="empty">No executions yet: the schedule has not fired, or the workflow is disabled.</div>`;
       else runs = `<div class="table-wrap"><table><thead><tr><th>When</th><th>Execution</th><th>Status</th></tr></thead><tbody>${k.executions.slice(0, 10).map((x) => `<tr><td class="num">${when(x.createdAt || x.startedAt)}</td><td class="num">${esc(x.id)}</td><td><span class="pill ${/success|completed/.test(String(x.status)) ? "ok" : /fail|error/.test(String(x.status)) ? "bad" : "warn"}">${esc(x.status)}</span></td></tr>`).join("")}</tbody></table></div>`;
-      $("keeper").innerHTML = head + runs;
+      $("keeper").innerHTML = head + runs + exitGuard(k.exit_guard);
     } catch (e) { $("keeper").innerHTML = `<div class="seg bad">${esc(String(e))}</div>`; }
+  }
+
+  function exitGuard(g) {
+    if (!g || !g.deployed) return "";
+    const runs = (g.manual_runs || []).slice().reverse().slice(0, 10);
+    const head = `<div class="card" style="margin-top:12px"><div class="row">
+      <span class="fn">guarded exit, as a workflow</span>
+      <span class="pill ok">Condition node is the guard</span>
+      <span class="hash">workflow ${esc(g.workflow_id)}</span>
+      <span class="addr">vault ${esc(String(g.vault || "").slice(0, 8))}…${esc(String(g.vault || "").slice(-4))}</span>
+      <span class="when">${when(g.created_at)}</span>
+    </div>
+    <div class="evidence"><div class="seg">Manual trigger carries the decision (shares) → balance node reads the wallet's vault shares → Condition: held ≥ decided → Morpho vault-redeem behind the true branch. Run by KeeperHub's engine; a stale decision stops at the Condition and broadcasts nothing.</div>
+    ${g.validation ? `<div class="seg ${g.validation.valid ? "ok" : "bad"}">KeeperHub validation at deploy: valid=${g.validation.valid}, ${(g.validation.errors || []).length} errors, ${(g.validation.warnings || []).length} warnings</div>` : ""}</div>
+    </div>`;
+    if (!runs.length) return head + `<div class="empty">No runs yet: <code>almanak-keeperhub exit-guard run</code> triggers one with the current position.</div>`;
+    const rows = runs.map((r) => {
+      const tx = (r.transactions || [])[0];
+      const verdict = r.executed ? `<span class="pill ok">redeemed</span>` : r.stopped_at_gate ? `<span class="pill warn">stopped at the Condition</span>` : `<span class="pill bad">${esc(r.status || "failed")}</span>`;
+      const link = tx && tx.hash ? `<a href="https://sepolia.basescan.org/tx/${esc(tx.hash)}" target="_blank" rel="noopener">${esc(String(tx.hash).slice(0, 10))}…</a>` : "<span class=\"muted\">nothing broadcast</span>";
+      return `<tr><td class="num">${when(r.at)}</td><td class="num">${esc(r.execution_id)}</td><td class="num">${esc(r.shares)}</td><td class="num">${esc(r.held)}</td><td>${verdict}</td><td>${link}</td></tr>`;
+    }).join("");
+    return head + `<div class="table-wrap"><table><thead><tr><th>When</th><th>Execution</th><th>Decided</th><th>KeeperHub observed</th><th>Verdict</th><th>Tx</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
   function failures(list) {
