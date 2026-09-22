@@ -230,11 +230,11 @@
   <section id="upstream">
     <div class="kicker">Upstream</div>
     <h2>What this project fixed in KeeperHub, it now uses</h2>
-    <p class="lede">Four gaps met while building, each filed, accepted, built to the maintainers' spec; then three of the maintainers' own accepted issues taken from their backlog. The client speaks the merged shapes and latches to the old ones from the API's own answer; the two merged changes went live on production on 16 September, and the runner's next tick used them without a change here. The footer shows the latest probe.</p>
+    <p class="lede">Four gaps met while building, each filed, accepted, built to the maintainers' spec; then three of the maintainers' own accepted issues taken from their backlog. The client speaks the merged shapes and latches to the old ones from the API's own answer; the first two merged changes went live on production on 16 September, the third followed on 22 September, and the runner's next tick used them without a change here. The footer shows the latest probe.</p>
     <div class="table-wrap"><table><thead><tr><th>Change</th><th>Issue</th><th>Pull request</th><th>State</th></tr></thead><tbody>
       <tr><td>Raw calldata on <code>POST /api/execute/contract-call</code>: send the bytes a framework compiled, KeeperHub decodes them losslessly</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2426">#2426</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2449">#2449</a></td><td><span class="pill ok">merged</span></td></tr>
       <tr><td>Simulate a sequence of calls against the state the earlier ones produce (<code>eth_simulateV1</code>, with a state-override fallback)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2427">#2427</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2452">#2452</a></td><td><span class="pill ok">merged</span></td></tr>
-      <tr><td>The acting wallet on sponsored executions (<code>executedCall.from</code>)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2428">#2428</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2450">#2450</a></td><td><span class="pill info">approved, awaiting merge</span></td></tr>
+      <tr><td>The acting wallet on sponsored executions (<code>executedCall.from</code>)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2428">#2428</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2450">#2450</a></td><td><span class="pill ok">merged</span></td></tr>
       <tr><td>Workflow preflight simulates consecutive write nodes against the state the earlier ones produced</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2519">#2519</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2531">#2531</a></td><td><span class="pill info">in review</span></td></tr>
       <tr><td>An approve with no upstream allowance check gets a hint that does not claim redundancy (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2367">#2367</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2533">#2533</a></td><td><span class="pill info">in review</span></td></tr>
       <tr><td>The EVM chain runbook, and a seed that fails instead of warning on a chain with no explorer (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2497">#2497</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2532">#2532</a></td><td><span class="pill info">in review</span></td></tr>
@@ -315,7 +315,7 @@ almanak-keeperhub api-features --chain base_sepolia
     rows.push(["Private keys on the machine", "0"]);
     rows.push(["Strategy code changed", "1 line (the chain list)"]);
     rows.push(["Tests", "563 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations"]);
-    rows.push(["Features contributed upstream to KeeperHub", "3 issues filed, 3 accepted, <b>2 pull requests merged</b>, 1 in review, a 4th filed"]);
+    rows.push(["Features contributed upstream to KeeperHub", "4 issues filed, 4 accepted; 7 pull requests, <b>3 merged and live on production</b>, 4 in review, 3 of them on maintainer-filed issues"]);
     $("results").querySelector("tbody").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
   }
 

@@ -21,7 +21,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
 | Tests | 563 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
-| Features contributed upstream to KeeperHub | 4 issues filed, 4 accepted; 7 pull requests, **2 merged and live on production**, 1 approved, 4 in review (3 of them on maintainer-filed issues) |
+| Features contributed upstream to KeeperHub | 4 issues filed, 4 accepted; 7 pull requests, **3 merged and live on production**, 4 in review (3 of them on maintainer-filed issues) |
 
 ## Judge links
 
@@ -38,7 +38,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | A full lifecycle run by a GitHub runner with nobody present, ending in a guarded exit KeeperHub re-checked before redeeming | [0xdf51810b…41f7d4](https://sepolia.basescan.org/tx/0xdf51810ba2851e7c4c29863e4945c41787ce8e8f0e21bca39694bf9f0541f7d4) · execution `8q6azz7iy224ef6jh8x5w` · [the run](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml) |
 | A keeper run by KeeperHub's own engine, no Almanak process | [0x3e31e8c1…68cf16](https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16) · workflow `7cloybpqfrjvjv756dd2r` |
 | Upstream: raw calldata on `contract-call` | [issue #2426](https://github.com/KeeperHub/keeperhub/issues/2426) → [PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449), **merged** |
-| Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), approved, awaiting merge |
+| Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), **merged** |
 | Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), **merged** |
 | Upstream: workflow preflight against carried state | [issue #2519](https://github.com/KeeperHub/keeperhub/issues/2519) → [PR #2531](https://github.com/KeeperHub/keeperhub/pull/2531), in review |
 | Upstream, from the maintainers' backlog: approve hint [#2367](https://github.com/KeeperHub/keeperhub/issues/2367), EVM chain runbook [#2497](https://github.com/KeeperHub/keeperhub/issues/2497), aggregate precision [#2496](https://github.com/KeeperHub/keeperhub/issues/2496) | [PR #2533](https://github.com/KeeperHub/keeperhub/pull/2533), [PR #2532](https://github.com/KeeperHub/keeperhub/pull/2532), [PR #2534](https://github.com/KeeperHub/keeperhub/pull/2534), in review |
