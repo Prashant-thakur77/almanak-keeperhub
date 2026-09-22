@@ -231,7 +231,7 @@
   .cue svg{width:14px;height:14px;animation:nudge 1.6s var(--ease) infinite}
   @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
   body[data-scrolled="true"] .cue{transform:translateY(120px)}
-  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;width:auto;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:28px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
+  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;grid-row:2;align-self:start;width:auto;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:8px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
 
   /* ---- the connector spine crossing between sections ---- */
   .spine-v{position:absolute;width:28px;border-radius:14px;background:var(--mint);z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 14px);clip-path:inset(0 0 100% 0 round 14px);transition:clip-path 900ms cubic-bezier(.16,1,.3,1);will-change:clip-path}
