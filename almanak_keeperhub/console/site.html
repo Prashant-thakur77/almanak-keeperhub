@@ -11,8 +11,7 @@
 <meta property="og:url" content="https://prashant-thakur77.github.io/almanak-keeperhub/">
 <meta property="og:image" content="https://prashant-thakur77.github.io/almanak-keeperhub/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/png" href="img/buidl-logo.png">
-<link rel="apple-touch-icon" href="img/buidl-logo.png">
+<link rel="icon" type="image/svg+xml" href="img/mark.svg">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
   /* ---- tokens: one family, three weights, two surfaces, no shadows ---- */
@@ -32,6 +31,7 @@
     --n-blue:var(--blue-800); --n-yellow:var(--yellow-800); --n-green:var(--green-700); --n-red:var(--red);
 
     --sans:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
     --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
     --display-xl:clamp(52px,7.4vw,118px); --display:clamp(44px,5.5vw,80px); --h1:clamp(36px,4vw,64px); --h2:clamp(28px,3vw,48px); --h3:clamp(22px,2vw,32px);
     --body-lg:clamp(18px,1.2vw,22px); --body:16px; --label:13px; --micro:11px;
@@ -63,10 +63,10 @@
     --ink:var(--stone-900); --heading:var(--stone-900); --muted:rgba(11,15,25,.85); --faint:rgba(11,15,25,.7);
     --link:var(--stone-900); --link-hover:var(--stone-950); --hairline:rgba(11,15,25,.28); --strong:var(--stone-900);
   }
-  @media (prefers-reduced-motion:reduce){ :root{ --d-fast:0ms; --d-medium:0ms; --d-cover:0ms; --d-path:0ms; --d-line:0ms; --stagger:0ms; } html{scroll-behavior:auto} }
+  @media (prefers-reduced-motion:reduce){ .spine-v,.steps .line{transition:none} :root{ --d-fast:0ms; --d-medium:0ms; --d-cover:0ms; --d-path:0ms; --d-line:0ms; --stagger:0ms; } html{scroll-behavior:auto} }
 
   *,*::before,*::after{box-sizing:border-box;box-shadow:none}
-  html{background:var(--canvas);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  html{background:var(--canvas);scroll-behavior:smooth;scroll-padding-top:96px;-webkit-text-size-adjust:100%}
   body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--sans);font-size:var(--body);line-height:1.45;letter-spacing:-.011em;font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;transition:background-color var(--d-medium) var(--ease),color var(--d-medium) var(--ease)}
   h1,h2,h3,h4{margin:0;color:var(--heading);font-weight:600;letter-spacing:-.03em;line-height:.98;text-wrap:balance}
   h2{font-size:var(--h2)} h3{font-size:var(--h3)}
@@ -105,9 +105,9 @@
   header.top{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px var(--margin);color:var(--stone-900);pointer-events:none;transition:color var(--d-medium) var(--ease)}
   header.top[data-on="dark"],header.top[data-on="menu"]{color:var(--stone)}
   header.top>*{pointer-events:auto}
-  .wordmark{display:inline-flex;align-items:center;gap:10px;color:inherit;font-weight:700;font-size:21px;letter-spacing:-.03em;transition:transform var(--d-cover) var(--ease)}
+  .wordmark{display:inline-flex;align-items:baseline;color:inherit;font-family:var(--serif);font-style:italic;font-weight:400;font-size:30px;letter-spacing:-.01em;line-height:1;transition:transform var(--d-cover) var(--ease)}
   body[data-scrolled="true"]:not([data-menu="open"]) header.top .wordmark{transform:translateY(-320%)}
-  .wordmark img{width:40px;height:40px;border-radius:10px}
+
   .menu-btn{position:relative;flex:0 0 auto;width:48px;height:48px;border-radius:var(--r-pill);border:2px solid currentColor;background:var(--stone);color:var(--stone-900);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background-color var(--d-fast) var(--ease),color var(--d-fast) var(--ease)}
   header.top[data-on="dark"] .menu-btn{background:var(--stone-900);color:var(--stone)}
   .menu-btn .bar{position:absolute;width:18px;height:2px;border-radius:999px;background:currentColor;transition:transform 320ms cubic-bezier(.16,1,.3,1)}
@@ -189,7 +189,7 @@
   .ol .c{font-family:var(--mono);font-size:12.5px;color:var(--n-green);margin-top:8px}
   .ol .gate{margin-left:10px}
   .steps{position:relative}
-  .steps .line{position:absolute;left:47px;top:22px;bottom:22px;width:4px;background:var(--mint);border-radius:2px;transform:scaleY(0);transform-origin:top;z-index:0;will-change:transform}
+  .steps .line{position:absolute;left:47px;top:22px;bottom:22px;width:4px;background:var(--mint);border-radius:2px;clip-path:inset(0 0 100% 0 round 2px);transition:clip-path 900ms cubic-bezier(.16,1,.3,1);z-index:0;will-change:clip-path}
   .steps .ol{position:relative;z-index:1}
   .steps .ol li{background:transparent;padding-left:0}
   .steps .ol li .m{background:var(--canvas)}
@@ -227,7 +227,7 @@
   @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} }
 
   /* ---- the connector spine crossing between sections ---- */
-  .spine-v{position:absolute;width:28px;border-radius:14px;background:var(--mint);z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 14px);transform:scaleY(0);transform-origin:top;will-change:transform}
+  .spine-v{position:absolute;width:28px;border-radius:14px;background:var(--mint);z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 14px);clip-path:inset(0 0 100% 0 round 14px);transition:clip-path 900ms cubic-bezier(.16,1,.3,1);will-change:clip-path}
   .spine-v.left{left:calc(var(--margin) + (100% - 2 * var(--margin)) * .315 - 14px)}
   @media (max-width:1024px){ .spine-v{display:none} }
 
@@ -293,7 +293,10 @@
   footer.site .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:var(--gutter)}
   footer.site .cols a{display:block;color:var(--stone);font-size:15px;padding:4px 0}
   footer.site .cols a:hover{color:var(--mint)}
-  footer.site .meta{margin-top:56px;padding-top:24px;border-top:1px solid var(--stone-700);display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;color:var(--stone-400);font-size:13px}
+  footer.site .big-name{margin-top:88px;font-family:var(--serif);font-style:italic;font-size:clamp(46px,11.2vw,166px);line-height:.9;letter-spacing:-.02em;color:var(--stone);white-space:nowrap;overflow:hidden}
+  footer.site .big-name span{display:inline-block;transform:translateY(110%);transition:transform 900ms cubic-bezier(.16,1,.3,1)}
+  footer.site .big-name.in span{transform:translateY(0)}
+  footer.site .meta{margin-top:40px;padding-top:24px;border-top:1px solid var(--stone-700);display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;color:var(--stone-400);font-size:13px}
   footer.site .meta code{background:var(--stone-800);color:var(--stone)}
   .totop{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stone);background:transparent;border:2px solid var(--stone-700);border-radius:var(--r-pill);height:44px;padding:0 18px;cursor:pointer}
   .totop:hover{border-color:var(--stone)}
@@ -309,7 +312,7 @@
 
 <header class="top" id="top-bar" data-on="light">
   <a class="wordmark" href="#top" aria-label="almanak-keeperhub, home">
-    <img src="img/buidl-logo.png" alt="" width="40" height="40" style="border-radius:10px;display:block">
+    
     <span>almanak-keeperhub</span>
   </a>
   <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="bar b1"></span><span class="bar b2"></span></button>
@@ -635,13 +638,14 @@ almanak-keeperhub api-features --chain base_sepolia
 <footer class="site" data-band="dark">
   <div class="cols">
     <div>
-      <a class="wordmark" href="#top" style="color:var(--stone)"><img src="img/buidl-logo.png" alt="" width="40" height="40" style="border-radius:10px;display:block"><span>almanak-keeperhub</span></a>
+      <a class="wordmark" href="#top" style="color:var(--stone)"><span>almanak-keeperhub</span></a>
       <p style="margin-top:16px;color:var(--stone-400);font-size:14px;max-width:44ch">KeeperHub as the execution backend for Almanak strategies. Built for the KeeperHub Agent Economy Hackathon, 2026.</p>
     </div>
     <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Site</div><a href="#problem">The problem</a><a href="#how">How it works</a><a href="#guard">The guard</a><a href="#proof">Proof</a><a href="#upstream">Upstream</a></div>
     <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Project</div><a href="console/">Console</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">GitHub</a><a href="https://pypi.org/project/almanak-keeperhub/">PyPI</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest">Release</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a></div>
     <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Proof</div><a href="https://youtu.be/wdZJTSivzRI">Demo video</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/panel/deck.pdf">Finalist deck</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml">Proof workflow</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/SECURITY.md">Security model</a></div>
   </div>
+  <div class="big-name" aria-hidden="true"><span>almanak-keeperhub</span></div>
   <div class="meta"><div id="footer"></div><button class="totop" id="totop">Back to top <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4M6 10l6-6 6 6"/></svg></button></div>
 </footer>
 
@@ -693,7 +697,8 @@ almanak-keeperhub api-features --chain base_sepolia
     for (const el of lines()) {
       const r = el.getBoundingClientRect(); const top = r.top + scrollY, h = Math.max(1, r.height);
       const p = reduced ? 1 : Math.min(1, Math.max(0, (tip - top) / h));
-      el.style.transform = `scaleY(${p.toFixed(4)})`;
+      // a clip rather than a scale, so the rounded tip keeps its shape; the CSS transition eases each new target
+      el.style.clipPath = `inset(0 0 ${((1 - p) * 100).toFixed(2)}% 0 round ${el.classList.contains("line") ? 2 : 14}px)`;
     }
   }
   const queueLines = () => { if (!lineTick) { lineTick = true; requestAnimationFrame(drawLines); } };
@@ -710,8 +715,8 @@ almanak-keeperhub api-features --chain base_sepolia
       el.classList.add("in"); io.unobserve(el);
     }
   }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
-  const watch = (scope) => (scope || document).querySelectorAll(".rv, .mask, .draw, .steps").forEach((el) => io.observe(el));
-  if (!("IntersectionObserver" in window)) document.querySelectorAll(".rv, .mask, .draw, .steps").forEach((el) => el.classList.add("in"));
+  const watch = (scope) => (scope || document).querySelectorAll(".rv, .mask, .draw, .steps, .big-name").forEach((el) => io.observe(el));
+  if (!("IntersectionObserver" in window)) document.querySelectorAll(".rv, .mask, .draw, .steps, .big-name").forEach((el) => el.classList.add("in"));
   else watch();
   if (reduced) document.querySelectorAll("svg").forEach((s) => { try { s.pauseAnimations(); } catch {} });
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>almanak-keeperhub · execution console</title>
-<link rel="icon" type="image/png" href="../img/buidl-logo.png">
+<link rel="icon" type="image/svg+xml" href="../img/mark.svg">
 <script>window.__CONSOLE_SNAPSHOT__ = true;</script>
 <script>
   (function () { var t = null; try { t = localStorage.getItem("ak-theme"); } catch (e) {} if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; document.documentElement.setAttribute("data-theme", t);
@@ -35,8 +35,7 @@
   html, body { transition: background-color 250ms cubic-bezier(.2,0,0,1), color 250ms cubic-bezier(.2,0,0,1); }
   .wrap { max-width: 1280px; margin: 0 auto; padding: 24px clamp(20px, 4vw, 64px) 80px; }
   .topnav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 28px; }
-  .topnav .wordmark { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; letter-spacing: -.03em; text-decoration: none; }
-  .topnav .wordmark img { width: 36px; height: 36px; border-radius: 9px; }
+  .topnav .wordmark { display: inline-flex; align-items: baseline; font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; font-size: 28px; letter-spacing: -.01em; line-height: 1; text-decoration: none; }
   .topnav .back { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--ink); font-weight: 500; font-size: 14px; text-decoration: none; }
   .topnav .back:hover { background: var(--ink); color: var(--bg); }
   .topnav .right { display: flex; align-items: center; gap: 10px; }
@@ -131,7 +130,7 @@
 <body>
 <div class="wrap">
   <div class="topnav">
-    <a class="wordmark" href="../"><img src="../img/buidl-logo.png" alt="" width="36" height="36" style="border-radius:9px;display:block"><span>almanak-keeperhub</span></a>
+    <a class="wordmark" href="../"><span>almanak-keeperhub</span></a>
     <div class="right">
       <button class="theme-btn" id="theme-btn" aria-label="Switch theme" title="Switch theme"><svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 14.9A8 8 0 0 1 14.5 2.5z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></button>
       <a class="back" href="../">Back to the site</a>
