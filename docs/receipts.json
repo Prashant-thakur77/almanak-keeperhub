@@ -92,5 +92,12 @@
     "shares_requested": 1,
     "shares_observed_by_keeperhub": "0",
     "broadcast": false
+  },
+  {
+    "kind": "duplicate_blocked",
+    "idempotency_key": "a734e67cfd6be0f3be296e777f0dc3c1db8030cc721235cd1b3f8b35ff2b672f",
+    "execution_id": "w5br1jv349gta84efzt00",
+    "tx_hash": "0x113730c6f3144053331089dc62b6b50332978cc18a839ffd0ed987676db76117",
+    "second_attempt_replayed": true
   }
 ]
