@@ -59,6 +59,7 @@
     --bad-c:var(--red-900); --bad-on:var(--red-100); --info-c:var(--blue-900); --info-on:var(--blue-100);
     --n-blue:var(--blue-300); --n-yellow:var(--yellow); --n-green:var(--mint); --n-red:var(--red-300);
   }
+  [data-theme="dark"] [data-band="dark"]{--canvas:var(--stone-950);--card:var(--stone-800);--sunken:var(--stone-900)}
   [data-band="mint"]{
     --canvas:var(--mint); --card:var(--stone-50); --sunken:#C9EEDA;
     --ink:var(--stone-900); --heading:var(--stone-900); --muted:rgba(11,15,25,.85); --faint:rgba(11,15,25,.7);
@@ -109,30 +110,35 @@
   .wordmark{display:inline-flex;align-items:center;gap:10px;color:inherit;font-weight:600;font-size:22px;letter-spacing:-.03em;transition:transform var(--d-cover) var(--ease)}
   body[data-scrolled="true"]:not([data-menu="open"]) header.top .wordmark{transform:translateY(-320%)}
   .wordmark img{width:40px;height:40px;border-radius:10px}
-  .menu-btn{width:48px;height:48px;border-radius:var(--r-pill);border:2px solid currentColor;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;padding:0;transition:background-color var(--d-fast) var(--ease),color var(--d-fast) var(--ease);}
-  .menu-btn:hover{background:currentColor}
-  .menu-btn:hover svg{color:var(--canvas)}
-  .menu-btn svg{width:20px;height:20px;color:inherit;transition:color var(--d-fast) var(--ease)}
-  .menu-btn .dot{display:none} .menu-btn[aria-expanded="true"] .dot{display:block} .menu-btn[aria-expanded="true"] .bars{display:none}
-  .menu-btn:active{transform:scale(.98)}
+  .menu-btn{position:relative;flex:0 0 auto;width:48px;height:48px;border-radius:var(--r-pill);border:2px solid currentColor;background:var(--stone);color:var(--stone-900);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background-color var(--d-fast) var(--ease),color var(--d-fast) var(--ease)}
+  header.top[data-on="dark"] .menu-btn{background:var(--stone-900);color:var(--stone)}
+  .menu-btn .bar{position:absolute;width:18px;height:2px;border-radius:999px;background:currentColor;transition:transform 320ms cubic-bezier(.16,1,.3,1)}
+  .menu-btn .b1{transform:translateY(-4px)} .menu-btn .b2{transform:translateY(4px)}
+  .menu-btn[aria-expanded="true"],header.top[data-on="menu"] .menu-btn{background:var(--stone-900);color:var(--stone)}
+  .menu-btn[aria-expanded="true"] .b1{transform:translateY(0) rotate(45deg)} .menu-btn[aria-expanded="true"] .b2{transform:translateY(0) rotate(-45deg)}
 
   /* ---- the menu: a charcoal sheet that covers the page from above ---- */
-  .menu{position:fixed;inset:0;z-index:40;background:var(--stone-900);color:var(--stone);transform:translateY(-100%);transition:transform var(--d-cover) var(--ease);display:grid;grid-template-rows:1fr auto;overflow:auto}
+  .menu{position:fixed;inset:0;z-index:40;background:var(--stone-900);color:var(--stone);transform:translateY(-100%);transition:transform var(--d-cover) var(--ease);display:grid;grid-template-rows:minmax(0,1fr) auto;overflow:hidden}
   .menu[data-open="true"]{transform:translateY(0)}
   .menu-cols{display:grid;grid-template-columns:54% 46%;min-height:0}
-  .menu-list{list-style:none;margin:0;padding:calc(72px + 3vh) var(--margin) 40px;display:flex;flex-direction:column;justify-content:center;gap:clamp(4px,1vh,12px)}
+  .menu-list{list-style:none;margin:0;padding:calc(72px + 2vh) var(--margin) 24px;display:flex;flex-direction:column;justify-content:center;gap:clamp(2px,.8vh,12px);overflow:auto;min-height:0}
+  .menu[data-open="true"] .menu-list li{animation:menu-in 500ms cubic-bezier(.16,1,.3,1) both;animation-delay:calc(220ms + 40ms * var(--k,0))}
+  @keyframes menu-in{from{transform:translateY(28px)}to{transform:translateY(0)}}
   .menu-list li{display:grid;grid-template-columns:40px 1fr;align-items:end;gap:12px}
   .menu-list .n{font-family:var(--mono);font-size:12px;font-weight:600;padding-bottom:.55em}
-  .menu-list a{color:var(--stone);font-size:clamp(36px,4.6vw,64px);font-weight:600;letter-spacing:-.035em;line-height:1;display:inline-block;transition:transform var(--d-medium) var(--ease),color var(--d-fast) var(--ease)}
-  .menu-list a:hover{color:var(--mint);transform:translateX(12px)}
+  .menu-list a{color:var(--stone);font-size:clamp(28px,min(4.6vw,6vh),64px);font-weight:600;letter-spacing:-.035em;line-height:1;display:inline-block;transition:transform var(--d-medium) var(--ease)}
+  .menu-list a:hover{transform:translateX(10px)}
   .menu-field{background:var(--stone-800)}
-  .menu-foot{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:var(--gutter);align-items:end;padding:32px var(--margin) 40px;border-top:1px solid var(--stone-700)}
+  .menu-foot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:var(--gutter);align-items:end;padding:28px var(--margin) 36px;border-top:1px solid var(--stone-700)}
+  .menu-foot .f{min-width:0}
   .menu-foot .mono-label{color:var(--stone-400);margin-bottom:8px}
-  .menu-foot a{color:var(--stone);font-size:15px}
+  .menu-foot a{display:block;color:var(--stone);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .theme-btn .sun{display:none} [data-theme="dark"] .theme-btn .sun{display:block} [data-theme="dark"] .theme-btn .moon{display:none}
   .theme-btn{width:48px;height:48px;border-radius:var(--r-pill);border:2px solid var(--stone);background:transparent;color:var(--stone);display:grid;place-items:center;cursor:pointer;padding:0}
   .theme-btn svg{width:18px;height:18px}
   .theme-btn:hover{background:var(--stone);color:var(--stone-900)}
   @media (max-width:1024px){ .menu-cols{grid-template-columns:1fr} .menu-field{display:none} .menu-foot{grid-template-columns:1fr 1fr;gap:20px} }
+  @media (max-width:640px){ .menu-foot{grid-template-columns:1fr;gap:16px;padding-bottom:28px} .menu-foot a{white-space:normal} }
   body[data-menu="open"]{overflow:hidden}
 
   /* ---- buttons: pills, charcoal on light, stone on dark ---- */
@@ -297,32 +303,30 @@
     <img src="img/buidl-logo.png" alt="" width="40" height="40" style="border-radius:10px;display:block">
     <span>almanak-keeperhub</span>
   </a>
-  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Menu">
-    <svg class="bars" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg>
-    <svg class="dot" viewBox="0 0 20 20" fill="currentColor" style="position:static;opacity:1;transform:none;width:20px;height:20px;background:transparent"><circle cx="10" cy="10" r="6"/></svg>
-  </button>
+  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="bar b1"></span><span class="bar b2"></span></button>
 </header>
 
 <nav class="menu" id="menu" data-open="false" aria-label="Site menu">
   <div class="menu-cols">
     <ul class="menu-list">
-      <li><span class="n" style="color:var(--mint)">01</span><a href="#top">Home</a></li>
-      <li><span class="n" style="color:var(--yellow)">02</span><a href="#problem">The problem</a></li>
-      <li><span class="n" style="color:var(--blue-300)">03</span><a href="#how">How it works</a></li>
-      <li><span class="n" style="color:var(--red-300)">04</span><a href="#guard">The guard</a></li>
-      <li><span class="n" style="color:var(--mint)">05</span><a href="#proof">Proof</a></li>
-      <li><span class="n" style="color:var(--yellow)">06</span><a href="#upstream">Upstream</a></li>
-      <li><span class="n" style="color:var(--blue-300)">07</span><a href="console/">Console</a></li>
-      <li><span class="n" style="color:var(--red-300)">08</span><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a></li>
+      <li style="--k:0"><span class="n" style="color:var(--mint)">01</span><a href="#top">Home</a></li>
+      <li style="--k:1"><span class="n" style="color:var(--yellow)">02</span><a href="#problem">The problem</a></li>
+      <li style="--k:2"><span class="n" style="color:var(--blue-300)">03</span><a href="#how">How it works</a></li>
+      <li style="--k:3"><span class="n" style="color:var(--red-300)">04</span><a href="#guard">The guard</a></li>
+      <li style="--k:4"><span class="n" style="color:var(--mint)">05</span><a href="#proof">Proof</a></li>
+      <li style="--k:5"><span class="n" style="color:var(--yellow)">06</span><a href="#upstream">Upstream</a></li>
+      <li style="--k:6"><span class="n" style="color:var(--blue-300)">07</span><a href="console/">Console</a></li>
+      <li style="--k:7"><span class="n" style="color:var(--red-300)">08</span><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a></li>
     </ul>
     <div class="menu-field" aria-hidden="true"></div>
   </div>
   <div class="menu-foot">
-    <div><div class="mono-label">GitHub</div><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">Prashant-thakur77/almanak-keeperhub</a></div>
-    <div><div class="mono-label">Package</div><a href="https://pypi.org/project/almanak-keeperhub/">pypi.org/project/almanak-keeperhub</a></div>
-    <div><div class="mono-label">Video</div><a href="https://youtu.be/wdZJTSivzRI">youtu.be/wdZJTSivzRI</a></div>
+    <div class="f"><div class="mono-label">GitHub</div><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">Prashant-thakur77 / almanak-keeperhub</a></div>
+    <div class="f"><div class="mono-label">Package</div><a href="https://pypi.org/project/almanak-keeperhub/">almanak-keeperhub on PyPI</a></div>
+    <div class="f"><div class="mono-label">Demo</div><a href="https://youtu.be/wdZJTSivzRI">the video, four minutes</a></div>
     <button class="theme-btn" id="theme-btn" aria-label="Switch theme" title="Switch theme">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 14.9A8 8 0 0 1 14.5 2.5z"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 14.9A8 8 0 0 1 14.5 2.5z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
     </button>
   </div>
 </nav>
@@ -630,7 +634,7 @@ almanak-keeperhub api-features --chain base_sepolia
 
   /* theme: remembered per viewer; charcoal bands keep their own polarity either way */
   const root = document.documentElement;
-  try { const t = localStorage.getItem("ak-theme"); if (t === "dark" || t === "light") root.setAttribute("data-theme", t); } catch {}
+  (() => { let t = null; try { t = localStorage.getItem("ak-theme"); } catch {} if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; root.setAttribute("data-theme", t); })();
   $("theme-btn").addEventListener("click", () => {
     const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
@@ -640,7 +644,7 @@ almanak-keeperhub api-features --chain base_sepolia
 
   /* menu: a sheet covering the page from above; Escape or any link closes it */
   const menu = $("menu"), menuBtn = $("menu-btn");
-  const setMenu = (open) => { menu.dataset.open = String(open); menuBtn.setAttribute("aria-expanded", String(open)); document.body.dataset.menu = open ? "open" : "closed"; $("top-bar").dataset.on = open ? "menu" : bandUnderHeader(); };
+  const setMenu = (open) => { menu.dataset.open = String(open); menuBtn.setAttribute("aria-expanded", String(open)); menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu"); document.body.dataset.menu = open ? "open" : "closed"; $("top-bar").dataset.on = open ? "menu" : bandUnderHeader(); };
   menuBtn.addEventListener("click", () => setMenu(menu.dataset.open !== "true"));
   menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
   addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
@@ -696,6 +700,8 @@ almanak-keeperhub api-features --chain base_sepolia
     document.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; x = e.clientX; y = e.clientY; if (!shown) { shown = true; dot.style.opacity = "1"; } if (!queued) { queued = true; requestAnimationFrame(frame); } }, { passive: true });
     document.addEventListener("pointerdown", () => { dot.style.width = dot.style.height = SIZE * 0.7 + "px"; }, { passive: true });
     document.addEventListener("pointerup", () => { dot.style.width = dot.style.height = SIZE + "px"; }, { passive: true });
+    /* a click can change what is under the pointer (the menu opening, a theme switch); re-probe once the transition has run */
+    document.addEventListener("click", () => { if (shown) setTimeout(() => { queued = true; frame(); }, 360); }, { passive: true });
     document.addEventListener("mouseleave", () => { shown = false; dot.style.opacity = "0"; });
     addEventListener("blur", () => { shown = false; dot.style.opacity = "0"; });
     addEventListener("scroll", () => { if (shown && !queued) { queued = true; requestAnimationFrame(frame); } }, { passive: true });

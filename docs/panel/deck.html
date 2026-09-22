@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <title>Almanak strategies through KeeperHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --paper:#fbfaf6; --ink:#1f2a37; --muted:#5b6673; --line:#2b3440; --green:#1a7f4b; --green-bg:#e3f4ea; --amber:#b7791f; --amber-bg:#fbf1dc; --red:#b42318; --red-bg:#fbe4e1; --blue:#1d4ed8; --blue-bg:#e2ebfb; --grey-bg:#eef0f3; }
+  :root { --paper:#F5F4EF; --ink:#0B0F19; --muted:#4A4C52; --line:#0B0F19; --green:#1E8F5B; --green-bg:#DDF3E6; --amber:#B07A17; --amber-bg:#FFF1D6; --red:#D63B3B; --red-bg:#FBE1E1; --blue:#1D4FB8; --blue-bg:#E1EBFF; --grey-bg:#EAE9E2; }
   * { box-sizing:border-box; }
-  html, body { margin:0; padding:0; background:#e9e6df; }
-  body { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); }
+  html, body { margin:0; padding:0; background:#EAE9E2; }
+  body { font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); }
   .slide { width:1280px; height:720px; background:var(--paper); position:relative; overflow:hidden; padding:44px 56px; margin:0 auto 24px; page-break-after:always; break-after:page; }
   .slide:last-child { page-break-after:auto; break-after:auto; }
   @page { size:1280px 720px; margin:0; }
@@ -20,7 +20,7 @@
   p, li { font-size:18px; line-height:1.45; }
   ul { margin:0; padding-left:20px; }
   li { margin-bottom:8px; }
-  code, .mono { font-family:"JetBrains Mono", ui-monospace, Menlo, monospace; font-size:0.92em; }
+  code, .mono { font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace; font-size:0.92em; }
   .foot { position:absolute; left:56px; right:56px; bottom:26px; display:flex; justify-content:space-between; font-size:13px; color:var(--muted); }
   .cols { display:grid; grid-template-columns: 1fr 1fr; gap:40px; align-items:start; }
   .cols.wide-right { grid-template-columns: 470px 1fr; }
@@ -33,17 +33,17 @@
   .tag.green { background:var(--green-bg); color:var(--green); } .tag.amber { background:var(--amber-bg); color:var(--amber); } .tag.blue { background:var(--blue-bg); color:var(--blue); }
   table { border-collapse:collapse; width:100%; font-size:15.5px; }
   th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); padding:6px 8px; border-bottom:2px solid var(--line); }
-  td { padding:7px 8px; border-bottom:1px solid #d9dde3; vertical-align:top; }
+  td { padding:7px 8px; border-bottom:1px solid #D8D7D0; vertical-align:top; }
   .lede { font-size:22px; color:var(--muted); margin:0 0 6px; max-width:1050px; }
   .title-slide { display:flex; flex-direction:column; justify-content:center; }
   .title-slide h1 { font-size:58px; max-width:1100px; }
   .byline { font-size:19px; color:var(--muted); margin-top:10px; }
   svg { display:block; }
-  svg text { font-family:"Patrick Hand", "Segoe Print", cursive; fill:var(--ink); }
-  svg .small { font-size:14px; } svg .mid { font-size:17px; } svg .big { font-size:20px; font-weight:600; }
-  svg .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-size:12.5px; }
-  svg .lbl { paint-order:stroke; stroke:#fbfaf6; stroke-width:6px; stroke-linejoin:round; }
-  svg .node { font-size:13px; }
+  svg text { font-family:"IBM Plex Sans", system-ui, sans-serif; fill:var(--ink); }
+  svg .small { font-size:11.5px; } svg .mid { font-size:14.5px; } svg .big { font-size:17px; font-weight:600; }
+  svg .mono { font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:10.5px; }
+  svg .lbl { paint-order:stroke; stroke:#F5F4EF; stroke-width:6px; stroke-linejoin:round; }
+  svg .node { font-size:11.5px; }
   .slide-5 li { font-size:17px; margin-bottom:7px; }
   .slide-4 .note { font-size:14px; }
   .note { font-size:15px; color:var(--muted); margin-top:10px; }
@@ -85,38 +85,38 @@
     <svg viewBox="0 0 480 450" width="480" height="450" aria-label="Almanak's execution layer today">
       <defs>
         <filter id="r2" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G"/></filter>
-        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2b3440"/></marker>
-        <marker id="a2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b42318"/></marker>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0B0F19"/></marker>
+        <marker id="a2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D63B3B"/></marker>
       </defs>
-      <g filter="url(#r2)" fill="none" stroke="#2b3440" stroke-width="2">
+      <g filter="url(#r2)" fill="none" stroke="#0B0F19" stroke-width="2">
         <rect x="140" y="14" width="200" height="50" rx="9" fill="#fff"/>
         <rect x="140" y="104" width="200" height="50" rx="9" fill="#fff"/>
-        <rect x="14" y="204" width="140" height="66" rx="9" fill="#fbe4e1" stroke="#b42318"/>
+        <rect x="14" y="204" width="140" height="66" rx="9" fill="#FBE1E1" stroke="#D63B3B"/>
         <rect x="170" y="204" width="140" height="66" rx="9" fill="#fff"/>
-        <rect x="326" y="204" width="140" height="66" rx="9" fill="#fbe4e1" stroke="#b42318"/>
-        <rect x="140" y="340" width="200" height="50" rx="9" fill="#eef0f3"/>
+        <rect x="326" y="204" width="140" height="66" rx="9" fill="#FBE1E1" stroke="#D63B3B"/>
+        <rect x="140" y="340" width="200" height="50" rx="9" fill="#EAE9E2"/>
         <path d="M240 64 L240 104" marker-end="url(#a2)"/>
         <path d="M200 154 L84 204" marker-end="url(#a2)"/>
         <path d="M240 154 L240 204" marker-end="url(#a2)"/>
         <path d="M280 154 L396 204" marker-end="url(#a2)"/>
         <path d="M396 270 L270 340" marker-end="url(#a2)"/>
-        <path d="M84 270 L84 365 L140 365" stroke="#b42318" stroke-dasharray="5 4" marker-end="url(#a2r)"/>
+        <path d="M84 270 L84 365 L140 365" stroke="#D63B3B" stroke-dasharray="5 4" marker-end="url(#a2r)"/>
       </g>
       <text x="240" y="45" text-anchor="middle" class="big">Almanak strategy</text>
       <text x="240" y="135" text-anchor="middle" class="big">gateway: execution service</text>
       <text x="84" y="232" text-anchor="middle" class="mid">Signer</text>
-      <text x="84" y="254" text-anchor="middle" class="small" fill="#b42318">local private key</text>
+      <text x="84" y="254" text-anchor="middle" class="small" fill="#D63B3B">local private key</text>
       <text x="240" y="232" text-anchor="middle" class="mid">Simulator</text>
       <text x="240" y="254" text-anchor="middle" class="small">RPC, off on live nets</text>
       <text x="396" y="232" text-anchor="middle" class="mid">Submitter</text>
-      <text x="396" y="254" text-anchor="middle" class="small" fill="#b42318">public mempool only</text>
+      <text x="396" y="254" text-anchor="middle" class="small" fill="#D63B3B">public mempool only</text>
       <text x="240" y="370" text-anchor="middle" class="big">chain</text>
-      <text x="14" y="404" class="small" fill="#b42318">no idempotency key: a retry</text>
-      <text x="14" y="422" class="small" fill="#b42318">after a nonce error minted twice</text>
-      <text x="348" y="96" class="small" fill="#b42318">"Unknown wallet kind"</text>
-      <text x="348" y="114" class="small" fill="#b42318">for any plugin kind</text>
-      <text x="336" y="300" class="small" fill="#b42318">PrivateRelaySubmitter:</text>
-      <text x="336" y="318" class="small" fill="#b42318">"not implemented"</text>
+      <text x="14" y="404" class="small" fill="#D63B3B">no idempotency key: a retry</text>
+      <text x="14" y="422" class="small" fill="#D63B3B">after a nonce error minted twice</text>
+      <text x="348" y="96" class="small" fill="#D63B3B">"Unknown wallet kind"</text>
+      <text x="348" y="114" class="small" fill="#D63B3B">for any plugin kind</text>
+      <text x="336" y="300" class="small" fill="#D63B3B">PrivateRelaySubmitter:</text>
+      <text x="336" y="318" class="small" fill="#D63B3B">"not implemented"</text>
     </svg>
   </div>
   <div class="foot"><span>Sources: almanak/framework/execution/interfaces.py, almanak/gateway/services/execution_service.py at their main f98b7896</span><span>2 / 5</span></div>
@@ -129,20 +129,20 @@
   <svg viewBox="0 0 1170 470" width="1170" height="470" aria-label="Architecture">
     <defs>
       <filter id="r3" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G"/></filter>
-      <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2b3440"/></marker>
-      <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a7f4b"/></marker>
+      <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0B0F19"/></marker>
+      <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1E8F5B"/></marker>
     </defs>
-    <g filter="url(#r3)" fill="none" stroke="#2b3440" stroke-width="2">
+    <g filter="url(#r3)" fill="none" stroke="#0B0F19" stroke-width="2">
       <rect x="10" y="30" width="190" height="96" rx="10" fill="#fff"/>
       <rect x="270" y="30" width="230" height="96" rx="10" fill="#fff"/>
-      <rect x="570" y="14" width="260" height="128" rx="10" fill="#e2ebfb" stroke="#1d4ed8"/>
-      <rect x="890" y="14" width="275" height="128" rx="10" fill="#e3f4ea" stroke="#1a7f4b"/>
+      <rect x="570" y="14" width="260" height="128" rx="10" fill="#E1EBFF" stroke="#1D4FB8"/>
+      <rect x="890" y="14" width="275" height="128" rx="10" fill="#DDF3E6" stroke="#1E8F5B"/>
       <path d="M200 78 L270 78" marker-end="url(#a3)"/>
       <path d="M500 78 L570 78" marker-end="url(#a3)"/>
       <path d="M830 62 L890 62" marker-end="url(#a3)"/>
-      <path d="M890 100 L830 100" marker-end="url(#a3g)" stroke="#1a7f4b" stroke-dasharray="6 4"/>
+      <path d="M890 100 L830 100" marker-end="url(#a3g)" stroke="#1E8F5B" stroke-dasharray="6 4"/>
       <rect x="890" y="190" width="275" height="60" rx="10" fill="#fff"/>
-      <rect x="890" y="290" width="275" height="60" rx="10" fill="#eef0f3"/>
+      <rect x="890" y="290" width="275" height="60" rx="10" fill="#EAE9E2"/>
       <path d="M1027 142 L1027 190" marker-end="url(#a3)"/>
       <path d="M1027 250 L1027 290" marker-end="url(#a3)"/>
       <rect x="570" y="190" width="80" height="60" rx="10" fill="#fff"/>
@@ -153,19 +153,19 @@
       <path d="M800 190 L770 142" stroke-dasharray="4 4"/>
       <rect x="10" y="190" width="210" height="60" rx="10" fill="#fff"/>
       <path d="M600 142 L600 175 L115 175 L115 190" marker-end="url(#a3)" stroke-dasharray="6 4"/>
-      <rect x="270" y="280" width="580" height="184" rx="10" fill="#e3f4ea" stroke="#1a7f4b"/>
+      <rect x="270" y="280" width="580" height="184" rx="10" fill="#DDF3E6" stroke="#1E8F5B"/>
       <path d="M890 120 L870 120 L870 375 L850 375" marker-end="url(#a3)" stroke-dasharray="6 4"/>
       <rect x="290" y="380" width="130" height="56" rx="8" fill="#fff"/>
       <rect x="435" y="380" width="130" height="56" rx="8" fill="#fff"/>
-      <path d="M580 408 L 600 380 L 660 380 L 680 408 L 660 436 L 600 436 Z" fill="#fbf1dc" stroke="#b7791f"/>
+      <path d="M580 408 L 600 380 L 660 380 L 680 408 L 660 436 L 600 436 Z" fill="#FFF1D6" stroke="#B07A17"/>
       <rect x="700" y="380" width="130" height="56" rx="8" fill="#fff"/>
       <path d="M420 408 L435 408" marker-end="url(#a3)"/>
       <path d="M565 408 L580 408" marker-end="url(#a3)"/>
-      <path d="M680 408 L700 408" marker-end="url(#a3g)" stroke="#1a7f4b"/>
-      <path d="M630 436 L630 446" stroke="#b42318" stroke-dasharray="4 3"/>
+      <path d="M680 408 L700 408" marker-end="url(#a3g)" stroke="#1E8F5B"/>
+      <path d="M630 436 L630 446" stroke="#D63B3B" stroke-dasharray="4 3"/>
     </g>
     <text x="105" y="62" text-anchor="middle" class="big">Almanak strategy</text>
-    <text x="105" y="86" text-anchor="middle" class="small">unchanged: one line declares the chain</text>
+    <text x="105" y="86" text-anchor="middle" class="small">unchanged; one line names the chain</text>
     <text x="105" y="106" text-anchor="middle" class="small">plans the intent, compiles the tx</text>
     <text x="385" y="62" text-anchor="middle" class="big">Almanak gateway</text>
     <text x="385" y="86" text-anchor="middle" class="small">plugin points: almanak.wallets,</text>
@@ -183,9 +183,9 @@
     <text x="235" y="158" text-anchor="middle" class="small lbl">compiled transaction</text>
     <text x="535" y="158" text-anchor="middle" class="small lbl">sign, simulate, submit</text>
     <text x="860" y="50" text-anchor="middle" class="small lbl">HTTPS</text>
-    <text x="860" y="165" text-anchor="middle" class="small lbl" fill="#1a7f4b">verified receipt</text>
+    <text x="860" y="165" text-anchor="middle" class="small lbl" fill="#1E8F5B">verified receipt</text>
     <text x="1027" y="214" text-anchor="middle" class="mid">Turnkey enclave signs</text>
-    <text x="1027" y="236" text-anchor="middle" class="small">sponsored gas: paymaster → org EOA (EIP-7702)</text>
+    <text x="1027" y="236" text-anchor="middle" class="small">sponsored gas: paymaster → org EOA, EIP-7702</text>
     <text x="1027" y="314" text-anchor="middle" class="mid">Base Sepolia</text>
     <text x="1027" y="336" text-anchor="middle" class="small">TestVault (ERC-4626) · test USDC</text>
     <text x="610" y="214" text-anchor="middle" class="mid">Telegram</text>
@@ -195,8 +195,8 @@
     <text x="800" y="214" text-anchor="middle" class="mid">MCP</text>
     <text x="800" y="236" text-anchor="middle" class="small">for any agent</text>
     <text x="115" y="214" text-anchor="middle" class="mid">receipts log</text>
-    <text x="115" y="236" text-anchor="middle" class="small">a crashed process resumes, never resends</text>
-    <text x="290" y="306" class="big">KeeperHub's engine: two workflows generated from the strategy config</text>
+    <text x="115" y="236" text-anchor="middle" class="small">a crash resumes from it, never resends</text>
+    <text x="290" y="306" class="big">KeeperHub's engine: two workflows from the strategy config</text>
     <text x="290" y="328" class="small">keeper.py and exit_workflow.py: create, validate (deepCheck), execute through the workflows API</text>
     <text x="290" y="346" class="small">compounder: Schedule trigger, cron 0 */6, validated at deploy</text>
     <text x="290" y="364" class="small">exit guard (below): a Manual trigger carrying the decision, from the phone (/guard) or from the strategy</text>
@@ -208,8 +208,8 @@
     <text x="630" y="422" text-anchor="middle" class="node">held ≥ decided</text>
     <text x="765" y="402" text-anchor="middle" class="node">morpho/vault-redeem</text>
     <text x="765" y="422" text-anchor="middle" class="node">true branch only</text>
-    <text x="690" y="400" text-anchor="middle" class="small lbl" fill="#1a7f4b">true</text>
-    <text x="640" y="457" class="small" fill="#b42318">false: stops, nothing broadcast</text>
+    <text x="690" y="400" text-anchor="middle" class="small lbl" fill="#1E8F5B">true</text>
+    <text x="640" y="457" class="small" fill="#D63B3B">false: stops, nothing broadcast</text>
   </svg>
   <div class="foot"><span>Every box is real code in the repository; the two workflow ids and every execution id are on the console</span><span>3 / 5</span></div>
 </section>
@@ -231,21 +231,21 @@
     <svg viewBox="0 0 660 520" width="660" height="520" aria-label="The exit-guard workflow">
       <defs>
         <filter id="r4" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G"/></filter>
-        <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2b3440"/></marker>
-        <marker id="a4g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a7f4b"/></marker>
-        <marker id="a4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b42318"/></marker>
+        <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0B0F19"/></marker>
+        <marker id="a4g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1E8F5B"/></marker>
+        <marker id="a4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D63B3B"/></marker>
       </defs>
-      <g filter="url(#r4)" fill="none" stroke="#2b3440" stroke-width="2">
+      <g filter="url(#r4)" fill="none" stroke="#0B0F19" stroke-width="2">
         <rect x="30" y="10" width="270" height="64" rx="10" fill="#fff"/>
         <rect x="30" y="120" width="270" height="64" rx="10" fill="#fff"/>
-        <path d="M165 230 L 300 300 L 165 370 L 30 300 Z" fill="#fbf1dc" stroke="#b7791f"/>
-        <rect x="360" y="268" width="270" height="64" rx="10" fill="#e3f4ea" stroke="#1a7f4b"/>
-        <rect x="30" y="430" width="270" height="64" rx="10" fill="#fbe4e1" stroke="#b42318"/>
+        <path d="M165 230 L 300 300 L 165 370 L 30 300 Z" fill="#FFF1D6" stroke="#B07A17"/>
+        <rect x="360" y="268" width="270" height="64" rx="10" fill="#DDF3E6" stroke="#1E8F5B"/>
+        <rect x="30" y="430" width="270" height="64" rx="10" fill="#FBE1E1" stroke="#D63B3B"/>
         <rect x="360" y="430" width="270" height="64" rx="10" fill="#fff"/>
         <path d="M165 74 L165 120" marker-end="url(#a4)"/>
         <path d="M165 184 L165 230" marker-end="url(#a4)"/>
-        <path d="M300 300 L360 300" marker-end="url(#a4g)" stroke="#1a7f4b"/>
-        <path d="M165 370 L165 430" marker-end="url(#a4r)" stroke="#b42318"/>
+        <path d="M300 300 L360 300" marker-end="url(#a4g)" stroke="#1E8F5B"/>
+        <path d="M165 370 L165 430" marker-end="url(#a4r)" stroke="#D63B3B"/>
         <path d="M495 332 L495 430" marker-end="url(#a4)"/>
         <path d="M380 60 L 320 60" stroke-dasharray="4 4"/>
       </g>
@@ -255,8 +255,8 @@
       <text x="165" y="168" text-anchor="middle" class="mono">balanceOf(wallet) on the vault</text>
       <text x="165" y="292" text-anchor="middle" class="mid">Condition</text>
       <text x="165" y="316" text-anchor="middle" class="mono">balanceRaw ≥ decided</text>
-      <text x="318" y="288" class="small" fill="#1a7f4b">true</text>
-      <text x="178" y="408" class="small" fill="#b42318">false</text>
+      <text x="318" y="288" class="small" fill="#1E8F5B">true</text>
+      <text x="178" y="408" class="small" fill="#D63B3B">false</text>
       <text x="495" y="294" text-anchor="middle" class="mid">morpho/vault-redeem</text>
       <text x="495" y="316" text-anchor="middle" class="mono">redeem(shares, receiver, owner)</text>
       <text x="165" y="456" text-anchor="middle" class="mid">stopped: 3 of 4 nodes</text>

@@ -9,7 +9,7 @@ MCP server, and two KeeperHub workflows generated from the strategy config and r
 
 [![ci](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/ci.yml/badge.svg)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/ci.yml)
 [![proof tick every six hours](https://img.shields.io/github/actions/workflow/status/Prashant-thakur77/almanak-keeperhub/proof.yml?branch=main&label=proof%20tick%20every%206h)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml)
-[![release](https://img.shields.io/github/v/release/Prashant-thakur77/almanak-keeperhub?label=release&color=1a7f4b)](https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest)
+[![release](https://img.shields.io/github/v/release/Prashant-thakur77/almanak-keeperhub?label=release&color=1E8F5B)](https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest)
 [![PyPI](https://img.shields.io/pypi/v/almanak-keeperhub?label=PyPI)](https://pypi.org/project/almanak-keeperhub/)
 [![Python](https://img.shields.io/pypi/pyversions/almanak-keeperhub)](https://pypi.org/project/almanak-keeperhub/)
 [![license](https://img.shields.io/github/license/Prashant-thakur77/almanak-keeperhub)](LICENSE)
@@ -18,14 +18,14 @@ MCP server, and two KeeperHub workflows generated from the strategy config and r
 [![verified by KeeperHub](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Fverified.json)](https://prashant-thakur77.github.io/almanak-keeperhub/console/)
 [![live conformance](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Fconformance.json)](docs/conformance.json)
 [![proof refreshed](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Frefreshed.json)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml)
-[![upstream](https://img.shields.io/badge/KeeperHub%20PRs-3%20merged%20%C2%B7%204%20in%20review-1a7f4b)](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses)
+[![upstream](https://img.shields.io/badge/KeeperHub%20PRs-3%20merged%20%C2%B7%204%20in%20review-1E8F5B)](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses)
 [![chain](https://img.shields.io/badge/chain-Base%20Sepolia%20%2884532%29-0052ff)](https://sepolia.basescan.org/address/0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9)
 [![tests](https://img.shields.io/badge/tests-576%20unit%20%2B%2011%20live-blue)](#tests)
 
 [![site](https://img.shields.io/badge/site-live%20counters%20and%20lifecycle-111)](https://prashant-thakur77.github.io/almanak-keeperhub/)
 [![console](https://img.shields.io/badge/console-every%20execution%2C%20every%20verdict-111)](https://prashant-thakur77.github.io/almanak-keeperhub/console/)
 [![video](https://img.shields.io/badge/video-demo-red?logo=youtube&logoColor=white)](https://youtu.be/wdZJTSivzRI)
-[![deck](https://img.shields.io/badge/deck-finalist%20panel-5b6673)](docs/panel/deck.pdf)
+[![deck](https://img.shields.io/badge/deck-finalist%20panel-4A4C52)](docs/panel/deck.pdf)
 [![telegram](https://img.shields.io/badge/Telegram-operator%20bot-26A5E4?logo=telegram&logoColor=white)](#telegram-operator-bot-optional)
 [![MCP](https://img.shields.io/badge/MCP-server-000)](#mcp-server-the-strategy-as-tools-for-any-agent)
 

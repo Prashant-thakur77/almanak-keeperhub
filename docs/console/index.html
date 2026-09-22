@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>almanak-keeperhub · execution console</title>
 <link rel="icon" type="image/png" href="../img/buidl-logo.png">
+<script>window.__CONSOLE_SNAPSHOT__ = true;</script>
+<script>
+  (function () { var t = null; try { t = localStorage.getItem("ak-theme"); } catch (e) {} if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; document.documentElement.setAttribute("data-theme", t);
+    addEventListener("DOMContentLoaded", function () { var b = document.getElementById("theme-btn"); if (!b) return; b.addEventListener("click", function () { var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", next); try { localStorage.setItem("ak-theme", next); } catch (e) {} }); }); })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -18,16 +23,29 @@
     --sans: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   }
+  [data-theme="dark"] {
+    --bg: #0B0F19; --frame: #161B26; --ink: #F5F4EF; --muted: #A9A8A0; --line: #2A3140; --sunken: #05070C;
+    --ok: #5CC48E; --ok-ink: #DDF3E6; --ok-bg: #0B4A2C;
+    --warn: #F5A524; --warn-ink: #FFF1D6; --warn-bg: #5A3606;
+    --bad: #F09A9A; --bad-ink: #FBE1E1; --bad-bg: #6E1414;
+    --info: #8FB3FF; --info-ink: #E1EBFF; --info-bg: #173B8A;
+  }
   * { box-sizing: border-box; box-shadow: none; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 var(--sans); letter-spacing: -.011em; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  ::selection { background: #B1E5FC; color: #262626; }
+  ::selection { background: #C9EEDA; color: #0B0F19; }
+  html, body { transition: background-color 250ms cubic-bezier(.2,0,0,1), color 250ms cubic-bezier(.2,0,0,1); }
   .wrap { max-width: 1280px; margin: 0 auto; padding: 24px clamp(20px, 4vw, 64px) 80px; }
   .topnav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 28px; }
   .topnav .wordmark { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; letter-spacing: -.03em; text-decoration: none; }
   .topnav .wordmark img { width: 36px; height: 36px; border-radius: 9px; }
   .topnav .back { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--ink); font-weight: 500; font-size: 14px; text-decoration: none; }
   .topnav .back:hover { background: var(--ink); color: var(--bg); }
+  .topnav .right { display: flex; align-items: center; gap: 10px; }
+  .theme-btn { width: 40px; height: 40px; border-radius: 999px; border: 2px solid var(--ink); background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .theme-btn svg { width: 16px; height: 16px; }
+  .theme-btn:hover { background: var(--ink); color: var(--bg); }
+  .theme-btn .sun { display: none; } [data-theme="dark"] .theme-btn .sun { display: block; } [data-theme="dark"] .theme-btn .moon { display: none; }
   header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; margin-bottom: 22px; }
   header h1 { margin: 0; font-size: clamp(28px, 3vw, 44px); letter-spacing: -.032em; font-weight: 600; line-height: .96; }
   header h1 span { color: var(--muted); font-weight: 500; }
@@ -68,10 +86,10 @@
   .addr, .hash { font: 12px var(--mono); }
   .hash a { color: var(--info-ink); text-decoration: none; border-bottom: 1px dotted var(--info); }
   .pill { font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid transparent; }
-  .pill.ok { background: var(--ok-bg); color: var(--ok-ink); border-color: #cdeeab; }
-  .pill.warn { background: var(--warn-bg); color: var(--warn-ink); border-color: #f4dd8a; }
-  .pill.bad { background: var(--bad-bg); color: var(--bad-ink); border-color: #f3b4b4; }
-  .pill.info { background: var(--info-bg); color: var(--info-ink); border-color: #c7d6fa; }
+  .pill.ok { background: var(--ok-bg); color: var(--ok-ink); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn-ink); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad-ink); }
+  .pill.info { background: var(--info-bg); color: var(--info-ink); }
   .filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
   .chip { font: inherit; font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 999px; border: 2px solid transparent; background: var(--frame); color: var(--muted); cursor: pointer; }
   .chip b { color: var(--ink); font-weight: 600; }
@@ -79,7 +97,7 @@
   .search { display: block; width: 100%; font: 13px var(--mono); padding: 12px 14px; margin: 0 0 12px; border: 2px solid transparent; border-radius: 8px; background: var(--frame); color: var(--ink); }
   .search:focus { outline: none; border-color: var(--info); }
   .card.target { border-color: var(--info); }
-  .pill.muted { background: #f0f0ec; color: var(--muted); border-color: var(--line); }
+  .pill.muted { background: var(--sunken); color: var(--muted); }
   .when { color: var(--muted); font-size: 12px; white-space: nowrap; }
   button.inspect { font: 500 13px var(--sans); padding: 7px 14px; border: 2px solid var(--ink); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; transition: background-color 150ms, color 150ms; }
   button.inspect:hover { background: var(--ink); color: var(--bg); }
@@ -116,7 +134,10 @@
 <div class="wrap">
   <div class="topnav">
     <a class="wordmark" href="../"><img src="../img/buidl-logo.png" alt="" width="36" height="36" style="border-radius:9px;display:block"><span>almanak-keeperhub</span></a>
-    <a class="back" href="../">Back to the site</a>
+    <div class="right">
+      <button class="theme-btn" id="theme-btn" aria-label="Switch theme" title="Switch theme"><svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 14.9A8 8 0 0 1 14.5 2.5z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></button>
+      <a class="back" href="../">Back to the site</a>
+    </div>
   </div>
   <header>
     <h1><a id="home" href="../" style="text-decoration:none" hidden>almanak-keeperhub</a><span id="h1name">almanak-keeperhub</span> <span>· execution console</span></h1>
@@ -167,7 +188,6 @@
   <footer id="sources"></footer>
 </div>
 
-<script>window.__CONSOLE_SNAPSHOT__ = true;</script>
 <script>
 (function () {
   // Set by the exporter: the same page over frozen JSON, for GitHub Pages.
