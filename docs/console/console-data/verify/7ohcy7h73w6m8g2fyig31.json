@@ -1,0 +1,27 @@
+{
+ "execution_id": "7ohcy7h73w6m8g2fyig31",
+ "status": "completed",
+ "sponsored": false,
+ "transaction_link": "https://sepolia.basescan.org/tx/0x4062e35233b1cdd97f98bee4de84cd26d0ad64b2e40e43f6078a8f8be51bbddb",
+ "receipts": [
+  {
+   "hash": "0x4062e35233b1cdd97f98bee4de84cd26d0ad64b2e40e43f6078a8f8be51bbddb",
+   "verified": true,
+   "receipt_status": "success"
+  }
+ ],
+ "org_wallet": "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9",
+ "tx_hash": "0x4062e35233b1cdd97f98bee4de84cd26d0ad64b2e40e43f6078a8f8be51bbddb",
+ "events": [
+  "Transfer at 0x036cbd53842c5426634e7929541ec2318f3dcf7e: from=0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9 to=0xd36e12a5b2926a5cbe6b4de42a0d60fd35d3cb04 value=5000000 -> actor is org wallet",
+  "Transfer at 0xd36e12a5b2926a5cbe6b4de42a0d60fd35d3cb04: from=0x0000000000000000000000000000000000000000 to=0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9 value=5000000 -> actor is mint to the org wallet",
+  "Deposit at 0xd36e12a5b2926a5cbe6b4de42a0d60fd35d3cb04: sender=0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9 owner=0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9 assets=5000000 shares=5000000 -> actor is org wallet"
+ ],
+ "onchain": {
+  "sender": "0xe7dbacbdd4cb2ddff5681dcd9e56fcf488e36ac9",
+  "sender_is_org_wallet": true,
+  "status": "success",
+  "block": 47012275,
+  "gas_used": 121604
+ }
+}
