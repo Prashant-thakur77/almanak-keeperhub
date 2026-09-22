@@ -33,7 +33,7 @@
     --sans:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
     --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
     --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
-    --display-xl:clamp(48px,min(7.4vw,11.2vh),118px); --display:clamp(44px,5.5vw,80px); --h1:clamp(36px,4vw,64px); --h2:clamp(28px,3vw,48px); --h3:clamp(22px,2vw,32px);
+    --display-xl:clamp(52px,7.4vw,118px); --display:clamp(44px,5.5vw,80px); --h1:clamp(36px,4vw,64px); --h2:clamp(28px,3vw,48px); --h3:clamp(22px,2vw,32px);
     --body-lg:clamp(18px,1.2vw,22px); --body:16px; --label:13px; --micro:11px;
     --margin:clamp(20px,4vw,64px); --gutter:clamp(16px,1.7vw,24px); --band:clamp(72px,9vw,128px);
     --r-card:16px; --r-card-lg:24px; --r-pill:999px;
@@ -215,18 +215,23 @@
   @keyframes draw{to{stroke-dashoffset:0}}
 
   /* ---- hero ---- */
-  .hero{min-height:100vh;display:grid;align-content:end;padding-top:104px;padding-bottom:44px;position:relative}
+  .hero{min-height:100vh;display:grid;align-content:end;padding-top:120px;padding-bottom:48px;position:relative}
   .hero .g{align-items:end}
+  .hero .g>*{grid-row:1}
   .hero h1{max-width:none}
-  .hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-  .hero .lede{margin-top:22px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
+  .hero .stops{grid-column:9/span 4;align-self:end;width:63.2%;display:flex;flex-direction:column;gap:14px;margin-bottom:6px;position:relative;z-index:1}
+  .hero .stops::before{content:"";position:absolute;right:-14px;top:-80px;bottom:22px;width:28px;border-radius:14px;background:var(--mint);z-index:-1}
+  .hero .stop{display:flex;align-items:center}
+  .hero .stop .btn{flex:0 0 auto}
+  .hero .stop .stub{flex:1;height:4px;min-width:16px;background:var(--mint);border-radius:2px;margin-left:12px}
+  .hero .lede{margin-top:28px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
   .pin{grid-column:10/span 3;justify-self:center;align-self:start;width:min(200px,18vw,26vh);margin-top:-40px}
   .pin svg{width:100%;height:auto;display:block;overflow:visible}
   .cue{position:absolute;right:var(--margin);bottom:40px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:transform var(--d-medium) var(--ease)}
   .cue svg{width:14px;height:14px;animation:nudge 1.6s var(--ease) infinite}
   @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
   body[data-scrolled="true"] .cue{transform:translateY(120px)}
-  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} }
+  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;width:auto;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:28px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
 
   /* ---- the connector spine crossing between sections ---- */
   .spine-v{position:absolute;width:28px;border-radius:14px;background:var(--mint);z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 14px);clip-path:inset(0 0 100% 0 round 14px);transition:clip-path 900ms cubic-bezier(.16,1,.3,1);will-change:clip-path}
@@ -350,17 +355,17 @@
         <div class="eyebrow" style="margin-bottom:28px">01 / Hero</div>
         <h1 class="display-xl rv"><span class="ln"><span>Almanak decides.</span></span><span class="ln"><span>KeeperHub <mark>lands it</mark>.</span></span><span class="ln"><span>No strategy</span></span><span class="ln"><span>code changes.</span></span></h1>
         <p class="lede rv"><span class="ln"><span>Every Almanak strategy, unmodified, dry-runs, signs and broadcasts through KeeperHub: one idempotency key per intent, a verified receipt back, no private key on the machine.</span></span></p>
-        <div class="cta">
-          <a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          <a class="btn ghost" href="#video">Watch the demo</a>
-          <a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub">Read the code</a>
-        </div>
       </div>
       <div class="pin draw" id="pin">
         <svg viewBox="0 0 200 560" fill="none" aria-hidden="true">
           <circle cx="100" cy="100" r="80" stroke="#5CC48E" stroke-width="28" style="--len:506"/>
           <path d="M100 194 V540" stroke="#5CC48E" stroke-width="28" stroke-linecap="round" style="--len:350"/>
         </svg>
+      </div>
+      <div class="stops" aria-label="Start here">
+        <div class="stop"><a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><span class="stub"></span></div>
+        <div class="stop"><a class="btn ghost" href="#video">Watch the demo</a><span class="stub"></span></div>
+        <div class="stop"><a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub">Read the code</a><span class="stub"></span></div>
       </div>
     </div>
     <a class="cue" href="#live" data-scroll-cue><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg> Scroll</a>
