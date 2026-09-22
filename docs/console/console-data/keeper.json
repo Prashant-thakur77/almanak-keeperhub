@@ -1,4 +1,195 @@
 {
- "deployed": false,
- "path": "/home/runner/work/almanak-keeperhub/almanak-keeperhub/docs/keeperhub-keeper.json"
+ "deployed": true,
+ "path": "/home/runner/work/almanak-keeperhub/almanak-keeperhub/demos/metamorpho_base_sepolia/keeperhub-keeper.json",
+ "workflow_id": "7cloybpqfrjvjv756dd2r",
+ "name": "almanak-keeperhub compounder (USDC -> 0xd36E...cb04)",
+ "validation": {
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "nodeCount": 5
+ },
+ "enabled": false,
+ "created_at": "2026-09-12T06:19:51.491852+00:00",
+ "cron": "0 */6 * * *",
+ "min": "1",
+ "max": "90",
+ "manual_runs": [
+  {
+   "execution_id": "ieycppji20h1iymm0mkvf",
+   "status": "success",
+   "at": "2026-09-12T07:18:10+00:00",
+   "started_at": "2026-09-12T07:17:52.425Z",
+   "completed_at": "2026-09-12T07:18:03.960Z",
+   "transactions": [
+    {
+     "node": "approve",
+     "hash": "0x00a03b8ff7f326fc8cf16fa885611d9dbe9615db664b695bbdd26c5b3fba6041",
+     "verified": true
+    },
+    {
+     "node": "deposit",
+     "hash": "0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16",
+     "verified": true
+    }
+   ],
+   "error": null
+  }
+ ],
+ "executions": [
+  {
+   "id": "ieycppji20h1iymm0mkvf",
+   "workflowId": "7cloybpqfrjvjv756dd2r",
+   "organizationId": "589baa4d-025f-47a4-9751-b68895f493f7",
+   "userId": "IStWFY5COkKl72PUTFrTynQGzpatEa25",
+   "status": "success",
+   "input": {},
+   "output": {
+    "chainId": 84532,
+    "gasUsed": "512478000000",
+    "success": true,
+    "sponsored": true,
+    "executedCall": {
+     "args": {
+      "assets": "15000000",
+      "receiver": "0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9"
+     },
+     "reverted": false,
+     "sponsored": true,
+     "topLevelTo": "0x5af5194b4b0909eb978e3cf1e25333852277f07d",
+     "functionName": "deposit",
+     "contractAddress": "0xd36e12a5b2926a5cbe6b4de42a0d60fd35d3cb04",
+     "functionSignature": "deposit(uint256,address)"
+    },
+    "gasUsedUnits": "85413",
+    "transactionHash": "0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16",
+    "transactionLink": "https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16",
+    "effectiveGasPrice": "6000000"
+   },
+   "error": null,
+   "errorCategory": null,
+   "errorType": null,
+   "errorCode": null,
+   "startedAt": "2026-09-12T07:17:52.425Z",
+   "completedAt": "2026-09-12T07:18:03.960Z",
+   "duration": "11385",
+   "totalSteps": 5,
+   "completedSteps": 5,
+   "currentNodeId": null,
+   "currentNodeName": null,
+   "lastSuccessfulNodeId": "deposit",
+   "lastSuccessfulNodeName": "Deposit into the vault",
+   "executionTrace": [
+    "trigger",
+    "balance",
+    "gate",
+    "approve",
+    "deposit"
+   ],
+   "runId": "wrun_01M2A7NMNT45VYDEMGBQXCN9AB",
+   "transactionHashes": [
+    {
+     "hash": "0x00a03b8ff7f326fc8cf16fa885611d9dbe9615db664b695bbdd26c5b3fba6041",
+     "nodeId": "approve",
+     "chainId": 84532,
+     "gasUsed": "60628",
+     "nodeName": "Approve USDC for the vault",
+     "verified": true,
+     "verifiedAt": "2026-09-12T07:18:03.881Z",
+     "blockNumber": 46714594,
+     "receiptStatus": "success"
+    },
+    {
+     "hash": "0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16",
+     "nodeId": "deposit",
+     "chainId": 84532,
+     "gasUsed": "85413",
+     "nodeName": "Deposit into the vault",
+     "verified": true,
+     "verifiedAt": "2026-09-12T07:18:03.881Z",
+     "blockNumber": 46714597,
+     "receiptStatus": "success"
+    }
+   ],
+   "gasUsedWei": "876246000000",
+   "billable": true,
+   "triggeredByUserApiKeyId": null,
+   "triggeredByOrgApiKeyId": "7szu6oixbqer72b2rhhsg",
+   "triggeredByIp": "14.139.56.4",
+   "triggeredByCountry": "IN",
+   "triggerSource": "manual",
+   "triggeredByCredentialType": "org_api_key",
+   "triggeredByCredentialLabel": null,
+   "executedWorkflowHash": "6df1eca3c2348adbf827a5e729f955ec02c6e87243c27570a75688180d31d3c8",
+   "dispatchKey": null,
+   "deletedAt": null,
+   "ranVersion": 2
+  }
+ ],
+ "error": null,
+ "exit_guard": {
+  "deployed": true,
+  "path": "/home/runner/work/almanak-keeperhub/almanak-keeperhub/demos/metamorpho_base_sepolia/keeperhub-exit-guard.json",
+  "workflow_id": "zhanaalz8k47rrjspihct",
+  "name": "almanak-keeperhub guarded exit (0xd36E...cb04)",
+  "validation": {
+   "valid": true,
+   "errors": [],
+   "warnings": [],
+   "nodeCount": 4
+  },
+  "vault": "0xd36E12a5b2926A5cbE6B4DE42a0D60Fd35d3cb04",
+  "wallet": "0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9",
+  "chain": "base_sepolia",
+  "chain_id": 84532,
+  "created_at": "2026-09-22T17:30:14.561028+00:00",
+  "manual_runs": [
+   {
+    "execution_id": "qez8b9fhipm7c4zcqa6sg",
+    "at": "2026-09-22T17:30:20.300207+00:00",
+    "shares": 5000001,
+    "held": 5000000,
+    "executed": false,
+    "stopped_at_gate": true,
+    "status": "success",
+    "trace": [],
+    "transactions": [],
+    "error": null
+   },
+   {
+    "execution_id": "90eswt00kn44cw2szpl80",
+    "at": "2026-09-22T17:30:36.938630+00:00",
+    "shares": 5000000,
+    "held": 5000000,
+    "executed": true,
+    "stopped_at_gate": false,
+    "status": "success",
+    "trace": [],
+    "transactions": [
+     {
+      "node": "redeem",
+      "hash": "0xc18e3c7fb2c9be914115d835e29042bc6593b5408e8c0f77ac64965d3282479d",
+      "verified": true
+     }
+    ],
+    "error": null
+   },
+   {
+    "execution_id": "d4uhb7ny5bp7zwwreb2m2",
+    "at": "2026-09-22T17:51:47.124081+00:00",
+    "shares": 1,
+    "held": 0,
+    "executed": false,
+    "stopped_at_gate": true,
+    "status": "success",
+    "trace": [
+     "trigger:success",
+     "shares:success",
+     "gate:success"
+    ],
+    "transactions": [],
+    "error": null
+   }
+  ]
+ }
 }
