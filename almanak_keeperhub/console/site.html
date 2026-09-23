@@ -225,10 +225,11 @@
   .hero .g{align-items:end}
   .hero .g>*{grid-row:1}
   .hero h1{max-width:none}
-  .hero .stops{grid-column:9/span 4;align-self:end;width:63.2%;display:flex;flex-direction:column;gap:14px;margin-bottom:6px;position:relative;z-index:1}
+  .hero .stops{grid-column:9/span 4;align-self:end;width:calc(63.2% + 56px);margin-left:-56px;display:flex;flex-direction:column;gap:16px;margin-bottom:6px;position:relative;z-index:1}
   .hero .stops::before{content:"";position:absolute;right:-3px;top:-80px;bottom:22px;width:6px;border-radius:3px;background:repeating-linear-gradient(180deg,var(--mint) 0 16px,transparent 16px 30px);opacity:.9;z-index:-1}
   .hero .stop{display:flex;align-items:center}
-  .hero .stop .btn{flex:0 0 auto}
+  .hero .stop .btn{flex:0 0 auto;height:66px;padding:0 34px;font-size:19px;border-width:2.5px}
+  .hero .stop .btn svg{width:22px;height:22px}
   .hero .stop .stub{flex:1;height:5px;min-width:16px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--mint) 0 12px,transparent 12px 24px);margin-left:12px;position:relative}
   .hero .stop .stub::after{content:"";position:absolute;right:-9px;top:-6px;width:17px;height:17px;border-radius:999px;background:var(--mint)}
   .hero .lede{margin-top:28px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
@@ -238,7 +239,8 @@
   .cue svg{width:14px;height:14px;animation:nudge 1.6s var(--ease) infinite}
   @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
   body[data-scrolled="true"] .cue{transform:translateY(120px)}
-  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;grid-row:2;align-self:start;width:auto;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:8px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
+  @media (max-width:1360px){ .hero .stops{width:calc(63.2% + 100px);margin-left:-100px} .hero .stop .btn{height:60px;padding:0 26px;font-size:17px} .hero .stop .btn svg{width:20px;height:20px} }
+  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;grid-row:2;align-self:start;width:auto;margin-left:0;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:8px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
 
   /* ---- the connector spine crossing between sections ---- */
   .spine-v{position:absolute;width:34px;z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 17px);--p:0}
