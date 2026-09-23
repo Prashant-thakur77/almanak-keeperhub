@@ -221,16 +221,16 @@
   @keyframes draw{to{stroke-dashoffset:0}}
 
   /* ---- hero ---- */
-  .hero{min-height:100vh;display:grid;align-content:end;padding-top:120px;padding-bottom:48px;position:relative}
+  .hero{min-height:100vh;display:grid;align-content:end;padding-top:120px;padding-bottom:104px;position:relative}
   .hero .g{align-items:end}
   .hero .g>*{grid-row:1}
   .hero h1{max-width:none}
   .hero .stops{grid-column:9/span 4;align-self:end;width:63.2%;display:flex;flex-direction:column;gap:14px;margin-bottom:6px;position:relative;z-index:1}
-  .hero .stops::before{content:"";position:absolute;right:-1px;top:-80px;bottom:22px;width:2px;background:repeating-linear-gradient(180deg,var(--mint) 0 8px,transparent 8px 18px);opacity:.85;z-index:-1}
+  .hero .stops::before{content:"";position:absolute;right:-3px;top:-80px;bottom:22px;width:6px;border-radius:3px;background:repeating-linear-gradient(180deg,var(--mint) 0 16px,transparent 16px 30px);opacity:.9;z-index:-1}
   .hero .stop{display:flex;align-items:center}
   .hero .stop .btn{flex:0 0 auto}
-  .hero .stop .stub{flex:1;height:2px;min-width:16px;background:repeating-linear-gradient(90deg,var(--mint) 0 6px,transparent 6px 13px);margin-left:12px;position:relative}
-  .hero .stop .stub::after{content:"";position:absolute;right:-5px;top:-4px;width:10px;height:10px;border-radius:999px;background:var(--mint)}
+  .hero .stop .stub{flex:1;height:5px;min-width:16px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--mint) 0 12px,transparent 12px 24px);margin-left:12px;position:relative}
+  .hero .stop .stub::after{content:"";position:absolute;right:-9px;top:-6px;width:17px;height:17px;border-radius:999px;background:var(--mint)}
   .hero .lede{margin-top:28px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
   .pin{grid-column:10/span 3;justify-self:center;align-self:start;width:min(200px,18vw,26vh);margin-top:-40px}
   .pin svg{width:100%;height:auto;display:block;overflow:visible}
@@ -241,10 +241,10 @@
   @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;grid-row:2;align-self:start;width:auto;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:8px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
 
   /* ---- the connector spine crossing between sections ---- */
-  .spine-v{position:absolute;width:18px;z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 9px);--p:0}
-  .spine-v::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(180deg,var(--mint) 0 8px,transparent 8px 18px);opacity:.85}
-  .spine-v::after{content:"";position:absolute;left:0;top:calc(var(--p) * 100%);width:18px;height:18px;margin-top:-9px;border-radius:999px;background:var(--mint);box-shadow:0 0 0 7px rgba(92,196,142,.22);transition:top 900ms cubic-bezier(.16,1,.3,1)}
-  .spine-v.left{left:calc(var(--margin) + (100% - 2 * var(--margin)) * .315 - 9px)}
+  .spine-v{position:absolute;width:34px;z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 17px);--p:0}
+  .spine-v::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:6px;border-radius:3px;background:repeating-linear-gradient(180deg,var(--mint) 0 16px,transparent 16px 30px);opacity:.9}
+  .spine-v::after{content:"";position:absolute;left:0;top:calc(var(--p) * 100%);width:34px;height:34px;margin-top:-17px;border-radius:999px;background:var(--mint);box-shadow:0 0 0 12px rgba(92,196,142,.22);transition:top 900ms cubic-bezier(.16,1,.3,1)}
+  .spine-v.left{left:calc(var(--margin) + (100% - 2 * var(--margin)) * .315 - 17px)}
   @media (max-width:1024px){ .spine-v{display:none} }
 
   /* ---- the problem: statement plus a sticky stack of full-height panels ---- */
@@ -303,9 +303,9 @@
   .diagram svg{width:100%;height:auto;display:block}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gutter)}
   .route{position:relative}
-  .route::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:2px;margin-top:-1px;background:repeating-linear-gradient(90deg,var(--mint) 0 8px,transparent 8px 18px);opacity:.85}
+  .route::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:6px;margin-top:-3px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--mint) 0 16px,transparent 16px 30px);opacity:.9}
   .route>.mask{position:relative;z-index:1}
-  @media (max-width:860px){ .route::before{left:50%;right:auto;top:4%;bottom:4%;height:auto;width:2px;margin:0 0 0 -1px;background:repeating-linear-gradient(180deg,var(--mint) 0 8px,transparent 8px 18px)} }
+  @media (max-width:860px){ .route::before{left:50%;right:auto;top:4%;bottom:4%;height:auto;width:6px;margin:0 0 0 -3px;background:repeating-linear-gradient(180deg,var(--mint) 0 16px,transparent 16px 30px)} }
   #failures-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
   @media (max-width:860px){ .grid3,.grid2{grid-template-columns:1fr} }
   .sec-head{margin-bottom:40px;max-width:20ch}
@@ -377,11 +377,11 @@
       <div class="pin" id="pin">
         <svg viewBox="0 0 200 560" fill="none" aria-hidden="true">
           <defs><path id="pin-track" d="M100 194 V540"/></defs>
-          <circle cx="100" cy="100" r="80" stroke="#5CC48E" stroke-width="3" stroke-dasharray="3 11" stroke-linecap="round" opacity=".85"/>
-          <circle cx="100" cy="100" r="14" fill="#5CC48E"/>
-          <path d="M100 194 V540" stroke="#5CC48E" stroke-width="3" stroke-dasharray="3 11" stroke-linecap="round" opacity=".85"/>
-          <circle r="11" fill="#5CC48E"><animateMotion dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"><mpath href="#pin-track"/></animateMotion></circle>
-          <circle r="11" fill="none" stroke="#5CC48E" stroke-width="2" opacity=".35"><animateMotion dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"><mpath href="#pin-track"/></animateMotion><animate attributeName="r" values="11;22" dur="3.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;0" dur="3.6s" repeatCount="indefinite"/></circle>
+          <circle cx="100" cy="100" r="80" stroke="#5CC48E" stroke-width="8" stroke-dasharray="14 20" stroke-linecap="round" opacity=".9"/>
+          <circle cx="100" cy="100" r="24" fill="#5CC48E"/>
+          <path d="M100 194 V540" stroke="#5CC48E" stroke-width="8" stroke-dasharray="16 22" stroke-linecap="round" opacity=".9"/>
+          <circle r="20" fill="#5CC48E"><animateMotion dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"><mpath href="#pin-track"/></animateMotion></circle>
+          <circle r="20" fill="none" stroke="#5CC48E" stroke-width="3" opacity=".35"><animateMotion dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"><mpath href="#pin-track"/></animateMotion><animate attributeName="r" values="20;38" dur="3.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;0" dur="3.6s" repeatCount="indefinite"/></circle>
         </svg>
       </div>
       <div class="stops" aria-label="Start here">
