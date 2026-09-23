@@ -602,14 +602,14 @@
     <div class="wrap above">
       <div class="g" style="margin-bottom:48px">
         <div class="rail"><div class="eyebrow">11 / Upstream</div></div>
-        <div class="main"><h2 class="display rv"><span class="ln"><span>What this project fixed</span></span><span class="ln"><span>in KeeperHub, it now uses.</span></span></h2><p class="lede">Four gaps met while building, each filed, accepted and built to the maintainers' spec; then three of their own backlog issues. Three are merged and live on production; the runner's next tick used them without a change here.</p></div>
+        <div class="main"><h2 class="display rv"><span class="ln"><span>What this project fixed</span></span><span class="ln"><span>in KeeperHub, it now uses.</span></span></h2><p class="lede">Four gaps met while building, each filed, accepted and built to the maintainers' spec; then three of their own backlog issues. Two are merged and live on production; the runner's next tick used them without a change here. The other five are in review.</p></div>
       </div>
-      <div class="segbar" aria-label="Eight changes: three merged, four in review, one proposed"><span class="seg merged"></span><span class="seg merged"></span><span class="seg merged"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg proposed"></span></div>
-      <div class="seglegend"><span><i class="merged"></i>3 merged, live on production</span><span><i class="review"></i>4 in review</span><span><i class="proposed"></i>1 proposed to Almanak</span></div>
+      <div class="segbar" aria-label="Eight changes: two merged, five in review, one proposed"><span class="seg merged"></span><span class="seg merged"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg proposed"></span></div>
+      <div class="seglegend"><span><i class="merged"></i>2 merged, live on production</span><span><i class="review"></i>5 in review</span><span><i class="proposed"></i>1 proposed to Almanak</span></div>
       <div class="table-wrap"><table><thead><tr><th>Change</th><th>Issue</th><th>Pull request</th><th>State</th></tr></thead><tbody>
         <tr><td>Raw calldata on <code>POST /api/execute/contract-call</code>: send the bytes a framework compiled, KeeperHub decodes them losslessly</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2426">#2426</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2449">#2449</a></td><td><span class="chip good">merged</span></td></tr>
         <tr><td>Simulate a sequence of calls against the state the earlier ones produce (<code>eth_simulateV1</code>, with a state-override fallback)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2427">#2427</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2452">#2452</a></td><td><span class="chip good">merged</span></td></tr>
-        <tr><td>The acting wallet on sponsored executions (<code>executedCall.from</code>)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2428">#2428</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2450">#2450</a></td><td><span class="chip good">merged</span></td></tr>
+        <tr><td>The acting wallet on sponsored executions (<code>executedCall.from</code>)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2428">#2428</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2450">#2450</a></td><td><span class="chip info">in review</span></td></tr>
         <tr><td>Workflow preflight simulates consecutive write nodes against the state the earlier ones produced</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2519">#2519</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2531">#2531</a></td><td><span class="chip info">in review</span></td></tr>
         <tr><td>An approve with no upstream allowance check gets a hint that does not claim redundancy (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2367">#2367</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2533">#2533</a></td><td><span class="chip info">in review</span></td></tr>
         <tr><td>The EVM chain runbook, and a seed that fails instead of warning on a chain with no explorer (maintainer-filed)</td><td><a href="https://github.com/KeeperHub/keeperhub/issues/2497">#2497</a></td><td><a href="https://github.com/KeeperHub/keeperhub/pull/2532">#2532</a></td><td><span class="chip info">in review</span></td></tr>
@@ -821,7 +821,7 @@ almanak-keeperhub api-features --chain base_sepolia
     rows.push(["Private keys on the machine", "0"]);
     rows.push(["Strategy code changed", "1 line (the chain list)"]);
     rows.push(["Tests", "576 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations"]);
-    rows.push(["Features contributed upstream to KeeperHub", "4 issues filed, 4 accepted; 7 pull requests, <b>3 merged and live on production</b>, 4 in review, 3 of them on maintainer-filed issues"]);
+    rows.push(["Features contributed upstream to KeeperHub", "4 issues filed, 4 accepted; 7 pull requests, <b>2 merged and live on production</b>, 5 in review, 3 of them on maintainer-filed issues"]);
     $("results").querySelector("tbody").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
   }
   function lifecycle(ex) {

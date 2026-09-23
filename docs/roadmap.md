@@ -9,7 +9,7 @@ Any Almanak strategy, unchanged, executes through KeeperHub: dry run of the exac
 key per intent, enclave signing, verified receipts back in Almanak's own parsers. Around it: the CLI, the
 Telegram operator bot, the execution console, the MCP server, and two KeeperHub workflows generated from the
 strategy config (the scheduled compounder and the guarded exit with a Condition node). Proven on production
-on Base Sepolia by a runner every six hours; four gaps filed upstream and built, three merged.
+on Base Sepolia by a runner every six hours; four gaps filed upstream and built, two merged and two in review.
 
 ## Now (this week)
 

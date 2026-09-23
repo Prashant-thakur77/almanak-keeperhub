@@ -18,7 +18,7 @@ MCP server, and two KeeperHub workflows generated from the strategy config and r
 [![verified by KeeperHub](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Fverified.json)](https://prashant-thakur77.github.io/almanak-keeperhub/console/)
 [![live conformance](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Fconformance.json)](docs/conformance.json)
 [![proof refreshed](https://img.shields.io/endpoint?url=https%3A%2F%2Fprashant-thakur77.github.io%2Falmanak-keeperhub%2Fbadges%2Frefreshed.json)](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml)
-[![upstream](https://img.shields.io/badge/KeeperHub%20PRs-3%20merged%20%C2%B7%204%20in%20review-1E8F5B)](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses)
+[![upstream](https://img.shields.io/badge/KeeperHub%20PRs-2%20merged%20%C2%B7%205%20in%20review-1E8F5B)](#the-loop-closed-what-this-project-fixed-upstream-it-now-uses)
 [![chain](https://img.shields.io/badge/chain-Base%20Sepolia%20%2884532%29-0052ff)](https://sepolia.basescan.org/address/0xe7DbACbDD4Cb2ddfF5681dCD9E56Fcf488E36Ac9)
 [![tests](https://img.shields.io/badge/tests-576%20unit%20%2B%2011%20live-blue)](#tests)
 
@@ -60,7 +60,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | Private keys on the machine | 0 |
 | Strategy code changed | 1 line (the chain list) |
 | Tests | 576 unit and property, 11 live against production every six hours, a fork rehearsal against both API generations |
-| Features contributed upstream to KeeperHub | 4 issues filed, 4 accepted; 7 pull requests, **3 merged and live on production**, 4 in review (3 of them on maintainer-filed issues) |
+| Features contributed upstream to KeeperHub | 4 issues filed, 4 accepted; 7 pull requests, **2 merged and live on production**, 5 in review (3 of them on maintainer-filed issues) |
 
 ## Judge links
 
@@ -77,7 +77,7 @@ estimated. `scripts/benchmark.py` reproduces the table; `docs/benchmark.json` is
 | A full lifecycle run by a GitHub runner with nobody present, ending in a guarded exit KeeperHub re-checked before redeeming | [0xdf51810b…41f7d4](https://sepolia.basescan.org/tx/0xdf51810ba2851e7c4c29863e4945c41787ce8e8f0e21bca39694bf9f0541f7d4) · execution `8q6azz7iy224ef6jh8x5w` · [the run](https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml) |
 | A keeper run by KeeperHub's own engine, no Almanak process | [0x3e31e8c1…68cf16](https://sepolia.basescan.org/tx/0x3e31e8c1d0d66242f11929417e3aa3dc58677f6b5c205e5ae0c23b0caa68cf16) · workflow `7cloybpqfrjvjv756dd2r` |
 | Upstream: raw calldata on `contract-call` | [issue #2426](https://github.com/KeeperHub/keeperhub/issues/2426) → [PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449), **merged** |
-| Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), **merged** |
+| Upstream: the acting wallet on sponsored executions | [issue #2428](https://github.com/KeeperHub/keeperhub/issues/2428) → [PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), in review |
 | Upstream: simulate a sequence against carried state | [issue #2427](https://github.com/KeeperHub/keeperhub/issues/2427) → [PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), **merged** |
 | Upstream: workflow preflight against carried state | [issue #2519](https://github.com/KeeperHub/keeperhub/issues/2519) → [PR #2531](https://github.com/KeeperHub/keeperhub/pull/2531), in review |
 | Upstream, from the maintainers' backlog: approve hint [#2367](https://github.com/KeeperHub/keeperhub/issues/2367), EVM chain runbook [#2497](https://github.com/KeeperHub/keeperhub/issues/2497), aggregate precision [#2496](https://github.com/KeeperHub/keeperhub/issues/2496) | [PR #2533](https://github.com/KeeperHub/keeperhub/pull/2533), [PR #2532](https://github.com/KeeperHub/keeperhub/pull/2532), [PR #2534](https://github.com/KeeperHub/keeperhub/pull/2534), in review |
@@ -573,7 +573,7 @@ Measured against the hosted app (`docs/benchmark.md`):
 
 Findings reproduced against the hosted API in one command (`docs/api-notes-verified.md`), re-run by the proof runner every six hours: the two this project fixed upstream, the raw-calldata write and the sequence dry run, now read `FIXED UPSTREAM BY THIS PROJECT, LIVE ON PRODUCTION`; the brief's MCP docs link still redirects (308) and `network` still outranks `chainId` on contract-call.
 
-Filed upstream on 12 Sep 2026 and since merged: [KeeperHub/keeperhub#2426](https://github.com/KeeperHub/keeperhub/issues/2426) raw calldata on contract-call ([PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449)), [#2427](https://github.com/KeeperHub/keeperhub/issues/2427) chained simulation for bundles ([PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452)), [#2428](https://github.com/KeeperHub/keeperhub/issues/2428) the acting wallet on sponsored executions ([PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450)). The fourth, [#2519](https://github.com/KeeperHub/keeperhub/issues/2519) workflow preflight against carried state, is [PR #2531](https://github.com/KeeperHub/keeperhub/pull/2531), in review.
+Filed upstream on 12 Sep 2026: [KeeperHub/keeperhub#2426](https://github.com/KeeperHub/keeperhub/issues/2426) raw calldata on contract-call ([PR #2449](https://github.com/KeeperHub/keeperhub/pull/2449), merged), [#2427](https://github.com/KeeperHub/keeperhub/issues/2427) chained simulation for bundles ([PR #2452](https://github.com/KeeperHub/keeperhub/pull/2452), merged), [#2428](https://github.com/KeeperHub/keeperhub/issues/2428) the acting wallet on sponsored executions ([PR #2450](https://github.com/KeeperHub/keeperhub/pull/2450), in review: the code is reviewed correct, the docs wording on the sponsorship route is being settled). The fourth, [#2519](https://github.com/KeeperHub/keeperhub/issues/2519) workflow preflight against carried state, is [PR #2531](https://github.com/KeeperHub/keeperhub/pull/2531), in review.
 
 `docs/rehearsal-fork.md` is the log of the same pipeline on an Anvil fork of Base against a local stand-in for KeeperHub (`tests/e2e/fake_keeperhub.py`, which mirrors the documented API shapes). It proves the wiring; it is not execution through KeeperHub.
 

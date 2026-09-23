@@ -18,6 +18,8 @@ independently of releases, by the runner, every six hours.
   surface. Every entrance is positional or masked; nothing fades. The same data bindings, one file, no build step.
 - `docs/roadmap.md`: what comes next, in order, and why.
 - Bot: the `/guard` reply's transaction link read `0xfed4…d=True`; the link text is the hash alone again.
+- Docs: PR #2450 (the acting wallet) was listed as merged; it is in review. The upstream counts on the README, the
+  site, the deck and the roadmap now read two merged and five in review.
 
 ## 1.1.0 — 2026-09-23
 
@@ -41,7 +43,7 @@ The guarded exit as a KeeperHub workflow, and the operator surfaces around it.
   `pyproject.toml`.
 - The finalist panel deck under `docs/panel/` and the diagrams in `docs/img/`.
 
-Upstream state at this release: KeeperHub PRs #2449, #2452 and #2450 merged and live on production; #2531,
+Upstream state at this release: KeeperHub PRs #2449 and #2452 merged and live on production; #2450, #2531,
 #2532, #2533 and #2534 in review; almanak-co/sdk#3 proposed.
 
 ## 1.0.0 — 2026-09-16
