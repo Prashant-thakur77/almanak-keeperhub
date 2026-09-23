@@ -7,15 +7,14 @@ independently of releases, by the runner, every six hours.
 
 - MCP: `guard_exit`, `guard_stale` and `guard_status`, the workflow guard for agents with the same confirm and
   `--write` split as the bot's `/guard` and `/guard stale`.
-- The front page and the console redesigned. Manrope with an Instrument Serif italic wordmark ("Almanak KeeperHub",
-  full-width in the footer), self-hosted; a near-black, mint and amber palette drawn from the project's own mark;
-  numbered section kickers; a connector line that draws with the scroll (tip at 62% of the viewport, eased) with
-  the hero's three buttons hanging off it as stops; the three problems as a sticky stack of full-height two-tone
-  panels; the six steps with markers that fill as the line passes; the Condition gate and the authority model as
-  connector diagrams; a live ring for the next runner tick; the lifecycle cards on a route; a merged / in review /
-  proposed bar over the upstream table; a full-screen numbered menu whose field takes the hovered item's colour;
-  a dark theme on both pages that follows the system and remembers; a dot cursor that inverts against its
-  surface. Every entrance is positional or masked; nothing fades. The same data bindings, one file, no build step.
+- The front page redesigned in its own language. Manrope and JetBrains Mono, self-hosted, with the wordmark set in
+  the sans beside a mint mark; a translucent header with inline links and a plain sheet on phones; a hero that puts
+  the claim beside a live tape of the newest executions as KeeperHub verified them, each row landing in turn; the
+  three problems as three cards on one screen; a stepper over the six steps that lights each one while its card is
+  on screen, the cards in two columns; the Condition gate and the authority model as connector diagrams; a live
+  ring for the next runner tick; a merged / in review / proposed bar over the upstream table; a dark theme on both
+  pages that follows the system and remembers. Entrances are a soft fade with a short rise. No custom cursor, no
+  line drawn by the scroll, no serif. The same data bindings, one file, no build step.
 - `docs/roadmap.md`: what comes next, in order, and why.
 - Bot: the `/guard` reply's transaction link read `0xfed4…d=True`; the link text is the hash alone again.
 - Docs: PR #2450 (the acting wallet) was listed as merged; it is in review. The upstream counts on the README, the

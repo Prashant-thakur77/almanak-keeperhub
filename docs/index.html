@@ -31,7 +31,6 @@
     --n-blue:var(--blue-800); --n-yellow:var(--yellow-800); --n-green:var(--green-700); --n-red:var(--red);
 
     --sans:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-    --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
     --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
     --display-xl:clamp(52px,7.4vw,118px); --display:clamp(44px,5.5vw,80px); --h1:clamp(36px,4vw,64px); --h2:clamp(28px,3vw,48px); --h3:clamp(22px,2vw,32px);
     --body-lg:clamp(18px,1.2vw,22px); --body:16px; --label:13px; --micro:11px;
@@ -63,7 +62,7 @@
     --ink:var(--stone-900); --heading:var(--stone-900); --muted:rgba(11,15,25,.85); --faint:rgba(11,15,25,.7);
     --link:var(--stone-900); --link-hover:var(--stone-950); --hairline:rgba(11,15,25,.28); --strong:var(--stone-900);
   }
-  @media (prefers-reduced-motion:reduce){ .spine-v{transition:none} :root{ --d-fast:0ms; --d-medium:0ms; --d-cover:0ms; --d-path:0ms; --d-line:0ms; --stagger:0ms; } html{scroll-behavior:auto} }
+  @media (prefers-reduced-motion:reduce){ :root{ --d-fast:0ms; --d-medium:0ms; --d-cover:0ms; --d-path:0ms; --d-line:0ms; --stagger:0ms; } html{scroll-behavior:auto} }
 
   *,*::before,*::after{box-sizing:border-box;box-shadow:none}
   html{background:var(--canvas);scroll-behavior:smooth;scroll-padding-top:96px;-webkit-text-size-adjust:100%}
@@ -106,46 +105,30 @@
   [data-band]{background:var(--canvas);color:var(--ink)}
   .above{position:relative;z-index:2}
 
-  /* ---- header: transparent, follows the polarity of the band beneath it ---- */
-  header.top{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px var(--margin);color:var(--stone-900);pointer-events:none;transition:color var(--d-medium) var(--ease)}
-  header.top[data-on="dark"],header.top[data-on="menu"]{color:var(--stone)}
-  header.top>*{pointer-events:auto}
-  .wordmark{display:inline-flex;align-items:baseline;color:inherit;font-family:var(--serif);font-style:italic;font-weight:400;font-size:32px;letter-spacing:-.01em;line-height:1;transition:transform var(--d-cover) var(--ease)}
-  body[data-scrolled="true"]:not([data-menu="open"]) header.top .wordmark{transform:translateY(-320%)}
-
-  .menu-btn{position:relative;flex:0 0 auto;width:48px;height:48px;border-radius:var(--r-pill);border:2px solid currentColor;background:var(--stone);color:var(--stone-900);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background-color var(--d-fast) var(--ease),color var(--d-fast) var(--ease)}
-  header.top[data-on="dark"] .menu-btn{background:var(--stone-900);color:var(--stone)}
-  .menu-btn .bar{position:absolute;width:18px;height:2px;border-radius:999px;background:currentColor;transition:transform 320ms cubic-bezier(.16,1,.3,1)}
-  .menu-btn .b1{transform:translateY(-4px)} .menu-btn .b2{transform:translateY(4px)}
-  .menu-btn[aria-expanded="true"],header.top[data-on="menu"] .menu-btn{background:var(--stone-900);color:var(--stone)}
-  .menu-btn[aria-expanded="true"] .b1{transform:translateY(0) rotate(45deg)} .menu-btn[aria-expanded="true"] .b2{transform:translateY(0) rotate(-45deg)}
-
-  /* ---- the menu: a charcoal sheet that covers the page from above ---- */
-  .menu{position:fixed;inset:0;z-index:40;background:var(--stone-900);color:var(--stone);transform:translateY(-100%);transition:transform var(--d-cover) var(--ease);display:grid;grid-template-rows:minmax(0,1fr) auto;overflow:hidden}
-  .menu[data-open="true"]{transform:translateY(0)}
-  .menu-cols{display:grid;grid-template-columns:54% 46%;min-height:0}
-  .menu-list{list-style:none;margin:0;padding:calc(72px + 2vh) var(--margin) 24px;display:flex;flex-direction:column;justify-content:center;gap:clamp(2px,.8vh,12px);overflow:auto;min-height:0}
-  .menu[data-open="true"] .menu-list li{animation:menu-in 500ms cubic-bezier(.16,1,.3,1) both;animation-delay:calc(220ms + 40ms * var(--k,0))}
-  @keyframes menu-in{from{transform:translateY(28px)}to{transform:translateY(0)}}
-  .menu-list li{display:grid;grid-template-columns:40px 1fr;align-items:end;gap:12px}
-  .menu-list .n{font-family:var(--mono);font-size:12px;font-weight:600;padding-bottom:.55em}
-  .menu-list a{color:var(--stone);font-size:clamp(28px,min(4.6vw,6vh),64px);font-weight:700;letter-spacing:-.035em;line-height:1;display:inline-block;transition:transform var(--d-medium) var(--ease)}
-  .menu-list a:hover{transform:translateX(10px)}
-  .menu-field{background:var(--stone-800);position:relative;overflow:hidden;transition:background-color 420ms var(--ease)}
-  .menu-field::after{content:attr(data-n);position:absolute;right:5%;bottom:0;font-family:var(--serif);font-style:italic;font-size:min(40vh,28vw);line-height:.9;color:rgba(11,15,25,.22);transform:translateY(12%);transition:transform 520ms cubic-bezier(.16,1,.3,1)}
-  .menu-field[data-n=""]::after{transform:translateY(110%)}
-  .menu[data-tone="mint"] .menu-field{background:var(--mint)} .menu[data-tone="amber"] .menu-field{background:var(--yellow)} .menu[data-tone="blue"] .menu-field{background:var(--blue)} .menu[data-tone="red"] .menu-field{background:var(--red)}
-  .menu-foot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:var(--gutter);align-items:end;padding:28px var(--margin) 36px;border-top:1px solid var(--stone-700)}
-  .menu-foot .f{min-width:0}
-  .menu-foot .mono-label{color:var(--stone-400);margin-bottom:8px}
-  .menu-foot a{display:block;color:var(--stone);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* ---- header: a translucent bar, the same on every band ---- */
+  header.top{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px var(--margin);color:var(--ink);background:color-mix(in srgb,var(--canvas) 84%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color var(--d-medium) var(--ease),background-color var(--d-medium) var(--ease)}
+  body[data-scrolled="true"] header.top{border-bottom-color:var(--hairline)}
+  .wordmark{display:inline-flex;align-items:center;gap:10px;color:inherit;font-weight:700;font-size:18px;letter-spacing:-.025em;line-height:1;white-space:nowrap}
+  .wordmark i{width:10px;height:10px;border-radius:2px;background:var(--mint);transform:rotate(45deg);flex:0 0 auto}
+  .nav{display:flex;align-items:center;gap:4px;margin-left:auto}
+  .nav a{color:var(--muted);font-size:14px;font-weight:500;padding:8px 12px;border-radius:var(--r-pill)}
+  .nav a:hover{color:var(--ink);background:var(--sunken)}
+  .nav a.cta{color:var(--canvas);background:var(--strong);margin-left:6px}
+  .nav a.cta:hover{background:var(--mint);color:var(--stone-900)}
+  .theme-btn{width:40px;height:40px;border-radius:var(--r-pill);border:1px solid var(--hairline);background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0;flex:0 0 auto}
+  .theme-btn svg{width:17px;height:17px}
+  .theme-btn:hover{background:var(--sunken)}
   .theme-btn .sun{display:none} [data-theme="dark"] .theme-btn .sun{display:block} [data-theme="dark"] .theme-btn .moon{display:none}
-  .theme-btn{width:48px;height:48px;border-radius:var(--r-pill);border:2px solid var(--stone);background:transparent;color:var(--stone);display:grid;place-items:center;cursor:pointer;padding:0}
-  .theme-btn svg{width:18px;height:18px}
-  .theme-btn:hover{background:var(--stone);color:var(--stone-900)}
-  @media (max-width:1024px){ .menu-cols{grid-template-columns:1fr} .menu-field{display:none} .menu-foot{grid-template-columns:1fr 1fr;gap:20px} }
-  @media (max-width:640px){ .menu-foot{grid-template-columns:1fr;gap:16px;padding-bottom:28px} .menu-foot a{white-space:normal} }
-  body[data-menu="open"]{overflow:hidden}
+  .menu-btn{display:none;width:40px;height:40px;border-radius:var(--r-pill);border:1px solid var(--hairline);background:transparent;color:var(--ink);cursor:pointer;padding:0;place-items:center;flex:0 0 auto}
+  .menu-btn svg{width:18px;height:18px}
+  .menu-btn .x{display:none} .menu-btn[aria-expanded="true"] .x{display:block} .menu-btn[aria-expanded="true"] .ham{display:none}
+  .sheet{position:fixed;left:var(--margin);right:var(--margin);top:68px;z-index:49;background:var(--card);border:1px solid var(--hairline);border-radius:var(--r-card);padding:8px;display:none;flex-direction:column;gap:2px}
+  .sheet[data-open="true"]{display:flex}
+  .sheet a{display:block;padding:12px 14px;border-radius:12px;color:var(--ink);font-size:16px;font-weight:500}
+  .sheet a:hover{background:var(--sunken)}
+  .sheet .meta{display:flex;flex-wrap:wrap;gap:4px 14px;padding:10px 14px 6px;border-top:1px solid var(--hairline);margin-top:6px}
+  .sheet .meta a{padding:4px 0;font-size:13px;color:var(--muted)}
+  @media (max-width:1024px){ .nav{display:none} .menu-btn{display:grid} }
 
   /* ---- buttons: pills, charcoal on light, stone on dark ---- */
   .btn{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 26px;border-radius:var(--r-pill);border:2px solid var(--strong);background:var(--strong);color:var(--canvas);font-weight:600;font-size:16px;letter-spacing:-.011em;text-decoration:none;cursor:pointer;transition:background-color var(--d-fast) var(--ease),color var(--d-fast) var(--ease),border-color var(--d-fast) var(--ease);white-space:nowrap}
@@ -189,78 +172,78 @@
   /* ---- the numbered list: outlined circles, one color per list ---- */
   .ol{list-style:none;margin:0;padding:0;display:grid;gap:12px;position:relative;color:var(--n-green)}
   .ol li{display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;background:var(--card);border-radius:var(--r-card);padding:22px 24px}
-  .ol .m{width:48px;height:48px;border:2px solid currentColor;border-radius:var(--r-pill);display:grid;place-items:center;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;transform:scale(0);transform-box:fill-box;transition:background-color 300ms var(--ease),color 300ms var(--ease)}
-  .ol .m.on{background:var(--n-green);color:#fff}
-  .in .ol .m,.steps.in .ol .m{animation:land var(--d-fast) var(--ease-decel) both}
-  .ol li:nth-child(1) .m{animation-delay:calc(var(--stagger)*1)} .ol li:nth-child(2) .m{animation-delay:calc(var(--stagger)*2)} .ol li:nth-child(3) .m{animation-delay:calc(var(--stagger)*3)} .ol li:nth-child(4) .m{animation-delay:calc(var(--stagger)*4)} .ol li:nth-child(5) .m{animation-delay:calc(var(--stagger)*5)} .ol li:nth-child(6) .m{animation-delay:calc(var(--stagger)*6)}
+  .ol .m{width:44px;height:44px;border:2px solid currentColor;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;transition:background-color 300ms var(--ease),color 300ms var(--ease)}
+  .ol .m.on{background:var(--n-green);color:#fff;border-color:var(--n-green)}
   .ol .t{color:var(--heading);font-weight:500;font-size:22px;letter-spacing:-.025em;line-height:1.1}
   .ol .d{color:var(--muted);font-size:15px;margin-top:4px}
   .ol .c{font-family:var(--mono);font-size:12.5px;color:var(--n-green);margin-top:8px}
   .ol .gate{margin-left:10px}
-  .steps{position:relative}
-  .steps .ol{position:relative;z-index:1}
-  .steps .ol li{background:transparent;padding-left:0}
-  .steps .ol li .m{background:var(--canvas)}
-  .steps .ol li .body{background:var(--card);border-radius:var(--r-card);padding:20px 22px}
-  @keyframes land{from{transform:scale(0)}to{transform:scale(1)}}
-  @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 
-  /* ---- motion: every entrance is positional or a mask; opacity is never animated ---- */
-  .rv .ln{display:block;overflow:hidden;padding-block:.22em;margin-block:-.22em}
-  .js .rv .ln>span{display:block;transform:translateY(105%)}
-  .js .rv.in .ln>span{animation:rise var(--d-line) var(--ease-decel) both}
-  .rv.in .ln:nth-child(1)>span{animation-delay:0ms} .rv.in .ln:nth-child(2)>span{animation-delay:calc(var(--stagger)*1)} .rv.in .ln:nth-child(3)>span{animation-delay:calc(var(--stagger)*2)} .rv.in .ln:nth-child(4)>span{animation-delay:calc(var(--stagger)*3)} .rv.in .ln:nth-child(5)>span{animation-delay:calc(var(--stagger)*4)} .rv.in .ln:nth-child(6)>span{animation-delay:calc(var(--stagger)*5)}
-  @keyframes rise{from{transform:translateY(105%)}to{transform:translateY(0)}}
-  .mask{overflow:hidden;border-radius:var(--r-card)}
-  .js .mask>.up{transform:translateY(102%)}
-  .js .mask.in>.up{animation:cover-up var(--d-cover) var(--ease) both;animation-delay:calc(var(--stagger)*var(--i,0))}
-  @keyframes cover-up{from{transform:translateY(102%)}to{transform:translateY(0)}}
-  .draw path,.draw circle{stroke-dasharray:var(--len,3000);stroke-dashoffset:var(--len,3000)}
-  .draw.in circle{animation:draw var(--d-path) var(--ease) both}
-  .draw.in path{animation:draw var(--d-path) var(--ease) both;animation-delay:calc(var(--d-path) * .7)}
-  @keyframes draw{to{stroke-dashoffset:0}}
+  /* ---- motion: a soft fade with a short rise, staggered where things sit in a row ---- */
+  .rv .ln{display:block}
+  .js .rv{opacity:0;transform:translateY(14px);transition:opacity 620ms var(--ease),transform 620ms var(--ease-decel)}
+  .js .rv.in{opacity:1;transform:none}
+  .js .mask>.up{opacity:0;transform:translateY(16px);transition:opacity 560ms var(--ease),transform 560ms var(--ease-decel);transition-delay:calc(var(--stagger)*var(--i,0))}
+  .js .mask.in>.up{opacity:1;transform:none}
+  .mask{border-radius:var(--r-card)}
 
-  /* ---- hero ---- */
-  .hero{min-height:100vh;display:grid;align-content:end;padding-top:120px;padding-bottom:48px;position:relative}
-  .hero .g{align-items:end}
-  .hero .g>*{grid-row:1}
-  .hero h1{max-width:none}
-  .hero .stops{grid-column:9/span 4;align-self:end;width:63.2%;display:flex;flex-direction:column;gap:14px;margin-bottom:6px;position:relative;z-index:1}
-  .hero .stops::before{content:"";position:absolute;right:-14px;top:-80px;bottom:22px;width:28px;border-radius:14px;background:var(--mint);z-index:-1}
-  .hero .stop{display:flex;align-items:center}
-  .hero .stop .btn{flex:0 0 auto}
-  .hero .stop .stub{flex:1;height:4px;min-width:16px;background:var(--mint);border-radius:2px;margin-left:12px}
-  .hero .lede{margin-top:28px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
-  .pin{grid-column:10/span 3;justify-self:center;align-self:start;width:min(200px,18vw,26vh);margin-top:-40px}
-  .pin svg{width:100%;height:auto;display:block;overflow:visible}
-  .cue{position:absolute;right:var(--margin);bottom:40px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:transform var(--d-medium) var(--ease)}
-  .cue svg{width:14px;height:14px;animation:nudge 1.6s var(--ease) infinite}
-  @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-  body[data-scrolled="true"] .cue{transform:translateY(120px)}
-  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;grid-row:2;align-self:start;width:auto;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:8px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
+  /* ---- hero: the claim on the left, the newest receipts landing on the right ---- */
+  .hero{padding-top:148px;padding-bottom:var(--band);position:relative}
+  .hero .g{align-items:center}
+  .hero h1{max-width:none;grid-column:1/span 7;font-size:clamp(40px,5.6vw,86px);line-height:1;letter-spacing:-.035em}
+  .hero h1 mark{background:linear-gradient(transparent 12%,var(--yellow) 12%,var(--yellow) 90%,transparent 90%);padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .hero .copy{grid-column:1/span 7}
+  .hero .lede{margin-top:26px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:50ch}
+  .hero .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+  .hero .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:30px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .hero .facts b{color:var(--ink);font-weight:600}
+  .tape{grid-column:8/span 5;background:var(--card);border:1px solid var(--hairline);border-radius:var(--r-card-lg);padding:18px 18px 14px;align-self:center}
+  .tape .head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4px 12px;border-bottom:1px solid var(--hairline)}
+  .tape .head .mono-label{display:flex;align-items:center;gap:8px}
+  .tape .live{width:8px;height:8px;border-radius:999px;background:var(--mint);box-shadow:0 0 0 0 rgba(92,196,142,.6);animation:pulse 2s ease-out infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(92,196,142,.55)}70%{box-shadow:0 0 0 10px rgba(92,196,142,0)}100%{box-shadow:0 0 0 0 rgba(92,196,142,0)}}
+  .tape ol{list-style:none;margin:0;padding:6px 0 0;display:grid;gap:4px;min-height:264px}
+  .tape li{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:center;padding:10px 6px;border-radius:12px;opacity:0;transform:translateX(18px);transition:opacity 480ms var(--ease),transform 480ms var(--ease-decel)}
+  .tape li.in{opacity:1;transform:none}
+  .tape li:first-child{background:var(--sunken)}
+  .tape .ok{width:22px;height:22px;border-radius:999px;background:var(--good-c);color:var(--good-on);display:grid;place-items:center}
+  .tape .ok svg{width:12px;height:12px}
+  .tape .fn{font-weight:600;font-size:15px;letter-spacing:-.015em;color:var(--heading)}
+  .tape .to{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:2px}
+  .tape .tag{text-align:right}
+  .tape .tag .chip{margin-bottom:4px}
+  .tape .when{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
+  .tape .foot{display:flex;justify-content:space-between;gap:10px;padding:12px 4px 0;margin-top:6px;border-top:1px solid var(--hairline);font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .tape .foot a{color:var(--link)}
+  @media (max-width:1024px){ .hero{padding-top:120px} .hero h1,.hero .copy{grid-column:1/-1} .hero h1{font-size:clamp(40px,9.6vw,76px)} .tape{grid-column:1/-1;margin-top:8px} }
+  @media (max-width:520px){ .tape .to .id{display:none} .tape .head .mono-label:last-child{display:none} }
+  @media (prefers-reduced-motion:reduce){ .tape .live{animation:none} }
 
-  /* ---- the connector spine crossing between sections ---- */
-  .spine-v{position:absolute;width:28px;border-radius:14px;background:var(--mint);z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 14px);clip-path:inset(0 0 100% 0 round 14px);transition:clip-path 900ms cubic-bezier(.16,1,.3,1);will-change:clip-path}
-  .spine-v.left{left:calc(var(--margin) + (100% - 2 * var(--margin)) * .315 - 14px)}
-  @media (max-width:1024px){ .spine-v{display:none} }
-
-  /* ---- the problem: statement plus a sticky stack of full-height panels ---- */
+  /* ---- the problem: three cards, one screen ---- */
   .problem-head{display:grid;grid-template-columns:7fr 5fr;gap:var(--gutter);align-items:end}
   .problem-head .side{max-width:44ch;color:var(--muted);font-size:15.5px;line-height:1.55}
   @media (max-width:1024px){ .problem-head{grid-template-columns:1fr} }
-  .stack{position:relative;height:300vh;margin-top:var(--band)}
-  .panel{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border-radius:var(--r-card-lg) var(--r-card-lg) 0 0;z-index:3}
-  .panel .copy{padding:clamp(28px,4vw,56px);display:flex;flex-direction:column;justify-content:flex-start;gap:16px}
-  .panel .copy .eyebrow{color:inherit;opacity:.85}
-  .panel .copy h3{font-size:clamp(34px,4.2vw,72px);line-height:.98;letter-spacing:-.035em;font-weight:700;color:inherit;max-width:12ch}
-  .panel .copy p{color:inherit;font-size:var(--body-lg);max-width:46ch;line-height:1.45}
-  .panel .copy .fix{margin-top:auto;padding-top:20px;border-top:2px solid currentColor;font-size:16px;max-width:52ch}
-  .panel .num{position:relative;container-type:size;overflow:hidden}
-  .panel .num span{position:absolute;right:-.04em;top:-.06em;font-size:118cqh;line-height:1;font-weight:800;letter-spacing:-.05em;color:var(--stone)}
-  .panel[data-tone="green"]{background:var(--mint)} .panel[data-tone="green"] .copy{background:var(--green-700);color:var(--stone-50)}
-  .panel[data-tone="yellow"]{background:var(--yellow)} .panel[data-tone="yellow"] .copy{background:var(--yellow-800);color:var(--stone-50)}
-  .panel[data-tone="blue"]{background:var(--blue)} .panel[data-tone="blue"] .copy{background:var(--navy);color:var(--stone-50)}
-  @media (max-width:640px){ .panel{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)} .panel .num span{font-size:94cqh} .stack{height:260vh} }
+  .problems{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter);margin-top:56px}
+  .pcard{background:var(--card);border-radius:var(--r-card);padding:26px 26px 24px;display:flex;flex-direction:column;gap:14px;border-top:6px solid var(--red);min-height:100%}
+  .pcard .k{font-family:var(--mono);font-size:var(--micro);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--n-red)}
+  .pcard h3{font-size:clamp(22px,1.9vw,28px);line-height:1.08;letter-spacing:-.03em;font-weight:700}
+  .pcard p{color:var(--muted);font-size:15.5px;line-height:1.5}
+  .pcard .fix{margin-top:auto;padding-top:14px;border-top:1px solid var(--hairline);font-size:14.5px;color:var(--ink)}
+  .pcard .fix b{color:var(--n-green)}
+  @media (max-width:860px){ .problems{grid-template-columns:1fr} }
+
+  /* ---- the pipeline: a stepper that lights as the cards pass, then the cards in two columns ---- */
+  .stepper{list-style:none;margin:40px 0 24px;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;position:relative}
+  .stepper li{display:flex;flex-direction:column;gap:10px;padding:0;position:relative}
+  .stepper .bar{height:5px;border-radius:3px;background:var(--sunken);overflow:hidden}
+  .stepper .bar::after{content:"";display:block;height:100%;width:100%;background:var(--n-green);transform:scaleX(0);transform-origin:left;transition:transform 520ms var(--ease-decel)}
+  .stepper li.on .bar::after{transform:scaleX(1)}
+  .stepper .lbl{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:-.01em;transition:color var(--d-fast) var(--ease)}
+  .stepper li.on .lbl{color:var(--heading)}
+  .stepper .lbl small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+  @media (max-width:860px){ .stepper{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  .ol.two{grid-template-columns:1fr 1fr;gap:var(--gutter)}
+  @media (max-width:860px){ .ol.two{grid-template-columns:1fr} }
 
   /* ---- tables ---- */
   .segbar{display:flex;gap:6px;margin-bottom:12px}
@@ -299,10 +282,6 @@
   .diagram{background:var(--card);border-radius:var(--r-card);padding:16px}
   .diagram svg{width:100%;height:auto;display:block}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gutter)}
-  .route{position:relative}
-  .route::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:4px;margin-top:-2px;background:var(--mint);border-radius:2px}
-  .route>.mask{position:relative;z-index:1}
-  @media (max-width:860px){ .route::before{left:50%;right:auto;top:4%;bottom:4%;height:auto;width:4px;margin:0 0 0 -2px} }
   #failures-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
   @media (max-width:860px){ .grid3,.grid2{grid-template-columns:1fr} }
   .sec-head{margin-bottom:40px;max-width:20ch}
@@ -315,150 +294,105 @@
   footer.site .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:var(--gutter)}
   footer.site .cols a{display:block;color:var(--stone);font-size:15px;padding:4px 0}
   footer.site .cols a:hover{color:var(--mint)}
-  footer.site .big-name{margin-top:88px;font-family:var(--serif);font-style:italic;font-size:clamp(48px,11.6vw,172px);line-height:.9;letter-spacing:-.015em;color:var(--stone);white-space:nowrap;overflow:hidden}
-  footer.site .big-name span{display:inline-block;transform:translateY(110%);transition:transform 900ms cubic-bezier(.16,1,.3,1)}
-  footer.site .big-name.in span{transform:translateY(0)}
   footer.site .meta{margin-top:40px;padding-top:24px;border-top:1px solid var(--stone-700);display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;color:var(--stone-400);font-size:13px}
   footer.site .meta code{background:var(--stone-800);color:var(--stone)}
   .totop{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stone);background:transparent;border:2px solid var(--stone-700);border-radius:var(--r-pill);height:44px;padding:0 18px;cursor:pointer}
   .totop:hover{border-color:var(--stone)}
   @media (max-width:860px){ footer.site .cols{grid-template-columns:1fr 1fr} }
 
-  /* ---- the cursor: a solid dot, the inverse of whatever it sits on ---- */
-  .dot{position:fixed;left:0;top:0;width:18px;height:18px;border-radius:999px;background:var(--stone-900);pointer-events:none;z-index:2147483647;transform:translate3d(-100px,-100px,0);will-change:transform;opacity:0;transition:opacity 120ms linear,background-color 120ms linear,width 140ms ease,height 140ms ease}
-  html[data-cursor="on"],html[data-cursor="on"] *{cursor:none!important}
 </style>
 </head>
 <body>
-<div class="dot" id="dot" aria-hidden="true"></div>
-
-<header class="top" id="top-bar" data-on="light">
-  <a class="wordmark" href="#top" aria-label="Almanak KeeperHub, home"><span>Almanak KeeperHub</span></a>
-  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="bar b1"></span><span class="bar b2"></span></button>
+<header class="top" id="top-bar">
+  <a class="wordmark" href="#top" aria-label="Almanak KeeperHub, home"><i aria-hidden="true"></i><span>Almanak KeeperHub</span></a>
+  <nav class="nav" aria-label="Site">
+    <a href="#problem">Problem</a><a href="#how">How it works</a><a href="#guard">Guard</a><a href="#proof">Proof</a><a href="#upstream">Upstream</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">GitHub</a><a class="cta" href="console/">Console</a>
+  </nav>
+  <button class="theme-btn" id="theme-btn" aria-label="Switch theme" title="Switch theme">
+    <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 14.9A8 8 0 0 1 14.5 2.5z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+  </button>
+  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+    <svg class="ham" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
 </header>
 
-<nav class="menu" id="menu" data-open="false" aria-label="Site menu">
-  <div class="menu-cols">
-    <ul class="menu-list">
-      <li style="--k:0" data-tone="mint"><span class="n" style="color:var(--mint)">01</span><a href="#top">Home</a></li>
-      <li style="--k:1" data-tone="amber"><span class="n" style="color:var(--yellow)">02</span><a href="#problem">The problem</a></li>
-      <li style="--k:2" data-tone="blue"><span class="n" style="color:var(--blue-300)">03</span><a href="#how">How it works</a></li>
-      <li style="--k:3" data-tone="red"><span class="n" style="color:var(--red-300)">04</span><a href="#guard">The guard</a></li>
-      <li style="--k:4" data-tone="mint"><span class="n" style="color:var(--mint)">05</span><a href="#proof">Proof</a></li>
-      <li style="--k:5" data-tone="amber"><span class="n" style="color:var(--yellow)">06</span><a href="#upstream">Upstream</a></li>
-      <li style="--k:6" data-tone="blue"><span class="n" style="color:var(--blue-300)">07</span><a href="console/">Console</a></li>
-      <li style="--k:7" data-tone="red"><span class="n" style="color:var(--red-300)">08</span><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a></li>
-    </ul>
-    <div class="menu-field" aria-hidden="true" data-n=""></div>
-  </div>
-  <div class="menu-foot">
-    <div class="f"><div class="mono-label">GitHub</div><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">Prashant-thakur77 / almanak-keeperhub</a></div>
-    <div class="f"><div class="mono-label">Package</div><a href="https://pypi.org/project/almanak-keeperhub/">almanak-keeperhub on PyPI</a></div>
-    <div class="f"><div class="mono-label">Demo</div><a href="https://youtu.be/wdZJTSivzRI">the video, four minutes</a></div>
-    <button class="theme-btn" id="theme-btn" aria-label="Switch theme" title="Switch theme">
-      <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14.5 2.5a9.5 9.5 0 1 0 7 14.9A8 8 0 0 1 14.5 2.5z"/></svg>
-      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
-    </button>
-  </div>
-</nav>
+<div class="sheet" id="menu" data-open="false" aria-label="Site menu">
+  <a href="#problem">The problem</a><a href="#how">How it works</a><a href="#guard">The guard</a><a href="#proof">Proof</a><a href="#upstream">Upstream</a><a href="console/">Console</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a>
+  <div class="meta"><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">GitHub</a><a href="https://pypi.org/project/almanak-keeperhub/">PyPI</a><a href="https://youtu.be/wdZJTSivzRI">Demo video</a></div>
+</div>
 
 <main id="top">
-  <!-- 01 / HERO -->
+  <!-- HERO -->
   <section class="hero wrap" data-band="light">
     <div class="g">
-      <div class="wide" style="grid-column:1/span 9">
-        <div class="eyebrow" style="margin-bottom:28px">01 / Hero</div>
-        <h1 class="display-xl rv"><span class="ln"><span>Almanak decides.</span></span><span class="ln"><span>KeeperHub <mark>lands it</mark>.</span></span><span class="ln"><span>No strategy</span></span><span class="ln"><span>code changes.</span></span></h1>
-        <p class="lede rv"><span class="ln"><span>Every Almanak strategy, unmodified, dry-runs, signs and broadcasts through KeeperHub: one idempotency key per intent, a verified receipt back, no private key on the machine.</span></span></p>
+      <div class="copy">
+        <h1 class="display-xl rv"><span class="ln">Almanak decides.</span><span class="ln">KeeperHub <mark>lands it</mark>.</span><span class="ln">No strategy code changes.</span></h1>
+        <p class="lede rv">Every Almanak strategy, unmodified, dry-runs, signs and broadcasts through KeeperHub: one idempotency key per intent, a verified receipt back, no private key on the machine.</p>
+        <div class="actions rv">
+          <a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn ghost" href="#video">Watch the demo</a>
+          <a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub">Read the code</a>
+        </div>
+        <div class="facts rv" id="facts"></div>
       </div>
-      <div class="pin draw" id="pin">
-        <svg viewBox="0 0 200 560" fill="none" aria-hidden="true">
-          <circle cx="100" cy="100" r="80" stroke="#5CC48E" stroke-width="28" style="--len:506"/>
-          <path d="M100 194 V540" stroke="#5CC48E" stroke-width="28" stroke-linecap="round" style="--len:350"/>
-        </svg>
-      </div>
-      <div class="stops" aria-label="Start here">
-        <div class="stop"><a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><span class="stub"></span></div>
-        <div class="stop"><a class="btn ghost" href="#video">Watch the demo</a><span class="stub"></span></div>
-        <div class="stop"><a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub">Read the code</a><span class="stub"></span></div>
-      </div>
+      <aside class="tape rv" id="tape" aria-label="The newest executions, as KeeperHub verified them">
+        <div class="head"><span class="mono-label"><span class="live" aria-hidden="true"></span>Latest executions</span><span class="mono-label">verified by KeeperHub</span></div>
+        <ol id="tape-rows"></ol>
+        <div class="foot"><span id="tape-count">loading the proof…</span><a href="console/">every row, on the console</a></div>
+      </aside>
     </div>
-    <a class="cue" href="#live" data-scroll-cue><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg> Scroll</a>
   </section>
 
-  <!-- 02 / LIVE PROOF -->
+  <!-- LIVE PROOF -->
   <section class="wrap" id="live" data-band="light">
     <div class="g" style="align-items:start;margin-bottom:40px">
-      <div class="rail"><div class="eyebrow">02 / Live proof</div></div>
+      <div class="rail"><div class="eyebrow">Live proof</div></div>
       <div class="main">
-        <p class="statement rv"><span class="ln"><span>Every number on this page</span></span><span class="ln"><span>is read from a file a real run wrote,</span></span><span class="ln"><span>and a runner rewrites those files</span></span><span class="ln"><span>every six hours.</span></span></p>
+        <p class="statement rv"><span class="ln">Every number on this page</span><span class="ln">is read from a file a real run wrote,</span><span class="ln">and a runner rewrites those files</span><span class="ln">every six hours.</span></p>
         <div class="tick"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="bg" cx="22" cy="22" r="18"/><circle class="fg" id="tick-arc" cx="22" cy="22" r="18"/></svg><div><div class="mono-label">Next runner tick</div><div class="mono-ui" id="next-run">…</div></div><div><div class="mono-label">Proof as of</div><div class="mono-ui" id="fresh">loading the latest run…</div></div></div>
       </div>
     </div>
     <div class="figures above" id="strip"></div>
     <div class="ticker above" id="ticker" aria-label="The newest executions"></div>
-    <div class="spine-v" style="top:-340px;bottom:-96px" aria-hidden="true"></div>
   </section>
 
-  <!-- 03 / THE PROBLEM -->
-  <section id="problem" data-band="dark" style="padding-bottom:0">
+  <!-- THE PROBLEM -->
+  <section id="problem" data-band="dark">
     <div class="wrap above">
-      <div class="eyebrow" style="margin-bottom:56px">03 / The problem</div>
+      <div class="eyebrow" style="margin-bottom:40px">The problem</div>
       <div class="problem-head">
-        <h2 class="display rv"><span class="ln"><span>A clean execution layer,</span></span><span class="ln"><span>and one way to execute.</span></span></h2>
-        <div class="side rv"><span class="ln"><span><div class="rule"></div>Almanak is an open-source DeFi strategy framework whose execution layer was built for pluggable backends. None ever shipped: what runs today is a local key, the public mempool, and a retry that can pay twice.</span></span></div>
+        <h2 class="display rv"><span class="ln">A clean execution layer,</span><span class="ln">and one way to execute.</span></h2>
+        <div class="side rv"><div class="rule"></div>Almanak is an open-source DeFi strategy framework whose execution layer was built for pluggable backends. None ever shipped: what runs today is a local key, the public mempool, and a retry that can pay twice.</div>
       </div>
-    </div>
-    <div class="stack">
-      <div class="panel" data-tone="green">
-        <div class="copy">
-          <div class="eyebrow">03 / The problem · 1 of 3</div>
-          <h3>The private key lives on the strategy machine</h3>
-          <p>Whoever reaches the box can sign anything the strategy could.</p>
-          <div class="fix"><b>With KeeperHub:</b> no key on the machine. The org wallet signs in Turnkey's enclave, behind KeeperHub's caps.</div>
-        </div>
-        <div class="num" aria-hidden="true"><span>1</span></div>
-      </div>
-      <div class="panel" data-tone="yellow">
-        <div class="copy">
-          <div class="eyebrow">03 / The problem · 2 of 3</div>
-          <h3>The public mempool is the only submitter</h3>
-          <p>The private relay is a stub, the simulator is off on live networks. Nothing dry-runs the bundle before it goes out.</p>
-          <div class="fix"><b>With KeeperHub:</b> the exact calldata is dry-run first; a revert stops the tick before anything is signed.</div>
-        </div>
-        <div class="num" aria-hidden="true"><span>2</span></div>
-      </div>
-      <div class="panel" data-tone="blue">
-        <div class="copy">
-          <div class="eyebrow">03 / The problem · 3 of 3</div>
-          <h3>No idempotency: a retry can pay twice</h3>
-          <p>A retry after a nonce error minted twice, in Almanak's own repository.</p>
-          <div class="fix"><b>With KeeperHub:</b> one idempotency key per intent. 50 of 50 retries replayed, 10 of 10 crashed processes resumed, zero double broadcasts.</div>
-        </div>
-        <div class="num" aria-hidden="true"><span>3</span></div>
+      <div class="problems">
+        <div class="mask rv" style="--i:0"><div class="up pcard"><div class="k">1 of 3 · the key</div><h3>The private key lives on the strategy machine</h3><p>Whoever reaches the box can sign anything the strategy could.</p><div class="fix"><b>With KeeperHub:</b> no key on the machine. The org wallet signs in Turnkey's enclave, behind KeeperHub's caps.</div></div></div>
+        <div class="mask rv" style="--i:1"><div class="up pcard"><div class="k">2 of 3 · the route</div><h3>The public mempool is the only submitter</h3><p>The private relay is a stub, the simulator is off on live networks. Nothing dry-runs the bundle before it goes out.</p><div class="fix"><b>With KeeperHub:</b> the exact calldata is dry-run first; a revert stops the tick before anything is signed.</div></div></div>
+        <div class="mask rv" style="--i:2"><div class="up pcard"><div class="k">3 of 3 · the retry</div><h3>No idempotency: a retry can pay twice</h3><p>A retry after a nonce error minted twice, in Almanak's own repository.</p><div class="fix"><b>With KeeperHub:</b> one idempotency key per intent. 50 of 50 retries replayed, 10 of 10 crashed processes resumed, zero double broadcasts.</div></div></div>
       </div>
     </div>
   </section>
 
-  <!-- 04 / HOW A TICK RUNS -->
+  <!-- HOW A TICK RUNS -->
   <section class="wrap" id="how" data-band="light">
-    <div class="spine-v left" style="top:0;bottom:-24px" aria-hidden="true"></div>
     <div class="g">
-      <div class="rail"><div class="eyebrow">04 / How a tick runs</div></div>
+      <div class="rail"><div class="eyebrow">How a tick runs</div></div>
       <div class="main">
-        <h2 class="display rv" style="max-width:14ch"><span class="ln"><span>Six steps, two gates</span></span><span class="ln"><span>the strategy does not control.</span></span></h2>
+        <h2 class="display rv" style="max-width:14ch"><span class="ln">Six steps, two gates</span><span class="ln">the strategy does not control.</span></h2>
         <p class="lede">Almanak's policy refuses before anything is compiled; KeeperHub's dry run and caps refuse before anything is signed.</p>
-        <div class="steps rv" style="margin-top:40px"><ol class="ol" id="pipeline"></ol></div>
       </div>
     </div>
+    <ol class="stepper above" id="stepper" aria-hidden="true"></ol>
+    <ol class="ol two above" id="pipeline"></ol>
   </section>
 
-  <!-- 05 / THE GUARD -->
+  <!-- THE GUARD -->
   <section class="wrap" id="guard" data-band="light" style="padding-top:0">
     <div class="g">
-      <div class="rail"><div class="eyebrow">05 / The guard</div></div>
+      <div class="rail"><div class="eyebrow">The guard</div></div>
       <div class="main">
-        <h2 class="display rv" style="max-width:16ch"><span class="ln"><span>An exit decision can be stale</span></span><span class="ln"><span>by the time it executes.</span></span></h2>
+        <h2 class="display rv" style="max-width:16ch"><span class="ln">An exit decision can be stale</span><span class="ln">by the time it executes.</span></h2>
         <p class="lede">Between a decision and its broadcast the position can change. So the redeem is never a bare write: two shapes, both KeeperHub's.</p>
       </div>
     </div>
@@ -515,45 +449,45 @@
     </div>
   </section>
 
-  <!-- 06 / PROOF -->
+  <!-- PROOF -->
   <section id="proof" data-band="dark">
     <div class="wrap above">
       <div class="g" style="margin-bottom:48px">
-        <div class="rail"><div class="eyebrow">06 / Proof</div></div>
-        <div class="main"><h2 class="display rv"><span class="ln"><span>The result.</span></span></h2><p class="lede">Every figure is a KeeperHub execution record or a receipt on Base Sepolia; <code>scripts/benchmark.py</code> reproduces the table.</p></div>
+        <div class="rail"><div class="eyebrow">Proof</div></div>
+        <div class="main"><h2 class="display rv"><span class="ln">The result.</span></h2><p class="lede">Every figure is a KeeperHub execution record or a receipt on Base Sepolia; <code>scripts/benchmark.py</code> reproduces the table.</p></div>
       </div>
       <div class="table-wrap"><table id="results"><thead><tr><th>Measure</th><th>Result</th></tr></thead><tbody></tbody></table></div>
       <div class="g" style="margin-top:var(--band)">
         <div class="rail"><div class="eyebrow">Live</div></div>
-        <div class="main"><h2 class="rv"><span class="ln"><span>The latest lifecycle, run by a GitHub runner</span></span><span class="ln"><span>with nobody present.</span></span></h2><p class="lede">Every six hours a runner ticks the strategy through KeeperHub, exits through the guarded redeem, checks eleven API behaviours against production, and republishes this site.</p></div>
+        <div class="main"><h2 class="rv"><span class="ln">The latest lifecycle, run by a GitHub runner</span><span class="ln">with nobody present.</span></h2><p class="lede">Every six hours a runner ticks the strategy through KeeperHub, exits through the guarded redeem, checks eleven API behaviours against production, and republishes this site.</p></div>
       </div>
-      <div class="grid3 route" id="lifecycle" style="margin-top:40px"></div>
+      <div class="grid3" id="lifecycle" style="margin-top:40px"></div>
     </div>
   </section>
 
-  <!-- 07 / DEMO -->
+  <!-- DEMO -->
   <section class="wrap" id="video" data-band="light">
     <div class="g" style="margin-bottom:40px">
-      <div class="rail"><div class="eyebrow">07 / Demo</div></div>
-      <div class="main"><h2 class="display rv"><span class="ln"><span>Four minutes, from a strategy tick</span></span><span class="ln"><span>to the operator's phone.</span></span></h2></div>
+      <div class="rail"><div class="eyebrow">Demo</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln">Four minutes, from a strategy tick</span><span class="ln">to the operator's phone.</span></h2></div>
     </div>
     <div class="video above" id="video-box"><div class="placeholder">The demo video is being uploaded. In the meantime, the console has every execution it shows.</div></div>
   </section>
 
-  <!-- 08 / FAILURE MODES -->
+  <!-- FAILURE MODES -->
   <section class="wrap" id="failures" data-band="light" style="padding-top:0">
     <div class="g" style="margin-bottom:40px">
-      <div class="rail"><div class="eyebrow">08 / Judged on what goes wrong</div></div>
-      <div class="main"><h2 class="display rv"><span class="ln"><span>Seven failure modes,</span></span><span class="ln"><span>on purpose.</span></span></h2><p class="lede">Each one is a script anyone can run; the verdicts are what they recorded.</p></div>
+      <div class="rail"><div class="eyebrow">Judged on what goes wrong</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln">Seven failure modes,</span><span class="ln">on purpose.</span></h2><p class="lede">Each one is a script anyone can run; the verdicts are what they recorded.</p></div>
     </div>
     <div class="grid3 above" id="failures-grid"></div>
   </section>
 
-  <!-- 09 / AUTHORITY -->
+  <!-- AUTHORITY -->
   <section class="wrap" data-band="light" style="padding-top:0">
     <div class="g" style="margin-bottom:40px">
-      <div class="rail"><div class="eyebrow">09 / Authority</div></div>
-      <div class="main"><h2 class="display rv"><span class="ln"><span>Who can act,</span></span><span class="ln"><span>and through which gate.</span></span></h2></div>
+      <div class="rail"><div class="eyebrow">Authority</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln">Who can act,</span><span class="ln">and through which gate.</span></h2></div>
     </div>
     <div class="gate-wrap above" aria-label="Who can act: the strategy proposes, two policy layers refuse, the enclave signs">
       <svg viewBox="0 0 1120 300" xmlns="http://www.w3.org/2000/svg">
@@ -583,11 +517,11 @@
     <p class="lede">What a stolen API key can and cannot do: <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/SECURITY.md">SECURITY.md</a>.</p>
   </section>
 
-  <!-- 10 / SURFACES -->
+  <!-- SURFACES -->
   <section class="wrap" data-band="light" style="padding-top:0">
     <div class="g" style="margin-bottom:40px">
-      <div class="rail"><div class="eyebrow">10 / Surfaces</div></div>
-      <div class="main"><h2 class="display rv"><span class="ln"><span>Three ways to use it,</span></span><span class="ln"><span>one truth.</span></span></h2></div>
+      <div class="rail"><div class="eyebrow">Surfaces</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln">Three ways to use it,</span><span class="ln">one truth.</span></h2></div>
     </div>
     <div class="grid3 above">
       <div class="mask rv" style="--i:0"><div class="up card tap"><h3>CLI</h3><p><span class="mono">run --once</span> runs any strategy through KeeperHub; <span class="mono">exit</span> and <span class="mono">exit-guard</span> are the two guarded exits; <span class="mono">verify</span> asks KeeperHub for its verdict on any hash.</p></div></div>
@@ -597,12 +531,12 @@
     <p class="lede">All three read the same receipts and drive the same code. Two more surfaces are KeeperHub's own: the compounder and the guarded exit are workflows generated from the strategy config, run by KeeperHub's engine with no Almanak process.</p>
   </section>
 
-  <!-- 11 / UPSTREAM -->
+  <!-- UPSTREAM -->
   <section id="upstream" data-band="dark">
     <div class="wrap above">
       <div class="g" style="margin-bottom:48px">
-        <div class="rail"><div class="eyebrow">11 / Upstream</div></div>
-        <div class="main"><h2 class="display rv"><span class="ln"><span>What this project fixed</span></span><span class="ln"><span>in KeeperHub, it now uses.</span></span></h2><p class="lede">Four gaps met while building, each filed, accepted and built to the maintainers' spec; then three of their own backlog issues. Two are merged and live on production; the runner's next tick used them without a change here. The other five are in review.</p></div>
+        <div class="rail"><div class="eyebrow">Upstream</div></div>
+        <div class="main"><h2 class="display rv"><span class="ln">What this project fixed</span><span class="ln">in KeeperHub, it now uses.</span></h2><p class="lede">Four gaps met while building, each filed, accepted and built to the maintainers' spec; then three of their own backlog issues. Two are merged and live on production; the runner's next tick used them without a change here. The other five are in review.</p></div>
       </div>
       <div class="segbar" aria-label="Eight changes: two merged, five in review, one proposed"><span class="seg merged"></span><span class="seg merged"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg review"></span><span class="seg proposed"></span></div>
       <div class="seglegend"><span><i class="merged"></i>2 merged, live on production</span><span><i class="review"></i>5 in review</span><span><i class="proposed"></i>1 proposed to Almanak</span></div>
@@ -620,11 +554,11 @@
     </div>
   </section>
 
-  <!-- 12 / VERIFY -->
+  <!-- VERIFY -->
   <section class="wrap" data-band="light">
     <div class="g" style="margin-bottom:40px">
-      <div class="rail"><div class="eyebrow">12 / Verify it yourself</div></div>
-      <div class="main"><h2 class="display rv"><span class="ln"><span>Nothing here asks</span></span><span class="ln"><span>to be believed.</span></span></h2></div>
+      <div class="rail"><div class="eyebrow">Verify it yourself</div></div>
+      <div class="main"><h2 class="display rv"><span class="ln">Nothing here asks</span><span class="ln">to be believed.</span></h2></div>
     </div>
     <div class="grid2 above">
       <pre><code>pip install 'almanak-keeperhub[mcp]'
@@ -639,10 +573,10 @@ almanak-keeperhub api-features --chain base_sepolia
     </div>
   </section>
 
-  <!-- 13 / CTA -->
+  <!-- CTA -->
   <section class="wrap cta-band" data-band="mint">
-    <div class="eyebrow" style="margin-bottom:40px;color:var(--stone-900)">13 / Start here</div>
-    <h2 class="display-xl rv"><span class="ln"><span>Open the console.</span></span><span class="ln"><span>Every row is a receipt.</span></span></h2>
+    <div class="eyebrow" style="margin-bottom:40px;color:var(--stone-900)">Start here</div>
+    <h2 class="display-xl rv"><span class="ln">Open the console.</span><span class="ln">Every row is a receipt.</span></h2>
     <div style="display:flex;flex-wrap:wrap;gap:12px">
       <a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest">Release v1.1.0</a>
@@ -654,14 +588,13 @@ almanak-keeperhub api-features --chain base_sepolia
 <footer class="site" data-band="dark">
   <div class="cols">
     <div>
-      <a class="wordmark" href="#top" style="color:var(--stone)"><span>Almanak KeeperHub</span></a>
+      <a class="wordmark" href="#top" style="color:var(--stone)"><i aria-hidden="true"></i><span>Almanak KeeperHub</span></a>
       <p style="margin-top:16px;color:var(--stone-400);font-size:14px;max-width:44ch">KeeperHub as the execution backend for Almanak strategies. Built for the KeeperHub Agent Economy Hackathon, 2026.</p>
     </div>
     <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Site</div><a href="#problem">The problem</a><a href="#how">How it works</a><a href="#guard">The guard</a><a href="#proof">Proof</a><a href="#upstream">Upstream</a></div>
     <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Project</div><a href="console/">Console</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub">GitHub</a><a href="https://pypi.org/project/almanak-keeperhub/">PyPI</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/releases/latest">Release</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/roadmap.md">Roadmap</a></div>
     <div><div class="mono-label" style="color:var(--stone-400);margin-bottom:8px">Proof</div><a href="https://youtu.be/wdZJTSivzRI">Demo video</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/docs/panel/deck.pdf">Finalist deck</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml">Proof workflow</a><a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/SECURITY.md">Security model</a></div>
   </div>
-  <div class="big-name" aria-hidden="true"><span>Almanak KeeperHub</span></div>
   <div class="meta"><div id="footer"></div><button class="totop" id="totop">Back to top <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4M6 10l6-6 6 6"/></svg></button></div>
 </footer>
 
@@ -684,95 +617,41 @@ almanak-keeperhub api-features --chain base_sepolia
     polarity();
   });
 
-  /* menu: a sheet covering the page from above; Escape or any link closes it */
+  /* menu: a plain sheet under the header on small screens; Escape, a link or a tap outside closes it */
   const menu = $("menu"), menuBtn = $("menu-btn");
-  const setMenu = (open) => { menu.dataset.open = String(open); menuBtn.setAttribute("aria-expanded", String(open)); menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu"); document.body.dataset.menu = open ? "open" : "closed"; $("top-bar").dataset.on = open ? "menu" : bandUnderHeader(); };
+  const setMenu = (open) => { menu.dataset.open = String(open); menuBtn.setAttribute("aria-expanded", String(open)); menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu"); };
   menuBtn.addEventListener("click", () => setMenu(menu.dataset.open !== "true"));
   menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
-  /* the field on the right takes the colour of the item under the pointer, the finger, or the focus */
-  const field = menu.querySelector(".menu-field");
-  menu.querySelectorAll(".menu-list li").forEach((li) => {
-    const on = () => { menu.dataset.tone = li.dataset.tone || ""; field.dataset.n = li.querySelector(".n").textContent; };
-    li.addEventListener("mouseenter", on); li.addEventListener("focusin", on); li.addEventListener("touchstart", on, { passive: true });
-  });
-  menu.querySelector(".menu-list").addEventListener("mouseleave", () => { menu.dataset.tone = ""; field.dataset.n = ""; });
   addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+  document.addEventListener("click", (e) => { if (menu.dataset.open === "true" && !menu.contains(e.target) && !menuBtn.contains(e.target)) setMenu(false); });
 
-  /* header polarity follows the band under it */
-  const bands = () => [...document.querySelectorAll("[data-band]")];
-  function bandUnderHeader() {
-    const y = scrollY + 44;
-    let on = "light";
-    for (const b of bands()) { const top = b.offsetTop, bottom = top + b.offsetHeight; if (y >= top && y < bottom) { on = b.dataset.band === "dark" ? "dark" : "light"; } }
-    if (on === "light" && root.getAttribute("data-theme") === "dark") on = "dark";
-    return on;
-  }
-  function polarity() { if (menu.dataset.open !== "true") $("top-bar").dataset.on = bandUnderHeader(); document.body.dataset.scrolled = scrollY > 80 ? "true" : "false"; }
-  addEventListener("scroll", polarity, { passive: true }); addEventListener("resize", polarity); polarity();
-
-  /* the connector lines draw with the scroll: the drawn tip sits at 62% of the viewport height, so the line
-     leads the reader down the page and finishes as its section does. Reduced motion draws them fully. */
-  const lines = () => [...document.querySelectorAll(".spine-v")];
-  let lineTick = false;
-  function drawLines() {
-    lineTick = false;
-    const vh = innerHeight, tip = scrollY + vh * 0.62;
-    for (const el of lines()) {
-      const r = el.getBoundingClientRect(); const top = r.top + scrollY, h = Math.max(1, r.height);
-      const p = reduced ? 1 : Math.min(1, Math.max(0, (tip - top) / h));
-      // a clip rather than a scale, so the rounded tip keeps its shape; the CSS transition eases each new target
-      el.style.clipPath = `inset(0 0 ${((1 - p) * 100).toFixed(2)}% 0 round ${el.classList.contains("line") ? 2 : 14}px)`;
-    }
-    for (const m of document.querySelectorAll("#pipeline .m")) { const r = m.getBoundingClientRect(); m.classList.toggle("on", !reduced ? r.top + scrollY + r.height / 2 < tip : true); }
-  }
-  const queueLines = () => { if (!lineTick) { lineTick = true; requestAnimationFrame(drawLines); } };
-  addEventListener("scroll", queueLines, { passive: true }); addEventListener("resize", queueLines); addEventListener("load", queueLines); drawLines();
+  /* the header gains a hairline once the page has moved */
+  function polarity() { document.body.dataset.scrolled = scrollY > 24 ? "true" : "false"; }
+  addEventListener("scroll", polarity, { passive: true }); polarity();
   $("totop").addEventListener("click", () => scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }));
 
-  /* entrances: text rises through its mask, cards cover up, lines draw, nodes land */
-  const prepDraw = (svg) => svg.querySelectorAll("path, circle").forEach((el) => { try { const len = Math.ceil(el.getTotalLength()) + 2; el.style.setProperty("--len", len); } catch {} });
+  /* entrances: a soft fade and a short rise as things reach the viewport */
   const io = new IntersectionObserver((entries) => {
-    for (const en of entries) {
-      if (!en.isIntersecting) continue;
-      const el = en.target;
-      if (el.classList.contains("draw")) { const svg = el.tagName === "svg" ? el : el.querySelector("svg"); if (svg) prepDraw(svg); }
-      el.classList.add("in"); io.unobserve(el);
-    }
-  }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
-  const watch = (scope) => (scope || document).querySelectorAll(".rv, .mask, .draw, .steps, .big-name").forEach((el) => io.observe(el));
-  if (!("IntersectionObserver" in window)) document.querySelectorAll(".rv, .mask, .draw, .steps, .big-name").forEach((el) => el.classList.add("in"));
+    for (const en of entries) { if (!en.isIntersecting) continue; en.target.classList.add("in"); io.unobserve(en.target); }
+  }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+  const watch = (scope) => (scope || document).querySelectorAll(".rv, .mask").forEach((el) => io.observe(el));
+  if (!("IntersectionObserver" in window)) document.querySelectorAll(".rv, .mask").forEach((el) => el.classList.add("in"));
   else watch();
   if (reduced) document.querySelectorAll("svg").forEach((s) => { try { s.pauseAnimations(); } catch {} });
 
-  /* the cursor: a solid dot painted the inverse of the surface under it (pointer devices only) */
-  (function cursor() {
-    if (!matchMedia("(pointer: fine)").matches) return;
-    const dot = $("dot"), SIZE = 18, CHAR = "#0B0F19", STONE = "#F5F4EF";
-    root.setAttribute("data-cursor", "on");
-    const lum = (r, g, b) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
-    const colorAt = (stack) => {
-      for (const el of stack) {
-        if (el === root) break;
-        const s = getComputedStyle(el); if (s.visibility === "hidden" || s.opacity === "0") continue;
-        const r = el.getBoundingClientRect(); if (r.width < SIZE || r.height < SIZE) continue;
-        const m = (s.backgroundColor || "").match(/rgba?\(([^)]+)\)/);
-        if (m) { const p = m[1].split(",").map(parseFloat); const a = p.length > 3 ? p[3] : 1; if (a > 0.5) return lum(p[0], p[1], p[2]) > 0.4 ? CHAR : STONE; }
+  /* the stepper lights each step while its card is on screen */
+  function stepperWatch() {
+    const cards = [...document.querySelectorAll("#pipeline > li")], steps = [...document.querySelectorAll("#stepper > li")];
+    if (!cards.length || !("IntersectionObserver" in window)) { steps.forEach((s) => s.classList.add("on")); cards.forEach((c) => c.querySelector(".m")?.classList.add("on")); return; }
+    const so = new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        const i = cards.indexOf(en.target); if (i < 0) continue;
+        steps[i]?.classList.toggle("on", en.isIntersecting);
+        en.target.querySelector(".m")?.classList.toggle("on", en.isIntersecting);
       }
-      const b = getComputedStyle(document.body).backgroundColor.match(/rgba?\(([^)]+)\)/);
-      if (b) { const q = b[1].split(",").map(parseFloat); return lum(q[0], q[1], q[2]) > 0.4 ? CHAR : STONE; }
-      return CHAR;
-    };
-    let x = 0, y = 0, queued = false, shown = false;
-    const frame = () => { queued = false; dot.style.transform = `translate3d(${x - SIZE / 2}px,${y - SIZE / 2}px,0)`; const c = colorAt(document.elementsFromPoint(x, y)); if (dot.dataset.fill !== c) { dot.dataset.fill = c; dot.style.backgroundColor = c; } };
-    document.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; x = e.clientX; y = e.clientY; if (!shown) { shown = true; dot.style.opacity = "1"; } if (!queued) { queued = true; requestAnimationFrame(frame); } }, { passive: true });
-    document.addEventListener("pointerdown", () => { dot.style.width = dot.style.height = SIZE * 0.7 + "px"; }, { passive: true });
-    document.addEventListener("pointerup", () => { dot.style.width = dot.style.height = SIZE + "px"; }, { passive: true });
-    /* a click can change what is under the pointer (the menu opening, a theme switch); re-probe once the transition has run */
-    document.addEventListener("click", () => { if (shown) setTimeout(() => { queued = true; frame(); }, 360); }, { passive: true });
-    document.addEventListener("mouseleave", () => { shown = false; dot.style.opacity = "0"; });
-    addEventListener("blur", () => { shown = false; dot.style.opacity = "0"; });
-    addEventListener("scroll", () => { if (shown && !queued) { queued = true; requestAnimationFrame(frame); } }, { passive: true });
-  })();
+    }, { threshold: 0.6 });
+    cards.forEach((c) => so.observe(c));
+  }
 
   /* ---- data ---- */
   function figures(s, state) {
@@ -783,7 +662,7 @@ almanak-keeperhub api-features --chain base_sepolia
       ["Refused before broadcast", pad(s.refused_before_broadcast + s.dry_run_refusals), "dry runs that would revert, and caps", "warn"],
       ["Replays, no resend", pad(s.replays), "same key, same execution", "blue"],
       ["Live conformance", c ? `${pad(c.passed)}/${pad(c.passed + c.failed)}` : "—", "documented API behaviours, on production", c && !c.failed ? "good" : "warn"],
-      ["PRs merged upstream", "003", "of 7 opened; four in review", "blue"],
+      ["PRs merged upstream", "002", "of 7 opened; five in review", "blue"],
     ];
     $("strip").innerHTML = items.map(([l, v, sub, k], i) => `<div class="mask rv" style="--i:${i}"><div class="up fig ${k}"><div class="figure">${esc(v)}</div><div class="mono-label">${esc(l)}</div><div class="sub">${esc(sub)}</div></div></div>`).join("");
     watch($("strip"));
@@ -795,6 +674,18 @@ almanak-keeperhub api-features --chain base_sepolia
     const a = rows.slice(0, 12).map(card).join(""), b = rows.slice(12, 24).map(card).join("") || a;
     $("ticker").innerHTML = `<div class="row">${a}${a}</div><div class="row rev">${b}${b}</div>`;
   }
+  function tape(ex, s) {
+    const rows = (ex || []).filter((e) => e.status === "completed").slice(0, 6);
+    const list = $("tape-rows");
+    const row = (e) => { const flags = e.idempotent_replay ? "replay" : e.guarded ? "guarded" : e.sponsored ? "sponsored gas" : ""; return `<li><span class="ok" aria-label="verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"/></svg></span><div><div class="fn">${esc(e.function)}</div><div class="to">→ ${esc(short(e.to || ""))}<span class="id"> · exec ${esc(e.execution_id)}</span></div></div><div class="tag">${flags ? `<span class="chip ${e.idempotent_replay ? "info" : "good"}">${esc(flags)}</span><br>` : ""}<span class="when">${esc(when(e.recorded_at))} UTC</span></div></li>`; };
+    if (!rows.length) { list.innerHTML = `<li class="in"><span class="ok"></span><div class="fn">no executions recorded yet</div></li>`; return; }
+    list.innerHTML = rows.map(row).join("");
+    const items = [...list.children];
+    if (reduced) items.forEach((li) => li.classList.add("in"));
+    else items.forEach((li, i) => setTimeout(() => li.classList.add("in"), 380 + i * 170));
+    $("tape-count").textContent = `${s.executions} executions on production · ${s.verified} verified`;
+    $("facts").innerHTML = [[`${s.executions}`, "executions"], [`${s.verified}`, "verified receipts"], ["0", "private keys on the machine"], ["1 line", "of strategy code changed"]].map(([v, l]) => `<span><b>${esc(v)}</b> ${esc(l)}</span>`).join("");
+  }
   function pipeline(s) {
     const st = [
       ["Almanak decides", "strategy or agent compiles the intent", "", ""],
@@ -805,6 +696,8 @@ almanak-keeperhub api-features --chain base_sepolia
       ["Prove", "receipts file, explorer, this site", "", ""],
     ];
     $("pipeline").innerHTML = st.map(([t, d, c, k], i) => `<li><span class="m">${i + 1}</span><div class="body"><div class="t">${t}${k ? ' <span class="chip warn gate">gate</span>' : ""}</div><div class="d">${d}</div>${c ? `<div class="c">${esc(c)}</div>` : ""}</div></li>`).join("");
+    $("stepper").innerHTML = st.map(([t, , , k], i) => `<li><span class="bar"></span><span class="lbl"><small>${k ? "gate" : "step " + (i + 1)}</small>${t}</span></li>`).join("");
+    stepperWatch();
   }
   function results(b, s) {
     const rows = [];
@@ -885,7 +778,7 @@ almanak-keeperhub api-features --chain base_sepolia
     try { cfg = await (await fetch("site.json")).json(); } catch (e) { cfg = null; }
     const s = state.summary, c = state.conformance, f = state.api_features;
     $("fresh").textContent = state.snapshot_at || state.generated_at || "";
-    figures(s, state); ticker(state.executions || []); pipeline(s); results(state.benchmark, s); lifecycle(state.executions || []); failures(state.failure_modes || []); video(cfg); nextRun(state.snapshot_at); gateCase(); queueLines(); setTimeout(queueLines, 1200);
+    figures(s, state); tape(state.executions || [], s); ticker(state.executions || []); pipeline(s); results(state.benchmark, s); lifecycle(state.executions || []); failures(state.failure_modes || []); video(cfg); nextRun(state.snapshot_at); gateCase();
     $("footer").innerHTML = [
       `Published by the <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml" style="color:var(--stone)">proof workflow</a> on ${esc(state.snapshot_at || "")}`,
       f ? `raw calldata: ${f.raw_calldata ? "yes" : "not yet"}, sequence dry runs: ${f.call_sequence ? "yes" : "not yet"}` : "",
@@ -893,7 +786,6 @@ almanak-keeperhub api-features --chain base_sepolia
       `org wallet <code>${esc(state.org_wallet || "")}</code> on ${esc(state.chain)}`,
       `<a href="https://github.com/Prashant-thakur77/almanak-keeperhub/blob/main/LICENSE" style="color:var(--stone)">MIT</a>`,
     ].filter(Boolean).join(" · ");
-    polarity();
   }
   main();
 </script>

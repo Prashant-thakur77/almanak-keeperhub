@@ -32,7 +32,7 @@ MCP server, and two KeeperHub workflows generated from the strategy config and r
 The badges in the second row are read from the published console state and refreshed by the proof runner, so
 they say what the console says.
 
-[![The site: live counters and the latest runner lifecycle](docs/img/site.png)](https://prashant-thakur77.github.io/almanak-keeperhub/)
+[![The site: the claim beside the newest executions, each one verified by KeeperHub](docs/img/site.png)](https://prashant-thakur77.github.io/almanak-keeperhub/)
 
 **Contents:** [The result](#the-result) · [Judge links](#judge-links) · [How it works](#how-it-works) ·
 [Run it](#run-it-in-five-minutes) · [The free path](#the-free-path-base-sepolia) · [Console](#execution-console) ·
