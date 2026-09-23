@@ -190,6 +190,8 @@ async def test_guard_runs_the_workflow_exit_after_confirm_and_stale_runs_at_once
     reply = await bot.handle(chat_id="42", text="/confirm")
     assert calls[0][:5] == ["exit-guard", "run", "-d", str(strategy_dir), "--chain"] and "--stale" not in calls[0]
     assert "Redeemed" in reply and "redeem:completed" in reply and "sepolia.basescan.org" in reply
+    # the CLI's "tx_hash : 0x...  verified=True" line: the link text is the hash alone, not "...d=True"
+    assert ">0xc1c1c1c1c1…c1c1c1</a>" in reply and "verified=True" not in reply
 
     reply = await bot.handle(chat_id="42", text="/guard stale")
     assert calls[1][-1] == "--stale" and len(calls) == 2  # nothing can be broadcast, so no confirm step

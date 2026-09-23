@@ -180,9 +180,9 @@ def _pretty(label: str, output: str, code: int) -> str:
             )
             lines.append(f"Redeemed: <b>{_h(kv.get('status'))}</b>, exec <code>{_h(kv.get('execution_id'))}</code>")
             if kv.get("explorer"):
-                lines.append(
-                    f'tx <a href="{_h(kv["explorer"])}">{_h(kv.get("tx_hash", "")[:12])}…{_h(kv.get("tx_hash", "")[-6:])}</a>'
-                )
+                # the CLI prints "tx_hash : 0x...  verified=True"; the link text wants the hash alone
+                tx_hash = (kv.get("tx_hash", "").split() or [""])[0]
+                lines.append(f'tx <a href="{_h(kv["explorer"])}">{_h(tx_hash[:12])}…{_h(tx_hash[-6:])}</a>')
             if kv.get("note"):
                 lines.append(_h(kv["note"]))
         elif "executed" in kv:

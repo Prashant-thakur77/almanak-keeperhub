@@ -17,6 +17,7 @@ independently of releases, by the runner, every six hours.
   a dark theme on both pages that follows the system and remembers; a dot cursor that inverts against its
   surface. Every entrance is positional or masked; nothing fades. The same data bindings, one file, no build step.
 - `docs/roadmap.md`: what comes next, in order, and why.
+- Bot: the `/guard` reply's transaction link read `0xfed4…d=True`; the link text is the hash alone again.
 
 ## 1.1.0 — 2026-09-23
 
