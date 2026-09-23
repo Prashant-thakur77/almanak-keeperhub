@@ -63,7 +63,7 @@
     --ink:var(--stone-900); --heading:var(--stone-900); --muted:rgba(11,15,25,.85); --faint:rgba(11,15,25,.7);
     --link:var(--stone-900); --link-hover:var(--stone-950); --hairline:rgba(11,15,25,.28); --strong:var(--stone-900);
   }
-  @media (prefers-reduced-motion:reduce){ .spine-v{transition:none} :root{ --d-fast:0ms; --d-medium:0ms; --d-cover:0ms; --d-path:0ms; --d-line:0ms; --stagger:0ms; } html{scroll-behavior:auto} }
+  @media (prefers-reduced-motion:reduce){ .spine-v::after{transition:none} :root{ --d-fast:0ms; --d-medium:0ms; --d-cover:0ms; --d-path:0ms; --d-line:0ms; --stagger:0ms; } html{scroll-behavior:auto} }
 
   *,*::before,*::after{box-sizing:border-box;box-shadow:none}
   html{background:var(--canvas);scroll-behavior:smooth;scroll-padding-top:96px;-webkit-text-size-adjust:100%}
@@ -220,49 +220,32 @@
   .draw.in path{animation:draw var(--d-path) var(--ease) both;animation-delay:calc(var(--d-path) * .7)}
   @keyframes draw{to{stroke-dashoffset:0}}
 
-  /* ---- hero: the claim on the left, the newest receipts landing on the right ---- */
-  .hero{min-height:100vh;display:grid;align-content:end;padding-top:112px;padding-bottom:56px;position:relative}
+  /* ---- hero ---- */
+  .hero{min-height:100vh;display:grid;align-content:end;padding-top:120px;padding-bottom:48px;position:relative}
   .hero .g{align-items:end}
+  .hero .g>*{grid-row:1}
   .hero h1{max-width:none}
-  .hero .copy{grid-column:1/span 7}
-  .hero .lede{margin-top:22px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:50ch}
-  .hero .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
-  .hero .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted)}
-  .hero .facts b{color:var(--ink);font-weight:600}
-  .tape{grid-column:8/span 5;background:var(--card);border-radius:var(--r-card-lg);padding:18px 18px 14px;align-self:end}
-  .tape .head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4px 12px;border-bottom:1px solid var(--hairline)}
-  .tape .head .mono-label{display:flex;align-items:center;gap:8px}
-  .tape .live{width:8px;height:8px;border-radius:999px;background:var(--mint);animation:pulse 2s ease-out infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(92,196,142,.55)}70%{box-shadow:0 0 0 10px rgba(92,196,142,0)}100%{box-shadow:0 0 0 0 rgba(92,196,142,0)}}
-  .tape ol{list-style:none;margin:0;padding:6px 0 0;display:grid;gap:2px;min-height:0}
-  .tape li{overflow:hidden;border-radius:12px}
-  .tape li .row{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:center;padding:9px 6px;border-radius:12px}
-  .tape li:first-child .row{background:var(--sunken)}
-  .js .tape li .row{transform:translateY(104%)}
-  .js .tape li.in .row{animation:cover-up var(--d-cover) var(--ease) both;animation-delay:calc(var(--stagger)*var(--i,0))}
-  .tape .ok{width:22px;height:22px;border-radius:999px;background:var(--good-c);color:var(--good-on);display:grid;place-items:center}
-  .tape .ok svg{width:12px;height:12px}
-  .tape .fn{font-weight:600;font-size:15px;letter-spacing:-.015em;color:var(--heading)}
-  .tape .to{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:2px}
-  .tape .tag{text-align:right}
-  .tape .tag .chip{margin-bottom:4px}
-  .tape .when{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
-  .tape .foot{display:flex;justify-content:space-between;gap:10px;padding:12px 4px 0;margin-top:6px;border-top:1px solid var(--hairline);font-family:var(--mono);font-size:11.5px;color:var(--muted)}
-  .tape .foot a{color:var(--link)}
-  .cue{position:absolute;right:var(--margin);bottom:24px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:transform var(--d-medium) var(--ease)}
+  .hero .stops{grid-column:9/span 4;align-self:end;width:63.2%;display:flex;flex-direction:column;gap:14px;margin-bottom:6px;position:relative;z-index:1}
+  .hero .stops::before{content:"";position:absolute;right:-1px;top:-80px;bottom:22px;width:2px;background:repeating-linear-gradient(180deg,var(--mint) 0 8px,transparent 8px 18px);opacity:.85;z-index:-1}
+  .hero .stop{display:flex;align-items:center}
+  .hero .stop .btn{flex:0 0 auto}
+  .hero .stop .stub{flex:1;height:2px;min-width:16px;background:repeating-linear-gradient(90deg,var(--mint) 0 6px,transparent 6px 13px);margin-left:12px;position:relative}
+  .hero .stop .stub::after{content:"";position:absolute;right:-5px;top:-4px;width:10px;height:10px;border-radius:999px;background:var(--mint)}
+  .hero .lede{margin-top:28px;color:var(--muted);font-size:var(--body-lg);line-height:1.5;max-width:52ch}
+  .pin{grid-column:10/span 3;justify-self:center;align-self:start;width:min(200px,18vw,26vh);margin-top:-40px}
+  .pin svg{width:100%;height:auto;display:block;overflow:visible}
+  .cue{position:absolute;right:var(--margin);bottom:40px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:transform var(--d-medium) var(--ease)}
   .cue svg{width:14px;height:14px;animation:nudge 1.6s var(--ease) infinite}
   @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
   body[data-scrolled="true"] .cue{transform:translateY(120px)}
-  @media (max-width:1024px){ .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .copy{grid-column:1/-1} .tape{grid-column:1/-1;margin-top:8px} }
-  @media (max-width:520px){ .tape .to .id{display:none} .tape .head .mono-label:last-child{display:none} }
-  @media (prefers-reduced-motion:reduce){ .tape .live{animation:none} }
+  @media (max-width:1024px){ .pin{display:none} .cue{display:none} .hero{min-height:auto;padding-top:132px} .hero .stops{grid-column:1/-1;grid-row:2;align-self:start;width:auto;flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:8px} .hero .stops::before{display:none} .hero .stop .stub{display:none} }
 
   /* ---- the connector spine crossing between sections ---- */
-  .spine-v{position:absolute;width:28px;border-radius:14px;background:var(--mint);z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 14px);clip-path:inset(0 0 100% 0 round 14px);transition:clip-path 900ms cubic-bezier(.16,1,.3,1);will-change:clip-path}
-  .spine-v.left{left:calc(var(--margin) + (100% - 2 * var(--margin)) * .315 - 14px)}
+  .spine-v{position:absolute;width:18px;z-index:1;pointer-events:none;left:calc(var(--margin) + (100% - 2 * var(--margin)) * .882 - 9px);--p:0}
+  .spine-v::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(180deg,var(--mint) 0 8px,transparent 8px 18px);opacity:.85}
+  .spine-v::after{content:"";position:absolute;left:0;top:calc(var(--p) * 100%);width:18px;height:18px;margin-top:-9px;border-radius:999px;background:var(--mint);box-shadow:0 0 0 7px rgba(92,196,142,.22);transition:top 900ms cubic-bezier(.16,1,.3,1)}
+  .spine-v.left{left:calc(var(--margin) + (100% - 2 * var(--margin)) * .315 - 9px)}
   @media (max-width:1024px){ .spine-v{display:none} }
-  .hero h1{font-size:clamp(40px,5vw,74px);line-height:.98}
-  .hero h1 mark{background:linear-gradient(transparent 12%,var(--yellow) 12%,var(--yellow) 90%,transparent 90%);padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 
   /* ---- the problem: statement plus a sticky stack of full-height panels ---- */
   .problem-head{display:grid;grid-template-columns:7fr 5fr;gap:var(--gutter);align-items:end}
@@ -320,9 +303,9 @@
   .diagram svg{width:100%;height:auto;display:block}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gutter)}
   .route{position:relative}
-  .route::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:4px;margin-top:-2px;background:var(--mint);border-radius:2px}
+  .route::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:2px;margin-top:-1px;background:repeating-linear-gradient(90deg,var(--mint) 0 8px,transparent 8px 18px);opacity:.85}
   .route>.mask{position:relative;z-index:1}
-  @media (max-width:860px){ .route::before{left:50%;right:auto;top:4%;bottom:4%;height:auto;width:4px;margin:0 0 0 -2px} }
+  @media (max-width:860px){ .route::before{left:50%;right:auto;top:4%;bottom:4%;height:auto;width:2px;margin:0 0 0 -1px;background:repeating-linear-gradient(180deg,var(--mint) 0 8px,transparent 8px 18px)} }
   #failures-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
   @media (max-width:860px){ .grid3,.grid2{grid-template-columns:1fr} }
   .sec-head{margin-bottom:40px;max-width:20ch}
@@ -386,22 +369,26 @@
   <!-- 01 / HERO -->
   <section class="hero wrap" data-band="light">
     <div class="g">
-      <div class="copy">
+      <div class="wide" style="grid-column:1/span 9">
         <div class="eyebrow" style="margin-bottom:28px">01 / Hero</div>
-        <h1 class="display-xl rv"><span class="ln"><span>Almanak decides.</span></span><span class="ln"><span>KeeperHub <mark>lands it</mark>.</span></span><span class="ln"><span>No strategy code changes.</span></span></h1>
+        <h1 class="display-xl rv"><span class="ln"><span>Almanak decides.</span></span><span class="ln"><span>KeeperHub <mark>lands it</mark>.</span></span><span class="ln"><span>No strategy</span></span><span class="ln"><span>code changes.</span></span></h1>
         <p class="lede rv"><span class="ln"><span>Every Almanak strategy, unmodified, dry-runs, signs and broadcasts through KeeperHub: one idempotency key per intent, a verified receipt back, no private key on the machine.</span></span></p>
-        <div class="actions mask rv" style="--i:1"><div class="up" style="display:flex;flex-wrap:wrap;gap:12px">
-          <a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          <a class="btn ghost" href="#video">Watch the demo</a>
-          <a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub">Read the code</a>
-        </div></div>
-        <div class="facts" id="facts"></div>
       </div>
-      <aside class="tape" id="tape" aria-label="The newest executions, as KeeperHub verified them">
-        <div class="head"><span class="mono-label"><span class="live" aria-hidden="true"></span>Latest executions</span><span class="mono-label">verified by KeeperHub</span></div>
-        <ol id="tape-rows"></ol>
-        <div class="foot"><span id="tape-count">loading the proof…</span><a href="console/">every row, on the console</a></div>
-      </aside>
+      <div class="pin" id="pin">
+        <svg viewBox="0 0 200 560" fill="none" aria-hidden="true">
+          <defs><path id="pin-track" d="M100 194 V540"/></defs>
+          <circle cx="100" cy="100" r="80" stroke="#5CC48E" stroke-width="3" stroke-dasharray="3 11" stroke-linecap="round" opacity=".85"/>
+          <circle cx="100" cy="100" r="14" fill="#5CC48E"/>
+          <path d="M100 194 V540" stroke="#5CC48E" stroke-width="3" stroke-dasharray="3 11" stroke-linecap="round" opacity=".85"/>
+          <circle r="11" fill="#5CC48E"><animateMotion dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"><mpath href="#pin-track"/></animateMotion></circle>
+          <circle r="11" fill="none" stroke="#5CC48E" stroke-width="2" opacity=".35"><animateMotion dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"><mpath href="#pin-track"/></animateMotion><animate attributeName="r" values="11;22" dur="3.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;0" dur="3.6s" repeatCount="indefinite"/></circle>
+        </svg>
+      </div>
+      <div class="stops" aria-label="Start here">
+        <div class="stop"><a class="btn" href="console/">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><span class="stub"></span></div>
+        <div class="stop"><a class="btn ghost" href="#video">Watch the demo</a><span class="stub"></span></div>
+        <div class="stop"><a class="btn ghost" href="https://github.com/Prashant-thakur77/almanak-keeperhub">Read the code</a><span class="stub"></span></div>
+      </div>
     </div>
     <a class="cue" href="#live" data-scroll-cue><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg> Scroll</a>
   </section>
@@ -417,7 +404,7 @@
     </div>
     <div class="figures above" id="strip"></div>
     <div class="ticker above" id="ticker" aria-label="The newest executions"></div>
-    <div class="spine-v" style="top:0;bottom:-96px" aria-hidden="true"></div>
+    <div class="spine-v" style="top:-340px;bottom:-96px" aria-hidden="true"></div>
   </section>
 
   <!-- 03 / THE PROBLEM -->
@@ -730,8 +717,8 @@ almanak-keeperhub api-features --chain base_sepolia
   function polarity() { if (menu.dataset.open !== "true") $("top-bar").dataset.on = bandUnderHeader(); document.body.dataset.scrolled = scrollY > 80 ? "true" : "false"; }
   addEventListener("scroll", polarity, { passive: true }); addEventListener("resize", polarity); polarity();
 
-  /* the connector lines draw with the scroll: the drawn tip sits at 62% of the viewport height, so the line
-     leads the reader down the page and finishes as its section does. Reduced motion draws them fully. */
+  /* the marker on each dashed track follows the scroll: it sits at 62% of the viewport height, so it leads the
+     reader down the page and reaches the end as its section does. Reduced motion parks it at the end. */
   const lines = () => [...document.querySelectorAll(".spine-v")];
   let lineTick = false;
   function drawLines() {
@@ -740,8 +727,8 @@ almanak-keeperhub api-features --chain base_sepolia
     for (const el of lines()) {
       const r = el.getBoundingClientRect(); const top = r.top + scrollY, h = Math.max(1, r.height);
       const p = reduced ? 1 : Math.min(1, Math.max(0, (tip - top) / h));
-      // a clip rather than a scale, so the rounded tip keeps its shape; the CSS transition eases each new target
-      el.style.clipPath = `inset(0 0 ${((1 - p) * 100).toFixed(2)}% 0 round ${el.classList.contains("line") ? 2 : 14}px)`;
+      // the CSS transition on the marker's top eases each new target
+      el.style.setProperty("--p", p.toFixed(4));
     }
     for (const m of document.querySelectorAll("#pipeline .m")) { const r = m.getBoundingClientRect(); m.classList.toggle("on", !reduced ? r.top + scrollY + r.height / 2 < tip : true); }
   }
@@ -814,15 +801,6 @@ almanak-keeperhub api-features --chain base_sepolia
     const card = (e) => `<div class="tk"><div class="fn">${esc(e.function)} <span class="chip ${e.status === "completed" ? "good" : "warn"}">${esc(e.status)}</span></div><div class="mono-ui">exec ${esc(e.execution_id)}</div><div class="mono-ui">${e.tx_hash ? "tx " + esc(short(e.tx_hash)) : "no broadcast"} · ${esc(when(e.recorded_at))} UTC</div></div>`;
     const a = rows.slice(0, 12).map(card).join(""), b = rows.slice(12, 24).map(card).join("") || a;
     $("ticker").innerHTML = `<div class="row">${a}${a}</div><div class="row rev">${b}${b}</div>`;
-  }
-  function tape(ex, s) {
-    const rows = (ex || []).filter((e) => e.status === "completed").slice(0, 5);
-    const list = $("tape-rows");
-    const row = (e, i) => { const flags = e.idempotent_replay ? "replay" : e.guarded ? "guarded" : e.sponsored ? "sponsored gas" : ""; return `<li class="mask" style="--i:${i + 2}"><div class="row up"><span class="ok" aria-label="verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"/></svg></span><div><div class="fn">${esc(e.function)}</div><div class="to">→ ${esc(short(e.to || ""))}<span class="id"> · exec ${esc(e.execution_id)}</span></div></div><div class="tag">${flags ? `<span class="chip ${e.idempotent_replay ? "info" : "good"}">${esc(flags)}</span><br>` : ""}<span class="when">${esc(when(e.recorded_at))} UTC</span></div></div></li>`; };
-    list.innerHTML = rows.length ? rows.map(row).join("") : `<li class="mask in"><div class="row up"><span class="ok"></span><div class="fn">no executions recorded yet</div></div></li>`;
-    watch(list);
-    $("tape-count").textContent = `${s.executions} executions on production · ${s.verified} verified`;
-    $("facts").innerHTML = [[`${s.executions}`, "executions"], [`${s.verified}`, "verified receipts"], ["0", "private keys on the machine"], ["1 line", "of strategy code changed"]].map(([v, l]) => `<span><b>${esc(v)}</b> ${esc(l)}</span>`).join("");
   }
   function pipeline(s) {
     const st = [
@@ -914,7 +892,7 @@ almanak-keeperhub api-features --chain base_sepolia
     try { cfg = await (await fetch("site.json")).json(); } catch (e) { cfg = null; }
     const s = state.summary, c = state.conformance, f = state.api_features;
     $("fresh").textContent = state.snapshot_at || state.generated_at || "";
-    figures(s, state); tape(state.executions || [], s); ticker(state.executions || []); pipeline(s); results(state.benchmark, s); lifecycle(state.executions || []); failures(state.failure_modes || []); video(cfg); nextRun(state.snapshot_at); gateCase(); queueLines(); setTimeout(queueLines, 1200);
+    figures(s, state); ticker(state.executions || []); pipeline(s); results(state.benchmark, s); lifecycle(state.executions || []); failures(state.failure_modes || []); video(cfg); nextRun(state.snapshot_at); gateCase(); queueLines(); setTimeout(queueLines, 1200);
     $("footer").innerHTML = [
       `Published by the <a href="https://github.com/Prashant-thakur77/almanak-keeperhub/actions/workflows/proof.yml" style="color:var(--stone)">proof workflow</a> on ${esc(state.snapshot_at || "")}`,
       f ? `raw calldata: ${f.raw_calldata ? "yes" : "not yet"}, sequence dry runs: ${f.call_sequence ? "yes" : "not yet"}` : "",

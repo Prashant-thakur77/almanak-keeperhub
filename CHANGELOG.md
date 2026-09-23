@@ -9,10 +9,10 @@ independently of releases, by the runner, every six hours.
   `--write` split as the bot's `/guard` and `/guard stale`.
 - The front page and the console redesigned. Manrope with an Instrument Serif italic wordmark ("Almanak KeeperHub",
   full-width in the footer), self-hosted; a near-black, mint and amber palette drawn from the project's own mark;
-  numbered section kickers; a connector line that draws with the scroll (tip at 62% of the viewport, eased); a hero
-  that sets the claim beside a live tape of the newest executions as KeeperHub verified them, each row landing in
-  turn, with a plain row of buttons under the claim; the three problems as a sticky stack of full-height two-tone
-  panels; the six steps with markers that fill as the line passes; the Condition gate and the authority model as
+  numbered section kickers; a dashed connector track with a marker that travels with the scroll (at 62% of the
+  viewport, eased), the hero's three buttons hanging off it as stops and a dot running down the hero's own track;
+  the three problems as a sticky stack of full-height two-tone
+  panels; the six steps with markers that fill as the marker passes; the Condition gate and the authority model as
   connector diagrams; a live ring for the next runner tick; the lifecycle cards on a route; a merged / in review /
   proposed bar over the upstream table; a full-screen numbered menu whose field takes the hovered item's colour;
   a dark theme on both pages that follows the system and remembers; a dot cursor that inverts against its
